@@ -281,6 +281,7 @@ public sealed partial class ISO9660
         var                    apple           = false;
         var                    susp            = false;
         var                    rrip            = false;
+        string                 rripVersion     = null;
         var                    ziso            = false;
         var                    amiga           = false;
         var                    aaip            = false;
@@ -544,8 +545,26 @@ public sealed partial class ISO9660
 
             foreach(byte[] erb in refareas)
             {
-                ReferenceArea er    = Marshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
-                string        extId = encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>(), er.id_len);
+                ReferenceArea er = Marshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
+
+                if(Marshal.SizeOf<ReferenceArea>() + er.id_len + er.des_len + er.src_len > erb.Length) continue;
+
+                string extId = encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>(), er.id_len);
+
+                // Extension identifiers from RRIP 1.10 4.3 and RRIP 1.12 4.3, plus the one of the approved standard
+                string extRripVersion = extId switch
+                                        {
+                                            "RRIP_1991A" => "1.09/1.10",
+                                            "IEEE_P1282" => "1.12",
+                                            "IEEE_1282"  => "IEEE 1282",
+                                            _            => null
+                                        };
+
+                if(extRripVersion != null)
+                {
+                    rrip        =   true;
+                    rripVersion ??= extRripVersion;
+                }
 
                 string extDes = encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>() + er.id_len, er.des_len);
 
@@ -587,7 +606,10 @@ public sealed partial class ISO9660
 
         if(susp) isoMetadata.AppendLine(Localization.System_Use_Sharing_Protocol_present);
 
-        if(rrip) isoMetadata.AppendLine(Localization.Rock_Ridge_Interchange_Protocol_present);
+        if(rripVersion != null)
+            isoMetadata.AppendFormat(Localization.Rock_Ridge_Interchange_Protocol_0_present, rripVersion).AppendLine();
+        else if(rrip)
+            isoMetadata.AppendLine(Localization.Rock_Ridge_Interchange_Protocol_present);
 
         if(aaip) isoMetadata.AppendLine(Localization.Arbitrary_Attribute_Interchange_Protocol_present);
 

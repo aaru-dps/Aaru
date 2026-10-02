@@ -758,6 +758,9 @@
     <data name="Rock_Ridge_Interchange_Protocol_present" xml:space="preserve">
     <value>[fuchsia]Rock Ridge Interchange Protocol present.[/]</value>
   </data>
+    <data name="Rock_Ridge_Interchange_Protocol_0_present" xml:space="preserve">
+    <value>[fuchsia]Rock Ridge Interchange Protocol [teal]{0}[/] present.[/]</value>
+  </data>
     <data name="Arbitrary_Attribute_Interchange_Protocol_present" xml:space="preserve">
     <value>[fuchsia]Arbitrary Attribute Interchange Protocol present.[/]</value>
   </data>

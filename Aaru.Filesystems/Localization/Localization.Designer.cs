@@ -1521,6 +1521,12 @@ namespace Aaru.Filesystems {
             }
         }
 
+        internal static string Rock_Ridge_Interchange_Protocol_0_present {
+            get {
+                return ResourceManager.GetString("Rock_Ridge_Interchange_Protocol_0_present", resourceCulture);
+            }
+        }
+
         internal static string Arbitrary_Attribute_Interchange_Protocol_present {
             get {
                 return ResourceManager.GetString("Arbitrary_Attribute_Interchange_Protocol_present", resourceCulture);

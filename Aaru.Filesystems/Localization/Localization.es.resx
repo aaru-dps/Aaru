@@ -2017,6 +2017,9 @@
     <data name="Rock_Ridge_Interchange_Protocol_present" xml:space="preserve">
     <value>[fuchsia]Protocolo de Intercambio Rock Ridge presente.[/]</value>
   </data>
+    <data name="Rock_Ridge_Interchange_Protocol_0_present" xml:space="preserve">
+    <value>[fuchsia]Protocolo de Intercambio Rock Ridge [teal]{0}[/] presente.[/]</value>
+  </data>
     <data name="Root_block_checksum_is_0" xml:space="preserve">
     <value>El checksum del bloque raíz es 0x{0:X8}</value>
   </data>
