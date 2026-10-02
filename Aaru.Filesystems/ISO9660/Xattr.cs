@@ -177,7 +177,11 @@ public sealed partial class ISO9660
             case Xattrs.XATTR_APPLE_FINDER_INFO:
                 if(entry.FinderInfo is null) return ErrorNumber.NoSuchExtendedAttribute;
 
-                buf = Marshal.StructureToByteArrayBigEndian(entry.FinderInfo.Value);
+                // FInfo followed by an empty FXInfo, the 32 bytes macOS and the HFS filesystems use
+                buf = new byte[32];
+
+                byte[] finderInfo = Marshal.StructureToByteArrayBigEndian(entry.FinderInfo.Value);
+                Array.Copy(finderInfo, 0, buf, 0, Math.Min(finderInfo.Length, 16));
 
                 return ErrorNumber.NoError;
             case Xattrs.XATTR_APPLE_ICON:
