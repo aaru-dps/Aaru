@@ -1036,11 +1036,16 @@ public sealed partial class ISO9660
                             systemAreaOff,
                             Marshal.SizeOf<ContinuationArea>());
 
-                    ErrorNumber errno = ReadSingleExtent(ca.offset, ca.ca_length, ca.block, out byte[] caData);
+                    // The continuation area can start anywhere in its block, so the extent must reach its end
+                    ErrorNumber errno = ReadWithExtents(ca.offset,
+                                                        ca.ca_length,
+                                                        [(ca.block, ca.offset + ca.ca_length)],
+                                                        false,
+                                                        0,
+                                                        out byte[] caData);
 
-                    // TODO: Check continuation area definition, this is not a proper fix
                     if(errno == ErrorNumber.NoError && caData.Length > 0)
-                        DecodeSystemArea(caData, 0, (int)ca.ca_length, ref entry, out hasResourceFork);
+                        DecodeSystemArea(caData, 0, caData.Length, ref entry, out hasResourceFork);
 
                     systemAreaOff += ceLength;
 
