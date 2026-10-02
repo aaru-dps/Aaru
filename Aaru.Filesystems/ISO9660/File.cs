@@ -494,24 +494,9 @@ public sealed partial class ISO9660
 
         if(entry.AmigaProtection != null)
         {
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupExec)) stat.Mode |= 8;
-
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupRead)) stat.Mode |= 32;
-
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupWrite)) stat.Mode |= 16;
-
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherExec)) stat.Mode |= 1;
-
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherRead)) stat.Mode |= 4;
-
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherWrite)) stat.Mode |= 2;
-
-            // Owner bits are set when the action is NOT allowed, as in AmigaOS
-            if(!entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerExec)) stat.Mode |= 64;
-
-            if(!entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerRead)) stat.Mode |= 256;
-
-            if(!entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerWrite)) stat.Mode |= 128;
+            // The "PX" entry is the POSIX view of the file, "AS" only replaces it when it is missing
+            if(entry.PosixAttributes == null && entry.PosixAttributesOld == null)
+                stat.Mode = AmigaProtectionToMode(entry.AmigaProtection.Value);
 
             if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.Archive))
                 stat.Attributes |= FileAttributes.Archive;
@@ -607,6 +592,33 @@ public sealed partial class ISO9660
         dest = entry.SymbolicLink;
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Converts the protection bits of the Amiga "AS" Rock Ridge extension to a POSIX mode</summary>
+    static uint AmigaProtectionToMode(AmigaProtection protection)
+    {
+        uint mode = 0;
+
+        // Owner bits are set when the action is NOT allowed, as in AmigaOS
+        if(!protection.Protection.HasFlag(AmigaAttributes.OwnerRead)) mode |= 256;
+
+        if(!protection.Protection.HasFlag(AmigaAttributes.OwnerWrite)) mode |= 128;
+
+        if(!protection.Protection.HasFlag(AmigaAttributes.OwnerExec)) mode |= 64;
+
+        if(protection.Multiuser.HasFlag(AmigaMultiuser.GroupRead)) mode |= 32;
+
+        if(protection.Multiuser.HasFlag(AmigaMultiuser.GroupWrite)) mode |= 16;
+
+        if(protection.Multiuser.HasFlag(AmigaMultiuser.GroupExec)) mode |= 8;
+
+        if(protection.Multiuser.HasFlag(AmigaMultiuser.OtherRead)) mode |= 4;
+
+        if(protection.Multiuser.HasFlag(AmigaMultiuser.OtherWrite)) mode |= 2;
+
+        if(protection.Multiuser.HasFlag(AmigaMultiuser.OtherExec)) mode |= 1;
+
+        return mode;
     }
 
     /// <summary>Gets the length of the file contents, once decompressed or decoded</summary>
