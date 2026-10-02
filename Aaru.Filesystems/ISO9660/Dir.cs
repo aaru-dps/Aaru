@@ -714,8 +714,22 @@ public sealed partial class ISO9660
 
                     break;
 
-                // All of these follow the SUSP indication of 2 bytes for signature 1 byte for length
+                // Arbitrary Attribute Interchange Protocol, unrelated to the Amiga extensions despite the signature
                 case AAIP_MAGIC:
+                    byte alLength = data[systemAreaOff + 2];
+
+                    if(alLength == 0)
+                    {
+                        systemAreaOff = end;
+
+                        break;
+                    }
+
+                    systemAreaOff += alLength;
+
+                    break;
+
+                // All of these follow the SUSP indication of 2 bytes for signature 1 byte for length
                 case AMIGA_MAGIC:
                     AmigaEntry amiga =
                         Marshal.ByteArrayToStructureBigEndian<AmigaEntry>(data,
