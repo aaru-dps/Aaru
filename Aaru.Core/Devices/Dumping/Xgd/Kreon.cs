@@ -1457,6 +1457,20 @@ partial class Dump
 
 #endregion Error handling
 
+        // Unlocked, the drive reads the disc up to the end of the game data with plain reads, at the same addresses as
+        // the image, and gives the physical format information of the game data, which has the real layer break. The
+        // video data on the second layer is only readable locked, at other addresses, so it is not measured.
+        if(_dpm && !_aborted)
+        {
+            if(_dev.KreonUnlockWxripper(out _, _dev.Timeout, out _))
+                ErrorMessage?.Invoke(Localization.Core.Cannot_unlock_drive_DPM_not_measured);
+            else
+            {
+                AaruLogging.Debug(MODULE_NAME, "DPM up to sector {0}, layer break at {1}", blocks - 1, layerBreak);
+                MeasureDpm(outputFormat as IWritableOpticalImage);
+            }
+        }
+
         _resume.BadBlocks.Sort();
         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 

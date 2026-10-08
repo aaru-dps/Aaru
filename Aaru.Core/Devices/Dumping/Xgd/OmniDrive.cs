@@ -695,6 +695,9 @@ partial class Dump
 
 #endregion Error handling
 
+        // The OmniDrive reads the whole disc with plain reads, and its physical format information has the layer break
+        MeasureDpm(outputFormat as IWritableOpticalImage);
+
         _resume.BadBlocks.Sort();
         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 

@@ -7468,5 +7468,11 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Cannot_unlock_drive_DPM_not_measured {
+            get {
+                return ResourceManager.GetString("Cannot_unlock_drive_DPM_not_measured", resourceCulture);
+            }
+        }
+        
     }
 }

@@ -3805,4 +3805,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="Calibrating_disc_rotation_at_sector_0" xml:space="preserve">
         <value>[slateblue1]Calibrating disc rotation at sector [lime]{0}[/][/]</value>
     </data>
+    <data name="Cannot_unlock_drive_DPM_not_measured" xml:space="preserve">
+        <value>[olive]Cannot unlock the drive, Data Position Measurement skipped.[/]</value>
+    </data>
 </root>

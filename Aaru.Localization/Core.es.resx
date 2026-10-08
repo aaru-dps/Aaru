@@ -3652,4 +3652,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="Calibrating_disc_rotation_at_sector_0" xml:space="preserve">
         <value>[slateblue1]Calibrando la rotación del disco en el sector [lime]{0}[/][/]</value>
     </data>
+    <data name="Cannot_unlock_drive_DPM_not_measured" xml:space="preserve">
+        <value>[olive]No se puede desbloquear la unidad, se omite la Medición de Posición de Datos.[/]</value>
+    </data>
 </root>
