@@ -44,15 +44,15 @@ public partial class ShrinkWrap
     /// <summary>Decodes a buffer compressed with ShrinkWrapper's StuffIt</summary>
     /// <param name="source">Encoded buffer</param>
     /// <param name="destination">Buffer where to write the decoded data</param>
-    /// <returns>The number of decoded bytes</returns>
+    /// <returns>The number of decoded bytes, or -1 on error</returns>
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
         if(!Native.IsSupported) return 0;
 
         nuint destLen = (nuint)destination.Length;
 
-        AARU_stuffit_shrinkwrap_decode_buffer(source, (nuint)source.Length, destination, ref destLen);
+        int res = AARU_stuffit_shrinkwrap_decode_buffer(source, (nuint)source.Length, destination, ref destLen);
 
-        return (int)destLen;
+        return res == 0 ? (int)destLen : -1;
     }
 }

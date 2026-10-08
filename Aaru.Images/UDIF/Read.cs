@@ -541,28 +541,40 @@ public sealed partial class Udif
                         case CHUNK_TYPE_ADC:
                             tmpBuffer = new byte[_buffersize];
                             realSize  = ADC.DecodeBuffer(cmpBuffer, tmpBuffer);
-                            data      = new byte[realSize];
+
+                            if(realSize < 0) return ErrorNumber.InOutError;
+
+                            data = new byte[realSize];
                             Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                             break;
                         case CHUNK_TYPE_RLE:
                             tmpBuffer = new byte[_buffersize];
                             realSize  = Rle.DecodeBuffer(cmpBuffer, tmpBuffer);
-                            data      = new byte[realSize];
+
+                            if(realSize < 0) return ErrorNumber.InOutError;
+
+                            data = new byte[realSize];
                             Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                             break;
                         case CHUNK_TYPE_LZH:
                             tmpBuffer = new byte[_buffersize];
                             realSize  = Lzh.DecodeBuffer(cmpBuffer, tmpBuffer);
-                            data      = new byte[realSize];
+
+                            if(realSize < 0) return ErrorNumber.InOutError;
+
+                            data = new byte[realSize];
                             Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                             break;
                         case CHUNK_TYPE_KENCODE:
                             tmpBuffer = new byte[_buffersize];
                             realSize  = KenCode.DecodeBuffer(cmpBuffer, tmpBuffer);
-                            data      = new byte[realSize];
+
+                            if(realSize < 0) return ErrorNumber.InOutError;
+
+                            data = new byte[realSize];
                             Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                             break;

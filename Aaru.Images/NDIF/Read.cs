@@ -330,7 +330,10 @@ public sealed partial class Ndif
                     {
                         var tmpBuffer = new byte[_bufferSize];
                         realSize = ADC.DecodeBuffer(cmpBuffer, tmpBuffer);
-                        data     = new byte[realSize];
+
+                        if(realSize < 0) return ErrorNumber.InOutError;
+
+                        data = new byte[realSize];
                         Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                         break;
@@ -340,7 +343,10 @@ public sealed partial class Ndif
                     {
                         var tmpBuffer = new byte[_bufferSize];
                         realSize = Rle.DecodeBuffer(cmpBuffer, tmpBuffer);
-                        data     = new byte[realSize];
+
+                        if(realSize < 0) return ErrorNumber.InOutError;
+
+                        data = new byte[realSize];
                         Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                         break;
@@ -350,7 +356,10 @@ public sealed partial class Ndif
                     {
                         var tmpBuffer = new byte[_bufferSize];
                         realSize = Lzh.DecodeBuffer(cmpBuffer, tmpBuffer);
-                        data     = new byte[realSize];
+
+                        if(realSize < 0) return ErrorNumber.InOutError;
+
+                        data = new byte[realSize];
                         Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                         break;
@@ -360,7 +369,10 @@ public sealed partial class Ndif
                     {
                         var tmpBuffer = new byte[_bufferSize];
                         realSize = KenCode.DecodeBuffer(cmpBuffer, tmpBuffer);
-                        data     = new byte[realSize];
+
+                        if(realSize < 0) return ErrorNumber.InOutError;
+
+                        data = new byte[realSize];
                         Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                         break;
@@ -370,7 +382,10 @@ public sealed partial class Ndif
                     {
                         var tmpBuffer = new byte[_bufferSize];
                         realSize = ShrinkWrap.DecodeBuffer(cmpBuffer, tmpBuffer);
-                        data     = new byte[realSize];
+
+                        if(realSize < 0) return ErrorNumber.InOutError;
+
+                        data = new byte[realSize];
                         Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                         break;

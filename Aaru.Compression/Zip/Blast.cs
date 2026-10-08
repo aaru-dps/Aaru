@@ -44,15 +44,15 @@ public partial class Blast
     /// <summary>Decodes a buffer compressed with PKWARE's Data Compression Library Implode</summary>
     /// <param name="source">Encoded buffer</param>
     /// <param name="destination">Buffer where to write the decoded data</param>
-    /// <returns>The number of decoded bytes</returns>
+    /// <returns>The number of decoded bytes, or -1 on error</returns>
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
         if(!Native.IsSupported) return 0;
 
         nuint destLen = (nuint)destination.Length;
 
-        AARU_zip_blast_decode_buffer(source, (nuint)source.Length, destination, ref destLen);
+        int res = AARU_zip_blast_decode_buffer(source, (nuint)source.Length, destination, ref destLen);
 
-        return (int)destLen;
+        return res == 0 ? (int)destLen : -1;
     }
 }
