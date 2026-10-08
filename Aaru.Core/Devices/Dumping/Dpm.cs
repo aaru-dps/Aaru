@@ -30,10 +30,12 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Devices.Dpm;
 using Aaru.Logging;
+using Humanizer;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -41,6 +43,10 @@ partial class Dump
 {
     /// <summary>DPM measurement in progress, so it can be aborted</summary>
     DpmMeasurement _dpmMeasurement;
+    /// <summary>Whether the DPM phase ran, even if it failed</summary>
+    bool _dpmRan;
+    /// <summary>Time spent in the DPM phase</summary>
+    readonly Stopwatch _dpmStopwatch = new();
 
     /// <summary>
     ///     Measures the Data Position Measurement of the disc and stores it in the image. It runs after every read, trim
@@ -63,6 +69,9 @@ partial class Dump
         }
 
         UpdateStatus?.Invoke(Localization.Core.Measuring_Data_Position_Measurement);
+
+        _dpmRan = true;
+        _dpmStopwatch.Start();
 
         _dpmMeasurement = new DpmMeasurement(new DeviceDpmDrive(_dev));
 
@@ -98,10 +107,43 @@ partial class Dump
         }
         finally
         {
+            _dpmStopwatch.Stop();
             _dpmMeasurement = null;
+
+            UpdateStatus?.Invoke(string.Format(Localization.Core.DPM_took_0,
+                                               _dpmStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
             // The measurement left the drive at its maximum speed
             AaruLogging.Debug(MODULE_NAME, "DPM phase finished");
         }
+    }
+
+    /// <summary>Reports how long the dump took, counting the DPM phase in the total and naming it if it ran</summary>
+    /// <param name="commandsMs">Milliseconds processing commands</param>
+    /// <param name="checksumMs">Milliseconds checksumming</param>
+    /// <param name="writeSeconds">Seconds writing</param>
+    void ReportTotalTime(double commandsMs, double checksumMs, double writeSeconds)
+    {
+        if(!_dpmRan)
+        {
+            UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                           .Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                                               _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                                               commandsMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                               checksumMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                               writeSeconds.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                               _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+
+            return;
+        }
+
+        UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                       .Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing_5_DPM,
+                                           (_dumpStopwatch.Elapsed + _dpmStopwatch.Elapsed).Humanize(minUnit: TimeUnit.Second),
+                                           commandsMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                           checksumMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                           writeSeconds.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                                           _dpmStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
     }
 }

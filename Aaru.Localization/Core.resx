@@ -3808,4 +3808,10 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="Cannot_unlock_drive_DPM_not_measured" xml:space="preserve">
         <value>[olive]Cannot unlock the drive, Data Position Measurement skipped.[/]</value>
     </data>
+    <data name="Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing_5_DPM" xml:space="preserve">
+        <value>[slateblue1]Took a total of [aqua]{0}[/] ([aqua]{1}[/] processing commands, [aqua]{2}[/] checksumming, [aqua]{3}[/] writing, [aqua]{4}[/] closing, [aqua]{5}[/] in Data Position Measurement).[/]</value>
+    </data>
+    <data name="DPM_took_0" xml:space="preserve">
+        <value>[slateblue1]Data Position Measurement took [aqua]{0}[/].[/]</value>
+    </data>
 </root>

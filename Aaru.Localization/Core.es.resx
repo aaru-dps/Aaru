@@ -3655,4 +3655,10 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="Cannot_unlock_drive_DPM_not_measured" xml:space="preserve">
         <value>[olive]No se puede desbloquear la unidad, se omite la Medición de Posición de Datos.[/]</value>
     </data>
+    <data name="Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing_5_DPM" xml:space="preserve">
+        <value>[slateblue1]Tomó un total de [aqua]{0}[/] ([aqua]{1}[/] procesando comandos, [aqua]{2}[/] calculando checksums, [aqua]{3}[/] escribiendo, [aqua]{4}[/] cerrando, [aqua]{5}[/] en la Medición de Posición de Datos).[/]</value>
+    </data>
+    <data name="DPM_took_0" xml:space="preserve">
+        <value>[slateblue1]La Medición de Posición de Datos tardó [aqua]{0}[/].[/]</value>
+    </data>
 </root>

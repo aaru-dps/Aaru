@@ -7474,5 +7474,17 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing_5_DPM {
+            get {
+                return ResourceManager.GetString("Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing_5_DPM", resourceCulture);
+            }
+        }
+        
+        public static string DPM_took_0 {
+            get {
+                return ResourceManager.GetString("DPM_took_0", resourceCulture);
+            }
+        }
+        
     }
 }
