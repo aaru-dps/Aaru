@@ -97,9 +97,10 @@ public sealed partial class Alcohol120
 
         if(_header.version[0] > MAXIMUM_SUPPORTED_VERSION) return ErrorNumber.NotSupported;
 
-        _dpm = null;
+        _dpm        = null;
+        _readErrors = [];
 
-        if(_header.discMetadataOffset != 0) ReadDpmBlock(stream);
+        if(_header.discMetadataOffset != 0) ReadDiscMetadataBlocks(stream);
 
         stream.Seek(_header.sessionOffset, SeekOrigin.Begin);
         _alcSessions = new Dictionary<int, Session>();
@@ -746,9 +747,12 @@ public sealed partial class Alcohol120
         return _dpm.HasValue ? ErrorNumber.NoError : ErrorNumber.NoData;
     }
 
-    /// <summary>Reads the DPM from the disc metadata blocks, if there is one</summary>
+    /// <summary>
+    ///     Reads the disc metadata blocks: the DPM, type 1, and the list of sectors that could not be read, type 2, in
+    ///     any order
+    /// </summary>
     /// <param name="stream">Descriptor stream</param>
-    void ReadDpmBlock(Stream stream)
+    void ReadDiscMetadataBlocks(Stream stream)
     {
         var buffer = new byte[16];
 
@@ -761,8 +765,6 @@ public sealed partial class Alcohol120
         var blockOffsets = new byte[blockCount * 4];
         stream.EnsureRead(blockOffsets, 0, blockOffsets.Length);
 
-        // Other block types have been seen, e.g. type 2 with a single value that looks like a sector count, but their
-        // meaning is unknown, so only the first DPM block is read.
         for(int i = 0; i < blockCount; i++)
         {
             uint blockOffset = BinaryPrimitives.ReadUInt32LittleEndian(blockOffsets.AsSpan(i * 4));
@@ -772,40 +774,57 @@ public sealed partial class Alcohol120
             stream.Seek(blockOffset, SeekOrigin.Begin);
             stream.EnsureRead(buffer, 0, 16);
 
-            if(BinaryPrimitives.ReadUInt32LittleEndian(buffer) != DPM_BLOCK_TYPE) continue;
+            uint type  = BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+            uint count = BinaryPrimitives.ReadUInt32LittleEndian(buffer.AsSpan(12));
 
-            DpmBlock header = Marshal.SpanToStructureLittleEndian<DpmBlock>(buffer.AsSpan(4));
+            AaruLogging.Debug(MODULE_NAME,
+                              "Disc metadata block {0}: type {1}, fields {2} and {3}, {4} entries",
+                              i,
+                              type,
+                              BinaryPrimitives.ReadUInt32LittleEndian(buffer.AsSpan(4)),
+                              BinaryPrimitives.ReadUInt32LittleEndian(buffer.AsSpan(8)),
+                              count);
 
-            if(header.dpmResolution      == 0 ||
-               header.numberOfDpmEntries == 0 ||
-               blockOffset + 16L + header.numberOfDpmEntries * 4L > stream.Length)
-            {
-                AaruLogging.Debug(MODULE_NAME, "Invalid DPM block, ignoring it.");
+            if(count == 0 || blockOffset + 16L + count * 4L > stream.Length) continue;
 
-                return;
-            }
-
-            var values = new byte[header.numberOfDpmEntries * 4];
+            var values = new byte[count * 4];
             stream.EnsureRead(values, 0, values.Length);
 
-            var angles = new uint[header.numberOfDpmEntries];
+            var entries = new uint[count];
 
-            for(int e = 0; e < angles.Length; e++)
-                angles[e] = BinaryPrimitives.ReadUInt32LittleEndian(values.AsSpan(e * 4));
+            for(int e = 0; e < entries.Length; e++)
+                entries[e] = BinaryPrimitives.ReadUInt32LittleEndian(values.AsSpan(e * 4));
 
-            DataPositionMeasurement? dpm = Dpm.FromGrid(header.dpmStartSector, header.dpmResolution, angles);
-
-            if(dpm is null)
+            switch(type)
             {
-                AaruLogging.Debug(MODULE_NAME, "Invalid DPM block, ignoring it.");
+                case DPM_BLOCK_TYPE when !_dpm.HasValue:
+                {
+                    DpmBlock header = Marshal.SpanToStructureLittleEndian<DpmBlock>(buffer.AsSpan(4));
 
-                return;
+                    _dpm = Dpm.FromGrid(header.dpmStartSector, header.dpmResolution, entries);
+
+                    if(_dpm is null) AaruLogging.Debug(MODULE_NAME, "Invalid DPM block, ignoring it.");
+
+                    break;
+                }
+
+                // The meaning of the two fields after the type is unknown
+                case READ_ERRORS_BLOCK_TYPE:
+                    foreach(uint sector in entries) _readErrors.Add(sector);
+
+                    break;
             }
-
-            _dpm = dpm;
-
-            return;
         }
+    }
+
+    /// <summary>Status of a sector, errored if it could not be read when the image was created</summary>
+    /// <param name="track">Track</param>
+    /// <param name="sectorAddress">Sector address relative to the track</param>
+    SectorStatus StatusOf(uint track, ulong sectorAddress)
+    {
+        if(_readErrors.Count == 0 || !_offsetMap.TryGetValue(track, out ulong trackStart)) return SectorStatus.Dumped;
+
+        return _readErrors.Contains(trackStart + sectorAddress) ? SectorStatus.Errored : SectorStatus.Dumped;
     }
 
     /// <inheritdoc />
@@ -843,9 +862,10 @@ public sealed partial class Alcohol120
     /// <inheritdoc />
     public ErrorNumber ReadSector(ulong sectorAddress, bool negative, out byte[] buffer, out SectorStatus sectorStatus)
     {
-        sectorStatus = SectorStatus.Dumped;
+        ErrorNumber errno = ReadSectors(sectorAddress, false, 1, out buffer, out SectorStatus[] status);
+        sectorStatus = status?.Length > 0 ? status[0] : SectorStatus.Dumped;
 
-        return ReadSectors(sectorAddress, false, 1, out buffer, out _);
+        return errno;
     }
 
     /// <inheritdoc />
@@ -855,9 +875,10 @@ public sealed partial class Alcohol120
     /// <inheritdoc />
     public ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer, out SectorStatus sectorStatus)
     {
-        sectorStatus = SectorStatus.Dumped;
+        ErrorNumber errno = ReadSectors(sectorAddress, 1, track, out buffer, out SectorStatus[] status);
+        sectorStatus = status?.Length > 0 ? status[0] : SectorStatus.Dumped;
 
-        return ReadSectors(sectorAddress, 1, track, out buffer, out _);
+        return errno;
     }
 
     /// <inheritdoc />
@@ -929,7 +950,7 @@ public sealed partial class Alcohol120
         if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap) return ErrorNumber.OutOfRange;
 
         sectorStatus = new SectorStatus[length];
-        for(uint i = 0; i < length; i++) sectorStatus[i] = SectorStatus.Dumped;
+        for(uint i = 0; i < length; i++) sectorStatus[i] = StatusOf(track, sectorAddress + i);
 
         uint sectorOffset;
         uint sectorSize;
@@ -1469,17 +1490,19 @@ public sealed partial class Alcohol120
     public ErrorNumber ReadSectorLong(ulong            sectorAddress, bool negative, out byte[] buffer,
                                       out SectorStatus sectorStatus)
     {
-        sectorStatus = SectorStatus.Dumped;
+        ErrorNumber errno = ReadSectorsLong(sectorAddress, false, 1, out buffer, out SectorStatus[] status);
+        sectorStatus = status?.Length > 0 ? status[0] : SectorStatus.Dumped;
 
-        return ReadSectorsLong(sectorAddress, false, 1, out buffer, out _);
+        return errno;
     }
 
     /// <inheritdoc />
     public ErrorNumber ReadSectorLong(ulong sectorAddress, uint track, out byte[] buffer, out SectorStatus sectorStatus)
     {
-        sectorStatus = SectorStatus.Dumped;
+        ErrorNumber errno = ReadSectorsLong(sectorAddress, 1, track, out buffer, out SectorStatus[] status);
+        sectorStatus = status?.Length > 0 ? status[0] : SectorStatus.Dumped;
 
-        return ReadSectorsLong(sectorAddress, 1, track, out buffer, out _);
+        return errno;
     }
 
     /// <inheritdoc />
@@ -1523,7 +1546,7 @@ public sealed partial class Alcohol120
         if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap) return ErrorNumber.OutOfRange;
 
         sectorStatus = new SectorStatus[length];
-        for(uint i = 0; i < length; i++) sectorStatus[i] = SectorStatus.Dumped;
+        for(uint i = 0; i < length; i++) sectorStatus[i] = StatusOf(track, sectorAddress + i);
 
         uint sectorOffset;
         uint sectorSize;

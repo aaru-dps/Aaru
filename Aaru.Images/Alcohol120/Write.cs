@@ -148,6 +148,7 @@ public sealed partial class Alcohol120
 
         _trackFlags = new Dictionary<byte, byte>();
         _dpm        = null;
+        _writtenReadErrors.Clear();
 
         IsWriting    = true;
         ErrorMessage = null;
@@ -182,29 +183,89 @@ public sealed partial class Alcohol120
         return true;
     }
 
-    /// <summary>Writes the DPM as the only disc metadata block, at the current position of the descriptor</summary>
-    void WriteDpmBlock()
+    /// <summary>Remembers whether a written sector could not be read</summary>
+    void TrackReadError(ulong sector, SectorStatus status)
     {
-        DataPositionMeasurement dpm    = _dpm.Value;
-        ulong[]                 angles = Dpm.ToGrid(dpm, dpm.NominalSpacing);
-        var                     block  = new byte[24 + angles.Length * 4];
+        if(status is SectorStatus.Errored or SectorStatus.NotDumped)
+            _writtenReadErrors.Add(sector);
+        else
+            _writtenReadErrors.Remove(sector);
+    }
 
-        // One disc metadata block, starting right after its offset
-        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(0), 1);
-        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(4), (uint)(_descriptorStream.Position + 8));
-        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(8), DPM_BLOCK_TYPE);
-        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(12), (uint)dpm.Entries[0].Lba);
-        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(16), dpm.NominalSpacing);
-        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(20), (uint)angles.Length);
+    /// <summary>Remembers which written sectors could not be read</summary>
+    void TrackReadErrors(ulong sector, uint length, SectorStatus[] status)
+    {
+        if(status is null) return;
 
-        for(int i = 0; i < angles.Length; i++)
+        for(uint i = 0; i < length && i < status.Length; i++) TrackReadError(sector + i, status[i]);
+    }
+
+    /// <summary>
+    ///     Writes the disc metadata blocks, the DPM and the list of sectors that could not be read, at the current
+    ///     position of the descriptor
+    /// </summary>
+    void WriteDiscMetadataBlocks()
+    {
+        List<byte[]> blocks = [];
+
+        if(_dpm.HasValue)
         {
-            BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(24 + i * 4),
-                                                     (uint)((angles[i] + Dpm.UNITS_PER_ALCOHOL_UNIT / 2) /
-                                                            Dpm.UNITS_PER_ALCOHOL_UNIT));
+            DataPositionMeasurement dpm    = _dpm.Value;
+            ulong[]                 angles = Dpm.ToGrid(dpm, dpm.NominalSpacing);
+            var                     block  = new byte[16 + angles.Length * 4];
+
+            BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(0),  DPM_BLOCK_TYPE);
+            BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(4),  (uint)dpm.Entries[0].Lba);
+            BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(8),  dpm.NominalSpacing);
+            BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(12), (uint)angles.Length);
+
+            for(int i = 0; i < angles.Length; i++)
+            {
+                BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(16 + i * 4),
+                                                         (uint)((angles[i] + Dpm.UNITS_PER_ALCOHOL_UNIT / 2) /
+                                                                Dpm.UNITS_PER_ALCOHOL_UNIT));
+            }
+
+            blocks.Add(block);
         }
 
-        _descriptorStream.Write(block, 0, block.Length);
+        if(_writtenReadErrors.Count > 0)
+        {
+            var block = new byte[16 + _writtenReadErrors.Count * 4];
+
+            // The meaning of the two fields after the type is unknown, every image seen has 4 and 1
+            BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(0),  READ_ERRORS_BLOCK_TYPE);
+            BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(4),  4);
+            BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(8),  1);
+            BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(12), (uint)_writtenReadErrors.Count);
+
+            int pos = 16;
+
+            foreach(ulong sector in _writtenReadErrors)
+            {
+                BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(pos), (uint)sector);
+                pos += 4;
+            }
+
+            blocks.Add(block);
+        }
+
+        // Number of blocks, then the absolute offset of each, then the blocks
+        long position = _descriptorStream.Position;
+        var  table    = new byte[4 + blocks.Count * 4];
+        long offset   = position + table.Length;
+
+        BinaryPrimitives.WriteUInt32LittleEndian(table.AsSpan(0), (uint)blocks.Count);
+
+        for(int i = 0; i < blocks.Count; i++)
+        {
+            BinaryPrimitives.WriteUInt32LittleEndian(table.AsSpan(4 + i * 4), (uint)offset);
+            offset += blocks[i].Length;
+        }
+
+        _descriptorStream.Write(table, 0, table.Length);
+
+        foreach(byte[] block in blocks) _descriptorStream.Write(block, 0, block.Length);
     }
 
     /// <inheritdoc />
@@ -295,6 +356,8 @@ public sealed partial class Alcohol120
             return false;
         }
 
+        TrackReadError(sectorAddress, sectorStatus);
+
         CommonTypes.Structs.Track track =
             _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector && sectorAddress <= trk.EndSector);
 
@@ -351,6 +414,8 @@ public sealed partial class Alcohol120
 
             return false;
         }
+
+        TrackReadErrors(sectorAddress, length, sectorStatus);
 
         if(!_isDvd)
         {
@@ -441,6 +506,8 @@ public sealed partial class Alcohol120
             return false;
         }
 
+        TrackReadError(sectorAddress, sectorStatus);
+
         CommonTypes.Structs.Track track =
             _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector && sectorAddress <= trk.EndSector);
 
@@ -487,6 +554,8 @@ public sealed partial class Alcohol120
 
             return false;
         }
+
+        TrackReadErrors(sectorAddress, length, sectorStatus);
 
         CommonTypes.Structs.Track track =
             _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector && sectorAddress <= trk.EndSector);
@@ -1014,7 +1083,7 @@ public sealed partial class Alcohol120
 
         byte[] filename = Encoding.Unicode.GetBytes("*.mdf"); // Yup, Alcohol stores no filename but a wildcard.
 
-        if(_dpm.HasValue)
+        if(_dpm.HasValue || _writtenReadErrors.Count > 0)
         {
             header.discMetadataOffset = _alcFooter.filenameOffset + (uint)filename.Length + 2; // 2 added because of the eventually written null termination.
         }
@@ -1136,7 +1205,7 @@ public sealed partial class Alcohol120
         _descriptorStream.Write(new byte[2], 0, 2);
 
         // Write DPM
-        if(_dpm.HasValue) WriteDpmBlock();
+        if(_dpm.HasValue || _writtenReadErrors.Count > 0) WriteDiscMetadataBlocks();
 
         _descriptorStream.Flush();
         _descriptorStream.Close();

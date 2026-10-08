@@ -52,6 +52,10 @@ public sealed partial class Alcohol120 : IWritableOpticalImage
     FileStream                              _descriptorStream;
     byte[]                                  _dmi;
     DataPositionMeasurement?                _dpm;
+    /// <summary>Sectors that could not be read, from the read errors disc metadata block</summary>
+    HashSet<ulong> _readErrors = [];
+    /// <summary>Sectors written as not read, for the read errors disc metadata block</summary>
+    readonly SortedSet<ulong> _writtenReadErrors = [];
     byte[]                                  _fullToc;
     Header                                  _header;
     ImageInfo                               _imageInfo;

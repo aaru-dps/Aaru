@@ -37,5 +37,7 @@ public sealed partial class Alcohol120
     const    byte   MAXIMUM_SUPPORTED_VERSION = 1;
     /// <summary>Disc metadata block type of the DPM</summary>
     const    uint   DPM_BLOCK_TYPE            = 1;
+    /// <summary>Disc metadata block type of the list of sectors that could not be read</summary>
+    const    uint   READ_ERRORS_BLOCK_TYPE    = 2;
     readonly byte[] _alcoholSignature         = "MEDIA DESCRIPTOR"u8.ToArray();
 }
