@@ -2921,10 +2921,10 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <value>La tabla de contenido dice que el disco es de tipo CD-ROM XA.</value>
   </data>
     <data name="Took_a_total_of_0_1_processing_commands" xml:space="preserve">
-        <value>[slateblue1]Tomó un total de [teal]{0}[/] ([teal]{1}[/] procesando comandos).[/]</value>
+        <value>[slateblue1]Tardó un total de [teal]{0}[/] ([teal]{1}[/] procesando órdenes).[/]</value>
     </data>
     <data name="Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing" xml:space="preserve">
-        <value>[slateblue1]Tomó un total de [aqua]{0}[/] ([aqua]{1}[/] procesando comandos, [aqua]{2}[/] calculando checksums, [aqua]{3}[/] escribiendo, [aqua]{4}[/] cerrando).[/]</value>
+        <value>[slateblue1]Tardó un total de [aqua]{0}[/] ([aqua]{1}[/] procesando órdenes, [aqua]{2}[/] calculando sumas de comprobación, [aqua]{3}[/] escribiendo, [aqua]{4}[/] cerrando).[/]</value>
     </data>
     <data name="Total_size" xml:space="preserve">
     <value>Tamaño total</value>
@@ -3656,7 +3656,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
         <value>[olive]No se puede desbloquear la unidad, se omite la Medición de Posición de Datos.[/]</value>
     </data>
     <data name="Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing_5_DPM" xml:space="preserve">
-        <value>[slateblue1]Tomó un total de [aqua]{0}[/] ([aqua]{1}[/] procesando comandos, [aqua]{2}[/] calculando checksums, [aqua]{3}[/] escribiendo, [aqua]{4}[/] cerrando, [aqua]{5}[/] en la Medición de Posición de Datos).[/]</value>
+        <value>[slateblue1]Tardó un total de [aqua]{0}[/] ([aqua]{1}[/] procesando órdenes, [aqua]{2}[/] calculando sumas de comprobación, [aqua]{3}[/] escribiendo, [aqua]{4}[/] cerrando, [aqua]{5}[/] en la Medición de Posición de Datos).[/]</value>
     </data>
     <data name="DPM_took_0" xml:space="preserve">
         <value>[slateblue1]La Medición de Posición de Datos tardó [aqua]{0}[/].[/]</value>
