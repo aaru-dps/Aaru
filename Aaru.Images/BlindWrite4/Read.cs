@@ -835,6 +835,8 @@ public sealed partial class BlindWrite4
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
             AaruLogging.Verbose(Localization.BlindWrite_comments_0, _imageInfo.Comments);
 
+        _dpm = LoadBwa(imageFilter);
+
         return ErrorNumber.NoError;
     }
 
@@ -869,14 +871,6 @@ public sealed partial class BlindWrite4
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, false, 1, tag, out buffer);
-
-    /// <inheritdoc />
-    public ErrorNumber ReadDpm(out DataPositionMeasurement dpm)
-    {
-        dpm = default(DataPositionMeasurement);
-
-        return ErrorNumber.NotSupported;
-    }
 
     /// <inheritdoc />
     public ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer, out SectorStatus sectorStatus)
