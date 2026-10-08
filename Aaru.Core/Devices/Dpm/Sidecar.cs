@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.IO;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Graphics;
 using Aaru.Logging;
@@ -49,7 +50,7 @@ public static class DpmSidecar
     {
         try
         {
-            DpmGraph.Write(dpm, prefix + ".dpm.png");
+            DpmGraph.Write(dpm, prefix + ".dpm.png", Path.GetFileName(prefix));
             DpmCsv.Write(dpm, prefix + ".dpm.csv");
         }
         catch(Exception ex)

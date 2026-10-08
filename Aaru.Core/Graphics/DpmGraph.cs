@@ -66,7 +66,8 @@ public static class DpmGraph
     /// <summary>Writes the graph of a DPM as a PNG</summary>
     /// <param name="dpm">DPM</param>
     /// <param name="path">Path to the PNG file</param>
-    public static void Write(DataPositionMeasurement dpm, string path)
+    /// <param name="name">Name of the image, shown as the title</param>
+    public static void Write(DataPositionMeasurement dpm, string path, string name)
     {
         using var bitmap = new SKBitmap(WIDTH, HEIGHT);
         using var canvas = new SKCanvas(bitmap);
@@ -124,12 +125,17 @@ public static class DpmGraph
         ink.IsAntialias = true;
 
         ink.Color = PrimaryInk;
-        canvas.DrawText("Data Position Measurement", MARGIN_LEFT, 40, SKTextAlign.Left, titleFont, ink);
+        canvas.DrawText(string.IsNullOrWhiteSpace(name) ? "Data Position Measurement" : name,
+                        MARGIN_LEFT,
+                        40,
+                        SKTextAlign.Left,
+                        titleFont,
+                        ink);
 
         ink.Color = SecondaryInk;
 
         canvas.DrawText(string.Format(CultureInfo.InvariantCulture,
-                                      "{0} entries every {1} sectors, {2:F2} turns. Degrees per sector by sector.",
+                                      "Data Position Measurement: {0} entries every {1} sectors, {2:F2} turns. Degrees per sector by sector.",
                                       entries.Length,
                                       dpm.NominalSpacing,
                                       (double)entries[^1].Angle / Dpm.UNITS_PER_TURN),
