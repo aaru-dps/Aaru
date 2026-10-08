@@ -47,6 +47,7 @@ sealed class SimulatedDrive : IDpmDrive
     readonly uint          _unit;
     uint                   _currentLba;
     double                 _phase;
+    double                 _previousEnd = -1;
     double                 _time;
 
     /// <param name="medium">Medium the drive reports</param>
@@ -76,6 +77,8 @@ sealed class SimulatedDrive : IDpmDrive
     public double JunkProbability { get; init; }
     /// <summary>Rotation period multiplier past the first layer</summary>
     public double UpperLayerSlowdown { get; init; } = 1.0;
+    /// <summary>Maximum seconds the host takes between commands, random, the disc turning meanwhile</summary>
+    public double HostDelay { get; init; }
     /// <summary>Seconds a failed read costs</summary>
     public double FailureCost { get; init; } = 2.0;
     /// <summary>Reads that hit unreadable sectors</summary>
@@ -85,20 +88,40 @@ sealed class SimulatedDrive : IDpmDrive
     public long Now => (long)(_time * 1e9);
 
     /// <inheritdoc />
-    public bool TimedRead(uint lba, out long elapsed)
+    public bool TimedRead(uint lba, out long elapsed, out long sincePrevious)
     {
+        HostPause();
+
         double start = _time;
         bool   ok    = Read(lba, 1);
-        elapsed = (long)((_time - start) * 1e9);
+        elapsed       = (long)((_time - start) * 1e9);
+        sincePrevious = _previousEnd < 0 ? elapsed : (long)((_time - _previousEnd) * 1e9);
+        _previousEnd  = _time;
 
         return ok;
     }
 
     /// <inheritdoc />
-    public void ReadUntimed(uint lba, ushort blocks) => Read(lba, blocks);
+    public void ReadUntimed(uint lba, ushort blocks)
+    {
+        HostPause();
+        Read(lba, blocks);
+        _previousEnd = _time;
+    }
+
+    /// <summary>The time the host takes before sending a command, logging, updating progress or collecting garbage</summary>
+    void HostPause()
+    {
+        if(HostDelay > 0) Advance(_random.NextDouble() * HostDelay);
+    }
 
     /// <inheritdoc />
-    public bool SetSpeed(ushort kbps) => true;
+    public bool SetSpeed(ushort kbps)
+    {
+        _previousEnd = -1;
+
+        return true;
+    }
 
     /// <inheritdoc />
     public bool DisableReadCache() => false;
@@ -370,6 +393,70 @@ public class DpmMeasurementTests
         // The second layer is calibrated on its own
         dpm.Value.Calibrations.Should().Contain(c => c.Lba > layer0End);
 
+        ShouldMatch(dpm.Value, drive, 0.005, 0.03);
+    }
+
+    [Test]
+    public void CompactDiscWithHostDelays()
+    {
+        var medium = new DpmMedium
+        {
+            Kind      = DpmMediumKind.Cd,
+            LastLba   = 334188,
+            LayerEnds = []
+        };
+
+        double[] spiral = BuildSpiral(334189, 50, 1.2 / 75, 1.6e-6, [], [(2000, 6000), (9000, 12000)]);
+
+        // Up to 3 ms between commands, more than writing the debug log takes, which is a quarter of a turn here
+        var drive = new SimulatedDrive(medium, spiral, 50, 1, [], 5)
+        {
+            HostDelay = 0.003
+        };
+
+        var measurement = new DpmMeasurement(drive);
+        measurement.Prepare(0).Should().BeTrue();
+
+        DataPositionMeasurement? dpm = measurement.Measure(0, 15000, 0);
+
+        dpm.Should().NotBeNull();
+        ShouldMatch(dpm.Value, drive, 0.005, 0.03);
+    }
+
+    [Test]
+    public void DualLayerDvdWithHostDelays()
+    {
+        const uint layer0End = 2084959;
+
+        var medium = new DpmMedium
+        {
+            Kind              = DpmMediumKind.Dvd,
+            LastLba           = 4169919,
+            LayerEnds         = [layer0End],
+            OppositeTrackPath = true,
+            ChannelBit        = 0.293e-6 / 2
+        };
+
+        double[] spiral = BuildSpiral(4169920,
+                                      16,
+                                      38688 * 0.293e-6 / 2,
+                                      0.74e-6,
+                                      [layer0End],
+                                      [(2050000, 2070000), (2100000, 2120000)]);
+
+        var drive = new SimulatedDrive(medium, spiral, 16, 16, [], 6)
+        {
+            Period             = 0.0077,
+            UpperLayerSlowdown = 1.5,
+            HostDelay          = 0.003
+        };
+
+        var measurement = new DpmMeasurement(drive);
+        measurement.Prepare(0).Should().BeTrue();
+
+        DataPositionMeasurement? dpm = measurement.Measure(2040000, 2130000, 0);
+
+        dpm.Should().NotBeNull();
         ShouldMatch(dpm.Value, drive, 0.005, 0.03);
     }
 
