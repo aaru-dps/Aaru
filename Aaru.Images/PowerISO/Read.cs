@@ -124,7 +124,7 @@ public sealed partial class PowerISO
                 Array.Copy(_ioBuffer, LZMA_PROPS_SIZE, lzmaData, 0, readLen - LZMA_PROPS_SIZE);
 
                 decompressedData = new byte[_chunkSize];
-                LZMA.DecodeBuffer(lzmaData, decompressedData, lzmaProps);
+                if(LZMA.DecodeBuffer(lzmaData, decompressedData, lzmaProps) < 0) return ErrorNumber.InOutError;
 
                 break;
             }

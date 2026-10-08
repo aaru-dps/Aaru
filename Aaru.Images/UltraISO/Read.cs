@@ -124,7 +124,7 @@ public sealed partial class UltraISO
 
                 decompressedData = new byte[decompressedSize];
 
-                BZip2.DecodeBuffer(compressedData, decompressedData);
+                if(BZip2.DecodeBuffer(compressedData, decompressedData) < 0) return ErrorNumber.InOutError;
 
                 break;
             }

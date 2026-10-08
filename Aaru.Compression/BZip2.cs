@@ -50,16 +50,16 @@ public partial class BZip2
     /// <summary>Decodes a buffer compressed with BZIP2</summary>
     /// <param name="source">Encoded buffer</param>
     /// <param name="destination">Buffer where to write the decoded data</param>
-    /// <returns>The number of decoded bytes</returns>
+    /// <returns>The number of decoded bytes, or -1 on error</returns>
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
         var destinationSize = (nuint)destination.Length;
 
         if(Native.IsSupported)
         {
-            AARU_bzip2_decode_buffer(source, (nuint)source.Length, destination, ref destinationSize);
+            int res = AARU_bzip2_decode_buffer(source, (nuint)source.Length, destination, ref destinationSize);
 
-            return (int)destinationSize;
+            return res == 0 ? (int)destinationSize : -1;
         }
 
         using var cmpMs     = new MemoryStream(source);
@@ -72,16 +72,20 @@ public partial class BZip2
     /// <param name="source">Data to compress</param>
     /// <param name="destination">Buffer to store the compressed data</param>
     /// <param name="blockSize100K">Block size in 100KiB units</param>
-    /// <returns>The size of the compressed data</returns>
+    /// <returns>The size of the compressed data, or -1 on error</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int blockSize100K)
     {
         var destinationSize = (nuint)destination.Length;
 
         if(Native.IsSupported)
         {
-            AARU_bzip2_encode_buffer(source, (nuint)source.Length, destination, ref destinationSize, blockSize100K);
+            int res = AARU_bzip2_encode_buffer(source,
+                                               (nuint)source.Length,
+                                               destination,
+                                               ref destinationSize,
+                                               blockSize100K);
 
-            return (int)destinationSize;
+            return res == 0 ? (int)destinationSize : -1;
         }
 
         using var cmpMs     = new MemoryStream(source);

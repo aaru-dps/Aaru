@@ -69,7 +69,8 @@ public sealed partial class Ewf
             {
                 // BZip2 decompression
                 chunkData = new byte[_chunkSize];
-                BZip2.DecodeBuffer(compressedData, chunkData);
+
+                if(BZip2.DecodeBuffer(compressedData, chunkData) < 0) return ErrorNumber.InOutError;
             }
             else
             {

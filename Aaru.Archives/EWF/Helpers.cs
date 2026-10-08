@@ -352,7 +352,8 @@ public sealed partial class EwfArchive
             if(_isV2 && _compressionMethod == EwfCompressionMethod.Bzip2)
             {
                 chunkData = new byte[_chunkSize];
-                BZip2.DecodeBuffer(compressedData, chunkData);
+
+                if(BZip2.DecodeBuffer(compressedData, chunkData) < 0) return null;
             }
             else
                 chunkData = DecompressZlib(compressedData, (int)_chunkSize);

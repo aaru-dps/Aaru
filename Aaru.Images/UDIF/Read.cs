@@ -531,7 +531,10 @@ public sealed partial class Udif
                         case CHUNK_TYPE_BZIP:
                             tmpBuffer = new byte[_buffersize];
                             realSize  = BZip2.DecodeBuffer(cmpBuffer, tmpBuffer);
-                            data      = new byte[realSize];
+
+                            if(realSize < 0) return ErrorNumber.InOutError;
+
+                            data = new byte[realSize];
                             Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                             break;

@@ -36,6 +36,9 @@ namespace Aaru.Compression;
 /// <summary>Implements the LZMA compression algorithm</summary>
 public partial class LZMA
 {
+    /// <summary>LZMA SDK status returned when the input ends before the output buffer is full</summary>
+    const int SZ_ERROR_INPUT_EOF = 6;
+
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
@@ -53,21 +56,28 @@ public partial class LZMA
     /// <param name="source">Encoded buffer</param>
     /// <param name="destination">Buffer where to write the decoded data</param>
     /// <param name="properties">LZMA stream properties</param>
-    /// <returns>The number of decoded bytes</returns>
+    /// <returns>The number of decoded bytes, or -1 on error</returns>
     public static int DecodeBuffer(byte[] source, byte[] destination, byte[] properties)
     {
         if(Native.IsSupported)
         {
             var dstSize = (nuint)destination.Length;
 
-            AARU_lzma_decode_buffer(source,
-                                    (nuint)source.Length,
-                                    destination,
-                                    ref dstSize,
-                                    properties,
-                                    (nuint)properties.Length);
+            int res = AARU_lzma_decode_buffer(source,
+                                              (nuint)source.Length,
+                                              destination,
+                                              ref dstSize,
+                                              properties,
+                                              (nuint)properties.Length);
 
-            return (int)dstSize;
+            // Streams without an end marker run out of input before filling a larger destination, what was decoded
+            // until then is still valid
+            return res switch
+                   {
+                       0                                   => (int)dstSize,
+                       SZ_ERROR_INPUT_EOF when dstSize > 0 => (int)dstSize,
+                       _                                   => -1
+                   };
         }
 
         using var cmpMs     = new MemoryStream(source);
@@ -87,7 +97,7 @@ public partial class LZMA
     /// <param name="lp">Literal position bits</param>
     /// <param name="pb">Position bits</param>
     /// <param name="fb">Forward bits</param>
-    /// <returns>How many bytes have been written to the destination buffer</returns>
+    /// <returns>How many bytes have been written to the destination buffer, or -1 on error</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, out byte[] properties, int level, uint dictSize,
                                    int    lc,     int    lp,          int        pb,         int fb)
     {
@@ -98,21 +108,21 @@ public partial class LZMA
             var propsSize = (nuint)properties.Length;
             var srcSize   = (nuint)source.Length;
 
-            AARU_lzma_encode_buffer(source,
-                                    srcSize,
-                                    destination,
-                                    ref dstSize,
-                                    properties,
-                                    ref propsSize,
-                                    level,
-                                    dictSize,
-                                    lc,
-                                    lp,
-                                    pb,
-                                    fb,
-                                    0);
+            int res = AARU_lzma_encode_buffer(source,
+                                              srcSize,
+                                              destination,
+                                              ref dstSize,
+                                              properties,
+                                              ref propsSize,
+                                              level,
+                                              dictSize,
+                                              lc,
+                                              lp,
+                                              pb,
+                                              fb,
+                                              0);
 
-            return (int)dstSize;
+            return res == 0 ? (int)dstSize : -1;
         }
 
         var lzmaEncoderProperties = new LzmaEncoderProperties(true, (int)dictSize, fb);

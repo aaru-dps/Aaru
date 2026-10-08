@@ -245,7 +245,7 @@ public sealed partial class Zip
 
                     try
                     {
-                        BZip2.DecodeBuffer(compressedData, decompressedBuf);
+                        if(BZip2.DecodeBuffer(compressedData, decompressedBuf) < 0) return ErrorNumber.InOutError;
                     }
                     catch(Exception ex)
                     {
@@ -282,7 +282,8 @@ public sealed partial class Zip
 
                     try
                     {
-                        LZMA.DecodeBuffer(compressedData, decompressedBuf, properties);
+                        if(LZMA.DecodeBuffer(compressedData, decompressedBuf, properties) < 0)
+                            return ErrorNumber.InOutError;
                     }
                     catch(Exception ex)
                     {
