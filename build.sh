@@ -190,9 +190,11 @@ if [[ ${OS_NAME} == Linux ]]; then
     continue
    }
 
-   # Move generated packages to build directory
-   if [ -f "${RPMBUILD_DIR}/RPMS/${arch}/aaru-"*.rpm ]; then
-    cp "${RPMBUILD_DIR}/RPMS/${arch}/aaru-"*.rpm build/ 2>/dev/null || true
+   # Move generated packages to build directory, only those of the version being built,
+   # as RPMS may still hold packages from previous versions
+   rpm_files=("${RPMBUILD_DIR}/RPMS/${arch}/aaru-${RPM_VERSION}-"*".${arch}.rpm")
+   if [ -f "${rpm_files[0]}" ]; then
+    cp "${rpm_files[@]}" build/ 2>/dev/null || true
     echo "✓ RPM package for ${arch} moved to build directory"
    fi
   done
