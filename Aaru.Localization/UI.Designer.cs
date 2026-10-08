@@ -11471,5 +11471,101 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Image_already_has_DPM_use_force {
+            get {
+                return ResourceManager.GetString("Image_already_has_DPM_use_force", resourceCulture);
+            }
+        }
+        
+        public static string DPM_cannot_be_measured_on_remote_devices {
+            get {
+                return ResourceManager.GetString("DPM_cannot_be_measured_on_remote_devices", resourceCulture);
+            }
+        }
+        
+        public static string DPM_can_only_be_measured_on_optical_drives {
+            get {
+                return ResourceManager.GetString("DPM_can_only_be_measured_on_optical_drives", resourceCulture);
+            }
+        }
+        
+        public static string DPM_on_Bluray_is_experimental {
+            get {
+                return ResourceManager.GetString("DPM_on_Bluray_is_experimental", resourceCulture);
+            }
+        }
+        
+        public static string Medium_in_drive_does_not_match_image {
+            get {
+                return ResourceManager.GetString("Medium_in_drive_does_not_match_image", resourceCulture);
+            }
+        }
+        
+        public static string Skipping_0_sectors_the_dump_could_not_read {
+            get {
+                return ResourceManager.GetString("Skipping_0_sectors_the_dump_could_not_read", resourceCulture);
+            }
+        }
+        
+        public static string Measuring_DPM {
+            get {
+                return ResourceManager.GetString("Measuring_DPM", resourceCulture);
+            }
+        }
+        
+        public static string Writing_DPM_to_image {
+            get {
+                return ResourceManager.GetString("Writing_DPM_to_image", resourceCulture);
+            }
+        }
+        
+        public static string Written_DPM_with_0_entries_to_image {
+            get {
+                return ResourceManager.GetString("Written_DPM_with_0_entries_to_image", resourceCulture);
+            }
+        }
+        
+        public static string DPM_force_help {
+            get {
+                return ResourceManager.GetString("DPM_force_help", resourceCulture);
+            }
+        }
+        
+        public static string DPM_spacing_help {
+            get {
+                return ResourceManager.GetString("DPM_spacing_help", resourceCulture);
+            }
+        }
+        
+        public static string DPM_speed_help {
+            get {
+                return ResourceManager.GetString("DPM_speed_help", resourceCulture);
+            }
+        }
+        
+        public static string DPM_start_help {
+            get {
+                return ResourceManager.GetString("DPM_start_help", resourceCulture);
+            }
+        }
+        
+        public static string DPM_end_help {
+            get {
+                return ResourceManager.GetString("DPM_end_help", resourceCulture);
+            }
+        }
+        
+        public static string DPM_image_path_help {
+            get {
+                return ResourceManager.GetString("DPM_image_path_help", resourceCulture);
+            }
+        }
+        
+        public static string Media_Dpm_Command_Description {
+            get {
+                return ResourceManager.GetString("Media_Dpm_Command_Description", resourceCulture);
+            }
+        }
+        
     }
 }

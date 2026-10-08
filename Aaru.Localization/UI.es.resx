@@ -5731,4 +5731,52 @@ Probadores:
     <data name="Error_0_writing_DPM_to_output_image_continuing" xml:space="preserve">
         <value>[olive]Error [red]{0}[/] escribiendo la Medición de Posición de Datos en la imagen, continuando...[/]</value>
     </data>
+    <data name="Image_already_has_DPM_use_force" xml:space="preserve">
+        <value>La imagen ya tiene Medición de Posición de Datos, use --force para medirla de nuevo.</value>
+    </data>
+    <data name="DPM_cannot_be_measured_on_remote_devices" xml:space="preserve">
+        <value>No se puede realizar la Medición de Posición de Datos en dispositivos remotos, ya que la latencia de la red estropearía los tiempos.</value>
+    </data>
+    <data name="DPM_can_only_be_measured_on_optical_drives" xml:space="preserve">
+        <value>La Medición de Posición de Datos solo se puede realizar en unidades ópticas.</value>
+    </data>
+    <data name="DPM_on_Bluray_is_experimental" xml:space="preserve">
+        <value>[yellow]La Medición de Posición de Datos en Blu-ray es experimental.[/]</value>
+    </data>
+    <data name="Medium_in_drive_does_not_match_image" xml:space="preserve">
+        <value>El medio en la unidad no coincide con la imagen, use --force para medirlo de todos modos.</value>
+    </data>
+    <data name="Skipping_0_sectors_the_dump_could_not_read" xml:space="preserve">
+        <value>Omitiendo {0} sectores que el volcado no pudo leer.</value>
+    </data>
+    <data name="Measuring_DPM" xml:space="preserve">
+        <value>Midiendo la Medición de Posición de Datos</value>
+    </data>
+    <data name="Writing_DPM_to_image" xml:space="preserve">
+        <value>Escribiendo la Medición de Posición de Datos en la imagen...</value>
+    </data>
+    <data name="Written_DPM_with_0_entries_to_image" xml:space="preserve">
+        <value>Escrita en la imagen la Medición de Posición de Datos con {0} entradas.</value>
+    </data>
+    <data name="DPM_force_help" xml:space="preserve">
+        <value>Medir aunque la imagen ya tenga Medición de Posición de Datos o el medio no coincida con ella.</value>
+    </data>
+    <data name="DPM_spacing_help" xml:space="preserve">
+        <value>Sectores entre entradas de la Medición de Posición de Datos, 0 para el valor por defecto del medio (50 en CD, 256 en DVD, 512 en Blu-ray).</value>
+    </data>
+    <data name="DPM_speed_help" xml:space="preserve">
+        <value>Velocidad a la que medir, como múltiplo de la velocidad base del medio, 0 para el máximo de la unidad.</value>
+    </data>
+    <data name="DPM_start_help" xml:space="preserve">
+        <value>Primer sector a medir.</value>
+    </data>
+    <data name="DPM_end_help" xml:space="preserve">
+        <value>Último sector a medir, por defecto el último sector del medio.</value>
+    </data>
+    <data name="DPM_image_path_help" xml:space="preserve">
+        <value>Imagen AaruFormat del medio, a la que se añade la Medición de Posición de Datos.</value>
+    </data>
+    <data name="Media_Dpm_Command_Description" xml:space="preserve">
+        <value>Mide la Medición de Posición de Datos de un medio y la añade a su imagen.</value>
+    </data>
 </root>

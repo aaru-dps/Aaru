@@ -439,6 +439,9 @@ class MainClass
                                                   media.AddCommand<DumpMediaCommand>("dump")
                                                        .WithAlias("d")
                                                        .WithDescription(UI.Media_Dump_Command_Description);
+
+                                                  media.AddCommand<MediaDpmCommand>("dpm")
+                                                       .WithDescription(UI.Media_Dpm_Command_Description);
                                               })
                       .WithAlias("m");
 
