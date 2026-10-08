@@ -32,7 +32,9 @@
 
 using System;
 using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Aaru.Devices;
 
 namespace Aaru.Core.Devices.Dpm;
@@ -114,9 +116,12 @@ public sealed class DeviceDpmDrive : IDpmDrive
 
     readonly byte[] _cdb = new byte[12];
     readonly Device _dev;
-    byte[]          _cachePage;
-    byte[]          _decoyBuffer = new byte[DECOY_MAX_BLOCKS * 2048];
-    byte[]          _sectorBuffer = new byte[2048];
+    /// <summary>First and last sector of every audio track, timed with READ CD as READ(12) can't read them</summary>
+    (uint first, uint last)[] _audio = [];
+    byte[] _audioBuffer = new byte[2352];
+    byte[] _cachePage;
+    byte[] _decoyBuffer = new byte[DECOY_MAX_BLOCKS * 2352];
+    byte[] _sectorBuffer = new byte[2048];
 
     /// <summary>Creates DPM drive operations on a device</summary>
     /// <param name="dev">Device</param>
@@ -128,10 +133,16 @@ public sealed class DeviceDpmDrive : IDpmDrive
     /// <inheritdoc />
     public bool TimedRead(uint lba, out long elapsed)
     {
-        FillRead12(lba, 1, true);
+        bool   audio  = IsAudio(lba);
+        byte[] buffer = audio ? _audioBuffer : _sectorBuffer;
+
+        if(audio)
+            FillReadCd(lba, 1);
+        else
+            FillRead12(lba, 1, true);
 
         long start = Stopwatch.GetTimestamp();
-        int  error = _dev.SendScsiCommand(_cdb, ref _sectorBuffer, TIMEOUT, ScsiDirection.In, out _, out bool sense);
+        int  error = _dev.SendScsiCommand(_cdb, ref buffer, TIMEOUT, ScsiDirection.In, out _, out bool sense);
         long end   = Stopwatch.GetTimestamp();
 
         elapsed = (long)((end - start) * (1e9 / Stopwatch.Frequency));
@@ -144,9 +155,16 @@ public sealed class DeviceDpmDrive : IDpmDrive
     {
         if(blocks > DECOY_MAX_BLOCKS) blocks = DECOY_MAX_BLOCKS;
 
-        FillRead12(lba, blocks, false);
+        bool audio = IsAudio(lba);
 
-        if(_decoyBuffer.Length != blocks * 2048) _decoyBuffer = new byte[blocks * 2048];
+        if(audio)
+            FillReadCd(lba, blocks);
+        else
+            FillRead12(lba, blocks, false);
+
+        int length = blocks * (audio ? 2352 : 2048);
+
+        if(_decoyBuffer.Length != length) _decoyBuffer = new byte[length];
 
         _dev.SendScsiCommand(_cdb, ref _decoyBuffer, TIMEOUT, ScsiDirection.In, out _, out _);
     }
@@ -226,6 +244,8 @@ public sealed class DeviceDpmDrive : IDpmDrive
 
                 return DetectDvd(ref medium);
             default:
+                DetectAudioTracks();
+
                 return true;
         }
     }
@@ -315,6 +335,57 @@ public sealed class DeviceDpmDrive : IDpmDrive
         medium.LayerEnds = ends;
 
         return true;
+    }
+
+    /// <summary>Finds the audio tracks of a CD from its table of contents</summary>
+    void DetectAudioTracks()
+    {
+        _audio = [];
+
+        if(_dev.ReadToc(out byte[] buffer, out _, false, 0, TIMEOUT, out _) || buffer is null) return;
+
+        Decoders.CD.TOC.CDTOC? toc = Decoders.CD.TOC.Decode(buffer);
+
+        if(toc?.TrackDescriptors is not { Length: > 0 } descriptors) return;
+
+        Decoders.CD.TOC.CDTOCTrackDataDescriptor[] tracks =
+            descriptors.OrderBy(static t => t.TrackStartAddress).ToArray();
+
+        List<(uint first, uint last)> audio = [];
+
+        for(int i = 0; i < tracks.Length - 1; i++)
+        {
+            // The lead-out is the last descriptor; tracks with the data bit clear are audio
+            if(tracks[i].TrackNumber == 0xAA || (tracks[i].CONTROL & 0x04) != 0) continue;
+
+            audio.Add((tracks[i].TrackStartAddress, tracks[i + 1].TrackStartAddress - 1));
+        }
+
+        _audio = audio.ToArray();
+    }
+
+    /// <summary>Whether a sector is in an audio track</summary>
+    bool IsAudio(uint lba)
+    {
+        foreach((uint first, uint last) in _audio)
+            if(lba >= first && lba <= last)
+                return true;
+
+        return false;
+    }
+
+    /// <summary>Fills a READ CD CDB asking for any sector type and only the main channel user data</summary>
+    void FillReadCd(uint lba, ushort blocks)
+    {
+        Array.Clear(_cdb);
+        _cdb[0] = 0xBE;
+        BinaryPrimitives.WriteUInt32BigEndian(_cdb.AsSpan(2), lba);
+        _cdb[6] = (byte)(blocks >> 16);
+        _cdb[7] = (byte)(blocks >> 8);
+        _cdb[8] = (byte)blocks;
+
+        // User data only: no sync, header, EDC/ECC, C2 or subchannel
+        _cdb[9] = 0x10;
     }
 
     /// <summary>Fills the READ(12) CDB</summary>
