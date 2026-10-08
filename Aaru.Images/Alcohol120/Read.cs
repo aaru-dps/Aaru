@@ -131,8 +131,6 @@ public sealed partial class Alcohol120
                 ReadOnlySpan<byte> span = dpmBytes;
                 _dpm = new uint[_dpmBlockHeader.numberOfDpmEntries];
                 _dpm = MemoryMarshal.Cast<byte, uint>(span)[..(int)_dpmBlockHeader.numberOfDpmEntries].ToArray();
-
-                //_imageInfo.ReadableMediaTags.Add(MediaTagType.DPM);
             }
             else
             {
