@@ -3782,7 +3782,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
         <value>[red]Data Position Measurement calibration failed at sector [lime]{0}[/].[/]</value>
     </data>
     <data name="Disc_turns_every_0_ms_1_RPM" xml:space="preserve">
-        <value>[slateblue1]Disc turns every [aqua]{0:F3} ms[/] ([aqua]{1:F0} RPM[/]).[/]</value>
+        <value>[slateblue1]Disc turns every [aqua]{0:F3} ms[/] ([teal]{1:F0} RPM[/]).[/]</value>
     </data>
     <data name="DPM_measurement_failed" xml:space="preserve">
         <value>[red]Data Position Measurement failed.[/]</value>

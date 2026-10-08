@@ -3629,7 +3629,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
         <value>[red]La calibración de la Medición de Posición de Datos falló en el sector [lime]{0}[/].[/]</value>
     </data>
     <data name="Disc_turns_every_0_ms_1_RPM" xml:space="preserve">
-        <value>[slateblue1]El disco gira cada [aqua]{0:F3} ms[/] ([aqua]{1:F0} RPM[/]).[/]</value>
+        <value>[slateblue1]El disco gira cada [aqua]{0:F3} ms[/] ([teal]{1:F0} RPM[/]).[/]</value>
     </data>
     <data name="DPM_measurement_failed" xml:space="preserve">
         <value>[red]La Medición de Posición de Datos falló.[/]</value>
