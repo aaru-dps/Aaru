@@ -516,6 +516,7 @@ public sealed partial class BlindWrite5
 
         _dpm = new byte[_header.dpmLen];
         stream.EnsureRead(_dpm, 0, _dpm.Length);
+        LoadDpm(imageFilter);
 
         // Unused
         tmpArray = new byte[4];
@@ -1450,14 +1451,6 @@ public sealed partial class BlindWrite5
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, false, 1, tag, out buffer);
-
-    /// <inheritdoc />
-    public ErrorNumber ReadDpm(out DataPositionMeasurement dpm)
-    {
-        dpm = default(DataPositionMeasurement);
-
-        return ErrorNumber.NotSupported;
-    }
 
     /// <inheritdoc />
     public ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer, out SectorStatus sectorStatus)

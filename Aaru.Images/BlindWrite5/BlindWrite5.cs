@@ -51,7 +51,8 @@ public sealed partial class BlindWrite5 : IOpticalMediaImage
     string                        _dataPath;
     byte[]                        _discInformation;
     byte[]                        _dmi;
-    byte[]                        _dpm;
+    /// <summary>DPM block stored in the descriptor</summary>
+    internal byte[]               _dpm;
     List<DataFileCharacteristics> _filePaths;
     byte[]                        _fullToc;
     Header                        _header;
