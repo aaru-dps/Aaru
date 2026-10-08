@@ -342,13 +342,13 @@
     <value>canal</value>
   </data>
     <data name="Checksums_0_and_1" xml:space="preserve">
-    <value>Checksums: 0x{0:X4} y 0x{1:X4}</value>
+    <value>Sumas de comprobación: 0x{0:X4} y 0x{1:X4}</value>
   </data>
     <data name="Checksum_0_calculated_1" xml:space="preserve">
-    <value>Checksum: 0x{0:X4} (calculado 0x{1:X4})</value>
+    <value>Suma de comprobación: 0x{0:X4} (calculada 0x{1:X4})</value>
   </data>
     <data name="Checksum_0_X8" xml:space="preserve">
-    <value>Checksum: 0x{0:X8}</value>
+    <value>Suma de comprobación: 0x{0:X8}</value>
   </data>
     <data name="Chunk_tree_starts_at_LBA_0" xml:space="preserve">
     <value>El árbol de pedazos comienza en el LBA {0}</value>
@@ -1102,7 +1102,7 @@
     <value>Número de paquete de Sistema de Ficheros Global: {0}</value>
   </data>
     <data name="Group_descriptor_checksums_and_sparse_inode_table_ext4" xml:space="preserve">
-    <value>Tabla de grupo descriptor de checksums y inodos dispersos</value>
+    <value>Tabla de grupo descriptor de sumas de comprobación y inodos dispersos</value>
   </data>
     <data name="Group_descriptor_size_is_0_bytes" xml:space="preserve">
     <value>El descriptor de grupo ocupa {0} bytes</value>
@@ -2027,7 +2027,7 @@
     <value>[fuchsia]Protocolo de Intercambio Rock Ridge [teal]{0}[/] presente.[/]</value>
   </data>
     <data name="Root_block_checksum_is_0" xml:space="preserve">
-    <value>El checksum del bloque raíz es 0x{0:X8}</value>
+    <value>La suma de comprobación del bloque raíz es 0x{0:X8}</value>
   </data>
     <data name="Root_block_extension_resides_at_block_0" xml:space="preserve">
     <value>El bloque raíz de extensión reside en el bloque {0}</value>
@@ -3122,7 +3122,7 @@
     <value>El volumen fue carroñeado el {0}</value>
   </data>
     <data name="Volume_sends_TRIM_UNMAP_commands_to_underlying_device" xml:space="preserve">
-    <value>El volumen envía comandos TRIM/UNMAP al dispositivo que lo contiene</value>
+    <value>El volumen envía órdenes TRIM/UNMAP al dispositivo que lo contiene</value>
   </data>
     <data name="Volume_serial_0" xml:space="preserve">
     <value>Serie del volumen: {0}</value>

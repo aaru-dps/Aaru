@@ -50,7 +50,7 @@
     <value>Tamaño del clúster: {0}</value>
   </data>
     <data name="Command_support_0" xml:space="preserve">
-    <value>Soporte de comandos - {0}</value>
+    <value>Soporte de órdenes - {0}</value>
   </data>
     <data name="Contents_for_0_in_1_must_be_defined_in_unit_test_declaration" xml:space="preserve">
     <value>¡Los contenidos para "{0}" en {1} deben definirse en la declaración de la prueba!</value>
@@ -284,10 +284,10 @@
     <value>No se identificó el formato de la imagen, no se procederá con el análisis</value>
   </data>
     <data name="Invalid_checksum_for_file_0" xml:space="preserve">
-    <value>Checksum no válido para el fichero {0}</value>
+    <value>Suma de comprobación no válida para el fichero {0}</value>
   </data>
     <data name="Invalid_checksum_for_xattr_0_for_file_1" xml:space="preserve">
-    <value>Checksum no válido para el atributo extendido {0} del fichero {1}</value>
+    <value>Suma de comprobación no válida para el atributo extendido {0} del fichero {1}</value>
   </data>
     <data name="Invalid_target_for_symbolic_link_0_in_1" xml:space="preserve">
     <value>Objetivo no válido para el enlace simbólico "{0}" en {1}</value>

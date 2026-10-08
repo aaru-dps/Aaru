@@ -52,7 +52,7 @@
         <value>[fuchsia]Fichero de Instalación de Symbian[/]</value>
     </data>
     <data name="UIDs_checksum_0" xml:space="preserve">
-        <value>[bold][slateblue1]Checksum de los UIDs:[/][/] [teal]0x{0:X8}[/]</value>
+        <value>[bold][slateblue1]Suma de comprobación de los UIDs:[/][/] [teal]0x{0:X8}[/]</value>
     </data>
     <data name="Unknown_EPOC_magic_0" xml:space="preserve">
         <value>[slateblue1]Mágica EPOC [teal]0x{0:X8}[/] desconocida[/]</value>

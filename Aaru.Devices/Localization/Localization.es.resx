@@ -17,402 +17,402 @@
         </value>
     </resheader>
     <data name="READ_BUFFER_took_0_ms" xml:space="preserve">
-    <value>READ BUFFER tomó {0} ms.</value>
+    <value>READ BUFFER tardó {0} ms.</value>
   </data>
     <data name="READ_BUFFER_DMA_took_0_ms" xml:space="preserve">
-    <value>READ BUFFER DMA tomó {0} ms.</value>
+    <value>READ BUFFER DMA tardó {0} ms.</value>
   </data>
     <data name="READ_DMA_took_0_ms" xml:space="preserve">
-    <value>READ DMA tomó {0} ms.</value>
+    <value>READ DMA tardó {0} ms.</value>
   </data>
     <data name="READ_MULTIPLE_took_0_ms" xml:space="preserve">
-    <value>READ MULTIPLE tomó {0} ms.</value>
+    <value>READ MULTIPLE tardó {0} ms.</value>
   </data>
     <data name="READ_NATIVE_MAX_ADDRESS_took_0_ms" xml:space="preserve">
-    <value>READ NATIVE MAX ADDRESS tomó {0} ms.</value>
+    <value>READ NATIVE MAX ADDRESS tardó {0} ms.</value>
   </data>
     <data name="READ_SECTORS_took_0_ms" xml:space="preserve">
-    <value>READ SECTORS tomó {0} ms.</value>
+    <value>READ SECTORS tardó {0} ms.</value>
   </data>
     <data name="READ_LONG_took_0_ms" xml:space="preserve">
-    <value>READ LONG tomó {0} ms.</value>
+    <value>READ LONG tardó {0} ms.</value>
   </data>
     <data name="SEEK_took_0_ms" xml:space="preserve">
-    <value>SEEK tomó {0} ms.</value>
+    <value>SEEK tardó {0} ms.</value>
   </data>
     <data name="GET_NATIVE_MAX_ADDRESS_EXT_took_0_ms" xml:space="preserve">
-    <value>GET NATIVE MAX ADDRESS EXT tomó {0} ms.</value>
+    <value>GET NATIVE MAX ADDRESS EXT tardó {0} ms.</value>
   </data>
     <data name="READ_DMA_EXT_took_0_ms" xml:space="preserve">
-    <value>READ DMA EXT tomó {0} ms.</value>
+    <value>READ DMA EXT tardó {0} ms.</value>
   </data>
     <data name="READ_LOG_EXT_took_0_ms" xml:space="preserve">
-    <value>READ LOG EXT tomó {0} ms.</value>
+    <value>READ LOG EXT tardó {0} ms.</value>
   </data>
     <data name="READ_LOG_DMA_EXT_took_0_ms" xml:space="preserve">
-    <value>READ LOG DMA EXT tomó {0} ms.</value>
+    <value>READ LOG DMA EXT tardó {0} ms.</value>
   </data>
     <data name="READ_MULTIPLE_EXT_took_0_ms" xml:space="preserve">
-    <value>READ MULTIPLE EXT tomó {0} ms.</value>
+    <value>READ MULTIPLE EXT tardó {0} ms.</value>
   </data>
     <data name="READ_NATIVE_MAX_ADDRESS_EXT_took_0_ms" xml:space="preserve">
-    <value>READ NATIVE MAX ADDRESS EXT tomó {0} ms.</value>
+    <value>READ NATIVE MAX ADDRESS EXT tardó {0} ms.</value>
   </data>
     <data name="READ_SECTORS_EXT_took_0_ms" xml:space="preserve">
-    <value>READ SECTORS EXT tomó {0} ms.</value>
+    <value>READ SECTORS EXT tardó {0} ms.</value>
   </data>
     <data name="SET_FEATURES_took_0_ms" xml:space="preserve">
-    <value>SET FEATURES tomó {0} ms.</value>
+    <value>SET FEATURES tardó {0} ms.</value>
   </data>
     <data name="DOOR_LOCK_took_0_ms" xml:space="preserve">
-    <value>DOOR LOCK tomó {0} ms.</value>
+    <value>DOOR LOCK tardó {0} ms.</value>
   </data>
     <data name="DOOR_UNLOCK_took_0_ms" xml:space="preserve">
-    <value>DOOR UNLOCK tomó {0} ms.</value>
+    <value>DOOR UNLOCK tardó {0} ms.</value>
   </data>
     <data name="MEDIA_EJECT_took_0_ms" xml:space="preserve">
-    <value>MEDIA EJECT tomó {0} ms.</value>
+    <value>MEDIA EJECT tardó {0} ms.</value>
   </data>
     <data name="IDENTIFY_PACKET_DEVICE_took_0_ms" xml:space="preserve">
-    <value>IDENTIFY PACKET DEVICE tomó {0} ms.</value>
+    <value>IDENTIFY PACKET DEVICE tardó {0} ms.</value>
   </data>
     <data name="CFA_TRANSLATE_SECTOR_took_0_ms" xml:space="preserve">
-    <value>CFA TRANSLATE SECTOR tomó {0} ms.</value>
+    <value>CFA TRANSLATE SECTOR tardó {0} ms.</value>
   </data>
     <data name="CFA_REQUEST_EXTENDED_ERROR_CODE_took_0_ms" xml:space="preserve">
-    <value>CFA REQUEST EXTENDED ERROR CODE tomó {0} ms.</value>
+    <value>CFA REQUEST EXTENDED ERROR CODE tardó {0} ms.</value>
   </data>
     <data name="CHECK_MEDIA_CARD_TYPE_took_0_ms" xml:space="preserve">
-    <value>CHECK MEDIA CARD TYPE tomó {0} ms.</value>
+    <value>CHECK MEDIA CARD TYPE tardó {0} ms.</value>
   </data>
     <data name="SMART_DISABLE_OPERATIONS_took_0_ms" xml:space="preserve">
-    <value>SMART DISABLE OPERATIONS tomó {0} ms.</value>
+    <value>SMART DISABLE OPERATIONS tardó {0} ms.</value>
   </data>
     <data name="SMART_ENABLE_ATTRIBUTE_AUTOSAVE_took_0_ms" xml:space="preserve">
-    <value>SMART ENABLE ATTRIBUTE AUTOSAVE tomó {0} ms.</value>
+    <value>SMART ENABLE ATTRIBUTE AUTOSAVE tardó {0} ms.</value>
   </data>
     <data name="SMART_DISABLE_ATTRIBUTE_AUTOSAVE_took_0_ms" xml:space="preserve">
-    <value>SMART DISABLE ATTRIBUTE AUTOSAVE tomó {0} ms.</value>
+    <value>SMART DISABLE ATTRIBUTE AUTOSAVE tardó {0} ms.</value>
   </data>
     <data name="SMART_ENABLE_OPERATIONS_took_0_ms" xml:space="preserve">
-    <value>SMART ENABLE OPERATIONS tomó {0} ms.</value>
+    <value>SMART ENABLE OPERATIONS tardó {0} ms.</value>
   </data>
     <data name="SMART_EXECUTE_OFF_LINE_IMMEDIATE_took_0_ms" xml:space="preserve">
-    <value>SMART EXECUTE OFF-LINE IMMEDIATE tomó {0} ms.</value>
+    <value>SMART EXECUTE OFF-LINE IMMEDIATE tardó {0} ms.</value>
   </data>
     <data name="SMART_READ_DATA_took_0_ms" xml:space="preserve">
-    <value>SMART READ DATA tomó {0} ms.</value>
+    <value>SMART READ DATA tardó {0} ms.</value>
   </data>
     <data name="SMART_READ_LOG_took_0_ms" xml:space="preserve">
-    <value>SMART READ LOG tomó {0} ms.</value>
+    <value>SMART READ LOG tardó {0} ms.</value>
   </data>
     <data name="SMART_RETURN_STATUS_took_0_ms" xml:space="preserve">
-    <value>SMART RETURN STATUS tomó {0} ms.</value>
+    <value>SMART RETURN STATUS tardó {0} ms.</value>
   </data>
     <data name="SEND_CSD_took_0_ms" xml:space="preserve">
-    <value>SEND_CSD tomó {0} ms.</value>
+    <value>SEND_CSD tardó {0} ms.</value>
   </data>
     <data name="SEND_CID_took_0_ms" xml:space="preserve">
-    <value>SEND_CID tomó {0} ms.</value>
+    <value>SEND_CID tardó {0} ms.</value>
   </data>
     <data name="SEND_OP_COND_took_0_ms" xml:space="preserve">
-    <value>SEND_OP_COND tomó {0} ms.</value>
+    <value>SEND_OP_COND tardó {0} ms.</value>
   </data>
     <data name="SEND_EXT_CSD_took_0_ms" xml:space="preserve">
-    <value>SEND_EXT_CSD tomó {0} ms.</value>
+    <value>SEND_EXT_CSD tardó {0} ms.</value>
   </data>
     <data name="SET_BLOCKLEN_took_0_ms" xml:space="preserve">
-    <value>SET_BLOCKLEN tomó {0} ms.</value>
+    <value>SET_BLOCKLEN tardó {0} ms.</value>
   </data>
     <data name="READ_SINGLE_BLOCK_took_0_ms" xml:space="preserve">
-    <value>READ_SINGLE_BLOCK tomó {0} ms.</value>
+    <value>READ_SINGLE_BLOCK tardó {0} ms.</value>
   </data>
     <data name="READ_MULTIPLE_BLOCK_took_0_ms" xml:space="preserve">
-    <value>READ_MULTIPLE_BLOCK tomó {0} ms.</value>
+    <value>READ_MULTIPLE_BLOCK tardó {0} ms.</value>
   </data>
     <data name="Multiple_READ_SINGLE_BLOCKs_took_0_ms" xml:space="preserve">
     <value>Múltiples READ_SINGLE_BLOCKs tomaron {0} ms.</value>
   </data>
     <data name="SEND_STATUS_took_0_ms" xml:space="preserve">
-    <value>SEND_STATUS tomó {0} ms.</value>
+    <value>SEND_STATUS tardó {0} ms.</value>
   </data>
     <data name="SD_STATUS_took_0_ms" xml:space="preserve">
-    <value>SD_STATUS tomó {0} ms.</value>
+    <value>SD_STATUS tardó {0} ms.</value>
   </data>
     <data name="SD_SEND_OP_COND_took_0_ms" xml:space="preserve">
-    <value>SD_SEND_OP_COND tomó {0} ms.</value>
+    <value>SD_SEND_OP_COND tardó {0} ms.</value>
   </data>
     <data name="SEND_SCR_took_0_ms" xml:space="preserve">
-    <value>SEND_SCR tomó {0} ms.</value>
+    <value>SEND_SCR tardó {0} ms.</value>
   </data>
     <data name="ADAPTEC_TRANSLATE_took_0_ms" xml:space="preserve">
-    <value>ADAPTEC TRANSLATE tomó {0} ms.</value>
+    <value>ADAPTEC TRANSLATE tardó {0} ms.</value>
   </data>
     <data name="ADAPTEC_SET_ERROR_THRESHOLD_took_0_ms" xml:space="preserve">
-    <value>ADAPTEC SET ERROR THRESHOLD tomó {0} ms.</value>
+    <value>ADAPTEC SET ERROR THRESHOLD tardó {0} ms.</value>
   </data>
     <data name="ADAPTEC_READ_RESET_USAGE_COUNTER_took_0_ms" xml:space="preserve">
-    <value>ADAPTEC READ/RESET USAGE COUNTER tomó {0} ms.</value>
+    <value>ADAPTEC READ/RESET USAGE COUNTER tardó {0} ms.</value>
   </data>
     <data name="ADAPTEC_WRITE_DATA_BUFFER_took_0_ms" xml:space="preserve">
-    <value>ADAPTEC WRITE DATA BUFFER tomó {0} ms.</value>
+    <value>ADAPTEC WRITE DATA BUFFER tardó {0} ms.</value>
   </data>
     <data name="ADAPTEC_READ_DATA_BUFFER_took_0_ms" xml:space="preserve">
-    <value>ADAPTEC READ DATA BUFFER tomó {0} ms.</value>
+    <value>ADAPTEC READ DATA BUFFER tardó {0} ms.</value>
   </data>
     <data name="ARCHIVE_CORP_REQUEST_BLOCK_ADDRESS_took_0_ms" xml:space="preserve">
-    <value>ARCHIVE CORP. REQUEST BLOCK ADDRESS tomó {0} ms.</value>
+    <value>ARCHIVE CORP. REQUEST BLOCK ADDRESS tardó {0} ms.</value>
   </data>
     <data name="ARCHIVE_CORP_SEEK_BLOCK_took_0_ms" xml:space="preserve">
-    <value>ARCHIVE CORP. SEEK BLOCK tomó {0} ms.</value>
+    <value>ARCHIVE CORP. SEEK BLOCK tardó {0} ms.</value>
   </data>
     <data name="CERTANCE_PARK_UNPARK_took_0_ms" xml:space="preserve">
-    <value>CERTANCE PARK UNPARK tomó {0} ms.</value>
+    <value>CERTANCE PARK UNPARK tardó {0} ms.</value>
   </data>
     <data name="FUJITSU_DISPLAY_took_0_ms" xml:space="preserve">
-    <value>FUJITSU DISPLAY tomó {0} ms.</value>
+    <value>FUJITSU DISPLAY tardó {0} ms.</value>
   </data>
     <data name="HL_DT_ST_READ_DVD_RAW_took_0_ms" xml:space="preserve">
-    <value>HL-DT-ST READ DVD (RAW) tomó {0} ms.</value>
+    <value>HL-DT-ST READ DVD (RAW) tardó {0} ms.</value>
   </data>
     <data name="HP_READ_LONG_took_0_ms" xml:space="preserve">
-    <value>HP READ LONG tomó {0} ms.</value>
+    <value>HP READ LONG tardó {0} ms.</value>
   </data>
     <data name="KREON_DEPRECATED_UNLOCK_took_0_ms" xml:space="preserve">
-    <value>KREON DEPRECATED UNLOCK tomó {0} ms.</value>
+    <value>KREON DEPRECATED UNLOCK tardó {0} ms.</value>
   </data>
     <data name="KREON_SET_LOCK_STATE_took_0_ms" xml:space="preserve">
-    <value>KREON SET LOCK STATE tomó {0} ms.</value>
+    <value>KREON SET LOCK STATE tardó {0} ms.</value>
   </data>
     <data name="KREON_GET_FEATURE_LIST_took_0_ms" xml:space="preserve">
-    <value>KREON GET FEATURE LIST tomó {0} ms.</value>
+    <value>KREON GET FEATURE LIST tardó {0} ms.</value>
   </data>
     <data name="KREON_EXTRACT_SS_took_0_ms" xml:space="preserve">
-    <value>KREON EXTRACT SS tomó {0} ms.</value>
+    <value>KREON EXTRACT SS tardó {0} ms.</value>
   </data>
     <data name="MediaTek_READ_DRAM_took_0_ms" xml:space="preserve">
-    <value>MediaTek READ DRAM tomó {0} ms.</value>
+    <value>MediaTek READ DRAM tardó {0} ms.</value>
   </data>
     <data name="MINIDISC_READ_DTOC_took_0_ms" xml:space="preserve">
-    <value>MINIDISC READ DTOC tomó {0} ms.</value>
+    <value>MINIDISC READ DTOC tardó {0} ms.</value>
   </data>
     <data name="MINIDISC_READ_UTOC_took_0_ms" xml:space="preserve">
-    <value>MINIDISC READ UTOC tomó {0} ms.</value>
+    <value>MINIDISC READ UTOC tardó {0} ms.</value>
   </data>
     <data name="MINIDISC_command_D5h_took_0_ms" xml:space="preserve">
-    <value>MINIDISC command D5h tomó {0} ms.</value>
+    <value>MINIDISC command D5h tardó {0} ms.</value>
   </data>
     <data name="MINIDISC_STOP_PLAY_took_0_ms" xml:space="preserve">
-    <value>MINIDISC STOP PLAY tomó {0} ms.</value>
+    <value>MINIDISC STOP PLAY tardó {0} ms.</value>
   </data>
     <data name="MINIDISC_READ_POSITION_took_0_ms" xml:space="preserve">
-    <value>MINIDISC READ POSITION tomó {0} ms.</value>
+    <value>MINIDISC READ POSITION tardó {0} ms.</value>
   </data>
     <data name="MINIDISC_GET_TYPE_took_0_ms" xml:space="preserve">
-    <value>MINIDISC GET TYPE tomó {0} ms.</value>
+    <value>MINIDISC GET TYPE tardó {0} ms.</value>
   </data>
     <data name="GET_CONFIGURATION_Starting_Feature_Number_1_Return_Type_2_Sense_3_Last_Error_4_took_0_ms"
           xml:space="preserve">
-    <value>GET CONFIGURATION (Número de primera funcionalidad Feature Number: {1}, Tipo de retorno: {2}, Sense: {3}, Error: {4}) tomó {0} ms.</value>
+    <value>GET CONFIGURATION (Número de primera funcionalidad Feature Number: {1}, Tipo de retorno: {2}, Sense: {3}, Error: {4}) tardó {0} ms.</value>
   </data>
     <data name="READ_DISC_STRUCTURE_Media_Type_1_Address_2_Layer_Number_3_Format_4_AGID_5_Sense_6_Last_Error_7_took_0_ms"
           xml:space="preserve">
-    <value>READ DISC STRUCTURE (Tipo de medio: {1}, Dirección: {2}, Capa: {3}, Formato: {4}, AGID: {5}, Sense: {6}, Error: {7}) tomó {0} ms.</value>
+    <value>READ DISC STRUCTURE (Tipo de medio: {1}, Dirección: {2}, Capa: {3}, Formato: {4}, AGID: {5}, Sense: {6}, Error: {7}) tardó {0} ms.</value>
   </data>
     <data name="READ_TOC_PMA_ATIP_took_MSF_1_Format_2_Track_Session_Number_3_Sense_4_LastError_5_0_ms"
           xml:space="preserve">
-    <value>READ TOC/PMA/ATIP tomó (MSF: {1}, Formato: {2}, Pista/Sesión: {3}, Sense: {4}, Error: {5}) {0} ms.</value>
+    <value>READ TOC/PMA/ATIP tardó (MSF: {1}, Formato: {2}, Pista/Sesión: {3}, Sense: {4}, Error: {5}) {0} ms.</value>
   </data>
     <data name="READ_DISC_INFORMATION_Data_Type_1_Sense_2_Last_Error_3_took_0_ms" xml:space="preserve">
-    <value>READ DISC INFORMATION (Tipo de datos: {1}, Sense: {2}, Last Error: {3}) tomó {0} ms.</value>
+    <value>READ DISC INFORMATION (Tipo de datos: {1}, Sense: {2}, Last Error: {3}) tardó {0} ms.</value>
   </data>
     <data
         name="READ_CD_LBA_1_Block_Size_2_Transfer_Length_3_Expected_Sector_Type_4_DAP_5_Relative_Address_6_Sync_7_Headers_8_User_Data_9_ECC_EDC_10_C2_11_Subchannel_12_Sense_13_Last_Error_14_took_0_ms"
         xml:space="preserve">
-    <value>READ CD (LBA: {1}, Tamaño del bloque: {2}, Longitud de la transferencia: {3}, Tipo de sector esperado: {4}, DAP: {5}, Dirección relativa: {6}, Síncrono: {7}, Cabeceras: {8}, Datos de usuario: {9}, ECC/EDC: {10}, C2: {11}, Subcanal: {12}, Sense: {13}, Error: {14}) tomó {0} ms.</value>
+    <value>READ CD (LBA: {1}, Tamaño del bloque: {2}, Longitud de la transferencia: {3}, Tipo de sector esperado: {4}, DAP: {5}, Dirección relativa: {6}, Síncrono: {7}, Cabeceras: {8}, Datos de usuario: {9}, ECC/EDC: {10}, C2: {11}, Subcanal: {12}, Sense: {13}, Error: {14}) tardó {0} ms.</value>
   </data>
     <data
         name="READ_CD_MSF_Start_MSF_1_End_MSF_2_Block_Size_3_Expected_Sector_Type_4_DAP_5_Sync_6_Headers_7_User_Data_8_ECC_EDC_9_C2_10_Subchannel_11_Sense_12_LastError_13_took_0_ms"
         xml:space="preserve">
-    <value>READ CD MSF (Start MSF: {1}, End MSF: {2}, Block Size: {3}, Expected Sector Type: {4}, DAP: {5}, Sync: {6}, Headers: {7}, User Data: {8}, ECC/EDC: {9}, C2: {10}, Subchannel: {11}, Sense: {12}, LastError: {13}) tomó {0} ms.</value>
+    <value>READ CD MSF (Start MSF: {1}, End MSF: {2}, Block Size: {3}, Expected Sector Type: {4}, DAP: {5}, Sync: {6}, Headers: {7}, User Data: {8}, ECC/EDC: {9}, C2: {10}, Subchannel: {11}, Sense: {12}, LastError: {13}) tardó {0} ms.</value>
   </data>
     <data name="PREVENT_ALLOW_MEDIUM_REMOVAL_Persistent_1_Prevent_2_Sense_3_LastError_4_took_0_ms" xml:space="preserve">
-    <value>PREVENT ALLOW MEDIUM REMOVAL (Persistente: {1}, Evitar: {2}, Sense: {3}, Error: {4}) tomó {0} ms.</value>
+    <value>PREVENT ALLOW MEDIUM REMOVAL (Persistente: {1}, Evitar: {2}, Sense: {3}, Error: {4}) tardó {0} ms.</value>
   </data>
     <data
         name="START_STOP_UNIT_Immediate_1_FormatLayer_2_Power_Conditions_3_Change_Format_Layer_4_Load_Eject_5_Start_6_Sense_7_Last_Error_8_took_0_ms"
         xml:space="preserve">
-    <value>START STOP UNIT (Inmediato: {1}, Formato de capa: {2}, Condiciones de energía: {3}, Cambiar capa de formato: {4}, Cargar/Expulsar: {5}, Iniciar: {6}, Sense: {7}, Error: {8}) tomó {0} ms.</value>
+    <value>START STOP UNIT (Inmediato: {1}, Formato de capa: {2}, Condiciones de energía: {3}, Cambiar capa de formato: {4}, Cargar/Expulsar: {5}, Iniciar: {6}, Sense: {7}, Error: {8}) tardó {0} ms.</value>
   </data>
     <data name="READ_READ_SUB_CHANNEL_MCN_Sense_1_Last_Error_2_took_0_ms" xml:space="preserve">
-    <value>READ READ SUB-CHANNEL (MCN, Sense {1}, Error {2}) tomó {0} ms.</value>
+    <value>READ READ SUB-CHANNEL (MCN, Sense {1}, Error {2}) tardó {0} ms.</value>
   </data>
     <data name="READ_READ_SUB_CHANNEL_ISRC_Track_Number_1_Sense_2_Last_Error_3_took_0_ms" xml:space="preserve">
-    <value>READ READ SUB-CHANNEL (ISRC, Pista: {1}, Sense: {2}, Error: {3}) tomó {0} ms.</value>
+    <value>READ READ SUB-CHANNEL (ISRC, Pista: {1}, Sense: {2}, Error: {3}) tardó {0} ms.</value>
   </data>
     <data name="SET_CD_SPEED_Rotational_Control_1_Read_Speed_2_Write_Speed_3_Sense_4_Last_Error_5_took_0_ms"
           xml:space="preserve">
-    <value>SET CD SPEED (Control rotación: {1}, Velocidad de lectura: {2}, Velocidad de escritura: {3}, Sense: {4}, Error: {5}) tomó {0} ms.</value>
+    <value>SET CD SPEED (Control rotación: {1}, Velocidad de lectura: {2}, Velocidad de escritura: {3}, Sense: {4}, Error: {5}) tardó {0} ms.</value>
   </data>
     <data name="READ_TRACK_INFORMATION_Data_Type_1_Sense_2_Last_Error_3_took_0_ms" xml:space="preserve">
-    <value>READ TRACK INFORMATION (Data Type: {1}, Sense: {2}, Last Error: {3}) tomó {0} ms.</value>
+    <value>READ TRACK INFORMATION (Data Type: {1}, Sense: {2}, Last Error: {3}) tardó {0} ms.</value>
   </data>
     <data name="NEC_READ_CD_DA_took_0_ms" xml:space="preserve">
-    <value>NEC READ CD-DA tomó {0} ms.</value>
+    <value>NEC READ CD-DA tardó {0} ms.</value>
   </data>
     <data name="MEDIUM_SCAN_took_0_ms" xml:space="preserve">
-    <value>MEDIUM SCAN tomó {0} ms.</value>
+    <value>MEDIUM SCAN tardó {0} ms.</value>
   </data>
     <data name="PIONEER_READ_CD_DA_took_0_ms" xml:space="preserve">
-    <value>PIONEER READ CD-DA tomó {0} ms.</value>
+    <value>PIONEER READ CD-DA tardó {0} ms.</value>
   </data>
     <data name="PIONEER_READ_CD_DA_MSF_took_0_ms" xml:space="preserve">
-    <value>PIONEER READ CD-DA MSF tomó {0} ms.</value>
+    <value>PIONEER READ CD-DA MSF tardó {0} ms.</value>
   </data>
     <data name="PIONEER_READ_CD_XA_took_0_ms" xml:space="preserve">
-    <value>PIONEER READ CD-XA tomó {0} ms.</value>
+    <value>PIONEER READ CD-XA tardó {0} ms.</value>
   </data>
     <data name="PLASMON_READ_SECTOR_LOCATION_took_0_ms" xml:space="preserve">
-    <value>PLASMON READ SECTOR LOCATION tomó {0} ms.</value>
+    <value>PLASMON READ SECTOR LOCATION tardó {0} ms.</value>
   </data>
     <data name="Plextor_READ_CD_DA_LBA_1_Block_Size_2_Transfer_Length_3_Subchannel_4_Sense_5_Last_Error_6_took_0_ms"
           xml:space="preserve">
-    <value>Plextor READ CD-DA (LBA: {1}, Tamaño del bloque: {2}, Longitud de la transferencia: {3}, Subcanal: {4}, Sense: {5}, Error: {6}) tomó {0} ms.</value>
+    <value>Plextor READ CD-DA (LBA: {1}, Tamaño del bloque: {2}, Longitud de la transferencia: {3}, Subcanal: {4}, Sense: {5}, Error: {6}) tardó {0} ms.</value>
   </data>
     <data name="Plextor_READ_DVD_RAW_took_0_ms" xml:space="preserve">
-    <value>Plextor READ DVD (RAW) tomó {0} ms.</value>
+    <value>Plextor READ DVD (RAW) tardó {0} ms.</value>
   </data>
     <data name="PLEXTOR_READ_EEPROM_took_0_ms" xml:space="preserve">
-    <value>PLEXTOR READ EEPROM tomó {0} ms.</value>
+    <value>PLEXTOR READ EEPROM tardó {0} ms.</value>
   </data>
     <data name="PLEXTOR_POWEREC_GET_SPEEDS_took_0_ms" xml:space="preserve">
-    <value>PLEXTOR POWEREC GET SPEEDS tomó {0} ms.</value>
+    <value>PLEXTOR POWEREC GET SPEEDS tardó {0} ms.</value>
   </data>
     <data name="PLEXTOR_GET_SILENT_MODE_took_0_ms" xml:space="preserve">
-    <value>PLEXTOR GET SILENT MODE tomó {0} ms.</value>
+    <value>PLEXTOR GET SILENT MODE tardó {0} ms.</value>
   </data>
     <data name="PLEXTOR_GET_GIGAREC_took_0_ms" xml:space="preserve">
-    <value>PLEXTOR GET GIGAREC tomó {0} ms.</value>
+    <value>PLEXTOR GET GIGAREC tardó {0} ms.</value>
   </data>
     <data name="PLEXTOR_GET_VARIREC_took_0_ms" xml:space="preserve">
-    <value>PLEXTOR GET VARIREC tomó {0} ms.</value>
+    <value>PLEXTOR GET VARIREC tardó {0} ms.</value>
   </data>
     <data name="PLEXTOR_GET_SECUREC_took_0_ms" xml:space="preserve">
-    <value>PLEXTOR GET SECUREC tomó {0} ms.</value>
+    <value>PLEXTOR GET SECUREC tardó {0} ms.</value>
   </data>
     <data name="PLEXTOR_GET_SPEEDREAD_took_0_ms" xml:space="preserve">
-    <value>PLEXTOR GET SPEEDREAD tomó {0} ms.</value>
+    <value>PLEXTOR GET SPEEDREAD tardó {0} ms.</value>
   </data>
     <data name="PLEXTOR_GET_SINGLE_SESSION_HIDE_CD_R_took_0_ms" xml:space="preserve">
-    <value>PLEXTOR GET SINGLE-SESSION / HIDE CD-R tomó {0} ms.</value>
+    <value>PLEXTOR GET SINGLE-SESSION / HIDE CD-R tardó {0} ms.</value>
   </data>
     <data name="PLEXTOR_GET_BOOK_BITSETTING_took_0_ms" xml:space="preserve">
-    <value>PLEXTOR GET BOOK BITSETTING tomó {0} ms.</value>
+    <value>PLEXTOR GET BOOK BITSETTING tardó {0} ms.</value>
   </data>
     <data name="PLEXTOR_GET_TEST_WRITE_DVD_took_0_ms" xml:space="preserve">
-    <value>PLEXTOR GET TEST WRITE DVD+ tomó {0} ms.</value>
+    <value>PLEXTOR GET TEST WRITE DVD+ tardó {0} ms.</value>
   </data>
     <data name="READ_6_took_0_ms" xml:space="preserve">
-    <value>READ (6) tomó {0} ms.</value>
+    <value>READ (6) tardó {0} ms.</value>
   </data>
     <data name="READ_10_took_0_ms" xml:space="preserve">
-    <value>READ (10) tomó {0} ms.</value>
+    <value>READ (10) tardó {0} ms.</value>
   </data>
     <data name="READ_12_took_0_ms" xml:space="preserve">
-    <value>READ (12) tomó {0} ms.</value>
+    <value>READ (12) tardó {0} ms.</value>
   </data>
     <data name="READ_16_took_0_ms" xml:space="preserve">
-    <value>READ (16) tomó {0} ms.</value>
+    <value>READ (16) tardó {0} ms.</value>
   </data>
     <data name="READ_LONG_10_took_0_ms" xml:space="preserve">
-    <value>READ LONG (10) tomó {0} ms.</value>
+    <value>READ LONG (10) tardó {0} ms.</value>
   </data>
     <data name="READ_LONG_16_took_0_ms" xml:space="preserve">
-    <value>READ LONG (16) tomó {0} ms.</value>
+    <value>READ LONG (16) tardó {0} ms.</value>
   </data>
     <data name="SEEK_6_took_0_ms" xml:space="preserve">
-    <value>SEEK (6) tomó {0} ms.</value>
+    <value>SEEK (6) tardó {0} ms.</value>
   </data>
     <data name="SEEK_10_took_0_ms" xml:space="preserve">
-    <value>SEEK (10) tomó {0} ms.</value>
+    <value>SEEK (10) tardó {0} ms.</value>
   </data>
     <data name="READ_ATTRIBUTE_took_0_ms" xml:space="preserve">
-    <value>READ ATTRIBUTE tomó {0} ms.</value>
+    <value>READ ATTRIBUTE tardó {0} ms.</value>
   </data>
     <data name="INQUIRY_took_0_ms" xml:space="preserve">
-    <value>INQUIRY tomó {0} ms.</value>
+    <value>INQUIRY tardó {0} ms.</value>
   </data>
     <data name="TEST_UNIT_READY_took_0_ms" xml:space="preserve">
-    <value>TEST UNIT READY tomó {0} ms.</value>
+    <value>TEST UNIT READY tardó {0} ms.</value>
   </data>
     <data name="MODE_SENSE_6_took_0_ms" xml:space="preserve">
-    <value>MODE SENSE(6) tomó {0} ms.</value>
+    <value>MODE SENSE(6) tardó {0} ms.</value>
   </data>
     <data name="MODE_SENSE_10_took_0_ms" xml:space="preserve">
-    <value>MODE SENSE(10) tomó {0} ms.</value>
+    <value>MODE SENSE(10) tardó {0} ms.</value>
   </data>
     <data name="PREVENT_ALLOW_MEDIUM_REMOVAL_took_0_ms" xml:space="preserve">
-    <value>PREVENT ALLOW MEDIUM REMOVAL tomó {0} ms.</value>
+    <value>PREVENT ALLOW MEDIUM REMOVAL tardó {0} ms.</value>
   </data>
     <data name="READ_CAPACITY_took_0_ms" xml:space="preserve">
-    <value>READ CAPACITY tomó {0} ms.</value>
+    <value>READ CAPACITY tardó {0} ms.</value>
   </data>
     <data name="READ_CAPACITY_16_took_0_ms" xml:space="preserve">
-    <value>READ CAPACITY(16) tomó {0} ms.</value>
+    <value>READ CAPACITY(16) tardó {0} ms.</value>
   </data>
     <data name="READ_MEDIA_SERIAL_NUMBER_took_0_ms" xml:space="preserve">
-    <value>READ MEDIA SERIAL NUMBER tomó {0} ms.</value>
+    <value>READ MEDIA SERIAL NUMBER tardó {0} ms.</value>
   </data>
     <data name="MODE_SELECT_6_took_0_ms" xml:space="preserve">
-    <value>MODE SELECT(6) tomó {0} ms.</value>
+    <value>MODE SELECT(6) tardó {0} ms.</value>
   </data>
     <data name="MODE_SELECT_10_took_0_ms" xml:space="preserve">
-    <value>MODE SELECT(10) tomó {0} ms.</value>
+    <value>MODE SELECT(10) tardó {0} ms.</value>
   </data>
     <data name="REQUEST_SENSE_took_0_ms" xml:space="preserve">
-    <value>REQUEST SENSE tomó {0} ms.</value>
+    <value>REQUEST SENSE tardó {0} ms.</value>
   </data>
     <data name="LOAD_UNLOAD_6_took_0_ms" xml:space="preserve">
-    <value>LOAD UNLOAD (6) tomó {0} ms.</value>
+    <value>LOAD UNLOAD (6) tardó {0} ms.</value>
   </data>
     <data name="LOCATE_10_took_0_ms" xml:space="preserve">
-    <value>LOCATE (10) tomó {0} ms.</value>
+    <value>LOCATE (10) tardó {0} ms.</value>
   </data>
     <data name="LOCATE_16_took_0_ms" xml:space="preserve">
-    <value>LOCATE (16) tomó {0} ms.</value>
+    <value>LOCATE (16) tardó {0} ms.</value>
   </data>
     <data name="READ_BLOCK_LIMITS_took_0_ms" xml:space="preserve">
-    <value>READ BLOCK LIMITS tomó {0} ms.</value>
+    <value>READ BLOCK LIMITS tardó {0} ms.</value>
   </data>
     <data name="READ_POSITION_took_0_ms" xml:space="preserve">
-    <value>READ POSITION tomó {0} ms.</value>
+    <value>READ POSITION tardó {0} ms.</value>
   </data>
     <data name="READ_REVERSE_6_took_0_ms" xml:space="preserve">
-    <value>READ REVERSE (6) tomó {0} ms.</value>
+    <value>READ REVERSE (6) tardó {0} ms.</value>
   </data>
     <data name="READ_REVERSE_16_took_0_ms" xml:space="preserve">
-    <value>READ REVERSE (16) tomó {0} ms.</value>
+    <value>READ REVERSE (16) tardó {0} ms.</value>
   </data>
     <data name="RECOVER_BUFFERED_DATA_took_0_ms" xml:space="preserve">
-    <value>RECOVER BUFFERED DATA tomó {0} ms.</value>
+    <value>RECOVER BUFFERED DATA tardó {0} ms.</value>
   </data>
     <data name="REPORT_DENSITY_SUPPORT_took_0_ms" xml:space="preserve">
-    <value>REPORT DENSITY SUPPORT tomó {0} ms.</value>
+    <value>REPORT DENSITY SUPPORT tardó {0} ms.</value>
   </data>
     <data name="REWIND_took_0_ms" xml:space="preserve">
-    <value>REWIND tomó {0} ms.</value>
+    <value>REWIND tardó {0} ms.</value>
   </data>
     <data name="TRACK_SELECT_took_0_ms" xml:space="preserve">
-    <value>TRACK SELECT tomó {0} ms.</value>
+    <value>TRACK SELECT tardó {0} ms.</value>
   </data>
     <data name="SPACE_took_0_ms" xml:space="preserve">
-    <value>SPACE tomó {0} ms.</value>
+    <value>SPACE tardó {0} ms.</value>
   </data>
     <data name="SYQUEST_READ_6_took_0_ms" xml:space="preserve">
-    <value>SYQUEST READ (6) tomó {0} ms.</value>
+    <value>SYQUEST READ (6) tardó {0} ms.</value>
   </data>
     <data name="SYQUEST_READ_10_took_0_ms" xml:space="preserve">
-    <value>SYQUEST READ (10) tomó {0} ms.</value>
+    <value>SYQUEST READ (10) tardó {0} ms.</value>
   </data>
     <data name="Platform_0_not_yet_supported" xml:space="preserve">
     <value>La plataforma {0} no está soportada.</value>
@@ -481,10 +481,10 @@
     <value>Se esperaba paquete de respuesta de datos PCMCIA, se recibió paquete tipo {0}...</value>
   </data>
     <data name="Expected_multi_MMC_SD_command_Response_Packet_got_packet_type_0" xml:space="preserve">
-    <value>Se esperaba paquete de respuesta de multi comando MMC/SD, se recibió paquete tipo {0}...</value>
+    <value>Se esperaba paquete de respuesta de multi orden MMC/SD, se recibió paquete tipo {0}...</value>
   </data>
     <data name="Expected_the_response_to_0_SD_MMC_commands_but_got_1_responses" xml:space="preserve">
-    <value>Se esperaban {0} respuestas a comandos SD/MMC, pero se recibieron {1} respuestas...</value>
+    <value>Se esperaban {0} respuestas a órdenes SD/MMC, pero se recibieron {1} respuestas...</value>
   </data>
     <data name="Expected_NOP_Packet_got_packet_type_0" xml:space="preserve">
     <value>Se esperaba paquete NOP, se recibió paquete tipo {0}...</value>
@@ -502,6 +502,6 @@
     <value>Error remoto {0} en lectura de OS...</value>
   </data>
     <data name="LiteOn_READ_DVD_RAW_took_0_ms" xml:space="preserve">
-        <value>Lite-On READ DVD (RAW) tomó {0} ms.</value>
+        <value>Lite-On READ DVD (RAW) tardó {0} ms.</value>
     </data>
 </root>

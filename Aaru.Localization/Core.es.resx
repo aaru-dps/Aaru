@@ -80,10 +80,10 @@
         <value>[bold][blue]ATAPI IDENTIFY contenido en la imagen:[/][/]</value>
     </data>
     <data name="ATA_command_0_error_status_1_error_2" xml:space="preserve">
-    <value>Error en el comando ATA {0}: estado = {1}, error = {2}.</value>
+    <value>Error en la orden ATA {0}: estado = {1}, error = {2}.</value>
   </data>
     <data name="ATA_command_0_operating_system_error_1" xml:space="preserve">
-    <value>Error del sistema operativo en el comando ATA {0}: {1}.</value>
+    <value>Error del sistema operativo en la orden ATA {0}: {1}.</value>
   </data>
     <data name="ATA_ERROR_0_STATUS_1" xml:space="preserve">
     <value>ERROR ATA: {0} ESTADO: {1}</value>
@@ -107,7 +107,7 @@
         <value>[bold][blue]Número de serie del dispositivo de automatización:[/][/] [italic][teal]{0}[/][/]</value>
     </data>
     <data name="Average_checksum_speed_0" xml:space="preserve">
-        <value>[slateblue1]Velocidad media de checksum: [aqua]{0}[/][/]</value>
+        <value>[slateblue1]Velocidad media de suma de comprobación: [aqua]{0}[/][/]</value>
     </data>
     <data name="Average_dump_speed_0" xml:space="preserve">
         <value>[slateblue1]Velocidad media de volcado: [aqua]{0}[/][/]</value>
@@ -119,7 +119,7 @@
         <value>[slateblue1]Velocidad media de escritura: [aqua]{0}[/][/]</value>
     </data>
     <data name="Because_of_commands_sent_dumping_XGD_must_be_administrative_Cannot_continue" xml:space="preserve">
-        <value>[red]Debido a los comandos que se envían a la unidad, volcar XGD debe hacerse con privilegios administrativos. No se puede continuar.[/]</value>
+        <value>[red]Debido a las órdenes que se envían a la unidad, volcar XGD debe hacerse con privilegios administrativos. No se puede continuar.[/]</value>
     </data>
     <data name="Blank_block_found_end_of_tape" xml:space="preserve">
         <value>[olive]Se encontró un bloque vacío, ¿fin de la cinta?...[/]</value>
@@ -209,7 +209,7 @@
         <value>[red]No se pudo bloquear la unidad, no se continuará.[/]</value>
     </data>
     <data name="Cannot_open_the_device_in_writable_mode_as_needed_by_some_commands" xml:space="preserve">
-        <value>[red]No se pudo abrir el dispositivo en modo de escritura, necesario por algunos comandos.[/]</value>
+        <value>[red]No se pudo abrir el dispositivo en modo de escritura, necesario por algunos órdenes.[/]</value>
     </data>
     <data name="Cannot_position_tape_to_block_0" xml:space="preserve">
         <value>[red]No se pudo posicionar la cinta en el bloque [lime]{0}[/].[/]</value>
@@ -359,7 +359,7 @@
         <value>[slateblue1]El desplazamiento combinado es de [lime]{0}[/] bytes ([teal]{1}[/] muestras).[/]</value>
     </data>
     <data name="Command_line_0" xml:space="preserve">
-    <value>Línea de comandos: {0}</value>
+    <value>Línea de órdenes: {0}</value>
   </data>
     <data name="Comments_0_WithMarkup" xml:space="preserve">
         <value>[bold][slateblue1]Comentarios:[/][/] {0}</value>
@@ -454,7 +454,7 @@
         <value>[olive]No se pudo encontrar el desplazamiento del fotograma de VideoNow, el volcado podría ser incorrecto.[/]</value>
     </data>
     <data name="Could_not_get_a_working_read_command" xml:space="preserve">
-        <value>[red]¡No se pudo encontrar un comando de lectura que funcione![/]</value>
+        <value>[red]¡No se pudo encontrar una orden de lectura que funcione![/]</value>
     </data>
     <data name="Could_not_get_correct_subchannel_for_sector_0" xml:space="preserve">
     <value>No se pudo obtener el subcanal correcto para el sector {0}</value>
@@ -585,7 +585,7 @@
         <value>[slateblue1]El dispositivo puede leer [violet]{0}[/] bloques a la vez usando lecturas a través del búfer del SO.[/]</value>
     </data>
     <data name="Device_can_read_0_blocks_using_sequential_commands" xml:space="preserve">
-        <value>[slateblue1]El dispositivo puede leer [violet]{0}[/] bloques usando comandos secuenciales.[/]</value>
+        <value>[slateblue1]El dispositivo puede leer [violet]{0}[/] bloques usando órdenes secuenciales.[/]</value>
     </data>
     <data name="Device_contains_MMC" xml:space="preserve">
     <value>El dispositivo contiene una MultiMediaCard</value>
@@ -634,16 +634,16 @@
     <value>El tamaño mínimo de un bloque del dispositivo es de {0} bytes</value>
   </data>
     <data name="Device_needs_28_bit_LBA_commands_but_I_cant_issue_them_Aborting" xml:space="preserve">
-        <value>[red]El dispositivo necesita comandos LBA de 28-bits pero no podemos mandárselos... Abortando.[/]</value>
+        <value>[red]El dispositivo necesita órdenes LBA de 28-bits pero no podemos mandárselas... Abortando.[/]</value>
     </data>
     <data name="Device_needs_48_bit_LBA_commands_but_I_cant_issue_them_Aborting" xml:space="preserve">
-        <value>[red]El dispositivo necesita comandos LBA de 48-bits pero no podemos mandárselos... Abortando.[/]</value>
+        <value>[red]El dispositivo necesita órdenes LBA de 48-bits pero no podemos mandárselas... Abortando.[/]</value>
     </data>
     <data name="Device_needs_a_block_size_granularity_of_pow_0_1_bytes" xml:space="preserve">
     <value>El dispositivo necesita un tamaño de bloque con una granularidad de 2^{0} ({1} bytes)</value>
   </data>
     <data name="Device_needs_CHS_commands_but_I_cant_issue_them_Aborting" xml:space="preserve">
-        <value>[red]El dispositivo necesita comandos CHS pero no podemos mandárselos... Abortando.[/]</value>
+        <value>[red]El dispositivo necesita órdenes CHS pero no podemos mandárselas... Abortando.[/]</value>
     </data>
     <data name="Device_not_in_database" xml:space="preserve">
         <value>[red]El dispositivo no está en la base de datos, por favor cree un reporte del mismo y adjúntelo en un reporte de Github.[/]</value>
@@ -682,7 +682,7 @@
     <value>El dispositivo reporta un tipo de tarjeta de memoria incorrect</value>
   </data>
     <data name="Device_supports_MCPT_Command_Set" xml:space="preserve">
-    <value>El dispositivo soporta el conjunto de comandos de tarjetas de memoria</value>
+    <value>El dispositivo soporta el conjunto de órdenes de tarjetas de memoria</value>
   </data>
     <data name="Device_type_0" xml:space="preserve">
     <value>Tipo de dispositivo: {0}</value>
@@ -790,13 +790,13 @@
         <value>[green]La unidad oculta los CD-R[/]</value>
     </data>
     <data name="Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading" xml:space="preserve">
-        <value>[olive]La unidad no aceptó el comando [fuchsia]MODE SELECT[/] para activar la lectura con persistencia en errores, por favor intente otra unidad.[/]</value>
+        <value>[olive]La unidad no aceptó la orden [fuchsia]MODE SELECT[/] para activar la lectura con persistencia en errores, por favor intente otra unidad.[/]</value>
     </data>
     <data name="Drive_does_not_returns_subchannel_in_BCD" xml:space="preserve">
         <value>[slateblue1]La unidad no devuelve el subcanal en [rosybrown]BCD[/]...[/]</value>
     </data>
     <data name="Drive_does_not_support_READ_CD_trying_SCSI_READ_commands" xml:space="preserve">
-        <value>[slateblue1]La unidad no soporta [fuchsia]READ CD[/], intentando comandos [fuchsia]SCSI READ[/]...[/]</value>
+        <value>[slateblue1]La unidad no soporta [fuchsia]READ CD[/], intentando órdenes [fuchsia]SCSI READ[/]...[/]</value>
     </data>
     <data name="Drive_does_not_support_the_requested_subchannel_format_not_continuing" xml:space="preserve">
         <value>[red]La unidad no soporta el format de subcanal solicitado, no se continuará...[/]</value>
@@ -917,10 +917,10 @@
         <value>[slateblue1]La unidad soporta la escritura de prueba en DVD+[/]</value>
     </data>
     <data name="DumBuffered_OS_reads_are_not_working_trying_direct_commands" xml:space="preserve">
-        <value>[olive]Las lecturas usando el búfer del SO no están funcionando, intentando comandos directos.[/olive]</value>
+        <value>[olive]Las lecturas usando el búfer del SO no están funcionando, intentando órdenes directas.[/olive]</value>
     </data>
     <data name="Dumping_CD_i_Ready_requires_the_drive_to_support_the_READ_CD_command" xml:space="preserve">
-        <value>[red]Volcar un [green]CD-i Ready[/] requiere que la unidad soporte el comando [fuchsia]READ CD[/].[/]</value>
+        <value>[red]Volcar un [green]CD-i Ready[/] requiere que la unidad soporte la orden [fuchsia]READ CD[/].[/]</value>
     </data>
     <data name="Dumping_CD_i_Ready_requires_the_output_image_format_to_support_long_sectors" xml:space="preserve">
         <value>[red]Volcar un [green]CD-i Ready[/] requiere que la imagen destino soporte sectores largos.[/]</value>
@@ -1031,7 +1031,7 @@
     <value>Error {0} leyendo sector {1}, continuando...</value>
   </data>
     <data name="ERROR_Cannot_find_correct_read_command_0" xml:space="preserve">
-        <value>[red]ERROR: No se pudo encontrar un comando de lectura correcto: {0}.[/]</value>
+        <value>[red]ERROR: No se pudo encontrar una orden de lectura correcta: {0}.[/]</value>
     </data>
     <data name="ERROR_Cannot_get_blocks_to_read_0" xml:space="preserve">
         <value>[red]ERROR: No se pudo obtener cuantos bloques para leer: {0}.[/]</value>
@@ -1623,7 +1623,7 @@
     <value>MD DATA (MiniDisc de datos de 140Mb)</value>
   </data>
     <data name="MEDIUM_SCAN_github_plead_message" xml:space="preserve">
-    <value>Por favor abra un reporte de errores en Github con el fabricante y modelo de este dispositivo, así como el nombre y versión de su sistema operativo, y este mensaje: Este entorno soporta correctamente el comando MEDIUM SCAN.</value>
+    <value>Por favor abra un reporte de errores en Github con el fabricante y modelo de este dispositivo, así como el nombre y versión de su sistema operativo, y este mensaje: Este entorno soporta correctamente la orden MEDIUM SCAN.</value>
   </data>
     <data name="Medium_Status" xml:space="preserve">
     <value>Estado del medio</value>
@@ -1998,7 +1998,7 @@
         <value>[slateblue1]Leyendo [violet]{0}[/] sectores a la vez usando lectúras con búfer del SO.[/]</value>
     </data>
     <data name="Reading_0_sectors_using_sequential_single_commands" xml:space="preserve">
-        <value>[slateblue1]Leyendo [violet]{0}[/] sectores usando secuencias de comandos singulares.[/]</value>
+        <value>[slateblue1]Leyendo [violet]{0}[/] sectores usando secuencias de órdenes singulares.[/]</value>
     </data>
     <data name="Reading_Burst_Cutting_Area" xml:space="preserve">
         <value>[slateblue1]Leyendo [italic]Burst Cutting Area[/].[/]</value>
@@ -2232,7 +2232,7 @@
         <value>[slateblue1]Leyendo Sector de Seguridad de Xbox.[/]</value>
     </data>
     <data name="READ_CD_command_is_not_supported_disabling_offset_fix_Dump_may_not_be_correct" xml:space="preserve">
-        <value>[olive]El comando READ CD no está soportado, desactivando correción de desplazamientos. El volcado podría ser incorrecto.[/]</value>
+        <value>[olive]La orden READ CD no está soportada, desactivando correción de desplazamientos. El volcado podría ser incorrecto.[/]</value>
     </data>
     <data name="READ_CD_error_0" xml:space="preserve">
     <value>Error de READ CD:
@@ -2531,19 +2531,19 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <value>SCR obtenido correctamente</value>
   </data>
     <data name="SCSI_command_0_error_1" xml:space="preserve">
-    <value>Comando SCSI {0} dió error: {1}</value>
+    <value>Orden SCSI {0} dió error: {1}</value>
   </data>
     <data name="SCSI_command_0_error_1_2" xml:space="preserve">
-    <value>Comando SCSI {0} dió error: {1}, {2}.</value>
+    <value>Orden SCSI {0} dió error: {1}, {2}.</value>
   </data>
     <data name="SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4" xml:space="preserve">
-    <value>Comando SCSI {0} dió error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.</value>
+    <value>Orden SCSI {0} dió error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.</value>
   </data>
     <data name="SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4_5" xml:space="preserve">
-    <value>Comando SCSI {0} dió error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.</value>
+    <value>Orden SCSI {0} dió error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.</value>
   </data>
     <data name="SCSI_command_0_operating_system_error_1" xml:space="preserve">
-    <value>Comando SCSI {0} dió error del sistema operativo: {1}.</value>
+    <value>Orden SCSI {0} dió error del sistema operativo: {1}.</value>
   </data>
     <data name="SCSI_density_type_0" xml:space="preserve">
         <value>[slateblue1]Tipo de densidad SCSI: [teal]{0}[/].[/]</value>
@@ -2585,10 +2585,10 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <value>Error SCSI del sistema operativo leyendo LBA {0}: {1}.</value>
   </data>
     <data name="SD_MMC_command_0_error_1" xml:space="preserve">
-    <value>Comando SD/MMC {0} dió error: {1}</value>
+    <value>Orden SD/MMC {0} dió error: {1}</value>
   </data>
     <data name="SD_MMC_command_0_operating_system_error_1" xml:space="preserve">
-    <value>Comando SD/MMC {0} dió error del sistema operativo: {1}</value>
+    <value>Orden SD/MMC {0} dió error del sistema operativo: {1}</value>
   </data>
     <data name="SD_MMC_reading_LBA_0_block_addressed_error_1" xml:space="preserve">
     <value>Error SD/MMC leyendo LBA {0} (direccionado por bloques): {1}</value>
@@ -2781,7 +2781,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
         <value>[olive]Habrá miles de errores entre las pistas 0 y 1, esto es normal y puede ignorarlos.[/]</value>
     </data>
     <data name="The_current_environment_doesn_t_support_the_medium_scan_command" xml:space="preserve">
-    <value>El entorno actual no soporta el comando MEDIUM SCAN, el volcado tardará mucho más de lo normal.</value>
+    <value>El entorno actual no soporta la orden MEDIUM SCAN, el volcado tardará mucho más de lo normal.</value>
   </data>
     <data name="The_drive_has_returned_incorrect_Q_positioning_calculating_pregaps" xml:space="preserve">
         <value>[olive][bold]ATENCIÓN:[/] La unidad ha devuelto la posición de Q incorrecta calculando los huecos anteriores. Se ha hecho todo lo posible pero pueden ser incorrectos.[/]</value>
@@ -3059,10 +3059,10 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <value>Intentando truco de HL-DT-ST (o LG) para leer DVDs sin procesar...</value>
   </data>
     <data name="Trying_MediaTek_READ_DRAM_command" xml:space="preserve">
-    <value>Intentando comando READ DRAM de MediaTek...</value>
+    <value>Intentando orden READ DRAM de MediaTek...</value>
   </data>
     <data name="Trying_MediaTek_READ_DRAM_command_for_Lead_Out" xml:space="preserve">
-    <value>Intentando comando READ DRAM de MediaTek para el Lead-Out...</value>
+    <value>Intentando orden READ DRAM de MediaTek para el Lead-Out...</value>
   </data>
     <data name="Trying_READ_SECTORS_RETRY_in_CHS_mode" xml:space="preserve">
     <value>Intentando READ SECTOR(S) RETRY en modo CHS...</value>
@@ -3158,7 +3158,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
         <value>[slateblue1]Intentando leer el sector [lime]{0}[/] en el hueco anterior a la pista 1 del CD ([aqua]{1}[/])[/]</value>
     </data>
     <data name="Try_to_find_SCSI_READ_LONG_size" xml:space="preserve">
-    <value>La unidad soporta el comando SCSI READ LONG pero no consigo encontrar el tamaño correcto. ¿Quiere que lo intente? (Puede tardar horas)</value>
+    <value>La unidad soporta la orden SCSI READ LONG pero no consigo encontrar el tamaño correcto. ¿Quiere que lo intente? (Puede tardar horas)</value>
   </data>
     <data name="Unable_to_communicate_with_ATA_device" xml:space="preserve">
     <value>No se pudo comunicar con el dispositivo ATA.</value>
@@ -3254,40 +3254,40 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <value>ID del fabricante USB: {0:X4}h</value>
   </data>
     <data name="Using_ATA_READ_command_CHS" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]ATA READ[/] (CHS).[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]ATA READ[/] (CHS).[/]</value>
     </data>
     <data name="Using_ATA_READ_command_LBA" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]ATA READ[/] (LBA).[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]ATA READ[/] (LBA).[/]</value>
     </data>
     <data name="Using_ATA_READ_command_with_retries_CHS" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]ATA READ[/] con reintentos (CHS).[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]ATA READ[/] con reintentos (CHS).[/]</value>
     </data>
     <data name="Using_ATA_READ_command_with_retries_LBA" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]ATA READ[/] con reintentos (LBA).[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]ATA READ[/] con reintentos (LBA).[/]</value>
     </data>
     <data name="Using_ATA_READ_DMA_command_CHS" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]ATA READ DMA[/] (CHS).[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]ATA READ DMA[/] (CHS).[/]</value>
     </data>
     <data name="Using_ATA_READ_DMA_command_LBA" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]ATA READ DMA[/] (LBA).[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]ATA READ DMA[/] (LBA).[/]</value>
     </data>
     <data name="Using_ATA_READ_DMA_command_with_retries_CHS" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]ATA READ DMA[/] con reintentos (CHS).[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]ATA READ DMA[/] con reintentos (CHS).[/]</value>
     </data>
     <data name="Using_ATA_READ_DMA_command_with_retries_LBA" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]ATA READ DMA[/] con reintentos (LBA).[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]ATA READ DMA[/] con reintentos (LBA).[/]</value>
     </data>
     <data name="Using_ATA_READ_DMA_EXT_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]ATA READ DMA EXT[/].[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]ATA READ DMA EXT[/].[/]</value>
     </data>
     <data name="Using_ATA_READ_EXT_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]ATA READ EXT[/].[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]ATA READ EXT[/].[/]</value>
     </data>
     <data name="Using_HL_DT_ST_raw_DVD_reading" xml:space="preserve">
         <value>[slateblue1]Usando lectura de [fuchsia]DVD sin procesar de HL-DT-ST[/].[/]</value>
     </data>
     <data name="Using_MMC_READ_CD_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]MMC READ CD[/].[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]MMC READ CD[/].[/]</value>
     </data>
     <data name="Using_OmniDrive_raw_DVD_reading" xml:space="preserve">
         <value>[slateblue1]Usando lectura de [fuchsia]DVD sin procesar de OmniDrive[/].[/]</value>
@@ -3299,28 +3299,28 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
         <value>[slateblue1]Usando lectura de [fuchsia]DVD sin procesar de Plextor[/].[/]</value>
     </data>
     <data name="Using_SCSI_READ_10_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]SCSI READ (10)[/].[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]SCSI READ (10)[/].[/]</value>
     </data>
     <data name="Using_SCSI_READ_12_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]SCSI READ (12)[/].[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]SCSI READ (12)[/].[/]</value>
     </data>
     <data name="Using_SCSI_READ_16_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]SCSI READ (16)[/].[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]SCSI READ (16)[/].[/]</value>
     </data>
     <data name="Using_SCSI_READ_6_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]SCSI READ (6)[/].[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]SCSI READ (6)[/].[/]</value>
     </data>
     <data name="Using_SCSI_READ_LONG_10_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]SCSI READ LONG (10)[/].[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]SCSI READ LONG (10)[/].[/]</value>
     </data>
     <data name="Using_SCSI_READ_LONG_16_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]SCSI READ LONG (16)[/].[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]SCSI READ LONG (16)[/].[/]</value>
     </data>
     <data name="Using_SyQuest_READ_LONG_10_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]SyQuest READ LONG (10)[/].[/]</value>
+        <value>[slateblue1]Usando orden [fuchsia]SyQuest READ LONG (10)[/].[/]</value>
     </data>
     <data name="Using_SyQuest_READ_LONG_6_command" xml:space="preserve">
-        <value>[slateblue1]Usando comando [fuchsia]SyQuest READ LONG (6).</value>
+        <value>[slateblue1]Usando orden [fuchsia]SyQuest READ LONG (6).</value>
     </data>
     <data name="Version_0" xml:space="preserve">
     <value>Versión: {0}</value>

@@ -44,7 +44,7 @@
     <value>AACS Volume Identifier en hexadecimal a continuación:</value>
   </data>
     <data name="Abort_any_write_command_without_protection_information" xml:space="preserve">
-    <value>Abortar cualquier comando de escritura sin información de protección</value>
+    <value>Abortar cualquier orden de escritura sin información de protección</value>
   </data>
     <data name="Absolute_time_0_1_2" xml:space="preserve">
         <value>[slateblue1]Tiempo absoluto: [lime]{0:D2}:{1:D2}:{2:D2}[/][/]</value>
@@ -135,7 +135,7 @@
   </data>
     <data name="Affected_commands_in_the_task_set_belonging_with_the_CHECK_CONDITION_nexus_shall_be_aborted"
           xml:space="preserve">
-    <value>Los comandos afectados en la tarea con el nexus en CHECK CONDITION se abortarán</value>
+    <value>Las órdenes afectadas en la tarea con el nexus en CHECK CONDITION se abortarán</value>
   </data>
     <data name="AIT1" xml:space="preserve">
     <value>AIT-1</value>
@@ -157,10 +157,10 @@
   </data>
     <data name="All_data_and_the_response_for_a_command_shall_be_transferred_within_a_single_interconnect_tenancy"
           xml:space="preserve">
-    <value>Todos los datos y la respuesta a un comando se transferirán en una interconexión única</value>
+    <value>Todos los datos y la respuesta a una orden se transferirán en una interconexión única</value>
   </data>
     <data name="All_data_for_a_command_shall_be_transferred_within_a_single_interconnect_tenancy" xml:space="preserve">
-    <value>Todos los datos de un comando se transferirán en una interconexión única</value>
+    <value>Todos los datos de una orden se transferirán en una interconexión única</value>
   </data>
     <data name="All_remaining_blocks_are_0_and_are_1_bytes_each" xml:space="preserve">
     <value>Todos los bloques restantes son {0} y tienen {1} bytes cada uno</value>
@@ -189,7 +189,7 @@
   </data>
     <data name="All_the_affected_commands_in_the_task_set_shall_be_aborted_when_CHECK_CONDITION_is_returned"
           xml:space="preserve">
-    <value>Todos los comandos afectados en el conjunto de tarea deberán abortarse cuando se devuelva CHECK CONDITION</value>
+    <value>Todas las órdenes afectadas en el conjunto de tarea deberán abortarse cuando se devuelva CHECK CONDITION</value>
   </data>
     <data name="Always_apply_the_verify_operation" xml:space="preserve">
     <value>Siempre aplicar la operación de verificación</value>
@@ -288,7 +288,7 @@
     <value>El dispositivo ATAPI soporta atención de dispositivos conectados</value>
   </data>
     <data name="ATAPI_device_supports_command_queueing" xml:space="preserve">
-    <value>El dispositivo ATAPI soporta encolado de comandos</value>
+    <value>El dispositivo ATAPI soporta encolado de órdenes</value>
   </data>
     <data name="ATAPI_device_supports_host_environment_detection" xml:space="preserve">
     <value>El dispositivo ATAPI soporta detectar el entorno anfitrión</value>
@@ -300,10 +300,10 @@
     <value>El dispositivo ATAPI soporta operaciones superpuestas</value>
   </data>
     <data name="ATAPI_device_uses_12_byte_command_packet" xml:space="preserve">
-    <value>El dispositivo ATAPI usa paquetes de comandos de 12 bytes</value>
+    <value>El dispositivo ATAPI usa paquetes de órdenes de 12 bytes</value>
   </data>
     <data name="ATAPI_device_uses_16_byte_command_packet" xml:space="preserve">
-    <value>El dispositivo ATAPI usa paquetes de comandos de 16 bytes</value>
+    <value>El dispositivo ATAPI usa paquetes de órdenes de 16 bytes</value>
   </data>
     <data name="ATAPI_Direct_access_device" xml:space="preserve">
     <value>Dispositivo ATAPI de acceso directo</value>
@@ -490,7 +490,7 @@
   </data>
     <data name="At_most_0_ms_must_be_before_suspending_a_background_scan_operation_and_processing_received_commands"
           xml:space="preserve">
-    <value>Como mucho {0} ms deben pasar antes de suspender una operación de escaneo en segundo plano y procesando los comandos recibidos</value>
+    <value>Como mucho {0} ms deben pasar antes de suspender una operación de escaneo en segundo plano y procesando las órdenes recibidas</value>
   </data>
     <data name="at_volume_0" xml:space="preserve">
     <value>al volumen {0}</value>
@@ -841,7 +841,7 @@
     <value>Posición del carácter {0}</value>
   </data>
     <data name="Checksum_0" xml:space="preserve">
-    <value>Checksum {0}</value>
+    <value>Suma de comprobación {0}</value>
   </data>
     <data name="CHECK_CONDITION_should_be_reported_rather_than_a_long_busy_condition" xml:space="preserve">
     <value>Se debe reportar CHECK CONDITION en lugar de una condición de ocupación larga</value>
@@ -868,19 +868,19 @@
     <value>Número de información de codificación: {0}</value>
   </data>
     <data name="Commands_can_be_reordered_in_any_manner" xml:space="preserve">
-    <value>Los comandos pueden reordenarse de cualquier forma</value>
+    <value>Las órdenes pueden reordenarse de cualquier forma</value>
   </data>
     <data name="Commands_should_be_sent_strictly_ordered" xml:space="preserve">
-    <value>Los comandos deben mandar estrictamente ordenados</value>
+    <value>Las órdenes deben mandarse estrictamente ordenadas</value>
   </data>
     <data name="Command_forwarding_is_disabled" xml:space="preserve">
-    <value>El reenvío de comandos está desactivado</value>
+    <value>El reenvío de órdenes está desactivado</value>
   </data>
     <data name="Command_forwarding_is_enabled" xml:space="preserve">
-    <value>El reenvío de comandos está activado</value>
+    <value>El reenvío de órdenes está activado</value>
   </data>
     <data name="Command_set_and_features" xml:space="preserve">
-    <value>Conjunto de comandos y funciones:</value>
+    <value>Conjunto de órdenes y funciones:</value>
   </data>
     <data name="Communications_device" xml:space="preserve">
     <value>Dispositivo de comunicaciones</value>
@@ -904,7 +904,7 @@
     <value>El modo de energía 1 de CompactFlash está desactivado</value>
   </data>
     <data name="CompactFlash_power_mode_1_required_for_one_or_more_commands" xml:space="preserve">
-    <value>El modo de energía 1 de CompactFlash se requiere para algunos comandos</value>
+    <value>El modo de energía 1 de CompactFlash se requiere para algunos órdenes</value>
   </data>
     <data name="Compression_is_controlled_using_mode_pages_0Fh_and_10h" xml:space="preserve">
     <value>La compresión se controla con las páginas de modo 0Fh y 10h</value>
@@ -1032,22 +1032,22 @@
   </data>
     <data name="Data_put_by_READ_commands_should_be_evicted_from_cache_sooner_than_data_put_in_read_cache_by_other_means"
           xml:space="preserve">
-    <value>Los datos recogidos por los comandos READ deben eliminarse de la caché antes que los datos puestos en la caché de lectura por otros medios</value>
+    <value>Los datos recogidos por las órdenes READ deben eliminarse de la caché antes que los datos puestos en la caché de lectura por otros medios</value>
   </data>
     <data
         name="Data_put_by_READ_commands_should_not_be_evicted_if_there_is_data_cached_by_other_means_that_can_be_evicted"
         xml:space="preserve">
-    <value>Los datos recogidos por los comandos READ no deben eliminarse si hay datos puestos en la caché por otros medios que pueden ser eliminados</value>
+    <value>Los datos recogidos por las órdenes READ no deben eliminarse si hay datos puestos en la caché por otros medios que pueden ser eliminados</value>
   </data>
     <data
         name="Data_put_by_WRITE_commands_should_be_evicted_from_cache_sooner_than_data_put_in_write_cache_by_other_means"
         xml:space="preserve">
-    <value>Los datos puestos por los comandos WRITE deben eliminarse de la caché antes que los datos puestos en la caché de escritura por otros medios</value>
+    <value>Los datos puestos por las órdenes WRITE deben eliminarse de la caché antes que los datos puestos en la caché de escritura por otros medios</value>
   </data>
     <data
         name="Data_put_by_WRITE_commands_should_not_be_evicted_if_there_is_data_cached_by_other_means_that_can_be_evicted"
         xml:space="preserve">
-    <value>Los datos puestos por los comandos WRITE no deben eliminarse si hay datos puestos en la caché por otros medios que pueden ser eliminados</value>
+    <value>Los datos puestos por las órdenes WRITE no deben eliminarse si hay datos puestos en la caché por otros medios que pueden ser eliminados</value>
   </data>
     <data name="DATA_SET_MANAGEMENT_can_receive_a_maximum_of_0_blocks_of_512_bytes" xml:space="preserve">
     <value>DATA SET MANAGEMENT puede recibir un máximo de {0} bloques de 512 bytes</value>
@@ -2785,7 +2785,7 @@
     <value>El dispositivo es conforme con la especificacón CFast</value>
   </data>
     <data name="Device_follows_compatibility_MMC_command_set" xml:space="preserve">
-    <value>El dispositivo sigue el conjunto de comandos de compatibilidad MMC.</value>
+    <value>El dispositivo sigue el conjunto de órdenes de compatibilidad MMC.</value>
   </data>
     <data name="Device_follows_IEEE_1667" xml:space="preserve">
     <value>El dispositivo es conforme con IEEE-1667</value>
@@ -2822,13 +2822,13 @@
     <value>El dispositivo sigue la especificación Secure Digital Physical Layer versión desconocida {0}.{1}.{2}.{3}</value>
   </data>
     <data name="Device_follows_standard_MMC_command_set_v4_0" xml:space="preserve">
-    <value>El dispositivo sigue el conjunto de comandos estándar MMC versión 4.0</value>
+    <value>El dispositivo sigue el conjunto de órdenes estándar MMC versión 4.0</value>
   </data>
     <data name="Device_follows_standard_MMC_command_set_with_unknown_version_code_0" xml:space="preserve">
-    <value>El dispositivo sigue el conjunto de comandos estándar MMC con código de versión desconocida {0}.</value>
+    <value>El dispositivo sigue el conjunto de órdenes estándar MMC con código de versión desconocida {0}.</value>
   </data>
     <data name="Device_follows_unknown_MMC_command_set_code_0_with_revision_code_1" xml:space="preserve">
-    <value>El dispositivo sigue el conjunto de comandos desconocido MMC con código {0} y revisión código {1}.</value>
+    <value>El dispositivo sigue el conjunto de órdenes desconocido MMC con código {0} y revisión código {1}.</value>
   </data>
     <data name="Device_has_0_blocks" xml:space="preserve">
     <value>El dispositivo tiene {0} bloques</value>
@@ -2879,7 +2879,7 @@
     <value>El dispositivo tiene desactivadas las comprobaciónes de protección de información</value>
   </data>
     <data name="Device_has_enabled_command_queuing" xml:space="preserve">
-    <value>El dispositivo tiene activado el encolado de comandos</value>
+    <value>El dispositivo tiene activado el encolado de órdenes</value>
   </data>
     <data name="Device_has_non_critical_operations_outstanding" xml:space="preserve">
     <value>El dispositivo tiene operaciones no críticas pendientes</value>
@@ -3123,13 +3123,13 @@
     <value>DEVICE RESET está soporta y activado</value>
   </data>
     <data name="Device_responded_to_ATA_command_0" xml:space="preserve">
-    <value>El dispositivo respondió al comando ATA {0:X2}h</value>
+    <value>El dispositivo respondió a la orden ATA {0:X2}h</value>
   </data>
     <data name="Device_responded_to_ATA_IDENTIFY_DEVICE_command" xml:space="preserve">
-    <value>El dispositivo respondió al comando ATA IDENTIFY DEVICE.</value>
+    <value>El dispositivo respondió a la orden ATA IDENTIFY DEVICE.</value>
   </data>
     <data name="Device_responded_to_ATA_IDENTIFY_PACKET_DEVICE_command" xml:space="preserve">
-    <value>El dispositivo respondió al comando ATA IDENTIFY PACKET DEVICE.</value>
+    <value>El dispositivo respondió a la orden ATA IDENTIFY PACKET DEVICE.</value>
   </data>
     <data name="Device_rotates_at_0_rpm" xml:space="preserve">
     <value>El dispositivo rota a {0} rpm.</value>
@@ -3234,16 +3234,16 @@
     <value>El dispositivo soporta encolado básico</value>
   </data>
     <data name="Device_supports_capability_based_command_security" xml:space="preserve">
-    <value>El dispositivo soporta comandos de seguridad basados en capacidades</value>
+    <value>El dispositivo soporta órdenes de seguridad basadas en capacidades</value>
   </data>
     <data name="Device_supports_command_queuing_with_a_depth_of_0" xml:space="preserve">
-    <value>El dispositivo soporta el encolado de comandos con una profundidad de {0}</value>
+    <value>El dispositivo soporta el encolado de órdenes con una profundidad de {0}</value>
   </data>
     <data name="Device_supports_content_protection" xml:space="preserve">
     <value>El dispositivo soporta la protección de contenido</value>
   </data>
     <data name="Device_supports_CONTINUE_TASK_and_TARGET_TRANSFER_DISABLE_commands" xml:space="preserve">
-    <value>El dispositivo soporta los comandos CONTINUE TASK y TARGET TRANSFER DISABLE</value>
+    <value>El dispositivo soporta las órdenes CONTINUE TASK y TARGET TRANSFER DISABLE</value>
   </data>
     <data name="Device_supports_Data_Tag" xml:space="preserve">
     <value>El dispositivo soporta la etiqueta de datos</value>
@@ -3270,10 +3270,10 @@
     <value>El dispositivo soporta seguridad extendida</value>
   </data>
     <data name="Device_supports_extension_register_multi_block_commands" xml:space="preserve">
-    <value>El dispositivo soporta comandos de extensión de registro multi-bloque</value>
+    <value>El dispositivo soporta órdenes de extensión de registro multi-bloque</value>
   </data>
     <data name="Device_supports_extension_register_single_block_commands" xml:space="preserve">
-    <value>El dispositivo soporta comandos de extensión de registro de bloque único</value>
+    <value>El dispositivo soporta órdenes de extensión de registro de bloque único</value>
   </data>
     <data name="Device_supports_FFU" xml:space="preserve">
     <value>El dispositivo soporta FFU</value>
@@ -3324,7 +3324,7 @@
     <value>El dispositivo soporta la fuera del controlador de E/S tipo 0.</value>
   </data>
     <data name="Device_supports_linked_commands" xml:space="preserve">
-    <value>El dispositivo soporta comandos enlazados</value>
+    <value>El dispositivo soporta órdenes enlazadas</value>
   </data>
     <data name="Device_supports_Long_Physical_Sector_Alignment_Error_Reporting_Control" xml:space="preserve">
     <value>El dispositivo soporta Control de Reporte de Errores de Alineación de Sectores Físicos Largos</value>
@@ -3384,13 +3384,13 @@
     <value>El dispositivo soporta establecer ACA normal</value>
   </data>
     <data name="Device_supports_set_block_count_command" xml:space="preserve">
-    <value>El dispositivo soporta el comando de contar bloques</value>
+    <value>El dispositivo soporta la orden de contar bloques</value>
   </data>
     <data name="Device_supports_speed_class_control_command" xml:space="preserve">
-    <value>El dispositivo soporta el comando de control de clase de velocidad</value>
+    <value>El dispositivo soporta la orden de control de clase de velocidad</value>
   </data>
     <data name="Device_supports_standard_MMC_command_set" xml:space="preserve">
-    <value>El dispositivo soporta el conjunto de comandos estándar de MMC</value>
+    <value>El dispositivo soporta el conjunto de órdenes estándar de MMC</value>
   </data>
     <data name="Device_supports_ST_and_DT_clocking" xml:space="preserve">
     <value>El dispositivo soporta los relojes ST y DT</value>
@@ -3414,10 +3414,10 @@
     <value>El dispositivo soporta la cola TCQ</value>
   </data>
     <data name="Device_supports_TERMINATE_TASK_command" xml:space="preserve">
-    <value>El dispositivo soporta el comando TERMINATE TASK</value>
+    <value>El dispositivo soporta la orden TERMINATE TASK</value>
   </data>
     <data name="Device_supports_the_barrier_command" xml:space="preserve">
-    <value>El dispositivo soporta el comando de barrera</value>
+    <value>El dispositivo soporta la orden de barrera</value>
   </data>
     <data name="Device_supports_the_ORDERED_task_attribute" xml:space="preserve">
     <value>El dispositivo soporta el atributo de tarea ORDERED</value>
@@ -3429,13 +3429,13 @@
     <value>El dispositivo soporta el atributo de tarea SIMPLE</value>
   </data>
     <data name="Device_supports_third_party_copy_commands" xml:space="preserve">
-    <value>El dispositivo soporta comandos de copia de terceras partes</value>
+    <value>El dispositivo soporta órdenes de copia de terceras partes</value>
   </data>
     <data name="Device_supports_unit_attention_condition_sense_key_specific_data" xml:space="preserve">
     <value>El dispositivo soporta datos de sense con llave específica a la condición de atención de la unidad</value>
   </data>
     <data name="Device_supports_unknown_command_sets_0" xml:space="preserve">
-    <value>El dispositivo soporta el conjunto de comandos desconocido 0x{0:X2}</value>
+    <value>El dispositivo soporta el conjunto de órdenes desconocido 0x{0:X2}</value>
   </data>
     <data name="Device_supports_vendor_specific_activation_for_new_microcode" xml:space="preserve">
     <value>El dispositivo soporta activación específica del fabricante para nuevo microcódigo</value>
@@ -3450,7 +3450,7 @@
     <value>El dispositivo soporta WORM versión {0}</value>
   </data>
     <data name="Device_support_command_classes_0" xml:space="preserve">
-    <value>El dispositivo soporta las clases de comando {0}</value>
+    <value>El dispositivo soporta las clases de orden {0}</value>
   </data>
     <data name="Device_s_clock_frequency_0_1" xml:space="preserve">
     <value>La frecuencia del reloj del dispositivo: {0}{1}</value>
@@ -3460,10 +3460,10 @@
   </data>
     <data name="Device_takes_a_maximum_of_0_by_default_to_power_off_from_a_SWITCH_command_notification"
           xml:space="preserve">
-    <value>El dispositivo toma un máximo de {0} por defecto para apagarse después de una notificación del comando SWITCH</value>
+    <value>El dispositivo toma un máximo de {0} por defecto para apagarse después de una notificación de la orden SWITCH</value>
   </data>
     <data name="Device_takes_a_maximum_of_0_ms_by_default_for_a_SWITCH_command" xml:space="preserve">
-    <value>El dispositivo toma un máximo de {0}ms por defecto en el comando SWITCH</value>
+    <value>El dispositivo toma un máximo de {0}ms por defecto en la orden SWITCH</value>
   </data>
     <data name="Device_takes_a_maximum_of_0_ms_for_erasing_a_single_erase_group" xml:space="preserve">
     <value>El dispositivo toma un máximo de {0}ms para borrar un único grupo de borrado</value>
@@ -4259,13 +4259,13 @@
     <value>DOWNLOAD MICROCODE está soportado y activado</value>
   </data>
     <data name="Drive_accepts_a_maximum_of_0_blocks_in_a_READ_command_during_rebuild" xml:space="preserve">
-    <value>La unidad acepta un máximo de {0} bloques en un comando READ durante una reconstrucción</value>
+    <value>La unidad acepta un máximo de {0} bloques en una orden READ durante una reconstrucción</value>
   </data>
     <data name="Drive_accepts_a_maximum_of_0_blocks_in_a_REGENERATE_command" xml:space="preserve">
-    <value>La unidad acepta un máximo de {0} bloques en un comando REGENERATE</value>
+    <value>La unidad acepta un máximo de {0} bloques en una orden REGENERATE</value>
   </data>
     <data name="Drive_accepts_a_maximum_of_0_blocks_in_a_single_XOR_WRITE_command" xml:space="preserve">
-    <value>La unidad acepta un máximo de {0} bloques en un único comando XOR WRITE</value>
+    <value>La unidad acepta un máximo de {0} bloques en un único orden XOR WRITE</value>
   </data>
     <data name="Drive_accepts_Packed_R_W_subchannel_data" xml:space="preserve">
     <value>La unidad acepta datos empaquetados del subcanal R-W</value>
@@ -4758,7 +4758,7 @@
     <value>El medio es extraíble</value>
   </data>
     <data name="Drive_needs_a_minimum_of_0_ms_between_READ_commands_during_rebuild" xml:space="preserve">
-    <value>La unidad necesita un mínimo de {0} ms entre comandos READ durante una reconstrucción</value>
+    <value>La unidad necesita un mínimo de {0} ms entre órdenes READ durante una reconstrucción</value>
   </data>
     <data name="Drive_needs_to_do_0_step_pulses_per_cylinder" xml:space="preserve">
     <value>La unidad necesita {0} pulsos de paso por cilindro</value>
@@ -4826,7 +4826,7 @@
     <value>La unidad debería tener {0} segmentos de caché</value>
   </data>
     <data name="Drive_should_not_reorder_the_sequence_of_write_commands_to_be_faster" xml:space="preserve">
-    <value>La unidad no debería reordenar la secuencia de los comandos de escritura para ser más rápida</value>
+    <value>La unidad no debería reordenar la secuencia de las órdenes de escritura para ser más rápida</value>
   </data>
     <data name="Drive_steps_in_0_ns" xml:space="preserve">
     <value>La unidad da pasos en {0} ns</value>
@@ -4850,7 +4850,7 @@
     <value>La unidad soporta AACS versión {0} y el disco actual está encriptado</value>
   </data>
     <data name="Drive_supports_address_mode_reservation_on_the_RESERVE_TRACK_command" xml:space="preserve">
-    <value>La unidad soporta el modo de reserva de direccionamiento en el comando RESERVE TRACK</value>
+    <value>La unidad soporta el modo de reserva de direccionamiento en la orden RESERVE TRACK</value>
   </data>
     <data name="Drive_supports_Advanced_Storage_Magneto_Optical" xml:space="preserve">
     <value>La unidad soporta Almacenamiento Avanzado - Magneto-Óptico</value>
@@ -5093,7 +5093,7 @@
     <value>La unidad soporta DVD-R DL grabados secuencialmente</value>
   </data>
     <data name="Drive_supports_Set_Minimum_Performance_with_the_SET_STREAMING_command" xml:space="preserve">
-    <value>La unidad soporta Establecer Rendimiento Mínimo con el comando SET STREAMING</value>
+    <value>La unidad soporta Establecer Rendimiento Mínimo con la orden SET STREAMING</value>
   </data>
     <data name="Drive_supports_set_release_of_PWP_status" xml:space="preserve">
     <value>La unidad soporta establecer/liberar el estado de PWP</value>
@@ -5111,13 +5111,13 @@
     <value>La unidad soporta la prueba de escritura</value>
   </data>
     <data name="Drive_supports_the_BLANK_command" xml:space="preserve">
-    <value>La unidad soporta el comando BLANK</value>
+    <value>La unidad soporta la orden BLANK</value>
   </data>
     <data name="Drive_supports_the_block_bit_in_the_READ_BUFFER_CAPACITY_command" xml:space="preserve">
-    <value>La unidad soporta el bit de bloqueo en el comando READ BUFFER CAPACITY</value>
+    <value>La unidad soporta el bit de bloqueo en la orden READ BUFFER CAPACITY</value>
   </data>
     <data name="Drive_supports_the_DAP_bit_in_the_READ_CD_and_READ_CD_MSF_commands" xml:space="preserve">
-    <value>La unidad soporta el bit DAP en los comandos READ CD y READ CD MSF</value>
+    <value>La unidad soporta el bit DAP en las órdenes READ CD y READ CD MSF</value>
   </data>
     <data name="Drive_supports_the_Group3_in_Timeout_Protect_mode_page_1Dh" xml:space="preserve">
     <value>La unidad soporte el Grupo 3 en la página de modo de Protección y Tiempo de espera 1Dh</value>
@@ -5126,10 +5126,10 @@
     <value>La unidad soporta la página de modo de Control de Excepciones Informacionales 1Ch</value>
   </data>
     <data name="Drive_supports_the_SCAN_command" xml:space="preserve">
-    <value>La unidad soporta el comando SCAN</value>
+    <value>La unidad soporta la orden SCAN</value>
   </data>
     <data name="Drive_supports_the_SET_CD_SPEED_command" xml:space="preserve">
-    <value>La unidad soporta el comando SET CD SPEED</value>
+    <value>La unidad soporta la orden SET CD SPEED</value>
   </data>
     <data name="Drive_supports_the_SWPP_bit_of_the_Timeout_and_Protect_mode_page" xml:space="preserve">
     <value>La unidad soporta el bit SWPP de la página de modo de Protección y Tiempo de espera</value>
@@ -5150,7 +5150,7 @@
   </data>
     <data name="Drive_supports_validating_the_5_bit_Mode_of_the_READ_BUFFER_and_WRITE_BUFFER_commands"
           xml:space="preserve">
-    <value>La página soporta validad el Modo de 5-bits de los comandos READ BUFFER y WRITE BUFFER</value>
+    <value>La página soporta validad el Modo de 5-bits de las órdenes READ BUFFER y WRITE BUFFER</value>
   </data>
     <data name="Drive_supports_VCPS" xml:space="preserve">
     <value>La unidad soporta VCPS</value>
@@ -5286,7 +5286,7 @@
     <value>La unidad sólo grabará un disco en formato OSSC</value>
   </data>
     <data name="Drive_will_only_respond_to_commands_if_it_has_received_a_reservation" xml:space="preserve">
-    <value>La unidad sólo responderá a los comandos si ha recibido una reserva</value>
+    <value>La unidad sólo responderá a las órdenes si ha recibido una reserva</value>
   </data>
     <data name="Drive_will_periodically_request_cleaning" xml:space="preserve">
     <value>La unidad solicitará limpieza periódicamente</value>
@@ -5420,10 +5420,10 @@
     <value>La unidad retornará CHECK CONDITION con un medio WORM manipulado</value>
   </data>
     <data name="Drive_will_return_from_playback_command_immediately" xml:space="preserve">
-    <value>La unidad volverá del comando de reproducción inmediatamente</value>
+    <value>La unidad volverá de la orden de reproducción inmediatamente</value>
   </data>
     <data name="Drive_will_return_from_playback_command_when_playback_ends" xml:space="preserve">
-    <value>La unidad volverá del comando de reproducción cuando esta termine</value>
+    <value>La unidad volverá de la orden de reproducción cuando esta termine</value>
   </data>
     <data name="Drive_will_set_Check_Condition_when_cleaning_is_needed" xml:space="preserve">
     <value>La unidad establecerá CHECK CONDITION cuando sea necesaria una limpieza</value>
@@ -6143,7 +6143,7 @@
     <data
         name="If_ACA_is_established_the_task_set_commands_shall_resume_after_it_is_cleared_otherwise_they_shall_terminate_with_CHECK_CONDITION"
         xml:space="preserve">
-    <value>Si ACA está establecido, el conjunto de comandos de tareas debería resumir al desestablecerse, si no deberían terminar con un CHECK CONDITION</value>
+    <value>Si ACA está establecido, el conjunto de órdenes de tareas debería resumir al desestablecerse, si no deberían terminar con un CHECK CONDITION</value>
   </data>
     <data name="If_set_target_shall_report_log_exception_conditions" xml:space="preserve">
     <value>Si está establecido, el destino debería reportar condiciones de excepción de anotación</value>
@@ -6350,7 +6350,7 @@
         <value>[slateblue1]Dirección del último bloque ECC escribible:[/] [lime]0x{0:X6}[/]</value>
     </data>
     <data name="Last_WRITE_MULTIPLE_command_correctly_programmed_0_sectors" xml:space="preserve">
-    <value>El último comando WRITE MULTIPLE programó {0} sectores correctamente</value>
+    <value>La última orden WRITE MULTIPLE programó {0} sectores correctamente</value>
   </data>
     <data name="Layers_are_in_opposite_track_path" xml:space="preserve">
         <value>[slateblue1]Las capas están en el camino de pista opuesto[/]</value>
@@ -6578,15 +6578,15 @@
     </data>
     <data name="Maximum_timeout_for_switch_command_when_setting_a_value_to_the_mode_operation_codes_field_is_0_ms"
           xml:space="preserve">
-    <value>El tiempo de espera máximo para cambiar el comando cuando se establece un valor en el campo de códigos del modo de operación es {0:D2}ms</value>
+    <value>El tiempo de espera máximo para cambiar la orden cuando se establece un valor en el campo de códigos del modo de operación es {0:D2}ms</value>
   </data>
     <data name="Maximum_timeout_for_switch_command_when_setting_a_value_to_the_mode_operation_codes_field_is_0_s"
           xml:space="preserve">
-    <value>El tiempo de espera máximo para cambiar el comando cuando se establece un valor en el campo de códigos del modo de operación es {0:D2}s</value>
+    <value>El tiempo de espera máximo para cambiar la orden cuando se establece un valor en el campo de códigos del modo de operación es {0:D2}s</value>
   </data>
     <data name="Maximum_timeout_for_switch_command_when_setting_a_value_to_the_mode_operation_codes_field_is_0_µs"
           xml:space="preserve">
-    <value>El tiempo de espera máximo para cambiar el comando cuando se establece un valor en el campo de códigos del modo de operación es {0:D2}µs</value>
+    <value>El tiempo de espera máximo para cambiar la orden cuando se establece un valor en el campo de códigos del modo de operación es {0:D2}µs</value>
   </data>
     <data name="Max_context_ID_is_0" xml:space="preserve">
     <value>La ID máxima de contexto es {0}.</value>
@@ -6607,10 +6607,10 @@
         <value>[slateblue1]El formateo del medio en segundo plano ha terminado[/]</value>
     </data>
     <data name="Media_Card_Pass_Through_command_set_is_supported" xml:space="preserve">
-    <value>El set de comandos de tarjetas de memoria está soportado</value>
+    <value>El set de órdenes de tarjetas de memoria está soportado</value>
   </data>
     <data name="Media_Card_Pass_Through_command_set_is_supported_and_enabled" xml:space="preserve">
-    <value>El set de comandos de tarjetas de memoria está soportado y activado</value>
+    <value>El set de órdenes de tarjetas de memoria está soportado y activado</value>
   </data>
     <data name="Media_has_been_taken_out_or_inserted_in_the_cartridge" xml:space="preserve">
         <value>[slateblue1]El medio ha sido extraído, o insertado en, el cartucho[/]</value>
@@ -7114,13 +7114,13 @@
     <value>NTSC (Norteamérica).</value>
   </data>
     <data name="Not_all_28_bit_commands_are_supported" xml:space="preserve">
-    <value>No todos los comandos de 28-bits están soportados.</value>
+    <value>No todas las órdenes de 28-bits están soportadas.</value>
   </data>
     <data name="No_additional_information" xml:space="preserve">
     <value>Sin información adicional.</value>
   </data>
     <data name="No_deferred_error_will_be_reported_to_a_rewind_command" xml:space="preserve">
-    <value>No se reportará un error retrasado a un comando de rebobinado</value>
+    <value>No se reportará un error retrasado a una orden de rebobinado</value>
   </data>
     <data name="No_disc_inserted_tray_closed_or_caddy_inserted" xml:space="preserve">
     <value>No hay disco insertado, bandeja cerrada o carrito insertado</value>
@@ -7286,7 +7286,7 @@
   </data>
     <data name="Partition_parameters_will_not_be_applied_until_a_FORMAT_MEDIUM_command_is_received"
           xml:space="preserve">
-    <value>Los parámetros de partición no se aplicarán hasta que se reciba un comando FORMAT MEDIUM</value>
+    <value>Los parámetros de partición no se aplicarán hasta que se reciba una orden FORMAT MEDIUM</value>
   </data>
     <data name="Part_version_0" xml:space="preserve">
         <value>[slateblue1]Parte versión[/] [green]{0}[/]</value>
@@ -7478,13 +7478,13 @@
     <value>La pre-lectura puede seguir a través de descontinuidades (como cilindros o pistas)</value>
   </data>
     <data name="Pre_fetch_should_be_aborted_upon_receiving_a_new_command" xml:space="preserve">
-    <value>La pre-lectura deberá abortarse al recibir un nuevo comando</value>
+    <value>La pre-lectura deberá abortarse al recibir una nueva orden</value>
   </data>
     <data name="Pre_fetch_values_indicate_a_block_multiplier" xml:space="preserve">
     <value>Los valores de pre-lectura indican un multiplicador de bloque</value>
   </data>
     <data name="Pre_fetch_will_be_done_for_READ_commands_of_0_blocks_or_less" xml:space="preserve">
-    <value>La pre-lectura se hará para los comandos READ de {0} bloques o menos</value>
+    <value>La pre-lectura se hará para las órdenes READ de {0} bloques o menos</value>
   </data>
     <data name="Primary_code_0" xml:space="preserve">
     <value>Código primaro: {0:X2}h</value>
@@ -7618,7 +7618,7 @@
         <value>[slateblue1]Pista de audio cuadrafónico sin pre-énfasis[/]</value>
     </data>
     <data name="Quantum_EEPROM_firmware_checksum_0" xml:space="preserve">
-    <value>Checksum de la EEPROM del firmware: 0x{0:X4}</value>
+    <value>Suma de comprobación de la EEPROM del firmware: 0x{0:X4}</value>
   </data>
     <data name="Quantum_Quantum_Firmware_Build_Information_page" xml:space="preserve">
     <value>Página de información de versión del firmware de Quantum:</value>
@@ -7627,10 +7627,10 @@
     <value>Fecha de versión del firmware de lectura/escritura: {0}</value>
   </data>
     <data name="Quantum_Read_write_firmware_checksum_0" xml:space="preserve">
-    <value>Checksum del firmware de lectura/escritura: 0x{0:X8}</value>
+    <value>Suma de comprobación del firmware de lectura/escritura: 0x{0:X8}</value>
   </data>
     <data name="Quantum_Servo_firmware_checksum_0" xml:space="preserve">
-    <value>Checksum del firmware del servo: 0x{0:X4}</value>
+    <value>Suma de comprobación del firmware del servo: 0x{0:X4}</value>
   </data>
     <data name="Quantum_vendor_specific_information" xml:space="preserve">
     <value>Información específica del fabricante de Quantum:</value>
@@ -7690,7 +7690,7 @@
     <value>La caché de lectura está activada</value>
   </data>
     <data name="Read_commands_can_cross_physical_block_boundaries" xml:space="preserve">
-    <value>Los comandos de lectura puede cruzar los límites de los bloques físicos</value>
+    <value>Las órdenes de lectura pueden cruzar los límites de los bloques físicos</value>
   </data>
     <data name="READ_DMA_QUEUED_and_WRITE_DMA_QUEUED_are_supported" xml:space="preserve">
     <value>READ DMA QUEUED y WRITE DMA QUEUED están soportados</value>
@@ -7929,10 +7929,10 @@
     <value>SANITIZE ANTIFREEZE LOCK EXT está soportado</value>
   </data>
     <data name="Sanitize_commands_are_specified_by_ACS_2" xml:space="preserve">
-    <value>Los comandos de sanitización están especificados por ACS-2</value>
+    <value>Las órdenes de sanitización están especificados por ACS-2</value>
   </data>
     <data name="Sanitize_commands_are_specified_by_ACS_3_or_higher" xml:space="preserve">
-    <value>Los comandos de sanitización están especificados por ACS-3 o superior</value>
+    <value>Las órdenes de sanitización están especificados por ACS-3 o superior</value>
   </data>
     <data name="Sanitize_feature_set_is_supported" xml:space="preserve">
     <value>El conjunto de funciones de sanitización están soportados</value>
@@ -8079,7 +8079,7 @@
     <value>Datos de la capa de traducción SCSI a ATA:</value>
   </data>
     <data name="SCSI_UNLOAD_command_will_not_eject_the_cartridge" xml:space="preserve">
-    <value>El comando UNLOAD no expulsará el cartucho</value>
+    <value>La orden UNLOAD no expulsará el cartucho</value>
   </data>
     <data name="SCSI_Verify_error_recovery_page" xml:space="preserve">
     <value>Página SCSI de verificación de recuperación de errores:</value>
@@ -8295,10 +8295,10 @@
     <value>SLR-5 SL</value>
   </data>
     <data name="SMART_Command_Transport_is_supported" xml:space="preserve">
-    <value>En transporte de comandos S.M.A.R.T. está soportado</value>
+    <value>En transporte de órdenes S.M.A.R.T. está soportado</value>
   </data>
     <data name="SMART_Command_Transport_SCT" xml:space="preserve">
-    <value>Transporte de comandos S.M.A.R.T. (SCT):</value>
+    <value>Transporte de órdenes S.M.A.R.T. (SCT):</value>
   </data>
     <data name="SMART_error_logging_is_supported" xml:space="preserve">
     <value>El registro de errores de S.M.A.R.T. está soportado</value>
@@ -8655,7 +8655,7 @@
     <value>El objetivo no debe liberar la señal de encendido del motor</value>
   </data>
     <data name="Target_shall_not_transfer_data_for_a_command_during_the_same_interconnect_tenancy" xml:space="preserve">
-    <value>El objetivo no debe transferir datos para un comando durante la misma interconexión</value>
+    <value>El objetivo no debe transferir datos para una orden durante la misma interconexión</value>
   </data>
     <data name="Target_shall_wait_0_seconds_after_drive_is_ready_before_aborting_medium_access_attempts"
           xml:space="preserve">
@@ -8685,7 +8685,7 @@
         <value>[slateblue1]Hay [teal]{0}[/] por bloque[/]</value>
     </data>
     <data name="There_are_commands_pending_to_be_forwarded" xml:space="preserve">
-    <value>Hay comandos pendientes de re-envío</value>
+    <value>Hay órdenes pendientes de re-envío</value>
   </data>
     <data name="There_are_no_addresses" xml:space="preserve">
     <value>No hay direcciones</value>
@@ -8988,7 +8988,7 @@
     <value>con código {0} desconocido</value>
   </data>
     <data name="Unknown_command_forwarding_code_0" xml:space="preserve">
-    <value>Código de reenvío de comandos desconocido ({0})</value>
+    <value>Código de reenvío de órdenes desconocido ({0})</value>
   </data>
     <data name="Unknown_compression_control_code_0" xml:space="preserve">
     <value>Código de control de compresión desconocido ({0})</value>
@@ -9129,7 +9129,7 @@
     <value>Código de restricciones de etiqueta WORM desconocido ({0})</value>
   </data>
     <data name="Unload_is_supported_with_outstanding_NCQ_commands" xml:space="preserve">
-    <value>Se puede descargar con comandos NCQ pendientes</value>
+    <value>Se puede descargar con órdenes NCQ pendientes</value>
   </data>
     <data name="Unrecovered_CIRC_errors_will_not_abort_the_transfer" xml:space="preserve">
     <value>Los errores CIRC no recuperables no abortarán la transferencia.</value>
@@ -9164,10 +9164,10 @@
     <value>Dirección no especificada: {0}</value>
   </data>
     <data name="URG_bit_is_supported_in_READ_STREAM_DMA_EXT_and_READ_STREAM_EXT" xml:space="preserve">
-    <value>El bit URG está soportado en los comandos READ STREAM DMA EXT y READ STREAM EXT</value>
+    <value>El bit URG está soportado en las órdenes READ STREAM DMA EXT y READ STREAM EXT</value>
   </data>
     <data name="URG_bit_is_supported_in_WRITE_STREAM_DMA_EXT_and_WRITE_STREAM_EXT" xml:space="preserve">
-    <value>El bit URG está soportado en los comandos WRITE STREAM DMA EXT y WRITE STREAM EXT</value>
+    <value>El bit URG está soportado en las órdenes WRITE STREAM DMA EXT y WRITE STREAM EXT</value>
   </data>
     <data name="USA_NTSC" xml:space="preserve">
     <value>NTSC (EEUU).</value>
@@ -9371,7 +9371,7 @@
     <value>La caché de escritura está soportada y activada</value>
   </data>
     <data name="Write_commands_can_cross_physical_block_boundaries" xml:space="preserve">
-    <value>Los comandos de escritura pueden cruzar los límites de los bloques físicos</value>
+    <value>Las órdenes de escritura pueden cruzar los límites de los bloques físicos</value>
   </data>
     <data name="Write_current_reduction_starts_at_cylinder_0" xml:space="preserve">
     <value>La reducción de la corriente en escritura comienza en el cilindro {0}</value>
@@ -9507,7 +9507,7 @@
   </data>
     <data name="_0_bytes_maximum_can_be_transferred_for_a_command_along_with_the_disconnect_command"
           xml:space="preserve">
-    <value>como máximo {0} bytes puede ser transferidos durante un comando junto al comando de desconexión</value>
+    <value>como máximo {0} bytes puede ser transferidos durante una orden junto a la orden de desconexión</value>
   </data>
     <data name="_0_bytes_per_logical_block" xml:space="preserve">
     <value>{0} bytes por bloque lógico</value>

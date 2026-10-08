@@ -156,7 +156,7 @@
     <value>Construyendo mapas de desplazamiento, pista y sesión</value>
   </data>
     <data name="Calculated_checksum_equals_0_X8_1" xml:space="preserve">
-    <value>Checksum calculado = 0x{0:X8}, {1}</value>
+    <value>Suma de comprobación calculada = 0x{0:X8}, {1}</value>
   </data>
     <data name="Calculated_CRC32_0" xml:space="preserve">
     <value>CRC32 calculado: {0}</value>
@@ -168,13 +168,13 @@
     <value>CRC calculado = 0x{0:X4}</value>
   </data>
     <data name="Calculated_data_checksum_equals_0_X8" xml:space="preserve">
-    <value>Checksum de los datos calculado = 0x{0:X8}</value>
+    <value>Suma de comprobación de los datos calculada = 0x{0:X8}</value>
   </data>
     <data name="Calculated_data_CRC_equals_0_X8_1" xml:space="preserve">
     <value>CRC de los datos calculado = 0x{0:X8}, {1}</value>
   </data>
     <data name="Calculated_header_checksum_equals_0_X2_1" xml:space="preserve">
-    <value>Checksum de la cabecera calculado = 0x{0:X2}, {1}</value>
+    <value>Suma de comprobación de la cabecera calculada = 0x{0:X2}, {1}</value>
   </data>
     <data name="calculated_header_crc_equals_0_X4" xml:space="preserve">
     <value>CRC de la cabecera calculado = 0x{0:X4}</value>
@@ -186,7 +186,7 @@
     <value>SHA1 calculado: {0}</value>
   </data>
     <data name="Calculated_tag_checksum_equals_0_X8" xml:space="preserve">
-    <value>Checksum de las etiquetas calculado = 0x{0:X8}</value>
+    <value>Suma de comprobación de las etiquetas calculada = 0x{0:X8}</value>
   </data>
     <data name="Calculate_and_store_MD5_of_image_user_data" xml:space="preserve">
     <value>Calcula y almacena el MD5 de los datos de usuario de la imagen</value>
@@ -201,10 +201,10 @@
     <value>Calcula y almacena el SpamSum de los datos de usuario de la imagen</value>
   </data>
     <data name="Calculating_data_checksum" xml:space="preserve">
-    <value>Calculando checksum de datos</value>
+    <value>Calculando suma de comprobación de datos</value>
   </data>
     <data name="Calculating_tag_checksum" xml:space="preserve">
-    <value>Calculando checksum de etiquetas</value>
+    <value>Calculando suma de comprobación de etiquetas</value>
   </data>
     <data name="Canada" xml:space="preserve">
     <value>Canadá</value>
@@ -333,7 +333,7 @@
     <value>Comprobando integridad del índice en {0}</value>
   </data>
     <data name="Checksum_0_X4" xml:space="preserve">
-    <value>Checksum: 0x{0:X4}</value>
+    <value>Suma de comprobación: 0x{0:X4}</value>
   </data>
     <data name="China" xml:space="preserve">
     <value>China</value>
@@ -735,7 +735,7 @@
     <value>No sé cómo gestionar los extents "{0}".</value>
   </data>
     <data name="Dynamic_header_checksum_equals_0_X8_calculated_1_X8" xml:space="preserve">
-    <value>Checksum de la cabecera dinámica = 0x{0:X8}, calculado = 0x{1:X8}</value>
+    <value>Suma de comprobación de la cabecera dinámica = 0x{0:X8}, calculada = 0x{1:X8}</value>
   </data>
     <data name="Enable_Apridisk_compression" xml:space="preserve">
     <value>Activar la compresión de Apridisk.</value>
@@ -882,7 +882,7 @@
     <value>Llenando extents</value>
   </data>
     <data name="Filling_the_BAT_took_0_seconds" xml:space="preserve">
-    <value>Llenar la BAT tomó {0} segundos</value>
+    <value>Llenar la BAT tardó {0} segundos</value>
   </data>
     <data name="Finland" xml:space="preserve">
     <value>Finlandia</value>
@@ -1401,16 +1401,16 @@
     <value>Imagen de disco de HD-Copy</value>
   </data>
     <data name="Header_checksum_0" xml:space="preserve">
-    <value>Checksum de la cabecera: 0x{0:X2}</value>
+    <value>Suma de comprobación de la cabecera: 0x{0:X2}</value>
   </data>
     <data name="Header_checksum_0_X4" xml:space="preserve">
-    <value>Checksum de la cabecera: 0x{0:X4}</value>
+    <value>Suma de comprobación de la cabecera: 0x{0:X4}</value>
   </data>
     <data name="Header_checksum_complement_0" xml:space="preserve">
-    <value>Complemento del checksum de la cabecera: 0x{0:X4}</value>
+    <value>Complemento de la suma de comprobación de la cabecera: 0x{0:X4}</value>
   </data>
     <data name="Header_checksum_equals_0_X8_calculated_equals_1_X8" xml:space="preserve">
-    <value>Checksum de la cabecera = 0x{0:X8}, calculado = 0x{1:X8}</value>
+    <value>Suma de comprobación de la cabecera = 0x{0:X8}, calculada = 0x{1:X8}</value>
   </data>
     <data name="How_many_sectors_to_store_per_block_will_be_rounded_to_next_power_of_two" xml:space="preserve">
     <value>Cuántos sectores guardar por bloque (se aproximará a la siguiente potencia de dos)</value>
@@ -2018,7 +2018,7 @@
     <value>Leyendo mapa de bloques de la imagen</value>
   </data>
     <data name="Reading_Image_Block_Map_took_0_ms" xml:space="preserve">
-    <value>La lectura del mapa de bloques de la imagen tomó {0} ms</value>
+    <value>La lectura del mapa de bloques de la imagen tardó {0} ms</value>
   </data>
     <data name="Reading_L1_table" xml:space="preserve">
     <value>Leyendo tabla L1</value>
@@ -2339,10 +2339,10 @@
     <value>Pista de comienzo: {0}</value>
   </data>
     <data name="Stored_data_checksum_equals_0_X8" xml:space="preserve">
-    <value>Checksum almacenado de los datos = 0x{0:X8}</value>
+    <value>Suma de comprobación almacenada de los datos = 0x{0:X8}</value>
   </data>
     <data name="Stored_tag_checksum_equals_0_X8" xml:space="preserve">
-    <value>Checksum almacenado de las etiquetas = 0x{0:X8}</value>
+    <value>Suma de comprobación almacenada de las etiquetas = 0x{0:X8}</value>
   </data>
     <data name="Store_only_unique_sectors_This_consumes_more_memory_and_is_slower_but_its_enabled_by_default"
           xml:space="preserve">
@@ -2455,61 +2455,61 @@
     <value>Longitud de TOC {0}</value>
   </data>
     <data name="Took_0_ms_to_deinterleave_subchannel" xml:space="preserve">
-    <value>Tomó {0}ms desentrelazar el subcanal.</value>
+    <value>Tardó {0}ms desentrelazar el subcanal.</value>
   </data>
     <data name="Took_0_ms_to_desequentialize_subchannel" xml:space="preserve">
-    <value>Tomó {0}ms des-secuencializar el subcanal.</value>
+    <value>Tardó {0}ms des-secuencializar el subcanal.</value>
   </data>
     <data name="Took_0_ms_to_interleave_subchannel" xml:space="preserve">
-    <value>Tomó {0}ms entrelazar el subcanal.</value>
+    <value>Tardó {0}ms entrelazar el subcanal.</value>
   </data>
     <data name="Took_0_ms_to_sequentialize_subchannel" xml:space="preserve">
-    <value>Tomó {0}ms secuencializar el subcanal.</value>
+    <value>Tardó {0}ms secuencializar el subcanal.</value>
   </data>
     <data name="Took_0_ms_to_transform_subchannel" xml:space="preserve">
-    <value>Tomó {0}ms transformar el subcanal.</value>
+    <value>Tardó {0}ms transformar el subcanal.</value>
   </data>
     <data name="Took_0_ms_to_untransform_subchannel" xml:space="preserve">
-    <value>Tomó {0}ms des-transformar el subcanal.</value>
+    <value>Tardó {0}ms des-transformar el subcanal.</value>
   </data>
     <data name="Took_0_seconds" xml:space="preserve">
-    <value>Tomó {0} segundos</value>
+    <value>Tardó {0} segundos</value>
   </data>
     <data name="Took_0_seconds_to_compress_CPR_MAI" xml:space="preserve">
-    <value>Tomó {0} segundos comprimir CPR_MAI</value>
+    <value>Tardó {0} segundos comprimir CPR_MAI</value>
   </data>
     <data name="Took_0_seconds_to_compress_decrypted_DVD_title_keys" xml:space="preserve">
-    <value>Tomó {0} segundos comprimir las llaves de título de DVD desencriptadas</value>
+    <value>Tardó {0} segundos comprimir las llaves de título de DVD desencriptadas</value>
   </data>
     <data name="Took_0_seconds_to_compress_EDC" xml:space="preserve">
-    <value>Tomó {0} segundos comprimir EDC</value>
+    <value>Tardó {0} segundos comprimir EDC</value>
   </data>
     <data name="Took_0_seconds_to_compress_ID" xml:space="preserve">
-    <value>Tomó {0} segundos comprimir ID</value>
+    <value>Tardó {0} segundos comprimir ID</value>
   </data>
     <data name="Took_0_seconds_to_compress_IED" xml:space="preserve">
-    <value>Tomó {0} segundos comprimir IED</value>
+    <value>Tardó {0} segundos comprimir IED</value>
   </data>
     <data name="Took_0_seconds_to_compress_MODE2_subheaders" xml:space="preserve">
-    <value>Tomó {0} segundos comprimir subcanales del modo 2</value>
+    <value>Tardó {0} segundos comprimir subcanales del modo 2</value>
   </data>
     <data name="Took_0_seconds_to_compress_prefix" xml:space="preserve">
-    <value>Tomó {0} segundos comprimir el prefijo</value>
+    <value>Tardó {0} segundos comprimir el prefijo</value>
   </data>
     <data name="Took_0_seconds_to_compress_subchannel" xml:space="preserve">
-    <value>Tomó {0} segundos comprimir el subcanal</value>
+    <value>Tardó {0} segundos comprimir el subcanal</value>
   </data>
     <data name="Took_0_seconds_to_compress_suffix" xml:space="preserve">
-    <value>Tomó {0} segundos comprimir el sufijo</value>
+    <value>Tardó {0} segundos comprimir el sufijo</value>
   </data>
     <data name="Took_0_seconds_to_decompress_block" xml:space="preserve">
-    <value>Tomó {0} segundos descomprimir el bloque</value>
+    <value>Tardó {0} segundos descomprimir el bloque</value>
   </data>
     <data name="Took_0_seconds_to_decompress_DDT" xml:space="preserve">
-    <value>Tomó {0} segundos descomprimir la DDT</value>
+    <value>Tardó {0} segundos descomprimir la DDT</value>
   </data>
     <data name="Took_0_seconds_to_fill_extents" xml:space="preserve">
-    <value>Tomó {0} segundos rellenar los extentes</value>
+    <value>Tardó {0} segundos rellenar los extentes</value>
   </data>
     <data name="Too_many_cylinders" xml:space="preserve">
     <value>Demasiados cilindros.</value>
@@ -2581,7 +2581,7 @@
     <value>La cabecera de pista en {0} tiene una firma incorrecta.</value>
   </data>
     <data name="Track_header_CRC_0_X2_calculated_1_X2" xml:space="preserve">
-    <value>CRC de la cabecera de la pista: 0x{0:X2} (calculado 0x{1:X2})</value>
+    <value>CRC de la cabecera de la pista: 0x{0:X2} (calculada 0x{1:X2})</value>
   </data>
     <data name="Track_head_0" xml:space="preserve">
     <value>Cabeza de la pista: {0}</value>

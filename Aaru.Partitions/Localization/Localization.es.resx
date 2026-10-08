@@ -194,7 +194,7 @@
     <value>BootStar</value>
   </data>
     <data name="Boot_code_checksum_0_X8" xml:space="preserve">
-    <value>Checksum del código de arranque: 0x{0:X8}</value>
+    <value>Suma de comprobación del código de arranque: 0x{0:X8}</value>
   </data>
     <data name="Boot_code_SHA1_0" xml:space="preserve">
     <value>SHA1 del código de arranque: {0}</value>
