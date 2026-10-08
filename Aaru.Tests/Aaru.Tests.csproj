@@ -34,6 +34,7 @@
     <ProjectReference Include="..\Aaru.Archives\Aaru.Archives.csproj"/>
     <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
     <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Compression\Aaru.Compression.csproj"/>
     <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj"/>
     <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"/>
     <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"/>
