@@ -36,8 +36,4 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
         DriveFirmwareRevision = null
     };
 
-    public uint    HeldDpmStartSector     { get; set; }
-    public uint    HeldDpmResolution      { get; set; }
-    public uint    HeldNumberOfDpmEntries { get; set; }
-    public ulong[] HeldDpm                { get; set; }
 }

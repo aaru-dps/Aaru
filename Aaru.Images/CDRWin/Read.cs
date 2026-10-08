@@ -40,6 +40,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Aaru.Logging;
@@ -1610,20 +1611,10 @@ public sealed partial class CdrWin
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, negative, 1, tag, out buffer);
 
-    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
-                               out ulong[] dpm)
+    /// <inheritdoc />
+    public ErrorNumber ReadDpm(out DataPositionMeasurement dpm)
     {
-        dpmStartSector     = 0;
-        dpmResolution      = 0;
-        numberOfDpmEntries = 0;
-        dpm                = null;
-
-        return ErrorNumber.NotSupported;
-    }
-
-    public ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm)
-    {
-        dpm = null;
+        dpm = default(DataPositionMeasurement);
 
         return ErrorNumber.NotSupported;
     }

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,6 +40,7 @@ using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.DVD;
 using Aaru.Helpers;
 using Aaru.Logging;
@@ -95,54 +97,9 @@ public sealed partial class Alcohol120
 
         if(_header.version[0] > MAXIMUM_SUPPORTED_VERSION) return ErrorNumber.NotSupported;
 
-        // DPM Reading Start
-        if(_header.discMetadataOffset != 0)
-        {
-            stream.Seek(_header.discMetadataOffset, SeekOrigin.Begin);
-            var blocks = new byte[4];
-            stream.EnsureRead(blocks, 0, 4);
+        _dpm = null;
 
-            // Only the DPM metadata block is currently read, as it's currently unknown what any of the other blocks represent.
-            _alcBlockCount        = Marshal.SpanToStructureLittleEndian<uint>(blocks);
-            _alcBlockStartAddress = new uint[_alcBlockCount];
-
-            for(int i = 0; i < _alcBlockCount; i++)
-            {
-                var startA = new byte[4];
-                stream.EnsureRead(startA, 0, 4);
-                _alcBlockStartAddress[i] = Marshal.SpanToStructureLittleEndian<uint>(startA);
-            }
-
-            stream.Seek(_alcBlockStartAddress[0], SeekOrigin.Begin);
-            var firstBlockTypeBytes = new byte[4];
-            stream.EnsureRead(firstBlockTypeBytes, 0, 4);
-            uint firstBlockType = Marshal.SpanToStructureLittleEndian<uint>(firstBlockTypeBytes);
-
-            // This value indicates what kind of block it is. DPM is 01. Other, non-dpm block types have
-            // been observed, but their purpose is currently unknown
-            if(firstBlockType == 1)
-            {
-                _dpmPresent = true;
-                var dpmBlockHdr = new byte[12];
-                stream.EnsureRead(dpmBlockHdr, 0, 12);
-                _dpmBlockHeader = Marshal.SpanToStructureLittleEndian<DPM>(dpmBlockHdr);
-                var dpmBytes = new byte[_dpmBlockHeader.numberOfDpmEntries * 4];
-                stream.EnsureRead(dpmBytes, 0, dpmBytes.Length);
-                ReadOnlySpan<byte> span = dpmBytes;
-                _dpm = new uint[_dpmBlockHeader.numberOfDpmEntries];
-                _dpm = MemoryMarshal.Cast<byte, uint>(span)[..(int)_dpmBlockHeader.numberOfDpmEntries].ToArray();
-            }
-            else
-            {
-                _dpmPresent = false;
-            }
-        }
-        else
-        {
-            _dpmPresent = false;
-        }
-
-        // DPM Reading End
+        if(_header.discMetadataOffset != 0) ReadDpmBlock(stream);
 
         stream.Seek(_header.sessionOffset, SeekOrigin.Begin);
         _alcSessions = new Dictionary<int, Session>();
@@ -782,61 +739,89 @@ public sealed partial class Alcohol120
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
-                               out ulong[] dpm)
+    public ErrorNumber ReadDpm(out DataPositionMeasurement dpm)
     {
-        if(_dpmPresent)
-        {
-            dpmStartSector     = _dpmBlockHeader.dpmStartSector;
-            dpmResolution      = _dpmBlockHeader.dpmResolution;
-            numberOfDpmEntries = _dpmBlockHeader.numberOfDpmEntries;
-            dpm                = new ulong[numberOfDpmEntries];
+        dpm = _dpm ?? default(DataPositionMeasurement);
 
-            // Arbitrary multiplication. If you want to go lower than a120's minimum dpm resolution of 50, you start
-            // losing precision since cumulative hex angles are only stored as uint32. Outside of this, the format a120
-            // /mds uses is otherwise as perfect as DPM storage realistically can be, so aaru can just give a bit of
-            // extra room for more possible values.
-
-            for(uint i = 0; i < numberOfDpmEntries; i++)
-            {
-                dpm[i] = (ulong)_dpm[i] * (ulong)10000;
-            }
-
-            return ErrorNumber.NoError;
-        }
-        else
-        {
-            dpmStartSector     = 0;
-            dpmResolution      = 0;
-            numberOfDpmEntries = 0;
-            dpm                = null;
-
-            return ErrorNumber.NoData;
-        }
+        return _dpm.HasValue ? ErrorNumber.NoError : ErrorNumber.NoData;
     }
 
-    public ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm)
+    /// <summary>Reads the DPM from the disc metadata blocks, if there is one</summary>
+    /// <param name="stream">Descriptor stream</param>
+    void ReadDpmBlock(Stream stream)
     {
-        if(_dpmPresent)
+        var buffer = new byte[16];
+
+        stream.Seek(_header.discMetadataOffset, SeekOrigin.Begin);
+        stream.EnsureRead(buffer, 0, 4);
+        uint blockCount = BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+
+        if(blockCount == 0 || _header.discMetadataOffset + 4 + (long)blockCount * 4 > stream.Length) return;
+
+        var blockOffsets = new byte[blockCount * 4];
+        stream.EnsureRead(blockOffsets, 0, blockOffsets.Length);
+
+        // Other block types have been seen, e.g. type 2 with a single value that looks like a sector count, but their
+        // meaning is unknown, so only the first DPM block is read.
+        for(int i = 0; i < blockCount; i++)
         {
-            if(sectorAddress % _dpmBlockHeader.dpmResolution != 0)
+            uint blockOffset = BinaryPrimitives.ReadUInt32LittleEndian(blockOffsets.AsSpan(i * 4));
+
+            if(blockOffset + 16L > stream.Length) continue;
+
+            stream.Seek(blockOffset, SeekOrigin.Begin);
+            stream.EnsureRead(buffer, 0, 16);
+
+            if(BinaryPrimitives.ReadUInt32LittleEndian(buffer) != DPM_BLOCK_TYPE) continue;
+
+            DpmBlock header = Marshal.SpanToStructureLittleEndian<DpmBlock>(buffer.AsSpan(4));
+
+            if(header.dpmResolution      == 0 ||
+               header.numberOfDpmEntries == 0 ||
+               blockOffset + 16L + header.numberOfDpmEntries * 4L > stream.Length)
             {
-                dpm = null;
+                AaruLogging.Debug(MODULE_NAME, "Invalid DPM block, ignoring it.");
 
-                return ErrorNumber.NoData;
+                return;
             }
-            else
+
+            var values = new byte[header.numberOfDpmEntries * 4];
+            stream.EnsureRead(values, 0, values.Length);
+
+            var entries = new DpmEntry[header.numberOfDpmEntries + 1];
+
+            entries[0] = new DpmEntry
             {
-                dpm = _dpm[sectorAddress / _dpmBlockHeader.dpmResolution] * 10000;
+                Lba = header.dpmStartSector
+            };
 
-                return ErrorNumber.NoError;
+            for(int e = 0; e < header.numberOfDpmEntries; e++)
+            {
+                entries[e + 1] = new DpmEntry
+                {
+                    Lba   = header.dpmStartSector + (ulong)(e + 1) * header.dpmResolution,
+                    Angle = BinaryPrimitives.ReadUInt32LittleEndian(values.AsSpan(e * 4)) * Dpm.UNITS_PER_ALCOHOL_UNIT
+                };
             }
-        }
-        else
-        {
-            dpm = null;
 
-            return ErrorNumber.NoData;
+            var dpm = new DataPositionMeasurement
+            {
+                NominalSpacing = header.dpmResolution,
+                LayerEnds      = [],
+                Entries        = entries,
+                Calibrations   = []
+            };
+
+            if(!Dpm.Validate(dpm))
+            {
+                AaruLogging.Debug(MODULE_NAME, "Invalid DPM block, ignoring it.");
+
+                return;
+            }
+
+            _dpm = dpm;
+
+            return;
         }
     }
 

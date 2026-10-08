@@ -157,7 +157,7 @@ public sealed partial class Cdrdao
     }
 
     /// <inheritdoc />
-    public bool WriteDPM()
+    public bool SetDpm(DataPositionMeasurement dpm)
     {
         ErrorMessage = Localization.Unsupported_feature;
 

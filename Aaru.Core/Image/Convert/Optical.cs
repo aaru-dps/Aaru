@@ -128,16 +128,15 @@ public partial class Convert
         // Write MCN
         if(mcn != null) outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
 
-        var     errorNumber = inputOptical.ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm);
-
-        if(errorNumber == ErrorNumber.NoError)
+        // Write Data Position Measurement
+        if(inputOptical.ReadDpm(out DataPositionMeasurement dpm) == ErrorNumber.NoError)
         {
-            outputOptical.HeldDpmStartSector     = dpmStartSector;
-            outputOptical.HeldDpmResolution      = dpmResolution;
-            outputOptical.HeldNumberOfDpmEntries = numberOfDpmEntries;
-            outputOptical.HeldDpm                = dpm;
+            if(outputOptical.SetDpm(dpm))
+                UpdateStatus?.Invoke(UI.Written_DPM_to_output_image);
+            else
+                ErrorMessage?.Invoke(string.Format(UI.Error_0_writing_DPM_to_output_image_continuing,
+                                                   outputOptical.ErrorMessage));
         }
-
 
         if(!IsCompactDiscMedia(inputOptical.Info.MediaType) || !_generateSubchannels) return ErrorNumber.NoError;
 

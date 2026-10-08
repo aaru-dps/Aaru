@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Aaru.Logging;
 using Marshal = System.Runtime.InteropServices.Marshal;
@@ -66,7 +67,7 @@ public sealed partial class AaruFormat
 #region IWritableOpticalImage Members
 
     /// <inheritdoc />
-    public bool WriteDPM()
+    public bool SetDpm(DataPositionMeasurement dpm)
     {
         ErrorMessage = Localization.Unsupported_feature;
 
@@ -208,7 +209,6 @@ public sealed partial class AaruFormat
             Version version      = typeof(AaruFormat).Assembly.GetName().Version;
             var     majorVersion = (byte)(version?.Major ?? 0);
             var     minorVersion = (byte)(version?.Minor ?? 0);
-
 
             const string applicationName = "Aaru";
 

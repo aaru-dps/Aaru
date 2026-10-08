@@ -139,9 +139,8 @@ public sealed partial class CloneCd
         }
     }
 
-
     /// <inheritdoc />
-    public bool WriteDPM()
+    public bool SetDpm(DataPositionMeasurement dpm)
     {
         ErrorMessage = Localization.Unsupported_feature;
 
@@ -285,11 +284,6 @@ public sealed partial class CloneCd
 
         return true;
     }
-
-    public uint    HeldDpmStartSector     { get; set; }
-    public uint    HeldDpmResolution      { get; set; }
-    public uint    HeldNumberOfDpmEntries { get; set; }
-    public ulong[] HeldDpm                { get; set; }
 
     /// <inheritdoc />
     public bool SetTracks(List<Track> tracks)

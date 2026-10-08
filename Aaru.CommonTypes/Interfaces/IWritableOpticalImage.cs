@@ -46,18 +46,6 @@ namespace Aaru.CommonTypes.Interfaces;
 /// <summary>Defines an image that is writable and can store an optical disc (CD, DVD, etc)</summary>
 public interface IWritableOpticalImage : IWritableImage, IOpticalMediaImage
 {
-    /// <summary>Start sector for DPM</summary>
-    uint    HeldDpmStartSector     { get; set; }
-
-    /// <summary>Resolution for DPM</summary>
-    uint    HeldDpmResolution      { get; set; }
-
-    /// <summary>Number of DPM entries.</summary>
-    uint    HeldNumberOfDpmEntries { get; set; }
-
-    /// <summary>Array of DPM entries.</summary>
-    ulong[] HeldDpm                { get; set; }
-
     /// <summary>Image format capabilities</summary>
     OpticalImageCapabilities OpticalCapabilities { get; }
 
@@ -66,7 +54,8 @@ public interface IWritableOpticalImage : IWritableImage, IOpticalMediaImage
     /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
     bool SetTracks(List<Track> tracks);
 
-    /// <summary>Writes DPM data to the image</summary>
+    /// <summary>Sets the disc's Data Position Measurement (DPM)</summary>
+    /// <param name="dpm">The disc's DPM</param>
     /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
-    bool WriteDPM();
+    bool SetDpm(DataPositionMeasurement dpm);
 }

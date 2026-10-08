@@ -5812,4 +5812,10 @@ Do you want to continue?</value>
     <data name="C2_repair_help" xml:space="preserve">
         <value>Re-read and repair audio sectors the drive concealed (C2 error pointers), rewriting recovered samples. Enabled by default; valid only for CD with audio.</value>
     </data>
+    <data name="Written_DPM_to_output_image" xml:space="preserve">
+        <value>[slateblue1]Written Data Position Measurement to output image.[/]</value>
+    </data>
+    <data name="Error_0_writing_DPM_to_output_image_continuing" xml:space="preserve">
+        <value>[olive]Error [red]{0}[/] writing Data Position Measurement to output image, continuing...[/]</value>
+    </data>
 </root>

@@ -3162,4 +3162,7 @@
     <data name="Qrst_track_decompression_yielded_incomplete_data" xml:space="preserve">
         <value>La descompresión de la pista QRST produjo datos incompletos.</value>
     </data>
+    <data name="Invalid_DPM" xml:space="preserve">
+        <value>Medición de Posición de Datos no válida.</value>
+    </data>
 </root>

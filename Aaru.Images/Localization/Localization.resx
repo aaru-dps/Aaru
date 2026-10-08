@@ -3184,4 +3184,7 @@
     <data name="Qrst_track_decompression_yielded_incomplete_data" xml:space="preserve">
         <value>QRST track decompression yielded incomplete data.</value>
     </data>
+    <data name="Invalid_DPM" xml:space="preserve">
+        <value>Invalid Data Position Measurement.</value>
+    </data>
 </root>

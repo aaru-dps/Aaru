@@ -97,7 +97,6 @@ public sealed partial class Redumper
         return ErrorNumber.NoSuchFile;
     }
 
-
     /// <inheritdoc />
     public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
     {
@@ -199,21 +198,9 @@ public sealed partial class Redumper
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
-                               out ulong[] dpm)
+    public ErrorNumber ReadDpm(out DataPositionMeasurement dpm)
     {
-        dpmStartSector     = 0;
-        dpmResolution      = 0;
-        numberOfDpmEntries = 0;
-        dpm                = null;
-
-        return ErrorNumber.NotSupported;
-    }
-
-    /// <inheritdoc />
-    public ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm)
-    {
-        dpm = null;
+        dpm = default(DataPositionMeasurement);
 
         return ErrorNumber.NotSupported;
     }

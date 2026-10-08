@@ -11459,5 +11459,17 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Written_DPM_to_output_image {
+            get {
+                return ResourceManager.GetString("Written_DPM_to_output_image", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_writing_DPM_to_output_image_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_writing_DPM_to_output_image_continuing", resourceCulture);
+            }
+        }
+        
     }
 }

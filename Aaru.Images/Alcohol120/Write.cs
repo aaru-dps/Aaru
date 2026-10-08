@@ -147,6 +147,7 @@ public sealed partial class Alcohol120
                  };
 
         _trackFlags = new Dictionary<byte, byte>();
+        _dpm        = null;
 
         IsWriting    = true;
         ErrorMessage = null;
@@ -154,7 +155,8 @@ public sealed partial class Alcohol120
         return true;
     }
 
-    public bool WriteDPM()
+    /// <inheritdoc />
+    public bool SetDpm(DataPositionMeasurement dpm)
     {
         if(!IsWriting)
         {
@@ -163,46 +165,46 @@ public sealed partial class Alcohol120
             return false;
         }
 
-        // Ideally this would more intelligently read where to seek to, but since filename isn't stored in a variable
-        // readable from here, the length must be assumed.
-        int seekOffset = (int)_alcFooter.filenameOffset + Encoding.Unicode.GetBytes("*.mdf").Length + 2;
-        _descriptorStream.Seek(seekOffset, SeekOrigin.Begin);
-
-        // Ideally writing the initial disc metadata block info would be separate from writing the DPM, but the DPM will
-        // be the first (and likely only, at least for a long time) disc metadata block written.
-        byte[] oneUint32 = [0x01, 0x00, 0x00, 0x00];
-        _descriptorStream.Write(oneUint32, 0, oneUint32.Length);
-        uint   dpmMetadataOffset      = (uint)(_descriptorStream.Position + 4);
-        byte[] dpmMetadataOffsetBytes = new byte[4];
-        BinaryPrimitives.WriteUInt32LittleEndian(dpmMetadataOffsetBytes, dpmMetadataOffset);
-        _descriptorStream.Write(dpmMetadataOffsetBytes, 0, dpmMetadataOffsetBytes.Length);
-
-        // Write dpm block header
-        _descriptorStream.Write(oneUint32, 0, oneUint32.Length);
-
-        var dpmBlockHdr = new DPM
+        if(!Dpm.Validate(dpm))
         {
-            dpmStartSector     = HeldDpmStartSector,
-            dpmResolution      = HeldDpmResolution,
-            numberOfDpmEntries = HeldNumberOfDpmEntries,
-        };
+            ErrorMessage = Localization.Invalid_DPM;
 
-        var  block    = new byte[Marshal.SizeOf<DPM>()];
-        nint blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DPM>());
-        System.Runtime.InteropServices.Marshal.StructureToPtr(dpmBlockHdr, blockPtr, true);
-        System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
-        System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
-        _descriptorStream.Write(block, 0, block.Length);
-
-        foreach(ulong dpmValue in HeldDpm)
-        {
-            uint   writeDpmValue          = (uint)(dpmValue / 10000);
-            byte[] dpmValueBytes = new byte[4];
-            BinaryPrimitives.WriteUInt32LittleEndian(dpmValueBytes, writeDpmValue);
-            _descriptorStream.Write(dpmValueBytes, 0, dpmValueBytes.Length);
+            return false;
         }
 
+        // Alcohol 120% can only store a uniform grid of whole 1/256 turn angles, so status, calibrations and layer
+        // information are lost.
+        if(dpm.Calibrations?.Length > 0 || dpm.LayerEnds?.Length > 0 || dpm.TimingUnit != 0)
+            AaruLogging.Debug(MODULE_NAME, "DPM measurement details cannot be stored and will be lost.");
+
+        _dpm = dpm;
+
         return true;
+    }
+
+    /// <summary>Writes the DPM as the only disc metadata block, at the current position of the descriptor</summary>
+    void WriteDpmBlock()
+    {
+        DataPositionMeasurement dpm    = _dpm.Value;
+        ulong[]                 angles = Dpm.ToGrid(dpm, dpm.NominalSpacing);
+        var                     block  = new byte[24 + angles.Length * 4];
+
+        // One disc metadata block, starting right after its offset
+        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(0), 1);
+        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(4), (uint)(_descriptorStream.Position + 8));
+        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(8), DPM_BLOCK_TYPE);
+        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(12), (uint)dpm.Entries[0].Lba);
+        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(16), dpm.NominalSpacing);
+        BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(20), (uint)angles.Length);
+
+        for(int i = 0; i < angles.Length; i++)
+        {
+            BinaryPrimitives.WriteUInt32LittleEndian(block.AsSpan(24 + i * 4),
+                                                     (uint)((angles[i] + Dpm.UNITS_PER_ALCOHOL_UNIT / 2) /
+                                                            Dpm.UNITS_PER_ALCOHOL_UNIT));
+        }
+
+        _descriptorStream.Write(block, 0, block.Length);
     }
 
     /// <inheritdoc />
@@ -524,11 +526,6 @@ public sealed partial class Alcohol120
 
         return true;
     }
-
-    public uint    HeldDpmStartSector     { get; set; }
-    public uint    HeldDpmResolution      { get; set; }
-    public uint    HeldNumberOfDpmEntries { get; set; }
-    public ulong[] HeldDpm                { get; set; }
 
     /// <inheritdoc />
     public bool SetTracks(List<CommonTypes.Structs.Track> tracks)
@@ -1017,9 +1014,8 @@ public sealed partial class Alcohol120
 
         byte[] filename = Encoding.Unicode.GetBytes("*.mdf"); // Yup, Alcohol stores no filename but a wildcard.
 
-        if(HeldDpm.Length > 0)
+        if(_dpm.HasValue)
         {
-            _dpmPresent = true;
             header.discMetadataOffset = _alcFooter.filenameOffset + (uint)filename.Length + 2; // 2 added because of the eventually written null termination.
         }
 
@@ -1140,8 +1136,7 @@ public sealed partial class Alcohol120
         _descriptorStream.Write(new byte[2], 0, 2);
 
         // Write DPM
-        if(_dpmPresent)
-            WriteDPM();
+        if(_dpm.HasValue) WriteDpmBlock();
 
         _descriptorStream.Flush();
         _descriptorStream.Close();

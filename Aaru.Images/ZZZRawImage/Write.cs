@@ -176,7 +176,7 @@ public sealed partial class ZZZRawImage
     }
 
     /// <inheritdoc />
-    public bool WriteDPM()
+    public bool SetDpm(DataPositionMeasurement dpm)
     {
         ErrorMessage = Localization.Unsupported_feature;
 
@@ -325,11 +325,6 @@ public sealed partial class ZZZRawImage
 
         return WriteSectors(cooked, sectorAddress, negative, length, sectorStatus);
     }
-
-    public uint    HeldDpmStartSector     { get; set; }
-    public uint    HeldDpmResolution      { get; set; }
-    public uint    HeldNumberOfDpmEntries { get; set; }
-    public ulong[] HeldDpm                { get; set; }
 
     /// <inheritdoc />
     public bool SetTracks(List<Track> tracks)

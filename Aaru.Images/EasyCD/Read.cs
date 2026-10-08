@@ -43,20 +43,9 @@ namespace Aaru.Images;
 public sealed partial class EasyCD
 {
     /// <inheritdoc />
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDpm(out DataPositionMeasurement dpm)
     {
-        dpmStartSector     = 0;
-        dpmResolution      = 0;
-        numberOfDpmEntries = 0;
-        dpm                = null;
-
-        return ErrorNumber.NotSupported;
-    }
-
-    /// <inheritdoc />
-    public ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm)
-    {
-        dpm = null;
+        dpm = default(DataPositionMeasurement);
 
         return ErrorNumber.NotSupported;
     }

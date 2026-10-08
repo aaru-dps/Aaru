@@ -51,11 +51,7 @@ public sealed partial class Alcohol120 : IWritableOpticalImage
     byte[]                                  _bca;
     FileStream                              _descriptorStream;
     byte[]                                  _dmi;
-    uint                                    _alcBlockCount;
-    uint[]                                  _alcBlockStartAddress;
-    uint[]                                  _dpm;
-    DPM                                     _dpmBlockHeader;
-    bool                                    _dpmPresent;
+    DataPositionMeasurement?                _dpm;
     byte[]                                  _fullToc;
     Header                                  _header;
     ImageInfo                               _imageInfo;

@@ -594,6 +594,12 @@ namespace Aaru.Images {
             }
         }
 
+        internal static string Invalid_DPM {
+            get {
+                return ResourceManager.GetString("Invalid_DPM", resourceCulture);
+            }
+        }
+
         internal static string Tried_to_write_on_a_non_writable_image {
             get {
                 return ResourceManager.GetString("Tried_to_write_on_a_non_writable_image", resourceCulture);

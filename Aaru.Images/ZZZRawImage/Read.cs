@@ -43,6 +43,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
@@ -1535,20 +1536,10 @@ public sealed partial class ZZZRawImage
         return lst;
     }
 
-    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
-                               out ulong[] dpm)
+    /// <inheritdoc />
+    public ErrorNumber ReadDpm(out DataPositionMeasurement dpm)
     {
-        dpmStartSector     = 0;
-        dpmResolution      = 0;
-        numberOfDpmEntries = 0;
-        dpm                = null;
-
-        return ErrorNumber.NotSupported;
-    }
-
-    public ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm)
-    {
-        dpm = null;
+        dpm = default(DataPositionMeasurement);
 
         return ErrorNumber.NotSupported;
     }

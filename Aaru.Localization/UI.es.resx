@@ -5725,4 +5725,10 @@ Probadores:
     <data name="C2_repair_help" xml:space="preserve">
         <value>Releer y reparar los sectores de audio que la unidad ocultó (punteros de error C2), reescribiendo las muestras recuperadas. Activado por defecto; válido sólo para CD con audio.</value>
     </data>
+    <data name="Written_DPM_to_output_image" xml:space="preserve">
+        <value>[slateblue1]Escrita la Medición de Posición de Datos en la imagen.[/]</value>
+    </data>
+    <data name="Error_0_writing_DPM_to_output_image_continuing" xml:space="preserve">
+        <value>[olive]Error [red]{0}[/] escribiendo la Medición de Posición de Datos en la imagen, continuando...[/]</value>
+    </data>
 </root>

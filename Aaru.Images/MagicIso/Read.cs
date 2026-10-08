@@ -39,6 +39,7 @@ using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Aaru.Logging;
@@ -990,21 +991,9 @@ public sealed partial class MagicIso
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
-                               out ulong[] dpm)
+    public ErrorNumber ReadDpm(out DataPositionMeasurement dpm)
     {
-        dpmStartSector     = 0;
-        dpmResolution      = 0;
-        numberOfDpmEntries = 0;
-        dpm                = null;
-
-        return ErrorNumber.NotSupported;
-    }
-
-    /// <inheritdoc />
-    public ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm)
-    {
-        dpm = null;
+        dpm = default(DataPositionMeasurement);
 
         return ErrorNumber.NotSupported;
     }

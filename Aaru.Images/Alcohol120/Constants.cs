@@ -35,5 +35,7 @@ namespace Aaru.Images;
 public sealed partial class Alcohol120
 {
     const    byte   MAXIMUM_SUPPORTED_VERSION = 1;
+    /// <summary>Disc metadata block type of the DPM</summary>
+    const    uint   DPM_BLOCK_TYPE            = 1;
     readonly byte[] _alcoholSignature         = "MEDIA DESCRIPTOR"u8.ToArray();
 }

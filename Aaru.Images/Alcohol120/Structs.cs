@@ -36,14 +36,18 @@ namespace Aaru.Images;
 
 public sealed partial class Alcohol120
 {
-#region Nested type: DPM
+#region Nested type: DpmBlock
 
+    /// <summary>DPM block header, follows the block type</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct DPM
+    struct DpmBlock
     {
-        public          uint dpmStartSector;
-        public          uint dpmResolution;
-        public          uint numberOfDpmEntries;
+        /// <summary>Sector where the DPM starts, its angle is 0</summary>
+        public uint dpmStartSector;
+        /// <summary>Sectors between entries</summary>
+        public uint dpmResolution;
+        /// <summary>Number of cumulative angles that follow, in 256 per turn units</summary>
+        public uint numberOfDpmEntries;
     }
 
 #endregion
