@@ -27,18 +27,21 @@ public partial class PpmdStream : Stream
         // Allocate output buffer
         _decoded = new byte[decompressedLength];
 
+        var outLen = (nuint)decompressedLength;
+
         // Call native decompressor
-        int err = AARU_zip_ppmd_decode_buffer(_decoded,
-                                              (nint)decompressedLength,
-                                              inBuf,
-                                              inBuf.Length,
+        int err = AARU_zip_ppmd_decode_buffer(inBuf,
+                                              (nuint)inBuf.Length,
+                                              _decoded,
+                                              ref outLen,
                                               maxOrder,
                                               subAllocSize,
                                               restoration ? 1 : 0);
 
         if(err != 0) throw new InvalidOperationException("PPMd decompression failed");
 
-        _length   = decompressedLength;
+        // Adjust actual length in case it differs
+        _length   = (long)outLen;
         _position = 0;
     }
 
@@ -54,9 +57,9 @@ public partial class PpmdStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int AARU_zip_ppmd_decode_buffer(byte[] dst_buffer, nint dst_size,  byte[] src_buffer,
-                                                          nint   src_size,   int  max_order, int    sub_alloc_size,
-                                                          int    restoration);
+    public static partial int AARU_zip_ppmd_decode_buffer(byte[] src_buffer, nuint src_size, byte[] dst_buffer,
+                                                          ref nuint dst_size, int max_order, int sub_alloc_size,
+                                                          int restoration);
 
     public override void Flush()
     {
