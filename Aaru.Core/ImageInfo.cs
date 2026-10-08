@@ -925,6 +925,25 @@ public static class ImageInfo
             SentrySdk.CaptureException(ex);
         }
 
+        if(opticalImage.ReadDpm(out DataPositionMeasurement dpm) == ErrorNumber.NoError)
+        {
+            AaruLogging.WriteLine(Localization.Core.DPM_0_entries_every_1_sectors_from_2_to_3_4_turns_WithMarkup,
+                                  dpm.Entries.Length,
+                                  dpm.NominalSpacing,
+                                  dpm.Entries[0].Lba,
+                                  dpm.Entries[^1].Lba,
+                                  (double)dpm.Entries[^1].Angle / Dpm.UNITS_PER_TURN);
+
+            if(dpm.Calibrations?.Length > 0)
+            {
+                AaruLogging.WriteLine(Localization.Core.DPM_measured_with_0_calibrations_1_layers_WithMarkup,
+                                      dpm.Calibrations.Length,
+                                      (dpm.LayerEnds?.Length ?? 0) + 1);
+            }
+
+            AaruLogging.WriteLine();
+        }
+
         try
         {
             if(opticalImage.Tracks is not { Count: > 0 }) return;

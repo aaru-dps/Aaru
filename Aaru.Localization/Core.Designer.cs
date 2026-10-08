@@ -7366,5 +7366,17 @@ namespace Aaru.Localization {
                 return ResourceManager.GetString("C2_layout_data_subchannel_C2", resourceCulture);
             }
         }
+        public static string DPM_0_entries_every_1_sectors_from_2_to_3_4_turns_WithMarkup {
+            get {
+                return ResourceManager.GetString("DPM_0_entries_every_1_sectors_from_2_to_3_4_turns_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string DPM_measured_with_0_calibrations_1_layers_WithMarkup {
+            get {
+                return ResourceManager.GetString("DPM_measured_with_0_calibrations_1_layers_WithMarkup", resourceCulture);
+            }
+        }
+        
     }
 }

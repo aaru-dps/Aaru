@@ -3601,4 +3601,10 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="C2_layout_data_subchannel_C2" xml:space="preserve">
         <value>datos + subcanal + C2</value>
     </data>
+    <data name="DPM_0_entries_every_1_sectors_from_2_to_3_4_turns_WithMarkup" xml:space="preserve">
+        <value>[bold][slateblue1]Medición de Posición de Datos:[/][/] [rosybrown]{0}[/] entradas cada [rosybrown]{1}[/] sectores, del sector [lime]{2}[/] al [lime]{3}[/], [rosybrown]{4:F2}[/] vueltas</value>
+    </data>
+    <data name="DPM_measured_with_0_calibrations_1_layers_WithMarkup" xml:space="preserve">
+        <value>[slateblue1]Medida con [rosybrown]{0}[/] calibraciones de rotación en [rosybrown]{1}[/] capas.[/]</value>
+    </data>
 </root>

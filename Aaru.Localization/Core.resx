@@ -3754,4 +3754,10 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="C2_layout_data_subchannel_C2" xml:space="preserve">
         <value>data + subchannel + C2</value>
     </data>
+    <data name="DPM_0_entries_every_1_sectors_from_2_to_3_4_turns_WithMarkup" xml:space="preserve">
+        <value>[bold][slateblue1]Data Position Measurement:[/][/] [rosybrown]{0}[/] entries every [rosybrown]{1}[/] sectors, from sector [lime]{2}[/] to [lime]{3}[/], [rosybrown]{4:F2}[/] turns</value>
+    </data>
+    <data name="DPM_measured_with_0_calibrations_1_layers_WithMarkup" xml:space="preserve">
+        <value>[slateblue1]Measured with [rosybrown]{0}[/] rotation calibrations on [rosybrown]{1}[/] layers.[/]</value>
+    </data>
 </root>
