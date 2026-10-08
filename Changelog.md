@@ -1,3 +1,217 @@
+# [6.0.0-beta.2] - 2026-10-09
+
+## Highlights
+
+- **Data Position Measurement.** Aaru now measures where data physically sits on CDs, DVDs and Blu-rays while dumping, stores it in AaruFormat images and draws its graph. The new `dpm` command measures it for media you have already dumped.
+- **ISO9660 extensions.** Support for Rock Ridge sparse files, the Arbitrary Attribute Interchange Protocol and ACLs, and the Amiga, Apple and Acorn extensions, as extended attributes.
+- **libaaruformat 1.0.0-beta.2.** Reading large images no longer exhausts memory, resumed CD dumps keep their sector prefix and suffix data, and the new `repair-cd-arena` tool recovers images damaged by earlier resumes.
+- **Hardening.** Many fixes so crafted, truncated or corrupt archives, images, partitions and filesystems return an error instead of crashing or hanging.
+- **Faster filesystems.** Directory and path caches in most filesystems; ISO9660 directories with 100000 files no longer take hours.
+- **Crash reporting asks first.** Aaru asks for consent before sending crash reports. ([#949](https://github.com/aaru-dps/Aaru/issues/949))
+
+## Upgrade notes
+
+- Data Position Measurement is measured by default at the end of every CD, DVD and Blu-ray dump. Use `--dpm false` to skip it.
+- Data Position Measurement is stored in a new libaaruformat block. Images that contain it need libaaruformat 1.0.0-beta.2 or later to read that block.
+- The DPM media tag type has been removed, and the Data Position Measurement API now uses a structure of control points instead of Alcohol 120% tables.
+- Aaru requires Aaru.Compression.Native 6.0.0-beta.2 and Aaru.Checksums.Native 6.0.0-beta.2. Earlier native libraries use an incompatible API.
+- Existing users are asked once whether to share crash reports.
+
+## AaruFormat
+
+- **New:** Data Position Measurement block, verified by its CRC, kept when resuming a dump and recoverable with erasure coding.
+- **New:** `repair-cd-arena` libaaruformat tool command, recovering CD sector prefix and suffix data in images whose resumed dump sessions left the deduplication table pointing past the stored data. It has a `--dry-run` mode.
+- **Changed:** Block caches are limited by the memory they hold (512 MiB for data, 8 MiB for block headers) instead of by entry count. Sequential reads of large images no longer cache the whole image and run out of memory.
+- **Changed:** CD sector headers that are not valid BCD, or that are on negative LBAs, are stored as they are instead of being regenerated.
+- **Fixed:** Damaged blocks could not be recovered with erasure coding while opening an image.
+- **Fixed:** Damaged images could make CD prefix and suffix reads go out of bounds. They now return an error.
+- **Fixed:** Double free after error paths, cache memory leaks and a use-after-free when writing images.
+- **Fixed:** Mode 1 sectors with a wrong prefix or ECC/EDC were reported as correct, and all-blank Mode 2 tracks were written without a deduplication table.
+- **Fixed:** PS5 and UHD Blu-ray media types were missing from metadata.
+- **Fixed:** Resumed CD dumps overwrote custom sector prefix and suffix data from earlier sessions.
+- **Fixed:** Uninitialized memory could be written into CD prefix and suffix data.
+- **Fixed:** Unknown flux captures crashed instead of returning an error.
+
+## Archives
+
+- **Fixed:** ACE and RAR solid entries after a non-solid entry ignored the previous state.
+- **Fixed:** ACE did not pass the dictionary size to the decompressor.
+- **Fixed:** AMG dropped a final file header ending exactly at the end of the file, and ARC listed file information blocks as entries.
+- **Fixed:** AMG, ARC and STFS could not find entries by name.
+- **Fixed:** ARJ, LHA, Tar, Ar and Cpio entries included one byte too many.
+- **Fixed:** Crafted or truncated ACE, AMG, ARC, ARJ, Ar, Compact Pro, Cpio, DiskDoubler, HA, LHA, RAR, StuffIt, StuffIt 5, StuffIt X, Symbian, Tar, ZIP and Zoo archives crashed, hung or ran out of memory. Headers, entries and forks are now validated against the file.
+- **Fixed:** RAR extended times were decoded wrongly, and files in RAR 1.x solid archives were not marked as solid.
+- **Fixed:** Several archive plugins leaked the data fork stream.
+- **Fixed:** STFS files were read with length and starting block swapped.
+- **Fixed:** Tar base-256 sizes wrapped negative and GNU sparse data was read from the wrong offset.
+
+## Command line
+
+- **New:** `dpm` command, measuring the Data Position Measurement of a medium already dumped to an AaruFormat image and adding it to the image.
+- **New:** Option to ignore sectors not found when merging images.
+- **Fixed:** A plugin printing data read from the media could crash the command line.
+- **Fixed:** Listing files showed duplicate entries.
+- **Fixed:** The analyze command did not find the resume sidecar.
+
+## Compression
+
+- **Changed:** Aaru.Compression.Native 6.0.0-beta.2, with a unified API and multithreaded LZMA and Zstandard.
+- **Changed:** Decompression errors are no longer ignored. UltraISO, PowerISO, EWF, UDIF, NDIF and ZIP reads fail instead of returning corrupted data.
+- **Fixed:** Opening lzip compressed files failed with SharpCompress 0.50.
+
+## Data Position Measurement
+
+- **New:** Graph of the data density and rotation speed, saved next to the image.
+- **New:** Measured from drives on CD, DVD and Blu-ray with any number of layers, handling unreadable sectors, speed changes and audio sectors.
+- **New:** Measured on Xbox Game Discs with OmniDrive units and unlocked Kreon drives.
+- **New:** Read and written in AaruFormat and Alcohol 120% images, read from BlindWrite 4 and 5 BWA files, and converted between image formats.
+- **New:** Shown by the image info command.
+- **Fixed:** Every entry lost a constant angle because the time the host spent between commands was not counted.
+
+## Devices
+
+- **Fixed:** Adaptec, Plextor and SyQuest vendor commands were built wrongly.
+- **Fixed:** ATA: READ SECTORS in LBA48 mode issued a 28-bit read, the physical sector size was zero for large exponents, and several commands did not transfer data.
+- **Fixed:** ATA: the last sector of each track was not read when dumping or scanning in CHS mode.
+- **Fixed:** Devices were not closed and their buffers not freed when disposed.
+- **Fixed:** GD-ROM: READ FULL TOC retries after the disc swap, and reads past the disc bounds in the high density area.
+- **Fixed:** Linux: successful reads were marked as failed, SD/MMC cards were not detected, and MMC command timeouts overflowed.
+- **Fixed:** MMC: READ CAPACITY block sizes were parsed wrongly, READ TOC/PMA/ATIP reused a stale allocation length, and the first session Lead-Out was off by 150 sectors.
+- **Fixed:** Remote: headers split across network packets were corrupted, server lengths were not validated, and sockets leaked.
+- **Fixed:** SCSI: MODE SELECT(10), READ(16) and READ REVERSE(16) built wrong commands. READ(16) crashed on every call.
+- **Fixed:** SCSI: page 83h parsing, READ LONG detection and allocation lengths wrapping on maximum-size data.
+- **Fixed:** SD/MMC: MMC cards were misdetected as SD cards.
+- **Fixed:** Windows: device handles and descriptor memory leaked for every device, and SD/MMC command data was overwritten.
+
+## Dumping
+
+- **New:** The media graph continues from the existing graph image when resuming.
+- **New:** VideoNow, VideoNow Color and VideoNow XP discs are detected and their offset set. ([#889](https://github.com/aaru-dps/Aaru/issues/889))
+- **Changed:** A clear message is shown when a device cannot be opened.
+- **Changed:** All drive speed settings, including OmniDrive hyper and ludicrous speeds, are clamped to the speed you set.
+- **Changed:** Device reports no longer test GD-ROM drives with trap discs.
+- **Changed:** Dumps, media scans, conversions, merges and sidecar creation report the abort reason, and say they were aborted instead of finished.
+- **Changed:** The total dump time includes trimming, retrying and Data Position Measurement, for every kind of media.
+- **Fixed:** CD: the ISRC was set on discs without one, BCD subchannel was always detected, C2 flags and retried subchannel used the wrong LBA, and the hidden track start was wrong when resuming.
+- **Fixed:** ImgBurn logs were always set as the HDD profile.
+- **Fixed:** Kreon drives did not handle read errors in the video partition.
+- **Fixed:** Resume bookkeeping, skipped block counts and error placeholders were wrong in several ATA, Kreon, OmniDrive, SBC, SSC and Xbox Game Disc paths.
+- **Fixed:** Sectors that were attempted and failed were not always recorded as errored in the image.
+- **Fixed:** Speed showed 0 KiB/s when dumping raw Blu-ray.
+- **Fixed:** Xbox Game Disc protection extent fills were not recorded as errored.
+
+## Filesystems
+
+- **New:** HFS+ shows BSD permissions and Finder information on files.
+- **New:** UDF volumes on raw (non-compatible mode) MRW media are detected and read. ([#284](https://github.com/aaru-dps/Aaru/issues/284))
+- **Fixed:** AmigaDOS did not read FFS-style data blocks on OFS-flagged volumes.
+- **Fixed:** Amstrad CP/M sidedness, second side sector numbers and the system attribute were wrong.
+- **Fixed:** BTRFS, exFAT, HPFS and NTFS crashed or looped on corrupt structures.
+- **Fixed:** FAT crashed on BPBs whose reserved area exceeds the volume ([#642](https://github.com/aaru-dps/Aaru/issues/642)), on overflowing cluster numbers and on corrupt long file name entries.
+- **Fixed:** HFS and HFS+ returned file types and creators byte-reversed ("TXET" instead of "TEXT").
+- **Fixed:** HFS reads were misplaced on raw CD images.
+- **Fixed:** HFS+ extents overflow, catalog and attributes searches failed on some volumes.
+- **Fixed:** MINIX and UFS trusted the superblock for the directory entry format instead of detecting it.
+- **Fixed:** ODS truncated files over 4 GiB and could not follow extension headers.
+- **Fixed:** ProDOS extended files failed to open, and PFS reads after seeking returned data from the old position.
+- **Fixed:** QNX4, QNX6, UNIX boot filesystem and Reiser4 rejected the last block of the partition.
+- **Fixed:** RT-11 reported a wrong cluster count, SolarFS crashed getting information, VxFS swapped block count and size, Locus could not reach inodes over 32767, and HPOFS advanced the position wrongly.
+- **Fixed:** The Wii filesystem read files at a quarter of their real offset.
+- **Fixed:** UDF looked entries up case-insensitively first, picking the wrong file when names differed only in case.
+- **Fixed:** XENIX used a wrong division base. ([#782](https://github.com/aaru-dps/Aaru/issues/782), [#783](https://github.com/aaru-dps/Aaru/issues/783))
+
+## Formats
+
+- **New:** Alcohol 120% list of sectors that could not be read.
+- **New:** D88 old style images. ([#834](https://github.com/aaru-dps/Aaru/issues/834))
+- **New:** Long sectors from 2048 bytes per sector ISO images, and conversion of MODE1/2352 images into ISO.
+- **Changed:** Data files are found next to the descriptor or cue sheet in Alcohol 120%, BlindWrite 5, CDRDAO, CDRWin, CloneCD, GDI, PowerISO, UltraISO and VMware, instead of in the current directory.
+- **Fixed:** CDRDAO parsed INDEX positions wrongly and crashed on a second INDEX in a track.
+- **Fixed:** Crafted or corrupt images crashed, hung or ran out of memory in Apridisk, AppleNIB, BlindWrite 4, CHD, CopyQM, CPCDSK, CrunchDisk, DiscJuggler, DiskCopy 4.2, DiskDupe, EWF, HDCopy, HxCStream, KryoFlux, SaveDskF, SnatchIt, SuperCardPro, TeleDisk, UkvFdi and WUX.
+- **Fixed:** DART Apple II images failed to open, RayDIM tracks past track 0 were shifted, and DriDiskCopy NEC 2HD images seeked past the end of the file.
+- **Fixed:** Every VDI and WCDiskImage image failed to open, and no EWF v2 image could open.
+- **Fixed:** Game Boy, Master System, NES, Mega Drive and Super Nintendo headers were detected or parsed wrongly, and 512 KiB ISO 9660 images were identified as Super Nintendo cartridges.
+- **Fixed:** IMD returned zero-filled sectors from truncated images as dumped.
+- **Fixed:** MagicISO, GDI, DIM and DiscFerret sector tags, sizes and track maps were wrong.
+- **Fixed:** NDIF segmented images and UDIF chunks were read wrongly.
+- **Fixed:** Nero, PowerISO and UltraISO let callers corrupt cached data.
+- **Fixed:** Partimage scanned its bitmap wrongly, Virtual98 accepted any file, and CopyTape dropped the last file without a trailing filemark.
+- **Fixed:** QCOW2 ignored the all-zeros cluster flag, QED broke on large clusters, and Parallels computed a wrong data offset.
+- **Fixed:** Raw images rebuilt sectors with wrong numbering and seeked long sectors wrongly.
+- **Fixed:** VHD and VHDX differencing images never found their parent.
+- **Fixed:** VMware disks read their tail as zeros, and UltraISO images over 4 GiB were wrong.
+
+## GUI
+
+- **New:** Setting to share crash reports.
+- **New:** The metadata editor can edit the version list of each required operating system.
+- **Fixed:** Extracting files did nothing.
+- **Fixed:** Images, filters, devices and log files were left open on errors and on exit.
+- **Fixed:** Logs, progress and device events were updated from the wrong thread.
+- **Fixed:** Release type and barcode type of loaded metadata were not shown.
+- **Fixed:** Resume files containing dump hardware were rejected.
+- **Fixed:** Saved INQUIRY and ATA IDENTIFY files were empty.
+- **Fixed:** Selecting a CD-TEXT media tag again corrupted its data, and short ATIP, CD-TEXT and INQUIRY tags crashed.
+- **Fixed:** Startup could hang or leave Aaru running without a window.
+- **Fixed:** The last sector of each track was not verified.
+- **Fixed:** Wrong generic media icons, Plextor silent mode write speed and free cluster percentage.
+
+## Image merging
+
+- **Changed:** Bad blocks inside a successful dump try are merged.
+- **Changed:** Images with different sector counts can be merged.
+- **Changed:** The primary image's bad blocks are copied from the secondary, and images without dump information are treated as fully good.
+- **Changed:** The resume file next to the image is used, and preferred over the image's own dump hardware.
+
+## ISO9660
+
+- **New:** Acorn ARCHIMEDES extension: RISC OS application names, filetypes, load and execution addresses and attributes.
+- **New:** Amiga Rock Ridge extension: protection bits and comments.
+- **New:** Apple extensions: resource forks, Finder information, HFS and ProDOS types, and restored ProDOS filenames.
+- **New:** Arbitrary Attribute Interchange Protocol attributes and POSIX ACLs.
+- **New:** Rock Ridge sparse files and creation time, and detection of Rock Ridge from its extension identifier.
+- **New:** Shift-JIS encoded volume identifiers.
+- **Changed:** File name lookups use an index per directory. Directories with 100000 files took hours.
+- **Fixed:** Discs with a path table bigger than its entries failed. ([#958](https://github.com/aaru-dps/Aaru/issues/958))
+- **Fixed:** Entries pointing at themselves or a parent looped forever.
+- **Fixed:** Entries with empty filenames looped forever. ([#836](https://github.com/aaru-dps/Aaru/issues/836))
+- **Fixed:** Filenames that are literally "." or ".;1" were modified. ([#956](https://github.com/aaru-dps/Aaru/issues/956))
+- **Fixed:** Files lost their attributes when their record came after their associated file.
+- **Fixed:** Malformed System Use entries looped forever.
+- **Fixed:** Rock Ridge symbolic links were truncated, file types and relocated directory attributes were wrong, and timestamps were shifted by twice the GMT offset.
+- **Fixed:** Rock Ridge was read from the Joliet tree on discs that have both.
+- **Fixed:** zisofs files were truncated.
+
+## Localization
+
+- **Changed:** Spanish translation uses Castilian Spanish.
+
+## Partitions
+
+- **Fixed:** Acorn, DEC and Rio Karma partitions had size and length swapped.
+- **Fixed:** AIX, Atari, BSD, NeXT, Plan 9, SGI, Sun and Xbox 360 partitions were misplaced or wrapped past 4 GiB.
+- **Fixed:** APA, Apple, GPT, Human68k, MBR, PC-98, RDB and VTOC entries were not validated, and old Apple maps had start and size swapped.
+- **Fixed:** RDB chains could loop forever.
+
+## Performance
+
+- **Changed:** Directory and path caches in BTRFS, ext2/3/4, F2FS, FAT, FATX, HPFS, JFS, MINIX, NTFS, PFS, ReiserFS, Reiser4, UFS and XFS.
+- **Changed:** Faster checksums, entropy calculation and sidecar creation.
+- **Changed:** Faster sector reads in AaruFormat, CDRWin, CloneCD and raw images.
+
+## TUI
+
+- **Fixed:** The file list could not be used with the keyboard, and dialogs ignored Enter and Escape.
+
+## For developers
+
+- Corpus-free unit tests for helpers, checksums, CD sectors, subchannels, geometry, image merging, VideoNow, Super Nintendo identification and Data Position Measurement.
+- Compression tests running the Aaru.Compression.Native test suite through the C# wrappers.
+- Tiered digest-based verification of filesystem contents, used by most filesystem tests.
+- ISO9660 tests for the Rock Ridge, AAIP, Amiga, Apple and Acorn extensions, and a test harness for AIX minidisks.
+- Helper fixes: BigEndianBitConverter.ToGuid skipped a byte, ToString overloads reversed the wrong bytes, corrupt timestamps threw, and ArrayFill could loop forever.
+- Updated libaaruformat to 1.0.0-beta.2, Aaru.Checksums.Native and Aaru.Compression.Native to 6.0.0-beta.2, Avalonia to 12.1.2, Consolonia to 12.0.3.13, Spectre.Console to 0.57.2, SharpCompress to 0.50.4, Sentry to 6.10.0, Serilog to 4.4.0, SkiaSharp to 4.151.2 and .NET libraries to 10.0.11.
+
 # [6.0.0-beta.1] - 2026-07-15
 
 ## Added
