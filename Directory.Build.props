@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>6.0.0-beta.1.1</Version>
+    <Version>6.0.0-beta.2</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2026 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>

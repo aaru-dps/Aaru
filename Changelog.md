@@ -3366,6 +3366,8 @@
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
+[6.0.0-beta.2]: https://github.com/aaru-dps/Aaru/releases/tag/v6.0.0-beta.2
+
 [6.0.0-beta.1]: https://github.com/aaru-dps/Aaru/releases/tag/v6.0.0-beta.1
 
 [6.0.0-alpha.19]: https://github.com/aaru-dps/Aaru/releases/tag/v6.0.0-alpha.19
