@@ -96,6 +96,9 @@
                         <CheckBox IsChecked="{Binding Resume, Mode=TwoWay}">
                             <TextBlock Text="{x:Static localization:UI.Create_or_use_resume_mapfile}" />
                         </CheckBox>
+                        <CheckBox IsChecked="{Binding MeasureDpm, Mode=TwoWay}">
+                            <TextBlock Text="{x:Static localization:UI.Measure_DPM_after_dumping}" />
+                        </CheckBox>
                         <CheckBox IsChecked="{Binding Track1Pregap, Mode=TwoWay}"
                                   IsVisible="{Binding Track1PregapVisible, Mode=OneWay}">
                             <TextBlock Text="{x:Static localization:UI.Try_to_read_track_1_pregap}" />

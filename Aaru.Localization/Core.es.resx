@@ -3634,4 +3634,19 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="DPM_measurement_failed" xml:space="preserve">
         <value>La Medición de Posición de Datos falló.</value>
     </data>
+    <data name="DPM_not_measured_on_remote_devices" xml:space="preserve">
+        <value>No se realiza la Medición de Posición de Datos en dispositivos remotos.</value>
+    </data>
+    <data name="Measuring_Data_Position_Measurement" xml:space="preserve">
+        <value>Realizando la Medición de Posición de Datos...</value>
+    </data>
+    <data name="DPM_on_Bluray_is_experimental" xml:space="preserve">
+        <value>La Medición de Posición de Datos en Blu-ray es experimental.</value>
+    </data>
+    <data name="Error_0_writing_DPM_to_image" xml:space="preserve">
+        <value>Error {0} escribiendo la Medición de Posición de Datos en la imagen.</value>
+    </data>
+    <data name="Measured_DPM_with_0_entries" xml:space="preserve">
+        <value>Medida la Medición de Posición de Datos con {0} entradas.</value>
+    </data>
 </root>

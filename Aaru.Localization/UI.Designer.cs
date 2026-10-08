@@ -11567,5 +11567,11 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Measure_DPM_after_dumping {
+            get {
+                return ResourceManager.GetString("Measure_DPM_after_dumping", resourceCulture);
+            }
+        }
+        
     }
 }

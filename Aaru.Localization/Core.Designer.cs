@@ -7432,5 +7432,35 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string DPM_not_measured_on_remote_devices {
+            get {
+                return ResourceManager.GetString("DPM_not_measured_on_remote_devices", resourceCulture);
+            }
+        }
+        
+        public static string Measuring_Data_Position_Measurement {
+            get {
+                return ResourceManager.GetString("Measuring_Data_Position_Measurement", resourceCulture);
+            }
+        }
+        
+        public static string DPM_on_Bluray_is_experimental {
+            get {
+                return ResourceManager.GetString("DPM_on_Bluray_is_experimental", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_writing_DPM_to_image {
+            get {
+                return ResourceManager.GetString("Error_0_writing_DPM_to_image", resourceCulture);
+            }
+        }
+        
+        public static string Measured_DPM_with_0_entries {
+            get {
+                return ResourceManager.GetString("Measured_DPM_with_0_entries", resourceCulture);
+            }
+        }
+        
     }
 }

@@ -5779,4 +5779,7 @@ Probadores:
     <data name="Media_Dpm_Command_Description" xml:space="preserve">
         <value>Mide la Medición de Posición de Datos de un medio y la añade a su imagen.</value>
     </data>
+    <data name="Measure_DPM_after_dumping" xml:space="preserve">
+        <value>Realizar la Medición de Posición de Datos de CDs, DVDs y Blu-rays después de volcarlos.</value>
+    </data>
 </root>

@@ -1034,6 +1034,10 @@ partial class Dump
 
 #endregion Error handling
 
+        // The medium kind, and whether it can be measured at all, comes from the drive profile
+        if(opticalDisc && _dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
+            MeasureDpm(outputFormat as IWritableOpticalImage);
+
         if(ngcwMode) FinalizeNgcwContext(outputFormat);
 
         if(opticalDisc)

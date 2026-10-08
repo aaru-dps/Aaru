@@ -5866,4 +5866,7 @@ Do you want to continue?</value>
     <data name="Media_Dpm_Command_Description" xml:space="preserve">
         <value>Measures the Data Position Measurement of a medium and adds it to its image.</value>
     </data>
+    <data name="Measure_DPM_after_dumping" xml:space="preserve">
+        <value>Measure the Data Position Measurement of CDs, DVDs and Blu-rays after dumping them.</value>
+    </data>
 </root>

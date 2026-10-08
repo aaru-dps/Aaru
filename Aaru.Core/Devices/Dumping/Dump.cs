@@ -124,6 +124,7 @@ public partial class Dump
     readonly        Stopwatch                  _sidecarStopwatch;
     readonly        bool                       _skipSafedisc;
     readonly        bool                       _c2Repair;
+    readonly        bool                       _dpm;
     readonly        Stopwatch                  _speedStopwatch;
     readonly        bool                       _startReverse;
     readonly        bool                       _stopOnError;
@@ -207,6 +208,8 @@ public partial class Dump
     /// <param name="cureParanoia">Try to fix sectors integrity</param>
     /// <param name="bypassWiiDecryption">When dumping Wii (WOD), skip partition AES decryption and store encrypted data</param>
     /// <param name="startReverse">Start error retrying in reverse</param>
+    /// <param name="c2Repair">Repair audio sectors the drive concealed using C2 pointers</param>
+    /// <param name="dpm">Measure Data Position Measurement of optical discs after dumping them</param>
     public Dump(bool doResume, Device dev, string devicePath, IBaseWritableImage outputPlugin, ushort retryPasses,
                 bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, Encoding encoding,
                 string outputPrefix, string outputPath, Dictionary<string, string> formatOptions, Metadata preSidecar,
@@ -216,7 +219,7 @@ public partial class Dump
                 bool generateSubchannels, uint maximumReadable, bool useBufferedReads, bool storeEncrypted,
                 bool titleKeys, uint ignoreCdrRunOuts, bool createGraph, uint dimensions, bool paranoia,
                 bool cureParanoia, bool bypassWiiDecryption, bool startReverse, int errorRecovery, bool hyperSpeed,
-                bool ludicrousSpeed, bool leadout, bool skipSafedisc, bool c2Repair = true)
+                bool ludicrousSpeed, bool leadout, bool skipSafedisc, bool c2Repair = true, bool dpm = true)
     {
         _doResume              = doResume;
         _dev                   = dev;
@@ -270,6 +273,7 @@ public partial class Dump
         _leadout               = leadout;
         _skipSafedisc          = skipSafedisc;
         _c2Repair              = c2Repair;
+        _dpm                   = dpm;
         _dumpStopwatch         = new Stopwatch();
         _sidecarStopwatch      = new Stopwatch();
         _speedStopwatch        = new Stopwatch();
@@ -402,6 +406,7 @@ public partial class Dump
         _abortReason = AbortReason.User;
         _aborted     = true;
         _sidecarClass?.Abort();
+        _dpmMeasurement?.Abort();
     }
 
     /// <summary>Why the dump in progress was aborted</summary>

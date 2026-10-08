@@ -1261,6 +1261,8 @@ sealed partial class Dump
                             smallestPregapLbaPerTrack);
         }
 
+        MeasureDpm(outputOptical);
+
         // Write media tags to image
         if(!_aborted)
         {
