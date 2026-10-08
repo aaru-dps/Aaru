@@ -1,3 +1,62 @@
+aaru (6.0.0~beta2) bookworm; urgency=medium
+
+  * New upstream beta release 6.0.0-beta.2
+  * Added Data Position Measurement, measured by default as the last phase
+    of CD, DVD and Blu-ray dumps (disable with --dpm false), including Xbox
+    Game Discs on OmniDrive and unlocked Kreon drives
+  * Added dpm command to measure Data Position Measurement of media already
+    dumped to an AaruFormat image
+  * Added Data Position Measurement support to AaruFormat and Alcohol 120%
+    images, BlindWrite 4/5 BWA files, image conversion and image info
+  * Added ISO9660 support for Rock Ridge sparse files, AAIP attributes and
+    ACLs, and the Amiga, Apple and Acorn extensions
+  * Added UDF reading on raw MRW media
+  * Added HFS+ BSD permissions and Finder information
+  * Added VideoNow, VideoNow Color and VideoNow XP disc detection
+  * Added D88 old style images and Alcohol 120% unreadable sector lists
+  * Added option to ignore sectors not found when merging images
+  * Added consent prompt before sending crash reports
+  * Changed to libaaruformat 1.0.0-beta.2, bounding block caches by memory
+    so reading large images no longer exhausts memory, and adding the
+    repair-cd-arena tool
+  * Changed to Aaru.Compression.Native and Aaru.Checksums.Native
+    6.0.0-beta.2, with multithreaded LZMA and Zstandard
+  * Changed decompression errors to fail reads instead of returning
+    corrupted data
+  * Changed dumps, scans, conversions, merges and sidecar creation to report
+    the abort reason
+  * Changed drive speed settings to be clamped to the requested speed
+  * Changed total dump time to include trimming, retrying and DPM
+  * Changed image merging to allow different sector counts and to prefer
+    the resume file next to the image
+  * Changed image formats to find data files next to their descriptor
+    instead of in the current working directory
+  * Changed most filesystems to cache directories and paths, ISO9660
+    directories with 100000 files no longer take hours
+  * Changed Spanish translation to Castilian Spanish
+  * Removed DPM media tag type
+  * Fixed crashes and hangs on crafted, truncated or corrupt archives,
+    images, partitions and filesystems
+  * Fixed resumed CD dumps in AaruFormat overwriting sector prefix and
+    suffix data from earlier sessions
+  * Fixed ATA, MMC, SCSI, SD/MMC, Linux, Windows and remote device commands
+  * Fixed CD dumping ISRC, BCD subchannel detection, C2 flags and resuming
+  * Fixed VDI, WCDiskImage and EWF v2 images failing to open, and VHD/VHDX
+    differencing images not finding their parent
+  * Fixed ISO9660 Rock Ridge on Joliet discs, symbolic links, timestamps
+    and zisofs files
+  * Fixed HFS and HFS+ file types and creators being byte-reversed
+  * Fixed partition bounds and size/length swaps in many schemes
+  * Fixed GUI file extraction, empty saved device files, startup hangs and
+    leaked handles
+  * Fixed TUI keyboard navigation and dialogs
+  * Fixed opening lzip compressed files
+  * Built for Debian 12 (Bookworm) and Ubuntu 24.04 LTS (Noble)
+  * Compatible with Debian 12+, Ubuntu 24.04+, and derivatives
+  * Multi-architecture support (amd64, arm64, armhf)
+
+ -- Natalia Portillo <claunia@claunia.com>  Thu, 08 Oct 2026 12:00:00 +0000
+
 aaru (6.0.0~beta1-1) bookworm; urgency=medium
 
   * New upstream beta release 6.0.0-beta.1

@@ -30,7 +30,7 @@ else
 IS_CROSS = no
 endif
 
-AARU_VERSION = 6.0.0-alpha.19
+AARU_VERSION = 6.0.0-beta.2
 NETCORE_TARGET = net10.0
 
 %:
