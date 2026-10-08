@@ -43,7 +43,7 @@ public static class DpmSidecar
 {
     const string MODULE_NAME = "DPM";
 
-    /// <summary>Writes the DPM graph as <c>prefix.dpm.png</c> and the per sector density as <c>prefix.dpm.csv</c></summary>
+    /// <summary>Writes the DPM graph as <c>prefix.dpm.png</c></summary>
     /// <param name="dpm">DPM</param>
     /// <param name="prefix">Path prefix of the image</param>
     public static void Write(DataPositionMeasurement dpm, string prefix)
@@ -51,12 +51,11 @@ public static class DpmSidecar
         try
         {
             DpmGraph.Write(dpm, prefix + ".dpm.png", Path.GetFileName(prefix));
-            DpmCsv.Write(dpm, prefix + ".dpm.csv");
         }
         catch(Exception ex)
         {
-            AaruLogging.Debug(MODULE_NAME, "Could not write DPM sidecar files: {0}", ex.Message);
-            AaruLogging.Exception(ex, "Could not write DPM sidecar files");
+            AaruLogging.Debug(MODULE_NAME, "Could not write the DPM graph: {0}", ex.Message);
+            AaruLogging.Exception(ex, "Could not write the DPM graph");
         }
     }
 }
