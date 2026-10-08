@@ -85,9 +85,6 @@ partial class Dump
         {
             if(!_dpmMeasurement.Prepare(0)) return;
 
-            if(_dpmMeasurement.Kind == DpmMediumKind.Bd)
-                UpdateStatus?.Invoke(Localization.Core.DPM_on_Bluray_is_experimental);
-
             _dpmMeasurement.SeedUnreadable(_resume?.BadBlocks ?? []);
 
             DataPositionMeasurement? dpm = _dpmMeasurement.Measure(0, _dpmMeasurement.LastLba, 0);

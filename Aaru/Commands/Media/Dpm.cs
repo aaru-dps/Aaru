@@ -194,8 +194,6 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
             return (int)ErrorNumber.NotSupported;
         }
 
-        if(measurement.Kind == DpmMediumKind.Bd) AaruLogging.WriteLine(UI.DPM_on_Bluray_is_experimental);
-
         // Check the disc in the drive is the one in the image
         if(!MediumMatchesImage(dev, aif, measurement.LastLba) && !settings.Force)
         {

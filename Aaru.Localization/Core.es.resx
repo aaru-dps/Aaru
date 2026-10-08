@@ -3640,9 +3640,6 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="Measuring_Data_Position_Measurement" xml:space="preserve">
         <value>[slateblue1]Cartografiando las posiciones de los sectores para la Medición de Posición de Datos...[/]</value>
     </data>
-    <data name="DPM_on_Bluray_is_experimental" xml:space="preserve">
-        <value>[olive]La Medición de Posición de Datos en Blu-ray es experimental.[/]</value>
-    </data>
     <data name="Error_0_writing_DPM_to_image" xml:space="preserve">
         <value>[red]Error [teal]{0}[/] escribiendo la Medición de Posición de Datos en la imagen.[/]</value>
     </data>

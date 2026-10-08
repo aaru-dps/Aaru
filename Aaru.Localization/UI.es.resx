@@ -5740,9 +5740,6 @@ Probadores:
     <data name="DPM_can_only_be_measured_on_optical_drives" xml:space="preserve">
         <value>[red]La Medición de Posición de Datos solo es posible en unidades ópticas.[/]</value>
     </data>
-    <data name="DPM_on_Bluray_is_experimental" xml:space="preserve">
-        <value>[olive]La Medición de Posición de Datos en Blu-ray es experimental.[/]</value>
-    </data>
     <data name="Medium_in_drive_does_not_match_image" xml:space="preserve">
         <value>[red]El medio en la unidad no coincide con la imagen, use [italic]--force[/] para continuar de todos modos.[/]</value>
     </data>

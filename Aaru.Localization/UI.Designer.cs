@@ -11489,12 +11489,6 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string DPM_on_Bluray_is_experimental {
-            get {
-                return ResourceManager.GetString("DPM_on_Bluray_is_experimental", resourceCulture);
-            }
-        }
-        
         public static string Medium_in_drive_does_not_match_image {
             get {
                 return ResourceManager.GetString("Medium_in_drive_does_not_match_image", resourceCulture);

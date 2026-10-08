@@ -5827,9 +5827,6 @@ Do you want to continue?</value>
     <data name="DPM_can_only_be_measured_on_optical_drives" xml:space="preserve">
         <value>[red]Data Position Measurement is only possible on optical drives.[/]</value>
     </data>
-    <data name="DPM_on_Bluray_is_experimental" xml:space="preserve">
-        <value>[olive]Data Position Measurement on Blu-ray is experimental.[/]</value>
-    </data>
     <data name="Medium_in_drive_does_not_match_image" xml:space="preserve">
         <value>[red]The medium in the drive does not match the image, use [italic]--force[/] to proceed anyway.[/]</value>
     </data>

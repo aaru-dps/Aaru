@@ -46,7 +46,7 @@ public enum DpmMediumKind
     Cd,
     /// <summary>DVD</summary>
     Dvd,
-    /// <summary>Blu-ray, experimental</summary>
+    /// <summary>Blu-ray</summary>
     Bd
 }
 

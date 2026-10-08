@@ -3793,9 +3793,6 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="Measuring_Data_Position_Measurement" xml:space="preserve">
         <value>[slateblue1]Mapping sector positions for the Data Position Measurement...[/]</value>
     </data>
-    <data name="DPM_on_Bluray_is_experimental" xml:space="preserve">
-        <value>[olive]Data Position Measurement on Blu-ray is experimental.[/]</value>
-    </data>
     <data name="Error_0_writing_DPM_to_image" xml:space="preserve">
         <value>[red]Error [teal]{0}[/] writing Data Position Measurement to image.[/]</value>
     </data>

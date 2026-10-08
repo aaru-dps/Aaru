@@ -7444,12 +7444,6 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string DPM_on_Bluray_is_experimental {
-            get {
-                return ResourceManager.GetString("DPM_on_Bluray_is_experimental", resourceCulture);
-            }
-        }
-        
         public static string Error_0_writing_DPM_to_image {
             get {
                 return ResourceManager.GetString("Error_0_writing_DPM_to_image", resourceCulture);

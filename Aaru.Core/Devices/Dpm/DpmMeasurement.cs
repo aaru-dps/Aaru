@@ -55,7 +55,7 @@ namespace Aaru.Core.Devices.Dpm;
 ///             between points, and the previous bins' density gives the whole rotations.
 ///         </item>
 ///     </list>
-///     DVDs are timed per 16 sectors ECC block and Blu-rays, experimentally, per 32 sectors cluster, as the drive can't
+///     DVDs are timed per 16 sectors ECC block and Blu-rays per 32 sectors cluster, as the drive can't
 ///     deliver a sector without reading its whole block.
 /// </remarks>
 public sealed partial class DpmMeasurement
