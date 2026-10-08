@@ -12,7 +12,7 @@ public partial class AceStream : Stream
     readonly long   _length;
     long            _position;
 
-    public AceStream(Stream compressedStream, long decompressedLength, int method)
+    public AceStream(Stream compressedStream, long decompressedLength, int method, int dicBits)
     {
         if(compressedStream == null) throw new ArgumentNullException(nameof(compressedStream));
         if(!compressedStream.CanRead) throw new ArgumentException("Stream must be readable", nameof(compressedStream));
@@ -30,8 +30,8 @@ public partial class AceStream : Stream
         // Call native decompressor
         int err = method switch
                   {
-                      1 => ace_decompress_lz77(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
-                      2 => ace_decompress_blocked(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      1 => ace_decompress_lz77(inBuf, (nuint)inBuf.Length, _decoded, ref outLen, dicBits),
+                      2 => ace_decompress_blocked(inBuf, (nuint)inBuf.Length, _decoded, ref outLen, dicBits),
                       _ => throw new ArgumentException("Invalid method")
                   };
 
@@ -54,10 +54,12 @@ public partial class AceStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int ace_decompress_lz77(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
+    public static partial int ace_decompress_lz77(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len,
+                                                  int    dic_bits);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int ace_decompress_blocked(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
+    public static partial int ace_decompress_blocked(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len,
+                                                     int    dic_bits);
 
     public override void Flush()
     {

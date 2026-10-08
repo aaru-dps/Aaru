@@ -149,12 +149,12 @@ public sealed partial class Ace
                     break;
 
                 case CompressionType.Lz77:
-                    stream = new AceStream(stream, entry.UncompressedSize, 1);
+                    stream = new AceStream(stream, entry.UncompressedSize, 1, (entry.DecompParam & 0x0F) + 10);
 
                     break;
 
                 case CompressionType.Blocked:
-                    stream = new AceStream(stream, entry.UncompressedSize, 2);
+                    stream = new AceStream(stream, entry.UncompressedSize, 2, (entry.DecompParam & 0x0F) + 10);
 
                     break;
 
