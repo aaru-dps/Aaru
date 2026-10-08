@@ -54,7 +54,8 @@ public static partial class ADC
     public static bool IsSupported => true;
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_adc_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
+    private static partial int AARU_adc_decode_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                      ref nuint dstSize);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static int GetChunkType(byte byt) => (byt & 0x80) == 0x80
@@ -88,7 +89,14 @@ public static partial class ADC
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
-        if(Native.IsSupported) return AARU_adc_decode_buffer(destination, destination.Length, source, source.Length);
+        if(Native.IsSupported)
+        {
+            nuint dstSize = (nuint)destination.Length;
+
+            return AARU_adc_decode_buffer(source, (nuint)source.Length, destination, ref dstSize) == 0
+                       ? (int)dstSize
+                       : -1;
+        }
 
         var        inputPosition = 0;
         var        outPosition   = 0;

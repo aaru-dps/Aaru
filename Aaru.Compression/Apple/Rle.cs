@@ -44,8 +44,8 @@ public static partial class Rle
     public static bool IsSupported => true;
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_apple_rle_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer,
-                                                            int    srcSize);
+    private static partial int AARU_apple_rle_decode_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                            ref nuint dstSize);
 
     /// <summary>Decodes a buffer compressed with Apple RLE</summary>
     /// <param name="source">Encoded buffer</param>
@@ -54,7 +54,13 @@ public static partial class Rle
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
         if(Native.IsSupported)
-            return AARU_apple_rle_decode_buffer(destination, destination.Length, source, source.Length);
+        {
+            nuint dstSize = (nuint)destination.Length;
+
+            return AARU_apple_rle_decode_buffer(source, (nuint)source.Length, destination, ref dstSize) == 0
+                       ? (int)dstSize
+                       : -1;
+        }
 
         var  count         = 0;
         var  nextA         = true; // true if A, false if B

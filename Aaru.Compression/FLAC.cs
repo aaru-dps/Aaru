@@ -39,18 +39,18 @@ public partial class FLAC
     public static bool IsSupported => Native.IsSupported;
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial nuint AARU_flac_decode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
-                                                                 nuint  srcSize);
+    private static partial int AARU_flac_decode_redbook_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                               ref nuint dstSize);
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true, StringMarshalling = StringMarshalling.Utf8)]
-    private static partial nuint AARU_flac_encode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
-                                                                 nuint srcSize, uint blocksize, int doMidSideStereo,
-                                                                 int looseMidSideStereo, string apodization,
-                                                                 uint maxLpcOrder, uint qlpCoeffPrecision,
-                                                                 int doQlpCoeffPrecSearch, int doExhaustiveModelSearch,
-                                                                 uint minResidualPartitionOrder,
-                                                                 uint maxResidualPartitionOrder, string applicationID,
-                                                                 uint applicationIDLen);
+    private static partial int AARU_flac_encode_redbook_buffer(byte[] srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                               ref nuint dstSize, uint blocksize, int doMidSideStereo,
+                                                               int looseMidSideStereo, string apodization,
+                                                               uint maxLpcOrder, uint qlpCoeffPrecision,
+                                                               int doQlpCoeffPrecSearch, int doExhaustiveModelSearch,
+                                                               uint minResidualPartitionOrder,
+                                                               uint maxResidualPartitionOrder, string applicationID,
+                                                               uint applicationIDLen);
 
     /// <summary>Decodes a buffer compressed with FLAC</summary>
     /// <param name="source">Encoded buffer</param>
@@ -60,10 +60,11 @@ public partial class FLAC
     {
         if(Native.IsSupported)
         {
-            return (int)AARU_flac_decode_redbook_buffer(destination,
-                                                        (nuint)destination.Length,
-                                                        source,
-                                                        (nuint)source.Length);
+            nuint dstSize = (nuint)destination.Length;
+
+            return AARU_flac_decode_redbook_buffer(source, (nuint)source.Length, destination, ref dstSize) == 0
+                       ? (int)dstSize
+                       : -1;
         }
 
         throw new NotSupportedException();
@@ -91,22 +92,26 @@ public partial class FLAC
     {
         if(Native.IsSupported)
         {
-            return (int)AARU_flac_encode_redbook_buffer(destination,
-                                                        (nuint)destination.Length,
-                                                        source,
-                                                        (nuint)source.Length,
-                                                        blockSize,
-                                                        doMidSideStereo ? 1 : 0,
-                                                        looseMidSideStereo ? 1 : 0,
-                                                        apodization,
-                                                        maxLpcOrder,
-                                                        qlpCoeffPrecision,
-                                                        doQlpCoeffPrecSearch ? 1 : 0,
-                                                        doExhaustiveModelSearch ? 1 : 0,
-                                                        minResidualPartitionOrder,
-                                                        maxResidualPartitionOrder,
-                                                        applicationID,
-                                                        (uint)applicationID.Length);
+            nuint dstSize = (nuint)destination.Length;
+
+            int err = AARU_flac_encode_redbook_buffer(source,
+                                                      (nuint)source.Length,
+                                                      destination,
+                                                      ref dstSize,
+                                                      blockSize,
+                                                      doMidSideStereo ? 1 : 0,
+                                                      looseMidSideStereo ? 1 : 0,
+                                                      apodization,
+                                                      maxLpcOrder,
+                                                      qlpCoeffPrecision,
+                                                      doQlpCoeffPrecSearch ? 1 : 0,
+                                                      doExhaustiveModelSearch ? 1 : 0,
+                                                      minResidualPartitionOrder,
+                                                      maxResidualPartitionOrder,
+                                                      applicationID,
+                                                      (uint)applicationID.Length);
+
+            return err == 0 ? (int)dstSize : -1;
         }
 
         throw new NotSupportedException();

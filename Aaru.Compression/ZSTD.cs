@@ -38,33 +38,41 @@ public partial class ZSTD
     public static bool IsSupported => Native.IsSupported;
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial nuint AARU_zstd_decode_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
-                                                         nuint  srcSize);
+    private static partial int AARU_zstd_decode_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                       ref nuint dstSize);
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial nuint AARU_zstd_encode_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
-                                                         nuint  srcSize,   int   compressionLevel);
+    private static partial int AARU_zstd_encode_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                       ref nuint dstSize,   int   compressionLevel);
 
     /// <summary>Decodes a buffer compressed with ZSTD</summary>
     /// <param name="source">Encoded buffer</param>
     /// <param name="destination">Buffer where to write the decoded data</param>
-    /// <returns>The number of decoded bytes</returns>
-    public static int DecodeBuffer(byte[] source, byte[] destination) =>
-        (int)(Native.IsSupported
-                  ? AARU_zstd_decode_buffer(destination, (nuint)destination.Length, source, (nuint)source.Length)
-                  : 0);
+    /// <returns>The number of decoded bytes, or -1 on error</returns>
+    public static int DecodeBuffer(byte[] source, byte[] destination)
+    {
+        if(!Native.IsSupported) return 0;
+
+        nuint dstSize = (nuint)destination.Length;
+
+        return AARU_zstd_decode_buffer(source, (nuint)source.Length, destination, ref dstSize) == 0
+                   ? (int)dstSize
+                   : -1;
+    }
 
     /// <summary>Compresses a buffer using ZSTD</summary>
     /// <param name="source">Data to compress</param>
     /// <param name="destination">Buffer to store the compressed data</param>
     /// <param name="compressionLevel">Compression level</param>
-    /// <returns>Length of the compressed data</returns>
-    public static int EncodeBuffer(byte[] source, byte[] destination, int compressionLevel) =>
-        (int)(Native.IsSupported
-                  ? AARU_zstd_encode_buffer(destination,
-                                            (nuint)destination.Length,
-                                            source,
-                                            (nuint)source.Length,
-                                            compressionLevel)
-                  : 0);
+    /// <returns>Length of the compressed data, or -1 on error</returns>
+    public static int EncodeBuffer(byte[] source, byte[] destination, int compressionLevel)
+    {
+        if(!Native.IsSupported) return 0;
+
+        nuint dstSize = (nuint)destination.Length;
+
+        return AARU_zstd_encode_buffer(source, (nuint)source.Length, destination, ref dstSize, compressionLevel) == 0
+                   ? (int)dstSize
+                   : -1;
+    }
 }

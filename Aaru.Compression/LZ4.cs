@@ -38,12 +38,19 @@ public partial class LZ4
     public static bool IsSupported => Native.IsSupported;
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_lz4_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
+    private static partial int AARU_lz4_decode_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                      ref nuint dstSize);
 
     /// <summary>Decodes a buffer compressed with LZ4</summary>
     /// <param name="source">Encoded buffer</param>
     /// <param name="destination">Buffer where to write the decoded data</param>
     /// <returns>The number of decoded bytes</returns>
-    public static int DecodeBuffer(byte[] source, byte[] destination) =>
-        Native.IsSupported ? AARU_lz4_decode_buffer(destination, destination.Length, source, source.Length) : 0;
+    public static int DecodeBuffer(byte[] source, byte[] destination)
+    {
+        if(!Native.IsSupported) return 0;
+
+        nuint dstSize = (nuint)destination.Length;
+
+        return AARU_lz4_decode_buffer(source, (nuint)source.Length, destination, ref dstSize) == 0 ? (int)dstSize : -1;
+    }
 }

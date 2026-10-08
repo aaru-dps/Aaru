@@ -38,18 +38,27 @@ public partial class LZIP
     public static bool IsSupported => Native.IsSupported;
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_lzip_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
+    private static partial int AARU_lzip_decode_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                       ref nuint dstSize);
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_lzip_encode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize,
-                                                       int    dictionarySize, int matchLenLimit);
+    private static partial int AARU_lzip_encode_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                       ref nuint dstSize,   int   dictionarySize, int matchLenLimit);
 
     /// <summary>Decodes a buffer compressed with LZIP</summary>
     /// <param name="source">Encoded buffer</param>
     /// <param name="destination">Buffer where to write the decoded data</param>
     /// <returns>The number of decoded bytes</returns>
-    public static int DecodeBuffer(byte[] source, byte[] destination) =>
-        Native.IsSupported ? AARU_lzip_decode_buffer(destination, destination.Length, source, source.Length) : 0;
+    public static int DecodeBuffer(byte[] source, byte[] destination)
+    {
+        if(!Native.IsSupported) return 0;
+
+        nuint dstSize = (nuint)destination.Length;
+
+        return AARU_lzip_decode_buffer(source, (nuint)source.Length, destination, ref dstSize) == 0
+                   ? (int)dstSize
+                   : -1;
+    }
 
     /// <summary>Compresses a buffer using LZIP</summary>
     /// <param name="source">Data to compress</param>
@@ -57,13 +66,20 @@ public partial class LZIP
     /// <param name="dictionarySize">Dictionary size in bytes</param>
     /// <param name="matchLengthLimit">Match length limit</param>
     /// <returns>The size of the compressed data</returns>
-    public static int EncodeBuffer(byte[] source, byte[] destination, int dictionarySize, int matchLengthLimit) =>
-        Native.IsSupported
-            ? AARU_lzip_encode_buffer(destination,
-                                      destination.Length,
-                                      source,
-                                      source.Length,
-                                      dictionarySize,
-                                      matchLengthLimit)
-            : 0;
+    public static int EncodeBuffer(byte[] source, byte[] destination, int dictionarySize, int matchLengthLimit)
+    {
+        if(!Native.IsSupported) return 0;
+
+        nuint dstSize = (nuint)destination.Length;
+
+        return AARU_lzip_encode_buffer(source,
+                                       (nuint)source.Length,
+                                       destination,
+                                       ref dstSize,
+                                       dictionarySize,
+                                       matchLengthLimit) ==
+               0
+                   ? (int)dstSize
+                   : -1;
+    }
 }

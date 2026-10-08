@@ -45,28 +45,29 @@ public static partial class LZVN
     public static bool IsSupported => Native.IsSupported;
 
     /// <summary>
-    /// size_t AARU_CALL AARU_lzvn_decode_buffer(uint8_t *dst_buffer, size_tdst_size, const uint8_t *src_buffer, size_t src_size)
+    /// AARU_EXPORT int32_t AARU_CALL AARU_lzvn_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer, size_t *dst_size)
     /// </summary>
-    /// <param name="dst_buffer">Buffer to write the decompressed data to</param>
-    /// <param name="dst_size">Size of the destination buffer</param>
     /// <param name="src_buffer">Buffer that contains the compressed data</param>
     /// <param name="src_size">Size of the source buffer</param>
-    /// <returns></returns>
+    /// <param name="dst_buffer">Buffer to write the decompressed data to</param>
+    /// <param name="dst_size">On entry, size of the destination buffer. On return, number of bytes written</param>
+    /// <returns>0 on success, non-zero on error</returns>
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial nuint AARU_lzvn_decode_buffer(byte[] dst_buffer, nuint dst_size, byte[] src_buffer, nuint src_size);
+    private static partial int AARU_lzvn_decode_buffer(byte[]    src_buffer, nuint src_size, byte[] dst_buffer,
+                                                       ref nuint dst_size);
 
     /// <summary>
-    /// AARU_EXPORT size_t AARU_CALL AARU_lzvn_encode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer, size_t src_size, void *scratch_buffer)
+    /// AARU_EXPORT int32_t AARU_CALL AARU_lzvn_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer, size_t *dst_size, void *scratch_buffer)
     /// </summary>
-    /// <param name="dst_buffer">Buffer to write the decompressed data to</param>
-    /// <param name="dst_size">Size of the destination buffer</param>
-    /// <param name="src_buffer">Buffer that contains the compressed data</param>
+    /// <param name="src_buffer">Buffer that contains the data to compress</param>
     /// <param name="src_size">Size of the source buffer</param>
+    /// <param name="dst_buffer">Buffer to write the compressed data to</param>
+    /// <param name="dst_size">On entry, size of the destination buffer. On return, number of bytes written</param>
     /// <param name="scratch_buffer">Scratch buffer</param>
-    /// <returns></returns>
+    /// <returns>0 on success, non-zero on error</returns>
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial nuint AARU_lzvn_encode_buffer(byte[] dst_buffer, nuint  dst_size, byte[] src_buffer,
-                                                         nuint  src_size,   byte[] scratch_buffer);
+    private static partial int AARU_lzvn_encode_buffer(byte[]    src_buffer, nuint  src_size, byte[] dst_buffer,
+                                                       ref nuint dst_size,   byte[] scratch_buffer);
 
     /// <summary>Decodes a buffer compressed with LZVN</summary>
     /// <param name="source">Compressed buffer</param>
@@ -78,7 +79,11 @@ public static partial class LZVN
 
         if(source == null || destination == null) return -1;
 
-        return (int)AARU_lzvn_decode_buffer(destination, (nuint)destination.Length, source, (nuint)source.Length);
+        nuint dstSize = (nuint)destination.Length;
+
+        return AARU_lzvn_decode_buffer(source, (nuint)source.Length, destination, ref dstSize) == 0
+                   ? (int)dstSize
+                   : -1;
     }
 
     /// <summary>
@@ -95,7 +100,11 @@ public static partial class LZVN
 
         byte[] scratch = new byte[1048576]; // LZVN requires a 512KB scratch buffer for encoding, let's give it twice that
 
-        return (long)AARU_lzvn_encode_buffer(destination, (nuint)destination.LongLength, source, (nuint)source.LongLength, scratch);
+        nuint dstSize = (nuint)destination.LongLength;
+
+        return AARU_lzvn_encode_buffer(source, (nuint)source.LongLength, destination, ref dstSize, scratch) == 0
+                   ? (long)dstSize
+                   : -1;
     }
 
     /// <summary>Decodes a buffer compressed with LZVN</summary>
