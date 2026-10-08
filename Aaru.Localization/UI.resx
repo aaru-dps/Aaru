@@ -5819,31 +5819,31 @@ Do you want to continue?</value>
         <value>[olive]Error [red]{0}[/] writing Data Position Measurement to output image, continuing...[/]</value>
     </data>
     <data name="Image_already_has_DPM_use_force" xml:space="preserve">
-        <value>Image already has Data Position Measurement, use --force to measure it again.</value>
+        <value>[red]Image already has Data Position Measurement, use [italic]--force[/] to measure it again.[/]</value>
     </data>
     <data name="DPM_cannot_be_measured_on_remote_devices" xml:space="preserve">
-        <value>Data Position Measurement cannot be measured on remote devices, as the network latency would ruin the timing.</value>
+        <value>[red]Data Position Measurement cannot be measured on remote devices, as the network latency would ruin the timing.[/]</value>
     </data>
     <data name="DPM_can_only_be_measured_on_optical_drives" xml:space="preserve">
-        <value>Data Position Measurement can only be measured on optical drives.</value>
+        <value>[red]Data Position Measurement can only be measured on optical drives.[/]</value>
     </data>
     <data name="DPM_on_Bluray_is_experimental" xml:space="preserve">
-        <value>[yellow]Data Position Measurement on Blu-ray is experimental.[/]</value>
+        <value>[olive]Data Position Measurement on Blu-ray is experimental.[/]</value>
     </data>
     <data name="Medium_in_drive_does_not_match_image" xml:space="preserve">
-        <value>The medium in the drive does not match the image, use --force to measure it anyway.</value>
+        <value>[red]The medium in the drive does not match the image, use [italic]--force[/] to measure it anyway.[/]</value>
     </data>
     <data name="Skipping_0_sectors_the_dump_could_not_read" xml:space="preserve">
-        <value>Skipping {0} sectors the dump could not read.</value>
+        <value>[slateblue1]Skipping [teal]{0}[/] sectors the dump could not read.[/]</value>
     </data>
     <data name="Measuring_DPM" xml:space="preserve">
-        <value>Measuring Data Position Measurement</value>
+        <value>[slateblue1]Measuring Data Position Measurement[/]</value>
     </data>
     <data name="Writing_DPM_to_image" xml:space="preserve">
-        <value>Writing Data Position Measurement to image...</value>
+        <value>[slateblue1]Writing Data Position Measurement to image...[/]</value>
     </data>
     <data name="Written_DPM_with_0_entries_to_image" xml:space="preserve">
-        <value>Written Data Position Measurement with {0} entries to image.</value>
+        <value>[slateblue1]Written Data Position Measurement with [teal]{0}[/] entries to image.[/]</value>
     </data>
     <data name="DPM_force_help" xml:space="preserve">
         <value>Measure even if the image already has Data Position Measurement or the medium does not match it.</value>

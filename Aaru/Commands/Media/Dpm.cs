@@ -246,7 +246,7 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
                         measurement.UpdateProgress += (text, current, maximum) =>
                         {
                             _progressTask1             ??= ctx.AddTask(UI.Measuring_DPM);
-                            _progressTask1.Description =   Markup.Escape(text);
+                            _progressTask1.Description =   text;
                             _progressTask1.Value       =   current;
                             _progressTask1.MaxValue    =   maximum;
                         };
