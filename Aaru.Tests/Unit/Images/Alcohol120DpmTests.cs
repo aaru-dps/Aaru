@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
@@ -57,7 +58,7 @@ public class Alcohol120DpmTests
     string      _directory;
 
     /// <summary>Writes a single track CD image with the given DPM and returns the path to its descriptor</summary>
-    string WriteImage(DataPositionMeasurement? dpm)
+    string WriteImage(DataPositionMeasurement? dpm, ulong[] unreadable = null)
     {
         string path  = Path.Combine(_directory, "test.mds");
         var    image = new Alcohol120();
@@ -89,6 +90,8 @@ public class Alcohol120DpmTests
         var data   = new byte[2352 * SECTORS];
         var status = new SectorStatus[SECTORS];
         Array.Fill(status, SectorStatus.Dumped);
+
+        foreach(ulong sector in unreadable ?? []) status[sector] = SectorStatus.Errored;
 
         image.WriteSectorsLong(data, 0, false, (uint)SECTORS, status).Should().BeTrue(image.ErrorMessage);
 
@@ -220,6 +223,37 @@ public class Alcohol120DpmTests
 
         read.LayerEnds.Should().BeEmpty();
         read.Calibrations.Should().BeEmpty();
+    }
+
+    [Test]
+    public void UnreadableSectorsRoundTrip()
+    {
+        ulong[]    unreadable = [0, 1, 2, 1500, 1999];
+        Alcohol120 image      = OpenImage(WriteImage(BuildGrid(), unreadable));
+
+        for(ulong sector = 0; sector < SECTORS; sector++)
+        {
+            image.ReadSector(sector, false, out _, out SectorStatus status).Should().Be(ErrorNumber.NoError);
+
+            status.Should()
+                  .Be(unreadable.Contains(sector) ? SectorStatus.Errored : SectorStatus.Dumped, $"sector {sector}");
+        }
+
+        // Both disc metadata blocks are there, whatever their order
+        image.ReadDpm(out DataPositionMeasurement dpm).Should().Be(ErrorNumber.NoError);
+        dpm.Entries.Should().HaveCount((int)(SECTORS / 50) + 1);
+    }
+
+    [Test]
+    public void UnreadableSectorsWithoutDpm()
+    {
+        Alcohol120 image = OpenImage(WriteImage(null, [42]));
+
+        image.ReadDpm(out _).Should().Be(ErrorNumber.NoData);
+        image.ReadSector(42, false, out _, out SectorStatus status).Should().Be(ErrorNumber.NoError);
+        status.Should().Be(SectorStatus.Errored);
+        image.ReadSector(43, false, out _, out status).Should().Be(ErrorNumber.NoError);
+        status.Should().Be(SectorStatus.Dumped);
     }
 
     [Test]
