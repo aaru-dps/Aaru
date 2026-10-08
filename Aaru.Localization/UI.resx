@@ -5819,25 +5819,25 @@ Do you want to continue?</value>
         <value>[olive]Error [red]{0}[/] writing Data Position Measurement to output image, continuing...[/]</value>
     </data>
     <data name="Image_already_has_DPM_use_force" xml:space="preserve">
-        <value>[red]Image already has Data Position Measurement, use [italic]--force[/] to measure it again.[/]</value>
+        <value>[red]Image already has Data Position Measurement, use [italic]--force[/] to replace it.[/]</value>
     </data>
     <data name="DPM_cannot_be_measured_on_remote_devices" xml:space="preserve">
-        <value>[red]Data Position Measurement cannot be measured on remote devices, as the network latency would ruin the timing.[/]</value>
+        <value>[red]Data Position Measurement is not possible on remote devices, as the network latency would ruin the timing.[/]</value>
     </data>
     <data name="DPM_can_only_be_measured_on_optical_drives" xml:space="preserve">
-        <value>[red]Data Position Measurement can only be measured on optical drives.[/]</value>
+        <value>[red]Data Position Measurement is only possible on optical drives.[/]</value>
     </data>
     <data name="DPM_on_Bluray_is_experimental" xml:space="preserve">
         <value>[olive]Data Position Measurement on Blu-ray is experimental.[/]</value>
     </data>
     <data name="Medium_in_drive_does_not_match_image" xml:space="preserve">
-        <value>[red]The medium in the drive does not match the image, use [italic]--force[/] to measure it anyway.[/]</value>
+        <value>[red]The medium in the drive does not match the image, use [italic]--force[/] to proceed anyway.[/]</value>
     </data>
     <data name="Skipping_0_sectors_the_dump_could_not_read" xml:space="preserve">
         <value>[slateblue1]Skipping [teal]{0}[/] sectors the dump could not read.[/]</value>
     </data>
     <data name="Measuring_DPM" xml:space="preserve">
-        <value>[slateblue1]Measuring Data Position Measurement[/]</value>
+        <value>[slateblue1]Mapping sector positions[/]</value>
     </data>
     <data name="Writing_DPM_to_image" xml:space="preserve">
         <value>[slateblue1]Writing Data Position Measurement to image...[/]</value>
@@ -5846,27 +5846,27 @@ Do you want to continue?</value>
         <value>[slateblue1]Written Data Position Measurement with [teal]{0}[/] entries to image.[/]</value>
     </data>
     <data name="DPM_force_help" xml:space="preserve">
-        <value>Measure even if the image already has Data Position Measurement or the medium does not match it.</value>
+        <value>Replace an existing Data Position Measurement, and proceed even if the medium does not match the image.</value>
     </data>
     <data name="DPM_spacing_help" xml:space="preserve">
         <value>Sectors between Data Position Measurement entries, 0 for the medium default (50 on CD, 256 on DVD, 512 on Blu-ray).</value>
     </data>
     <data name="DPM_speed_help" xml:space="preserve">
-        <value>Speed to measure at, as a multiple of the medium base speed, 0 for the drive maximum.</value>
+        <value>Drive speed while timing reads, as a multiple of the medium base speed, 0 for the drive maximum.</value>
     </data>
     <data name="DPM_start_help" xml:space="preserve">
-        <value>First sector to measure.</value>
+        <value>First sector to include.</value>
     </data>
     <data name="DPM_end_help" xml:space="preserve">
-        <value>Last sector to measure, the last sector of the medium by default.</value>
+        <value>Last sector to include, the last sector of the medium by default.</value>
     </data>
     <data name="DPM_image_path_help" xml:space="preserve">
         <value>AaruFormat image of the medium, where the Data Position Measurement is added.</value>
     </data>
     <data name="Media_Dpm_Command_Description" xml:space="preserve">
-        <value>Measures the Data Position Measurement of a medium and adds it to its image.</value>
+        <value>Gets the Data Position Measurement of a medium and adds it to its image.</value>
     </data>
     <data name="Measure_DPM_after_dumping" xml:space="preserve">
-        <value>Measure the Data Position Measurement of CDs, DVDs and Blu-rays after dumping them.</value>
+        <value>Get the Data Position Measurement of CDs, DVDs and Blu-rays after dumping them.</value>
     </data>
 </root>

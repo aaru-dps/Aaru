@@ -3608,16 +3608,16 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
         <value>[slateblue1]Medida con [rosybrown]{0}[/] calibraciones de rotación en [rosybrown]{1}[/] capas.[/]</value>
     </data>
     <data name="Measuring_DPM_at_sector_0" xml:space="preserve">
-        <value>[slateblue1]Midiendo la Medición de Posición de Datos en el sector [lime]{0}[/][/]</value>
+        <value>[slateblue1]Localizando el sector [lime]{0}[/] en la espiral[/]</value>
     </data>
     <data name="Re_measuring_0_DPM_bins_pass_1_of_2" xml:space="preserve">
-        <value>[slateblue1]Volviendo a medir [teal]{0}[/] intervalos fallidos o atípicos de la Medición de Posición de Datos (pasada [teal]{1}[/] de [violet]{2}[/])...[/]</value>
+        <value>[slateblue1]Cronometrando de nuevo [teal]{0}[/] entradas fallidas o atípicas (pasada [teal]{1}[/] de [violet]{2}[/])...[/]</value>
     </data>
     <data name="DPM_needs_a_high_resolution_timer" xml:space="preserve">
         <value>[red]La Medición de Posición de Datos necesita un temporizador de alta resolución, que este sistema no tiene.[/]</value>
     </data>
     <data name="DPM_cannot_be_measured_on_this_medium" xml:space="preserve">
-        <value>[olive]No se puede realizar la Medición de Posición de Datos en este medio.[/]</value>
+        <value>[olive]La Medición de Posición de Datos no es posible en este medio.[/]</value>
     </data>
     <data name="DPM_cannot_lock_the_drive_speed" xml:space="preserve">
         <value>[red]No se puede fijar la velocidad de la unidad, que la Medición de Posición de Datos necesita.[/]</value>
@@ -3635,10 +3635,10 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
         <value>[red]La Medición de Posición de Datos falló.[/]</value>
     </data>
     <data name="DPM_not_measured_on_remote_devices" xml:space="preserve">
-        <value>[olive]No se realiza la Medición de Posición de Datos en dispositivos remotos.[/]</value>
+        <value>[olive]La Medición de Posición de Datos se omite en dispositivos remotos.[/]</value>
     </data>
     <data name="Measuring_Data_Position_Measurement" xml:space="preserve">
-        <value>[slateblue1]Realizando la Medición de Posición de Datos...[/]</value>
+        <value>[slateblue1]Cartografiando las posiciones de los sectores para la Medición de Posición de Datos...[/]</value>
     </data>
     <data name="DPM_on_Bluray_is_experimental" xml:space="preserve">
         <value>[olive]La Medición de Posición de Datos en Blu-ray es experimental.[/]</value>
@@ -3647,6 +3647,6 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
         <value>[red]Error [teal]{0}[/] escribiendo la Medición de Posición de Datos en la imagen.[/]</value>
     </data>
     <data name="Measured_DPM_with_0_entries" xml:space="preserve">
-        <value>[slateblue1]Medida la Medición de Posición de Datos con [teal]{0}[/] entradas.[/]</value>
+        <value>[slateblue1]Medición de Posición de Datos terminada, con [teal]{0}[/] entradas.[/]</value>
     </data>
 </root>

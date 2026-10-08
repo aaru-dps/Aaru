@@ -3761,19 +3761,19 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
         <value>[slateblue1]Measured with [rosybrown]{0}[/] rotation calibrations on [rosybrown]{1}[/] layers.[/]</value>
     </data>
     <data name="Measuring_DPM_at_sector_0" xml:space="preserve">
-        <value>[slateblue1]Measuring Data Position Measurement at sector [lime]{0}[/][/]</value>
+        <value>[slateblue1]Locating sector [lime]{0}[/] on the spiral[/]</value>
     </data>
     <data name="Re_measuring_0_DPM_bins_pass_1_of_2" xml:space="preserve">
-        <value>[slateblue1]Re-measuring [teal]{0}[/] failed or outlying Data Position Measurement bins (pass [teal]{1}[/] of [violet]{2}[/])...[/]</value>
+        <value>[slateblue1]Timing again [teal]{0}[/] failed or outlying entries (pass [teal]{1}[/] of [violet]{2}[/])...[/]</value>
     </data>
     <data name="DPM_needs_a_high_resolution_timer" xml:space="preserve">
         <value>[red]Data Position Measurement needs a high resolution timer, which this system does not have.[/]</value>
     </data>
     <data name="DPM_cannot_be_measured_on_this_medium" xml:space="preserve">
-        <value>[olive]Data Position Measurement cannot be measured on this medium.[/]</value>
+        <value>[olive]Data Position Measurement is not possible on this medium.[/]</value>
     </data>
     <data name="DPM_cannot_lock_the_drive_speed" xml:space="preserve">
-        <value>[red]Cannot lock the drive speed, which Data Position Measurement needs.[/]</value>
+        <value>[red]Cannot lock the drive speed, which the Data Position Measurement needs.[/]</value>
     </data>
     <data name="Calibrating_disc_rotation" xml:space="preserve">
         <value>[slateblue1]Calibrating disc rotation...[/]</value>
@@ -3788,10 +3788,10 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
         <value>[red]Data Position Measurement failed.[/]</value>
     </data>
     <data name="DPM_not_measured_on_remote_devices" xml:space="preserve">
-        <value>[olive]Data Position Measurement is not measured on remote devices.[/]</value>
+        <value>[olive]Data Position Measurement is skipped on remote devices.[/]</value>
     </data>
     <data name="Measuring_Data_Position_Measurement" xml:space="preserve">
-        <value>[slateblue1]Measuring Data Position Measurement...[/]</value>
+        <value>[slateblue1]Mapping sector positions for the Data Position Measurement...[/]</value>
     </data>
     <data name="DPM_on_Bluray_is_experimental" xml:space="preserve">
         <value>[olive]Data Position Measurement on Blu-ray is experimental.[/]</value>
@@ -3800,6 +3800,6 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
         <value>[red]Error [teal]{0}[/] writing Data Position Measurement to image.[/]</value>
     </data>
     <data name="Measured_DPM_with_0_entries" xml:space="preserve">
-        <value>[slateblue1]Measured Data Position Measurement with [teal]{0}[/] entries.[/]</value>
+        <value>[slateblue1]Data Position Measurement done, with [teal]{0}[/] entries.[/]</value>
     </data>
 </root>
