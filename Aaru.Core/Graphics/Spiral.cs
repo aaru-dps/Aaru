@@ -423,6 +423,7 @@ public sealed class Spiral : IMediaGraph
             MediaType.Pippin      => _cdParameters,
             MediaType.VideoNow      => _videoNowParameters,
             MediaType.VideoNowColor => _videoNowColorParameters,
+            MediaType.VideoNowXp    => _videoNowColorParameters,
             MediaType.DDCD        => _ddcdParameters,
             MediaType.DDCDR       => _ddcdRecordableParameters,
             MediaType.DDCDRW      => _ddcdRewritableParameters,
