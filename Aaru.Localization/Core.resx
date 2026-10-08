@@ -3802,4 +3802,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="Measured_DPM_with_0_entries" xml:space="preserve">
         <value>[slateblue1]Data Position Measurement done, with [teal]{0}[/] entries.[/]</value>
     </data>
+    <data name="Calibrating_disc_rotation_at_sector_0" xml:space="preserve">
+        <value>[slateblue1]Calibrating disc rotation at sector [lime]{0}[/][/]</value>
+    </data>
 </root>

@@ -7462,5 +7462,11 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Calibrating_disc_rotation_at_sector_0 {
+            get {
+                return ResourceManager.GetString("Calibrating_disc_rotation_at_sector_0", resourceCulture);
+            }
+        }
+        
     }
 }

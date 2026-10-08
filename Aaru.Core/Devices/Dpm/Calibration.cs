@@ -294,6 +294,25 @@ public sealed partial class DpmMeasurement
     /// </summary>
     bool Calibrate(uint lba, out double tMs, out double aps)
     {
+        // A calibration stops the progress for a while, say so, or it looks like trouble reading
+        if(_showingProgress)
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Calibrating_disc_rotation_at_sector_0, lba),
+                                   _progressLba,
+                                   _progressEnd);
+
+        bool calibrated = CalibrateSweeps(lba, out tMs, out aps);
+
+        if(_showingProgress)
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Measuring_DPM_at_sector_0, _progressLba),
+                                   _progressLba,
+                                   _progressEnd);
+
+        return calibrated;
+    }
+
+    /// <summary>Repeats calibration sweeps at <paramref name="lba" /> until two of them agree</summary>
+    bool CalibrateSweeps(uint lba, out double tMs, out double aps)
+    {
         tMs = 0;
         aps = 0;
 

@@ -46,6 +46,13 @@ public sealed partial class DpmMeasurement
     const double OUTLIER_MIN_REL  = 0.03;
     const int    OUTLIER_RETRIES  = 3;
 
+    /// <summary>Sector of the bin being measured, shown in the progress</summary>
+    uint _progressLba;
+    /// <summary>Last sector to measure, the maximum of the progress</summary>
+    uint _progressEnd;
+    /// <summary>Whether the main pass progress bar is shown</summary>
+    bool _showingProgress;
+
     /// <summary>
     ///     Flags control points that deviate from the median of their <see cref="OUTLIER_HALF_WIN" /> neighbours on each
     ///     side, in the same layer only, by more than max(<see cref="OUTLIER_SIGMA" /> robust sigmas,
@@ -189,11 +196,14 @@ public sealed partial class DpmMeasurement
         int  skipFrom = 0;
 
         InitProgress?.Invoke();
+        _showingProgress = true;
+        _progressEnd     = endLba;
 
         for(int j = 0; j < nb; j++)
         {
             if(_aborted)
             {
+                _showingProgress = false;
                 EndProgress?.Invoke();
 
                 return null;
@@ -201,6 +211,7 @@ public sealed partial class DpmMeasurement
 
             uint lo = pt[j], hi = pt[j + 1];
 
+            _progressLba = lo;
             UpdateProgress?.Invoke(string.Format(Localization.Core.Measuring_DPM_at_sector_0, lo), lo, endLba);
 
             if(skipLeft > 0 && LayerOf(lo) == LayerOf(pt[skipFrom]))
@@ -320,6 +331,7 @@ public sealed partial class DpmMeasurement
             }
         }
 
+        _showingProgress = false;
         EndProgress?.Invoke();
         AaruLogging.Debug(MODULE_NAME, "Main pass: {0:F1} s", stopwatch.Elapsed.TotalSeconds);
 
