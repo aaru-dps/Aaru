@@ -73,11 +73,15 @@ public interface IDpmDrive
     /// <summary>Monotonic time in nanoseconds</summary>
     long Now { get; }
 
-    /// <summary>Reads one sector with Force Unit Access, timing only the command</summary>
+    /// <summary>Reads one sector with Force Unit Access, timing it</summary>
     /// <param name="lba">Sector address</param>
     /// <param name="elapsed">Nanoseconds the command took</param>
+    /// <param name="sincePrevious">
+    ///     Nanoseconds since the previous command finished, including any time the host took before sending this one,
+    ///     while the disc kept turning, or <paramref name="elapsed" /> if there was no previous command
+    /// </param>
     /// <returns><c>true</c> if the sector was read, <c>false</c> otherwise</returns>
-    bool TimedRead(uint lba, out long elapsed);
+    bool TimedRead(uint lba, out long elapsed, out long sincePrevious);
 
     /// <summary>Reads several sectors without timing them, to flush the drive cache</summary>
     /// <param name="lba">First sector</param>
@@ -122,6 +126,8 @@ public sealed class DeviceDpmDrive : IDpmDrive
     byte[] _cachePage;
     byte[] _decoyBuffer = new byte[DECOY_MAX_BLOCKS * 2352];
     byte[] _sectorBuffer = new byte[2048];
+    /// <summary>Timestamp when the previous command finished, 0 if none</summary>
+    long _previousEnd;
 
     /// <summary>Creates DPM drive operations on a device</summary>
     /// <param name="dev">Device</param>
@@ -131,7 +137,7 @@ public sealed class DeviceDpmDrive : IDpmDrive
     public long Now => (long)(Stopwatch.GetTimestamp() * (1e9 / Stopwatch.Frequency));
 
     /// <inheritdoc />
-    public bool TimedRead(uint lba, out long elapsed)
+    public bool TimedRead(uint lba, out long elapsed, out long sincePrevious)
     {
         bool   audio  = IsAudio(lba);
         byte[] buffer = audio ? _audioBuffer : _sectorBuffer;
@@ -145,7 +151,9 @@ public sealed class DeviceDpmDrive : IDpmDrive
         int  error = _dev.SendScsiCommand(_cdb, ref buffer, TIMEOUT, ScsiDirection.In, out _, out bool sense);
         long end   = Stopwatch.GetTimestamp();
 
-        elapsed = (long)((end - start) * (1e9 / Stopwatch.Frequency));
+        elapsed       = (long)((end - start) * (1e9 / Stopwatch.Frequency));
+        sincePrevious = _previousEnd == 0 ? elapsed : (long)((end - _previousEnd) * (1e9 / Stopwatch.Frequency));
+        _previousEnd  = end;
 
         return error == 0 && !sense;
     }
@@ -167,11 +175,19 @@ public sealed class DeviceDpmDrive : IDpmDrive
         if(_decoyBuffer.Length != length) _decoyBuffer = new byte[length];
 
         _dev.SendScsiCommand(_cdb, ref _decoyBuffer, TIMEOUT, ScsiDirection.In, out _, out _);
+        _previousEnd = Stopwatch.GetTimestamp();
     }
 
     /// <inheritdoc />
-    public bool SetSpeed(ushort kbps) =>
-        !_dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, kbps, 0xFFFF, TIMEOUT, out _);
+    public bool SetSpeed(ushort kbps)
+    {
+        bool ok = !_dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, kbps, 0xFFFF, TIMEOUT, out _);
+
+        // The head may have moved, so the next timed read starts afresh
+        _previousEnd = 0;
+
+        return ok;
+    }
 
     /// <inheritdoc />
     public bool DisableReadCache()

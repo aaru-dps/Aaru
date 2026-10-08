@@ -82,14 +82,21 @@ public sealed partial class DpmMeasurement
         _badRestored = _bad.Count;
     }
 
-    /// <summary>Single sector read, timed if <paramref name="elapsed" /> is wanted, that remembers failures</summary>
-    bool ReadBlock(uint lba, out long elapsed)
+    /// <summary>Single sector read, timed, that remembers failures</summary>
+    /// <param name="lba">Sector address</param>
+    /// <param name="elapsed">Nanoseconds the command took, to tell cache hits</param>
+    /// <param name="sincePrevious">
+    ///     Nanoseconds since the previous command finished, which is how far the disc turned, whatever the host did in
+    ///     between
+    /// </param>
+    bool ReadBlock(uint lba, out long elapsed, out long sincePrevious)
     {
-        elapsed = 0;
+        elapsed       = 0;
+        sincePrevious = 0;
 
         if(IsBad(lba)) return false;
 
-        if(!_drive.TimedRead(lba, out elapsed))
+        if(!_drive.TimedRead(lba, out elapsed, out sincePrevious))
         {
             MarkBad(lba);
 
@@ -141,11 +148,12 @@ public sealed partial class DpmMeasurement
         AaruLogging.Debug(MODULE_NAME, "Waiting for spindle to spin up and stabilize...");
 
         // An unreadable sector here would be retried by the drive for many seconds on every pass, move along
-        while(!_drive.TimedRead(lba, out _) && _drive.Now < deadline) lba += 16;
+        while(!_drive.TimedRead(lba, out _, out _) && _drive.Now < deadline) lba += 16;
 
         while(_drive.Now < deadline)
         {
-            if(!_drive.TimedRead(lba, out long delta))
+            // Since the previous read finished, a whole number of turns whatever the host took in between
+            if(!_drive.TimedRead(lba, out _, out long delta))
             {
                 lba         += 16;
                 previous    =  0;
@@ -206,12 +214,17 @@ public sealed partial class DpmMeasurement
     }
 
     /// <summary>One paired sample: positions on S, then times the read of S+d</summary>
-    /// <returns>Nanoseconds the second command took, or 0 on error</returns>
-    long PairSample(uint s, uint d)
+    /// <param name="s">First sector</param>
+    /// <param name="d">Distance to the timed sector</param>
+    /// <param name="elapsed">Nanoseconds the timed command took, to tell cache hits</param>
+    /// <returns>Nanoseconds from the end of the read of S to the end of the read of S+d, or 0 on error</returns>
+    long PairSample(uint s, uint d, out long elapsed)
     {
-        if(!ReadBlock(s, out _)) return 0;
+        elapsed = 0;
 
-        return ReadBlock(s + d, out long elapsed) ? elapsed : 0;
+        if(!ReadBlock(s, out _, out _)) return 0;
+
+        return ReadBlock(s + d, out elapsed, out long sincePrevious) ? sincePrevious : 0;
     }
 
     /// <summary>Median of the paired samples, detecting and retrying cache hits</summary>
@@ -225,9 +238,9 @@ public sealed partial class DpmMeasurement
         while(n < _reps && attempts < _reps * 3)
         {
             attempts++;
-            long elapsed = PairSample(s, d);
+            long turned = PairSample(s, d, out long elapsed);
 
-            if(elapsed == 0) continue;
+            if(turned == 0) continue;
 
             if(elapsed < PAIR_CACHE_HIT_NS)
             {
@@ -238,19 +251,22 @@ public sealed partial class DpmMeasurement
                 continue;
             }
 
-            values[n++] = elapsed / 1e6;
+            values[n++] = turned / 1e6;
         }
 
         return n == 0 ? -1.0 : Median(values, n);
     }
 
     /// <summary>One timed read</summary>
-    /// <returns>Milliseconds, -1 on error, -2 if served from cache</returns>
+    /// <returns>
+    ///     Milliseconds since the previous command finished, which is how far the disc turned, -1 on error, -2 if served
+    ///     from cache
+    /// </returns>
     double TimedReadMs(uint lba)
     {
-        if(!ReadBlock(lba, out long elapsed)) return -1.0;
+        if(!ReadBlock(lba, out long elapsed, out long sincePrevious)) return -1.0;
 
-        return elapsed < PAIR_CACHE_HIT_NS ? -2.0 : elapsed / 1e6;
+        return elapsed < PAIR_CACHE_HIT_NS ? -2.0 : sincePrevious / 1e6;
     }
 
     /// <summary>Median of the first <paramref name="n" /> values, sorting them in place</summary>
