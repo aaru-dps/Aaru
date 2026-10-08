@@ -40,12 +40,12 @@ public partial class BZip2
     public static bool IsSupported => true;
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_bzip2_decode_buffer(byte[] dstBuffer, ref uint dstSize, byte[] srcBuffer,
-                                                        uint   srcSize);
+    private static partial int AARU_bzip2_decode_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                        ref nuint dstSize);
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_bzip2_encode_buffer(byte[] dstBuffer, ref uint dstSize, byte[] srcBuffer,
-                                                        uint   srcSize,   int      blockSize100K);
+    private static partial int AARU_bzip2_encode_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                        ref nuint dstSize,   int   blockSize100K);
 
     /// <summary>Decodes a buffer compressed with BZIP2</summary>
     /// <param name="source">Encoded buffer</param>
@@ -53,11 +53,11 @@ public partial class BZip2
     /// <returns>The number of decoded bytes</returns>
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
-        var destinationSize = (uint)destination.Length;
+        var destinationSize = (nuint)destination.Length;
 
         if(Native.IsSupported)
         {
-            AARU_bzip2_decode_buffer(destination, ref destinationSize, source, (uint)source.Length);
+            AARU_bzip2_decode_buffer(source, (nuint)source.Length, destination, ref destinationSize);
 
             return (int)destinationSize;
         }
@@ -75,11 +75,11 @@ public partial class BZip2
     /// <returns>The size of the compressed data</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int blockSize100K)
     {
-        var destinationSize = (uint)destination.Length;
+        var destinationSize = (nuint)destination.Length;
 
         if(Native.IsSupported)
         {
-            AARU_bzip2_encode_buffer(destination, ref destinationSize, source, (uint)source.Length, blockSize100K);
+            AARU_bzip2_encode_buffer(source, (nuint)source.Length, destination, ref destinationSize, blockSize100K);
 
             return (int)destinationSize;
         }

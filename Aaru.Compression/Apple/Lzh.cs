@@ -38,8 +38,8 @@ public partial class Lzh
     public static bool IsSupported => Native.IsSupported;
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_apple_lzh_decode_buffer(byte[] dst_buffer, ref nint dst_size, byte[] src_buffer,
-                                                            nint   src_size);
+    private static partial int AARU_apple_lzh_decode_buffer(byte[] src_buffer, nuint src_size, byte[] dst_buffer,
+                                                            ref nuint dst_size);
 
     /// <summary>Decodes a buffer compressed with Apple's LZH</summary>
     /// <param name="source">Encoded buffer</param>
@@ -49,9 +49,9 @@ public partial class Lzh
     {
         if(!Native.IsSupported) return 0;
 
-        nint destLen = destination.Length;
+        nuint destLen = (nuint)destination.Length;
 
-        AARU_apple_lzh_decode_buffer(destination, ref destLen, source, source.Length);
+        AARU_apple_lzh_decode_buffer(source, (nuint)source.Length, destination, ref destLen);
 
         return (int)destLen;
     }

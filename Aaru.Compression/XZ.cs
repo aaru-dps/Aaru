@@ -17,33 +17,33 @@ public static partial class XZ
     }
 
     /// <summary>
-    ///     AARU_EXPORT int32_t AARU_CALL AARU_xz_decode_buffer(uint8_t * dst_buffer, size_t *dst_size, const uint8_t
-    ///     *src_buffer, size_t src_size)
+    ///     AARU_EXPORT int32_t AARU_CALL AARU_xz_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t
+    ///     *dst_buffer, size_t *dst_size)
     /// </summary>
-    /// <param name="dst_buffer">Buffer to write the decompressed data to</param>
-    /// <param name="dst_size">Size of the destination buffer, total bytes written on finish</param>
     /// <param name="src_buffer">Buffer that contains the compressed data</param>
     /// <param name="src_size">Size of the source buffer</param>
-    /// <returns></returns>
+    /// <param name="dst_buffer">Buffer to write the decompressed data to</param>
+    /// <param name="dst_size">Size of the destination buffer, total bytes written on finish</param>
+    /// <returns>Error code or 0 on success</returns>
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_xz_decode_buffer(byte[] dst_buffer, ref nuint dst_size, byte[] src_buffer,
-                                                     nuint  src_size);
+    private static partial int AARU_xz_decode_buffer(byte[]    src_buffer, nuint src_size, byte[] dst_buffer,
+                                                     ref nuint dst_size);
 
 
     /// <summary>
-    ///     AARU_EXPORT int32_t AARU_CALL AARU_xz_encode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t
-    ///     *src_buffer, size_t src_size,uint32_t preset, uint32_t checkType)
+    ///     AARU_EXPORT int32_t AARU_CALL AARU_xz_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t
+    ///     *dst_buffer, size_t *dst_size, uint32_t preset, uint32_t checkType)
     /// </summary>
-    /// <param name="dst_buffer">Buffer to write the decompressed data to</param>
-    /// <param name="dst_size">Size of the destination buffer</param>
-    /// <param name="src_buffer">Buffer that contains the compressed data</param>
+    /// <param name="src_buffer">Buffer that contains the data to compress</param>
     /// <param name="src_size">Size of the source buffer</param>
+    /// <param name="dst_buffer">Buffer to write the compressed data to</param>
+    /// <param name="dst_size">Size of the destination buffer, total bytes written on finish</param>
     /// <param name="level">Compression level</param>
     /// <param name="checkType">Checksum to use</param>
-    /// <returns>The size of the compressed data, or -1 on error.</returns>
+    /// <returns>Error code or 0 on success</returns>
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_xz_encode_buffer(byte[] dst_buffer, ref nuint dst_size, byte[] src_buffer,
-                                                     nuint  src_size,   uint      level,    CheckType checkType);
+    private static partial int AARU_xz_encode_buffer(byte[]    src_buffer, nuint src_size, byte[] dst_buffer,
+                                                     ref nuint dst_size,   uint  level,    CheckType checkType);
 
     /// <summary>Decodes a buffer compressed with XZ</summary>
     /// <param name="source">Encoded buffer</param>
@@ -54,7 +54,7 @@ public static partial class XZ
         if(Native.IsSupported)
         {
             var dstSize = (nuint)destination.Length;
-            int res     = AARU_xz_decode_buffer(destination, ref dstSize, source, (nuint)source.Length);
+            int res     = AARU_xz_decode_buffer(source, (nuint)source.Length, destination, ref dstSize);
 
             if(res == 0) return (int)dstSize;
         }
@@ -102,7 +102,7 @@ public static partial class XZ
         if(!Native.IsSupported) return -1;
 
         var dstSize = (nuint)destination.Length;
-        int res     = AARU_xz_encode_buffer(destination, ref dstSize, source, (nuint)source.Length, level, checkType);
+        int res     = AARU_xz_encode_buffer(source, (nuint)source.Length, destination, ref dstSize, level, checkType);
 
         if(res != 0) return -1;
 

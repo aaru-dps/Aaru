@@ -40,14 +40,14 @@ public partial class LZMA
     public static bool IsSupported => true;
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_lzma_decode_buffer(byte[]    dstBuffer, ref nuint dstSize, byte[] srcBuffer,
-                                                       ref nuint srcSize,   byte[]    props,   nuint  propsSize);
+    private static partial int AARU_lzma_decode_buffer(byte[]    srcBuffer, nuint  srcSize, byte[] dstBuffer,
+                                                       ref nuint dstSize,   byte[] props,   nuint  propsSize);
 
     [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
-    private static partial int AARU_lzma_encode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer,
-                                                       nuint  srcSize,   byte[] outProps, ref nuint outPropsSize,
-                                                       int    level,     uint dictSize, int lc, int lp, int pb, int fb,
-                                                       int    numThreads);
+    private static partial int AARU_lzma_encode_buffer(byte[] srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                       ref nuint dstSize, byte[] outProps, ref nuint outPropsSize,
+                                                       int level, uint dictSize, int lc, int lp, int pb, int fb,
+                                                       int numThreads);
 
     /// <summary>Decodes a buffer compressed with LZMA</summary>
     /// <param name="source">Encoded buffer</param>
@@ -58,13 +58,12 @@ public partial class LZMA
     {
         if(Native.IsSupported)
         {
-            var srcSize = (nuint)source.Length;
             var dstSize = (nuint)destination.Length;
 
-            AARU_lzma_decode_buffer(destination,
+            AARU_lzma_decode_buffer(source,
+                                    (nuint)source.Length,
+                                    destination,
                                     ref dstSize,
-                                    source,
-                                    ref srcSize,
                                     properties,
                                     (nuint)properties.Length);
 
@@ -99,10 +98,10 @@ public partial class LZMA
             var propsSize = (nuint)properties.Length;
             var srcSize   = (nuint)source.Length;
 
-            AARU_lzma_encode_buffer(destination,
-                                    ref dstSize,
-                                    source,
+            AARU_lzma_encode_buffer(source,
                                     srcSize,
+                                    destination,
+                                    ref dstSize,
                                     properties,
                                     ref propsSize,
                                     level,

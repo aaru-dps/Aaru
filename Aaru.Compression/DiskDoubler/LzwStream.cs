@@ -25,15 +25,15 @@ public partial class LzwStream : Stream
 
         // Allocate output buffer
         _decoded = new byte[decompressedLength];
-        var outLen = (nint)decompressedLength;
+        var outLen = (nuint)decompressedLength;
 
         // Call native decompressor
-        int err = AARU_dd_lzw_decode_buffer(_decoded, ref outLen, inBuf, inBuf.Length, flags);
+        int err = AARU_dd_lzw_decode_buffer(inBuf, (nuint)inBuf.Length, _decoded, ref outLen, flags);
 
         if(err != 0) throw new InvalidOperationException("LZW decompression failed");
 
         // Adjust actual length in case it differs
-        _length   = outLen;
+        _length   = (long)outLen;
         _position = 0;
     }
 
@@ -49,8 +49,8 @@ public partial class LzwStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int AARU_dd_lzw_decode_buffer(byte[] dst_buffer, ref nint dst_size, byte[] src_buffer,
-                                                        nint   src_size,   int      flags);
+    public static partial int AARU_dd_lzw_decode_buffer(byte[] src_buffer, nuint src_size, byte[] dst_buffer,
+                                                        ref nuint dst_size, int flags);
 
     public override void Flush()
     {

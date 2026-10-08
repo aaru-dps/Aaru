@@ -25,20 +25,20 @@ public partial class ImplodeStream : Stream
 
         // Allocate output buffer
         _decoded = new byte[decompressedLength];
-        var outLen = (nint)decompressedLength;
+        var outLen = (nuint)decompressedLength;
 
         // Call native decompressor
-        int err = AARU_zip_implode_decode_buffer(_decoded,
+        int err = AARU_zip_implode_decode_buffer(inBuf,
+                                                 (nuint)inBuf.Length,
+                                                 _decoded,
                                                  ref outLen,
-                                                 inBuf,
-                                                 inBuf.Length,
                                                  largeDictionary ? 1 : 0,
                                                  hasLiterals ? 1 : 0);
 
         if(err != 0) throw new InvalidOperationException("Implode decompression failed");
 
         // Adjust actual length in case it differs
-        _length   = outLen;
+        _length   = (long)outLen;
         _position = 0;
     }
 
@@ -54,8 +54,9 @@ public partial class ImplodeStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int AARU_zip_implode_decode_buffer(byte[] dst_buffer, ref nint dst_size, byte[] src_buffer,
-                                                             nint   src_size,   int large_dictionary, int has_literals);
+    public static partial int AARU_zip_implode_decode_buffer(byte[] src_buffer, nuint src_size, byte[] dst_buffer,
+                                                             ref nuint dst_size, int large_dictionary,
+                                                             int has_literals);
 
     public override void Flush()
     {
