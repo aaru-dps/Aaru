@@ -33,7 +33,7 @@ public partial class HaStream : Stream
 
         // Allocate output buffer
         _decoded = new byte[decompressedLength];
-        var outLen = (nint)decompressedLength;
+        var outLen = (nuint)decompressedLength;
 
         // Call native decompressor
         int err;
@@ -41,11 +41,11 @@ public partial class HaStream : Stream
         switch(method)
         {
             case HaMethod.ASC:
-                err = ha_asc_decompress(inBuf, inBuf.Length, _decoded, ref outLen);
+                err = ha_asc_decompress(inBuf, (nuint)inBuf.Length, _decoded, ref outLen);
 
                 break;
             case HaMethod.HSC:
-                err = ha_hsc_decompress(inBuf, inBuf.Length, _decoded, ref outLen);
+                err = ha_hsc_decompress(inBuf, (nuint)inBuf.Length, _decoded, ref outLen);
 
                 break;
             default:
@@ -55,7 +55,7 @@ public partial class HaStream : Stream
         if(err != 0) throw new InvalidOperationException("Ha decompression failed");
 
         // Adjust actual length in case it differs
-        _length   = outLen;
+        _length   = (long)outLen;
         _position = 0;
     }
 
@@ -71,10 +71,10 @@ public partial class HaStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int ha_asc_decompress(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int ha_asc_decompress(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int ha_hsc_decompress(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int ha_hsc_decompress(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     public override void Flush()
     {

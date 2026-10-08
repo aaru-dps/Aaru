@@ -23,15 +23,15 @@ public partial class PackStream : Stream
 
         // Allocate output buffer
         _decoded = new byte[decompressedLength];
-        var outLen = (nint)decompressedLength;
+        var outLen = (nuint)decompressedLength;
 
         // Call native decompressor
-        int err = arc_decompress_pack(inBuf, inBuf.Length, _decoded, ref outLen);
+        int err = arc_decompress_pack(inBuf, (nuint)inBuf.Length, _decoded, ref outLen);
 
         if(err != 0) throw new InvalidOperationException("Pack decompression failed");
 
         // Adjust actual length in case it differs
-        _length   = outLen;
+        _length   = (long)outLen;
         _position = 0;
     }
 
@@ -47,7 +47,7 @@ public partial class PackStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int arc_decompress_pack(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int arc_decompress_pack(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     public override void Flush()
     {

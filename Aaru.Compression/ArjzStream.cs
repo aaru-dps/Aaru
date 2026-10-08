@@ -25,22 +25,26 @@ public partial class ArjzStream : Stream
 
         // Allocate output buffer
         _decoded = new byte[decompressedLength];
-        var outLen = (nint)decompressedLength;
+        var outLen = (nuint)decompressedLength;
 
         // Call native decompressor
         int err = method switch
                   {
-                      1 => arjz_decompress_method1(inBuf, inBuf.Length, _decoded, ref outLen),
-                      2 => arjz_decompress_method2(inBuf, inBuf.Length, _decoded, ref outLen),
-                      3 => arjz_decompress_method3(inBuf, inBuf.Length, _decoded, ref outLen),
-                      5 => arjz_decompress_buffer(inBuf, inBuf.Length, _decoded, ref outLen, (nint)decompressedLength),
+                      1 => arjz_decompress_method1(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      2 => arjz_decompress_method2(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      3 => arjz_decompress_method3(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      5 => arjz_decompress_buffer(inBuf,
+                                                   (nuint)inBuf.Length,
+                                                   _decoded,
+                                                   ref outLen,
+                                                   (nuint)decompressedLength),
                       _ => throw new ArgumentException("Invalid method")
                   };
 
         if(err != 0) throw new InvalidOperationException("ARJZ decompression failed");
 
         // Adjust actual length in case it differs
-        _length   = outLen;
+        _length   = (long)outLen;
         _position = 0;
     }
 
@@ -56,16 +60,17 @@ public partial class ArjzStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int arjz_decompress_method1(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int arjz_decompress_method1(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int arjz_decompress_method2(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int arjz_decompress_method2(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int arjz_decompress_method3(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int arjz_decompress_method3(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int arjz_decompress_buffer(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len, nint orig_size);
+    public static partial int arjz_decompress_buffer(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len,
+                                                     nuint orig_size);
 
     public override void Flush()
     {

@@ -25,20 +25,20 @@ public partial class AceStream : Stream
 
         // Allocate output buffer
         _decoded = new byte[decompressedLength];
-        var outLen = (nint)decompressedLength;
+        var outLen = (nuint)decompressedLength;
 
         // Call native decompressor
         int err = method switch
                   {
-                      1 => ace_decompress_lz77(inBuf, inBuf.Length, _decoded, ref outLen),
-                      2 => ace_decompress_blocked(inBuf, inBuf.Length, _decoded, ref outLen),
+                      1 => ace_decompress_lz77(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      2 => ace_decompress_blocked(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
                       _ => throw new ArgumentException("Invalid method")
                   };
 
         if(err != 0) throw new InvalidOperationException("ACE decompression failed");
 
         // Adjust actual length in case it differs
-        _length   = outLen;
+        _length   = (long)outLen;
         _position = 0;
     }
 
@@ -54,10 +54,10 @@ public partial class AceStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int ace_decompress_lz77(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int ace_decompress_lz77(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int ace_decompress_blocked(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int ace_decompress_blocked(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     public override void Flush()
     {

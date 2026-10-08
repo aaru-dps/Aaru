@@ -371,7 +371,7 @@ public sealed partial class Rar
         var  dictShift   = (int)(compInfo >> 10 & 0x0F);
 
         // Window size matches unrar: 0x20000 << dictShift, minimum 0x40000.
-        var windowSize = (nint)(0x20000L << dictShift);
+        var windowSize = (nuint)(0x20000L << dictShift);
 
         if(windowSize < 0x40000) windowSize = 0x40000;
 

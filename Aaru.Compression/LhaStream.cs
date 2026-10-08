@@ -25,25 +25,25 @@ public partial class LhaStream : Stream
 
         // Allocate output buffer
         _decoded = new byte[decompressedLength];
-        var outLen = (nint)decompressedLength;
+        var outLen = (nuint)decompressedLength;
 
         // Call native decompressor
         int err = method switch
                   {
-                      1 => lha_decompress_lh1(inBuf, inBuf.Length, _decoded, ref outLen),
-                      2 => lha_decompress_lh2(inBuf, inBuf.Length, _decoded, ref outLen),
-                      3 => lha_decompress_lh3(inBuf, inBuf.Length, _decoded, ref outLen),
-                      4 => lha_decompress_lh4(inBuf, inBuf.Length, _decoded, ref outLen),
-                      5 => lha_decompress_lh5(inBuf, inBuf.Length, _decoded, ref outLen),
-                      6 => lha_decompress_lh6(inBuf, inBuf.Length, _decoded, ref outLen),
-                      7 => lha_decompress_lh7(inBuf, inBuf.Length, _decoded, ref outLen),
+                      1 => lha_decompress_lh1(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      2 => lha_decompress_lh2(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      3 => lha_decompress_lh3(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      4 => lha_decompress_lh4(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      5 => lha_decompress_lh5(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      6 => lha_decompress_lh6(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      7 => lha_decompress_lh7(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
                       _ => throw new ArgumentException("Invalid method")
                   };
 
         if(err != 0) throw new InvalidOperationException("LHA decompression failed");
 
         // Adjust actual length in case it differs
-        _length   = outLen;
+        _length   = (long)outLen;
         _position = 0;
     }
 
@@ -59,25 +59,25 @@ public partial class LhaStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int lha_decompress_lh1(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int lha_decompress_lh1(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int lha_decompress_lh2(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int lha_decompress_lh2(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int lha_decompress_lh3(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int lha_decompress_lh3(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int lha_decompress_lh4(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int lha_decompress_lh4(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int lha_decompress_lh5(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int lha_decompress_lh5(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int lha_decompress_lh6(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int lha_decompress_lh6(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int lha_decompress_lh7(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int lha_decompress_lh7(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     public override void Flush()
     {

@@ -23,19 +23,19 @@ public partial class LzwStream : Stream
 
         // Allocate output buffer
         _decoded = new byte[decompressedLength];
-        var outLen = (nint)decompressedLength;
+        var outLen = (nuint)decompressedLength;
 
         int err;
 
         // Call native decompressor
         err = squash
-                  ? arc_decompress_squash(inBuf, inBuf.Length, _decoded, ref outLen)
-                  : arc_decompress_crunch_dynamic(inBuf, inBuf.Length, _decoded, ref outLen);
+                  ? arc_decompress_squash(inBuf, (nuint)inBuf.Length, _decoded, ref outLen)
+                  : arc_decompress_crunch_dynamic(inBuf, (nuint)inBuf.Length, _decoded, ref outLen);
 
         if(err != 0) throw new InvalidOperationException("LZW decompression failed");
 
         // Adjust actual length in case it differs
-        _length   = outLen;
+        _length   = (long)outLen;
         _position = 0;
     }
 
@@ -51,11 +51,11 @@ public partial class LzwStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int arc_decompress_squash(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int arc_decompress_squash(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int arc_decompress_crunch_dynamic(byte[]   in_buf, nint in_len, byte[] out_buf,
-                                                            ref nint out_len);
+    public static partial int arc_decompress_crunch_dynamic(byte[] in_buf, nuint in_len, byte[] out_buf,
+                                                            ref nuint out_len);
 
     public override void Flush()
     {

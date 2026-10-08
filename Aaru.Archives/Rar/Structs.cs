@@ -26,7 +26,7 @@ public sealed partial class Rar
         public bool              IsSolid;
         public bool              IsEncrypted;
         public bool              IsSplit;
-        public nint              WindowSize;
+        public nuint             WindowSize;
         public string            Comment;
         public bool              HasCreationTime;
         public bool              HasLastAccessTime;

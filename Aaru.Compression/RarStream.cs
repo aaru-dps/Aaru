@@ -12,7 +12,7 @@ public partial class RarStream : Stream
     readonly long   _length;
     long            _position;
 
-    public RarStream(Stream compressedStream, long decompressedLength, int method, nint windowSize = 0)
+    public RarStream(Stream compressedStream, long decompressedLength, int method, nuint windowSize = 0)
     {
         if(compressedStream == null) throw new ArgumentNullException(nameof(compressedStream));
         if(!compressedStream.CanRead) throw new ArgumentException("Stream must be readable", nameof(compressedStream));
@@ -25,22 +25,22 @@ public partial class RarStream : Stream
 
         // Allocate output buffer
         _decoded = new byte[decompressedLength];
-        var outLen = (nint)decompressedLength;
+        var outLen = (nuint)decompressedLength;
 
         // Call native decompressor
         int err = method switch
                   {
-                      15 => rar15_decompress(inBuf, inBuf.Length, _decoded, ref outLen),
-                      20 => rar20_decompress(inBuf, inBuf.Length, _decoded, ref outLen),
-                      29 => rar30_decompress(inBuf, inBuf.Length, _decoded, ref outLen),
-                      50 => rar50_decompress(inBuf, inBuf.Length, _decoded, ref outLen, windowSize),
+                      15 => rar15_decompress(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      20 => rar20_decompress(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      29 => rar30_decompress(inBuf, (nuint)inBuf.Length, _decoded, ref outLen),
+                      50 => rar50_decompress(inBuf, (nuint)inBuf.Length, _decoded, ref outLen, windowSize),
                       _  => throw new ArgumentException("Invalid method")
                   };
 
         if(err != 0) throw new InvalidOperationException("RAR decompression failed");
 
         // Adjust actual length in case it differs
-        _length   = outLen;
+        _length   = (long)outLen;
         _position = 0;
     }
 
@@ -56,17 +56,17 @@ public partial class RarStream : Stream
     }
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int rar15_decompress(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int rar15_decompress(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int rar20_decompress(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int rar20_decompress(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int rar30_decompress(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len);
+    public static partial int rar30_decompress(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len);
 
     [LibraryImport("libAaru.Compression.Native")]
-    public static partial int rar50_decompress(byte[] in_buf, nint in_len, byte[] out_buf, ref nint out_len,
-                                               nint   window_size);
+    public static partial int rar50_decompress(byte[] in_buf, nuint in_len, byte[] out_buf, ref nuint out_len,
+                                               nuint window_size);
 
     public override void Flush()
     {
