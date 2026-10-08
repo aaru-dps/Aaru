@@ -46,6 +46,12 @@ public sealed class Spiral : IMediaGraph
     static readonly DiscParameters _cdRewritableParameters =
         new(120, 15, 33, 46, 50, 116, 45, 46, 360000, new SKColor(0x50, 0x50, 0x50));
     static readonly DiscParameters _ddcdParameters = new(120, 15, 33, 46, 50, 116, 0, 0, 666000, SKColors.Silver);
+
+    // VideoNow discs are CDs of a smaller diameter: same hole, clamping area, information area start and lead-in, the
+    // same margin at the rim, and a capacity proportional to the recorded area, (end² - 50²) / (116² - 50²) of a CD's
+    static readonly DiscParameters _videoNowParameters = new(85, 15, 33, 46, 50, 81, 0, 0, 133439, SKColors.Silver);
+    static readonly DiscParameters _videoNowColorParameters =
+        new(100, 15, 33, 46, 50, 96, 0, 0, 220679, SKColors.Silver);
     static readonly DiscParameters _ddcdRecordableParameters =
         new(120, 15, 33, 46, 50, 116, 45, 46, 666000, new SKColor(0xBD, 0xA0, 0x00));
     static readonly DiscParameters _ddcdRewritableParameters =
@@ -415,6 +421,8 @@ public sealed class Spiral : IMediaGraph
             MediaType.GOD         => _dvdParameters80,
             MediaType.WOD         => _dvdParameters,
             MediaType.Pippin      => _cdParameters,
+            MediaType.VideoNow      => _videoNowParameters,
+            MediaType.VideoNowColor => _videoNowColorParameters,
             MediaType.DDCD        => _ddcdParameters,
             MediaType.DDCDR       => _ddcdRecordableParameters,
             MediaType.DDCDRW      => _ddcdRewritableParameters,
