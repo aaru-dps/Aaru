@@ -788,31 +788,14 @@ public sealed partial class Alcohol120
             var values = new byte[header.numberOfDpmEntries * 4];
             stream.EnsureRead(values, 0, values.Length);
 
-            var entries = new DpmEntry[header.numberOfDpmEntries + 1];
+            var angles = new uint[header.numberOfDpmEntries];
 
-            entries[0] = new DpmEntry
-            {
-                Lba = header.dpmStartSector
-            };
+            for(int e = 0; e < angles.Length; e++)
+                angles[e] = BinaryPrimitives.ReadUInt32LittleEndian(values.AsSpan(e * 4));
 
-            for(int e = 0; e < header.numberOfDpmEntries; e++)
-            {
-                entries[e + 1] = new DpmEntry
-                {
-                    Lba   = header.dpmStartSector + (ulong)(e + 1) * header.dpmResolution,
-                    Angle = BinaryPrimitives.ReadUInt32LittleEndian(values.AsSpan(e * 4)) * Dpm.UNITS_PER_ALCOHOL_UNIT
-                };
-            }
+            DataPositionMeasurement? dpm = Dpm.FromGrid(header.dpmStartSector, header.dpmResolution, angles);
 
-            var dpm = new DataPositionMeasurement
-            {
-                NominalSpacing = header.dpmResolution,
-                LayerEnds      = [],
-                Entries        = entries,
-                Calibrations   = []
-            };
-
-            if(!Dpm.Validate(dpm))
+            if(dpm is null)
             {
                 AaruLogging.Debug(MODULE_NAME, "Invalid DPM block, ignoring it.");
 

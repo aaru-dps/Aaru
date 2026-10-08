@@ -205,6 +205,46 @@ public static class Dpm
         return grid;
     }
 
+    /// <summary>
+    ///     Builds a DPM from a uniform grid of cumulative angles in 256 units per turn, as stored by Alcohol 120% and
+    ///     BlindWrite, where the first value is the angle at <paramref name="start" /> plus
+    ///     <paramref name="resolution" /> sectors.
+    /// </summary>
+    /// <param name="start">Sector where the DPM starts, its angle is 0</param>
+    /// <param name="resolution">Sectors between values</param>
+    /// <param name="values">Cumulative angles, 256 per turn</param>
+    /// <returns>The DPM, or <c>null</c> if the values are not a valid DPM</returns>
+    public static DataPositionMeasurement? FromGrid(uint start, uint resolution, ReadOnlySpan<uint> values)
+    {
+        if(resolution == 0 || values.Length == 0) return null;
+
+        var entries = new DpmEntry[values.Length + 1];
+
+        entries[0] = new DpmEntry
+        {
+            Lba = start
+        };
+
+        for(int i = 0; i < values.Length; i++)
+        {
+            entries[i + 1] = new DpmEntry
+            {
+                Lba   = start + (ulong)(i + 1) * resolution,
+                Angle = values[i] * UNITS_PER_ALCOHOL_UNIT
+            };
+        }
+
+        var dpm = new DataPositionMeasurement
+        {
+            NominalSpacing = resolution,
+            LayerEnds      = [],
+            Entries        = entries,
+            Calibrations   = []
+        };
+
+        return Validate(dpm) ? dpm : null;
+    }
+
     /// <summary>Gets the bin that contains a sector</summary>
     /// <param name="dpm">DPM</param>
     /// <param name="lba">Sector address</param>
