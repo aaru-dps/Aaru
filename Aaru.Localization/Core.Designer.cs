@@ -7378,5 +7378,59 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Measuring_DPM_at_sector_0 {
+            get {
+                return ResourceManager.GetString("Measuring_DPM_at_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string Re_measuring_0_DPM_bins_pass_1_of_2 {
+            get {
+                return ResourceManager.GetString("Re_measuring_0_DPM_bins_pass_1_of_2", resourceCulture);
+            }
+        }
+        
+        public static string DPM_needs_a_high_resolution_timer {
+            get {
+                return ResourceManager.GetString("DPM_needs_a_high_resolution_timer", resourceCulture);
+            }
+        }
+        
+        public static string DPM_cannot_be_measured_on_this_medium {
+            get {
+                return ResourceManager.GetString("DPM_cannot_be_measured_on_this_medium", resourceCulture);
+            }
+        }
+        
+        public static string DPM_cannot_lock_the_drive_speed {
+            get {
+                return ResourceManager.GetString("DPM_cannot_lock_the_drive_speed", resourceCulture);
+            }
+        }
+        
+        public static string Calibrating_disc_rotation {
+            get {
+                return ResourceManager.GetString("Calibrating_disc_rotation", resourceCulture);
+            }
+        }
+        
+        public static string DPM_calibration_failed_at_sector_0 {
+            get {
+                return ResourceManager.GetString("DPM_calibration_failed_at_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string Disc_turns_every_0_ms_1_RPM {
+            get {
+                return ResourceManager.GetString("Disc_turns_every_0_ms_1_RPM", resourceCulture);
+            }
+        }
+        
+        public static string DPM_measurement_failed {
+            get {
+                return ResourceManager.GetString("DPM_measurement_failed", resourceCulture);
+            }
+        }
+        
     }
 }

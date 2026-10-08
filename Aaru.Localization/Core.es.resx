@@ -3607,4 +3607,31 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="DPM_measured_with_0_calibrations_1_layers_WithMarkup" xml:space="preserve">
         <value>[slateblue1]Medida con [rosybrown]{0}[/] calibraciones de rotación en [rosybrown]{1}[/] capas.[/]</value>
     </data>
+    <data name="Measuring_DPM_at_sector_0" xml:space="preserve">
+        <value>Midiendo la Medición de Posición de Datos en el sector {0}</value>
+    </data>
+    <data name="Re_measuring_0_DPM_bins_pass_1_of_2" xml:space="preserve">
+        <value>Volviendo a medir {0} intervalos fallidos o atípicos de la Medición de Posición de Datos (pasada {1} de {2})...</value>
+    </data>
+    <data name="DPM_needs_a_high_resolution_timer" xml:space="preserve">
+        <value>La Medición de Posición de Datos necesita un temporizador de alta resolución, que este sistema no tiene.</value>
+    </data>
+    <data name="DPM_cannot_be_measured_on_this_medium" xml:space="preserve">
+        <value>No se puede realizar la Medición de Posición de Datos en este medio.</value>
+    </data>
+    <data name="DPM_cannot_lock_the_drive_speed" xml:space="preserve">
+        <value>No se puede fijar la velocidad de la unidad, que la Medición de Posición de Datos necesita.</value>
+    </data>
+    <data name="Calibrating_disc_rotation" xml:space="preserve">
+        <value>Calibrando la rotación del disco...</value>
+    </data>
+    <data name="DPM_calibration_failed_at_sector_0" xml:space="preserve">
+        <value>La calibración de la Medición de Posición de Datos falló en el sector {0}.</value>
+    </data>
+    <data name="Disc_turns_every_0_ms_1_RPM" xml:space="preserve">
+        <value>El disco gira cada {0:F3} ms ({1:F0} RPM).</value>
+    </data>
+    <data name="DPM_measurement_failed" xml:space="preserve">
+        <value>La Medición de Posición de Datos falló.</value>
+    </data>
 </root>
