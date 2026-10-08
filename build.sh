@@ -66,6 +66,8 @@ if [[ ${OS_NAME} == Linux ]]; then
   cd ../../..
   mv .globalconfig.bak .globalconfig
   mv pkg/pacman/stable/*.pkg.tar.zst build/ 2>/dev/null || true
+  # Remove the makepkg working directories, they hold a whole copy of the sources and their build outputs
+  rm -rf pkg/pacman/stable/src pkg/pacman/stable/pkg
  fi
 
  # Build Debian packages for all architectures (on any distro if tools are available)
