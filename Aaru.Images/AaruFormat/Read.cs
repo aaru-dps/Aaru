@@ -112,14 +112,6 @@ public sealed partial class AaruFormat
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDpm(out DataPositionMeasurement dpm)
-    {
-        dpm = default(DataPositionMeasurement);
-
-        return ErrorNumber.NotSupported;
-    }
-
-    /// <inheritdoc />
     public ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer, out SectorStatus sectorStatus)
     {
         buffer = null;

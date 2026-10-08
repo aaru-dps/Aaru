@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Aaru.Logging;
 using Marshal = System.Runtime.InteropServices.Marshal;
@@ -65,14 +64,6 @@ public sealed partial class AaruFormat
                                                [MarshalAs(UnmanagedType.I1)] bool isTape);
 
 #region IWritableOpticalImage Members
-
-    /// <inheritdoc />
-    public bool SetDpm(DataPositionMeasurement dpm)
-    {
-        ErrorMessage = Localization.Unsupported_feature;
-
-        return false;
-    }
 
     /// <inheritdoc />
     public bool WriteSector(byte[] data, ulong sectorAddress, bool negative, SectorStatus sectorStatus)
