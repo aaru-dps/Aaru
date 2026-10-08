@@ -109,6 +109,8 @@ public partial class Dump
     readonly        bool                       _hyperSpeed;
     readonly        uint                       _ignoreCdrRunOuts;
     readonly        Stopwatch                  _imageCloseStopwatch;
+    /// <summary>Time the whole dump takes, from start to closing the image</summary>
+    readonly        Stopwatch                  _totalStopwatch;
     readonly        bool                       _leadout;
     readonly        bool                       _ludicrousSpeed;
     readonly        bool                       _metadata;
@@ -280,6 +282,7 @@ public partial class Dump
         _trimStopwatch         = new Stopwatch();
         _writeStopwatch        = new Stopwatch();
         _imageCloseStopwatch   = new Stopwatch();
+        _totalStopwatch        = new Stopwatch();
     }
 
     /// <summary>Computes the KiB/s cap from the user mandated speed and the media speed multiplier</summary>
@@ -305,6 +308,8 @@ public partial class Dump
     /// <summary>Starts dumping with the established fields and autodetecting the device type</summary>
     public void Start()
     {
+        _totalStopwatch.Restart();
+
         // Open main database
         _ctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
@@ -407,6 +412,38 @@ public partial class Dump
         _aborted     = true;
         _sidecarClass?.Abort();
         _dpmMeasurement?.Abort();
+    }
+
+    /// <summary>
+    ///     Reports how long the whole dump took, from the start to closing the image, including trimming, retrying and the
+    ///     Data Position Measurement, naming the time the latter took if it ran
+    /// </summary>
+    /// <param name="commandsMs">Milliseconds processing commands</param>
+    /// <param name="checksumMs">Milliseconds checksumming</param>
+    /// <param name="writeSeconds">Seconds writing</param>
+    void ReportTotalTime(double commandsMs, double checksumMs, double writeSeconds)
+    {
+        if(!_dpmRan)
+        {
+            UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                           .Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                                               _totalStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                                               commandsMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                               checksumMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                               writeSeconds.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                               _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+
+            return;
+        }
+
+        UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                       .Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing_5_DPM,
+                                           _totalStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                                           commandsMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                           checksumMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                           writeSeconds.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                                           _dpmStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
     }
 
     /// <summary>Why the dump in progress was aborted</summary>

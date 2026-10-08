@@ -849,13 +849,7 @@ partial class Dump
 
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core
-                                                       .Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                           _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
-                                           totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                           totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                           imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+        ReportTotalTime(totalDuration, totalChkDuration, imageWriteDuration);
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1))

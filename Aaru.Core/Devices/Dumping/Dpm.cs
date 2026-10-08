@@ -117,33 +117,4 @@ partial class Dump
             AaruLogging.Debug(MODULE_NAME, "DPM phase finished");
         }
     }
-
-    /// <summary>Reports how long the dump took, counting the DPM phase in the total and naming it if it ran</summary>
-    /// <param name="commandsMs">Milliseconds processing commands</param>
-    /// <param name="checksumMs">Milliseconds checksumming</param>
-    /// <param name="writeSeconds">Seconds writing</param>
-    void ReportTotalTime(double commandsMs, double checksumMs, double writeSeconds)
-    {
-        if(!_dpmRan)
-        {
-            UpdateStatus?.Invoke(string.Format(Localization.Core
-                                                           .Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                               _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
-                                               commandsMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                               checksumMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                               writeSeconds.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                               _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
-
-            return;
-        }
-
-        UpdateStatus?.Invoke(string.Format(Localization.Core
-                                                       .Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing_5_DPM,
-                                           (_dumpStopwatch.Elapsed + _dpmStopwatch.Elapsed).Humanize(minUnit: TimeUnit.Second),
-                                           commandsMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                           checksumMs.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                           writeSeconds.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
-                                           _dpmStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
-    }
 }
