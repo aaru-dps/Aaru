@@ -234,7 +234,7 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
         AnsiConsole.Progress()
                    .AutoClear(true)
                    .HideCompleted(true)
-                   .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                   .Columns(new TaskDescriptionColumn(), new PercentageColumn(), new ProgressBarColumn(), new RemainingTimeColumn())
                    .Start(ctx =>
                     {
                         measurement.UpdateStatus += static text => AaruLogging.WriteLine(text);
