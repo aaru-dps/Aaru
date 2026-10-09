@@ -3658,4 +3658,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="DPM_took_0" xml:space="preserve">
         <value>[slateblue1]La Medición de Posición de Datos tardó [aqua]{0}[/].[/]</value>
     </data>
+    <data name="DPM_calibration_failed_retrying_at_0x" xml:space="preserve">
+        <value>[olive]La calibración de la rotación del disco falló a esta velocidad, reintentando a [teal]{0}x[/].[/]</value>
+    </data>
 </root>

@@ -7480,5 +7480,11 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string DPM_calibration_failed_retrying_at_0x {
+            get {
+                return ResourceManager.GetString("DPM_calibration_failed_retrying_at_0x", resourceCulture);
+            }
+        }
+        
     }
 }

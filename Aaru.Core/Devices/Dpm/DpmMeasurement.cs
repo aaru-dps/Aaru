@@ -174,7 +174,7 @@ public sealed partial class DpmMeasurement
             UpdateStatus?.Invoke(Localization.Core.Calibrating_disc_rotation);
             SpinUpSettle(startLba);
 
-            if(!Calibrate(startLba, out double t, out double aps))
+            if(!CalibrateAtUsableSpeed(startLba, out double t, out double aps))
             {
                 ErrorMessage?.Invoke(string.Format(Localization.Core.DPM_calibration_failed_at_sector_0, startLba));
 
@@ -194,5 +194,54 @@ public sealed partial class DpmMeasurement
             _drive.RestoreReadCache();
             _drive.SetSpeed(0xFFFF);
         }
+    }
+
+    /// <summary>Speeds to retry calibrating at when it fails at the drive maximum, fastest first</summary>
+    ushort[] FallbackSpeeds()
+    {
+        return _kind switch
+               {
+                   DpmMediumKind.Dvd => [8, 4],
+                   DpmMediumKind.Bd  => [4, 2],
+                   _                 => [32, 24, 16, 8]
+               };
+    }
+
+    /// <summary>
+    ///     Calibrates at the requested speed and, if that is the drive maximum and calibration fails, at slower speeds,
+    ///     keeping the first that works for the whole measurement.
+    /// </summary>
+    /// <remarks>
+    ///     Every read costs a fixed command overhead, about 19 ms on the test drive. When the drive spins a disc fast,
+    ///     that is several turns, and at the inner radius of a CD, with only about 9 sectors per turn, the head moves past
+    ///     the next sectors of a calibration sweep before reading them. The drive then jumps back one or more tracks, taking
+    ///     a different time for each, and the sweep is no longer a sawtooth of whole turns. Slower, the overhead covers
+    ///     fewer turns and calibration works. Chained reads are not affected, as entries are further apart than the head
+    ///     moves during the overhead.
+    /// </remarks>
+    bool CalibrateAtUsableSpeed(uint lba, out double tMs, out double aps)
+    {
+        if(Calibrate(lba, out tMs, out aps)) return true;
+
+        if(_speed != 0xFFFF) return false;
+
+        foreach(ushort speed in FallbackSpeeds())
+        {
+            if(_aborted) return false;
+
+            UpdateStatus?.Invoke(string.Format(Localization.Core.DPM_calibration_failed_retrying_at_0x, speed));
+
+            _speed = speed;
+            _kbps  = SpeedToKbps(speed);
+
+            if(!_drive.SetSpeed(_kbps)) continue;
+
+            SpinUpSettle(lba);
+            _calibrations.Clear();
+
+            if(Calibrate(lba, out tMs, out aps)) return true;
+        }
+
+        return false;
     }
 }

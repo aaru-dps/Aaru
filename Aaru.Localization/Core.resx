@@ -3811,4 +3811,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="DPM_took_0" xml:space="preserve">
         <value>[slateblue1]Data Position Measurement took [aqua]{0}[/].[/]</value>
     </data>
+    <data name="DPM_calibration_failed_retrying_at_0x" xml:space="preserve">
+        <value>[olive]Disc rotation calibration failed at this speed, retrying at [teal]{0}x[/].[/]</value>
+    </data>
 </root>
