@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System;
+using System.Globalization;
+using System.Linq;
 using Aaru.CommonTypes.Structs;
 using Aaru.Logging;
 
@@ -227,6 +229,8 @@ public sealed partial class DpmMeasurement
                               inconsistent,
                               nd);
 
+            LogSweep(baseLba, e, diffs, nd, s, t, wrapPos, 0);
+
             return false;
         }
 
@@ -250,6 +254,7 @@ public sealed partial class DpmMeasurement
         if(nWrap < CAL_MIN_WRAPS)
         {
             AaruLogging.Debug(MODULE_NAME, "  sweep rejected: only {0} genuine wraps", nWrap);
+            LogSweep(baseLba, e, diffs, nd, s, t, wrapPos, nWrap);
 
             return false;
         }
@@ -264,6 +269,8 @@ public sealed partial class DpmMeasurement
                               "  sweep rejected: timing says {0:F2} sectors/rotation but wraps are {1:F2} sectors apart",
                               uprTime  * u,
                               uprCount * u);
+
+            LogSweep(baseLba, e, diffs, nd, s, t, wrapPos, nWrap);
 
             return false;
         }
@@ -284,6 +291,45 @@ public sealed partial class DpmMeasurement
                           uprCount * u);
 
         return true;
+    }
+
+    /// <summary>Logs a rejected calibration sweep, so drives that behave unexpectedly can be studied</summary>
+    /// <param name="baseLba">First sector of the sweep</param>
+    /// <param name="e">Milliseconds of every paired sample</param>
+    /// <param name="diffs">Steps between consecutive samples</param>
+    /// <param name="nd">Number of steps</param>
+    /// <param name="s">Fitted slope, ms per step</param>
+    /// <param name="t">Fitted rotation period, ms</param>
+    /// <param name="wrapPos">Steps where a genuine wrap was found</param>
+    /// <param name="nWrap">Number of genuine wraps</param>
+    static void LogSweep(uint  baseLba, double[] e, double[] diffs, int nd, double s, double t, int[] wrapPos,
+                         int   nWrap)
+    {
+        var samples = new string[nd + 1];
+        var steps   = new string[nd];
+
+        for(int i = 0; i <= nd; i++) samples[i] = e[i].ToString("F3", CultureInfo.InvariantCulture);
+
+        for(int i = 0; i < nd; i++)
+        {
+            long m     = (long)Math.Round((diffs[i] - s) / t, MidpointRounding.AwayFromZero);
+            bool noise = Math.Abs(diffs[i] - s - m * t) >= CAL_MULT_TOL * t;
+
+            steps[i] = string.Format(CultureInfo.InvariantCulture, "{0:+0;-0}{1}", m, noise ? "?" : "");
+        }
+
+        AaruLogging.Debug(MODULE_NAME,
+                          "    sweep at {0}: slope {1:F4} ms, T {2:F4} ms",
+                          baseLba,
+                          s,
+                          t);
+
+        AaruLogging.Debug(MODULE_NAME, "    samples (ms): {0}", string.Join(' ', samples));
+        AaruLogging.Debug(MODULE_NAME, "    rotations per step (? = noise): {0}", string.Join(' ', steps));
+
+        AaruLogging.Debug(MODULE_NAME,
+                          "    genuine wraps at steps: {0}",
+                          string.Join(' ', wrapPos.Take(nWrap)));
     }
 
     /// <summary>
