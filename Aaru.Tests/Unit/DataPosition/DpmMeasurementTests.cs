@@ -75,6 +75,10 @@ sealed class SimulatedDrive : IDpmDrive
     public double MissProbability { get; init; }
     /// <summary>Probability of a random extra delay</summary>
     public double JunkProbability { get; init; }
+    /// <summary>Probability of a random extra delay while spinning at the drive maximum speed</summary>
+    public double JunkProbabilityAtMaximum { get; init; }
+    /// <summary>Speeds requested, in kB/s</summary>
+    public List<ushort> RequestedSpeeds { get; } = [];
     /// <summary>Rotation period multiplier past the first layer</summary>
     public double UpperLayerSlowdown { get; init; } = 1.0;
     /// <summary>Maximum seconds the host takes between commands, random, the disc turning meanwhile</summary>
@@ -118,6 +122,7 @@ sealed class SimulatedDrive : IDpmDrive
     /// <inheritdoc />
     public bool SetSpeed(ushort kbps)
     {
+        RequestedSpeeds.Add(kbps);
         _previousEnd = -1;
 
         return true;
@@ -191,7 +196,11 @@ sealed class SimulatedDrive : IDpmDrive
 
         Advance(wait * PeriodNow());
 
-        if(_random.NextDouble() < JunkProbability) Advance(_random.NextDouble() * PeriodNow());
+        double junk = RequestedSpeeds.Count > 0 && RequestedSpeeds[^1] == 0xFFFF
+                          ? JunkProbabilityAtMaximum + JunkProbability
+                          : JunkProbability;
+
+        if(_random.NextDouble() < junk) Advance(_random.NextDouble() * PeriodNow());
 
         Advance((SectorAngle(last) - SectorAngle(first)) * PeriodNow());
 
@@ -394,6 +403,60 @@ public class DpmMeasurementTests
         dpm.Value.Calibrations.Should().Contain(c => c.Lba > layer0End);
 
         ShouldMatch(dpm.Value, drive, 0.005, 0.03);
+    }
+
+    [Test]
+    public void CalibrationFallsBackToSlowerSpeed()
+    {
+        var medium = new DpmMedium
+        {
+            Kind      = DpmMediumKind.Cd,
+            LastLba   = 334188,
+            LayerEnds = []
+        };
+
+        double[] spiral = BuildSpiral(334189, 50, 1.2 / 75, 1.6e-6, [], [(2000, 6000)]);
+
+        // At the drive maximum every read is late by a random part of a turn, so no calibration sweep is a sawtooth
+        var drive = new SimulatedDrive(medium, spiral, 50, 1, [], 8)
+        {
+            JunkProbabilityAtMaximum = 1.0
+        };
+
+        var measurement = new DpmMeasurement(drive);
+        measurement.Prepare(0).Should().BeTrue();
+
+        DataPositionMeasurement? dpm = measurement.Measure(0, 8000, 0);
+
+        dpm.Should().NotBeNull();
+        dpm.Value.Speed.Should().Be(32, "the first slower speed that calibrates is used for the whole measurement");
+        drive.RequestedSpeeds.Should().Contain(32 * 176);
+        ShouldMatch(dpm.Value, drive, 0.005, 0.03);
+    }
+
+    [Test]
+    public void NoFallbackWhenSpeedIsRequested()
+    {
+        var medium = new DpmMedium
+        {
+            Kind      = DpmMediumKind.Cd,
+            LastLba   = 334188,
+            LayerEnds = []
+        };
+
+        double[] spiral = BuildSpiral(334189, 50, 1.2 / 75, 1.6e-6, [], []);
+
+        // Junk at any speed: calibration fails, and with a requested speed no other speed is tried
+        var drive = new SimulatedDrive(medium, spiral, 50, 1, [], 9)
+        {
+            JunkProbability = 1.0
+        };
+
+        var measurement = new DpmMeasurement(drive);
+        measurement.Prepare(0).Should().BeTrue();
+
+        measurement.Measure(0, 2000, 16).Should().BeNull();
+        drive.RequestedSpeeds.Should().NotContain((ushort)(32 * 176));
     }
 
     [Test]
