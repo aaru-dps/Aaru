@@ -92,6 +92,9 @@ public sealed partial class AppleHFSPlus : IReadOnlyFilesystem
     /// <summary>HFS+ Volume Header</summary>
     VolumeHeader _volumeHeader;
 
+    /// <summary>Volume name, taken from the root folder's catalog key</summary>
+    string _volumeName;
+
     /// <inheritdoc />
     public FileSystem                                                Metadata         { get; set; }
     /// <inheritdoc />

@@ -74,6 +74,7 @@ public sealed partial class AppleHFSPlus
         _directoryCaches    = new Dictionary<uint, Dictionary<string, CatalogEntry>>();
         _catalogBTreeHeader = default(BTHeaderRec);
         _rootFolder         = default(HFSPlusCatalogFolder);
+        _volumeName         = null;
 
         // Attempt to read and validate the Catalog File (B-Tree) header
         errno = ReadAndValidateCatalogHeader();
@@ -141,6 +142,7 @@ public sealed partial class AppleHFSPlus
 
         // Clear root folder data
         _rootFolder = default(HFSPlusCatalogFolder);
+        _volumeName = null;
 
         // Clear B-Tree header
         _catalogBTreeHeader = default(BTHeaderRec);
@@ -456,10 +458,14 @@ public sealed partial class AppleHFSPlus
                                                                recordTypeOffset,
                                                                folderRecordSize);
 
+                                                   // The root folder's own key carries the volume name
+                                                   _volumeName =
+                                                       ExtractNameFromCatalogKey(leafNode, (ushort)recordOffset);
+
                                                    found = true;
 
                                                    AaruLogging.Debug(MODULE_NAME,
-                                                                     $"Found root folder: CNID={_rootFolder.folderID}, valence={_rootFolder.valence}");
+                                                                     $"Found root folder: CNID={_rootFolder.folderID}, valence={_rootFolder.valence}, name=\"{_volumeName}\"");
 
                                                    return true; // Stop traversal
                                                });
@@ -504,8 +510,8 @@ public sealed partial class AppleHFSPlus
         Metadata.Dirty = !_volumeHeader.attributes.HasFlag(VolumeAttributes.kHFSVolumeUnmountedBit) ||
                          _volumeHeader.attributes.HasFlag(VolumeAttributes.kHFSBootVolumeInconsistentBit);
 
-        // Parse volume name from Volume Header
-        // TODO: Parse volume name from the root folder thread record
+        // HFS+ keeps no name in the Volume Header, it is the name of the root folder
+        if(!string.IsNullOrEmpty(_volumeName)) Metadata.VolumeName = _volumeName;
 
         if(_volumeHeader.createDate > 0) Metadata.CreationDate = DateHandlers.MacToDateTime(_volumeHeader.createDate);
 
