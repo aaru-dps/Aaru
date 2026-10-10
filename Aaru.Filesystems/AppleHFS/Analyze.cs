@@ -212,7 +212,7 @@ public sealed partial class AppleHFS
         return NormalizeAnalyzeExtents(overlaps);
     }
 
-    static string NormalizePathComponent(string name) => name?.Replace(":", "/") ?? string.Empty;
+    static string NormalizePathComponent(string name) => name?.Replace("/", ":") ?? string.Empty;
 
     static void AddExtentOverlaps(ulong                                   startSector, ulong endSector,
                                   IReadOnlyList<(ulong Start, ulong End)> sectorExtents,
