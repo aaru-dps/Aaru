@@ -57,10 +57,6 @@ public sealed partial class AppleHFS
         // Normalize path
         string normalizedPath = string.IsNullOrEmpty(path) ? "/" : path;
 
-        // Convert colons back to forward slashes for internal path matching
-        // Mac OS filenames use colons for the path separator, so convert them back to our internal format
-        normalizedPath = normalizedPath.Replace(":", "/");
-
         // Root directory case
         if(string.Equals(normalizedPath, "/", StringComparison.OrdinalIgnoreCase))
         {
@@ -99,9 +95,8 @@ public sealed partial class AppleHFS
         {
             string component = pieces[p];
 
-            // Replace '/' with ':' in names for HFS path matching
-            // HFS uses ':' as path separator, so '/' in the search must be converted
-            component = component.Replace("/", ":");
+            // Convert colons to slashes in component (readdir returns display names with colons)
+            component = component.Replace(":", "/");
 
             // Look for the component in current directory
             KeyValuePair<string, CatalogEntry> foundEntry = default;

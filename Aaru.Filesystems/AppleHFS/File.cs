@@ -151,7 +151,8 @@ public sealed partial class AppleHFS
             // Calculate sector info for this extent
             // HFS uses 512-byte sectors internally; extent.xdrStABN is in allocation blocks
             // drAlBlSt is the first allocation block start sector (in 512-byte sectors)
-            ulong extentOffsetSector512 = _mdb.drAlBlSt + (ulong)extent.xdrStABN * _mdb.drAlBlkSiz / 512 + offsetInExtent / 512;
+            ulong extentOffsetSector512 =
+                _mdb.drAlBlSt + (ulong)extent.xdrStABN * _mdb.drAlBlkSiz / 512 + offsetInExtent / 512;
 
             // Convert to device sector address
             HfsOffsetToDeviceSector(extentOffsetSector512, out ulong deviceSector, out uint byteOffset);
@@ -482,10 +483,6 @@ public sealed partial class AppleHFS
     {
         entry = null;
 
-        // Convert colons back to forward slashes for internal path matching
-        // Mac OS filenames use colons for the path separator, so convert them back to our internal format
-        path = path.Replace(":", "/");
-
         // Root directory case
         if(string.Equals(path, "/", StringComparison.OrdinalIgnoreCase))
         {
@@ -521,9 +518,8 @@ public sealed partial class AppleHFS
         {
             string component = pieces[p];
 
-            // Replace '/' with ':' in names for HFS path matching
-            // HFS uses ':' as path separator, so '/' in the search must be converted
-            component = component.Replace("/", ":");
+            // Convert colons to slashes in component (readdir returns display names with colons)
+            component = component.Replace(":", "/");
 
             // Look for the component in current directory
             var          found        = false;
