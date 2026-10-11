@@ -35,6 +35,9 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Aaru.CommonTypes;
+using Aaru.Core.Graphics;
+using Aaru.Decoders.DVD;
 using Aaru.Devices;
 
 namespace Aaru.Core.Devices.Dpm;
@@ -115,8 +118,6 @@ public sealed class DeviceDpmDrive : IDpmDrive
 {
     const uint   TIMEOUT          = 20;
     const ushort DECOY_MAX_BLOCKS = 64;
-    /// <summary>Physical sector number of LBA 0 on DVD</summary>
-    const uint DVD_PSN_BASE = 0x030000;
 
     readonly byte[] _cdb = new byte[12];
     readonly Device _dev;
@@ -289,7 +290,14 @@ public sealed class DeviceDpmDrive : IDpmDrive
         // Linear density: 0 = 0.267 um/bit (single layer), 1 = 0.293 um/bit (dual layer). A channel bit is half.
         medium.ChannelBit = (pfi[3] >> 4 == 1 ? 0.293e-6 : 0.267e-6) / 2.0;
 
-        if(layers >= 2) medium.LayerEnds = [BinaryPrimitives.ReadUInt32BigEndian(pfi[12..]) - DVD_PSN_BASE];
+        if(layers < 2) return true;
+
+        // OTP discs mastered with no layer 0 end need the capacity to find it
+        ulong blocks = medium.LastLba == uint.MaxValue ? 0 : medium.LastLba + 1UL;
+
+        (ulong? layerBreak, _) = Spiral.LayerBreakFromPfi(PFI.Decode(buffer, MediaType.DVDROM), blocks);
+
+        if(layerBreak is not null) medium.LayerEnds = [(uint)layerBreak];
 
         return true;
     }
