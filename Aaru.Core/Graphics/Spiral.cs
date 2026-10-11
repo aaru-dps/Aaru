@@ -457,13 +457,26 @@ public sealed class Spiral : IMediaGraph
     ///     ECMA-267 §13.2) distinguishes OTP (<c>TrackPath = 1</c>) from PTP (<c>TrackPath = 0</c>) and is mapped
     ///     directly onto the returned <c>oppositeTrackPath</c> boolean.
     /// </summary>
-    /// <param name="pfi">Decoded DVD PFI, or <see langword="null" /> if unavailable</param>
+    /// <remarks>
+    ///     <list type="bullet">
+    ///         <item>
+    ///             OTP: layer 0 ends at the layer 0 end PSN. Many discs are mastered with that field set to 0, then it is
+    ///             derived from the capacity: layer 1 runs from the complement of layer 0's last PSN to the data area
+    ///             end PSN, so N = (E0 - start + 1) + (end - (0xFFFFFF - E0) + 1), solved for E0.
+    ///         </item>
+    ///         <item>PTP: every layer has its own data area, layer 0's PFI gives its end PSN.</item>
+    ///     </list>
+    ///     A layer break outside the medium is discarded.
+    /// </remarks>
+    /// <param name="pfi">Decoded DVD PFI of layer 0, or <see langword="null" /> if unavailable</param>
+    /// <param name="totalBlocks">Total blocks in the medium, or 0 if unknown</param>
     /// <returns>
     ///     <c>layerBreak</c>: sector (relative to LBA 0) where layer 0 ends; layer 1 starts at
-    ///     <c>layerBreak + 1</c>. <c>oppositeTrackPath</c>: <see langword="true" /> when PFI reports OTP,
-    ///     <see langword="false" /> when PFI reports PTP.
+    ///     <c>layerBreak + 1</c>, or <see langword="null" /> if it cannot be found. <c>oppositeTrackPath</c>:
+    ///     <see langword="true" /> when PFI reports OTP, <see langword="false" /> when PFI reports PTP.
     /// </returns>
-    public static (ulong? layerBreak, bool oppositeTrackPath) LayerBreakFromPfi(PFI.PhysicalFormatInformation? pfi)
+    public static (ulong? layerBreak, bool oppositeTrackPath) LayerBreakFromPfi(PFI.PhysicalFormatInformation? pfi,
+                                                                               ulong totalBlocks)
     {
         // Default for single-layer discs: no layer break, OTP assumed (unused when layerBreak is null)
         if(pfi is null) return (null, true);
@@ -474,15 +487,31 @@ public sealed class Spiral : IMediaGraph
         // Single- and triple-plus-layer discs are treated as single-layer by this visualization.
         if(decoded.Layers != 1) return (null, decoded.TrackPath);
 
+        // ECMA-267 §13.2: PFI TrackPath field — 1b = Opposite Track Path, 0b = Parallel Track Path.
+        bool  oppositeTrackPath = decoded.TrackPath;
+        ulong start             = decoded.DataAreaStartPSN;
+        ulong layer0End;
+
+        if(!oppositeTrackPath)
+            layer0End = decoded.DataAreaEndPSN;
+        else if(decoded.Layer0EndPSN != 0)
+            layer0End = decoded.Layer0EndPSN;
+        else
+        {
+            ulong twice = totalBlocks + start + 0xFFFFFF;
+
+            if(totalBlocks == 0 || twice < decoded.DataAreaEndPSN + 2UL) return (null, oppositeTrackPath);
+
+            layer0End = (twice - decoded.DataAreaEndPSN - 2) / 2;
+        }
+
         // Layer 0 end PSN and data area start PSN are physical sector numbers. Sector 0 of the image
         // corresponds to DataAreaStartPSN; layer break in image LBAs is the number of sectors in layer 0 minus one.
-        if(decoded.Layer0EndPSN == 0 || decoded.Layer0EndPSN < decoded.DataAreaStartPSN)
-            return (null, decoded.TrackPath);
+        if(layer0End < start) return (null, oppositeTrackPath);
 
-        ulong layerBreak = decoded.Layer0EndPSN - decoded.DataAreaStartPSN;
+        ulong layerBreak = layer0End - start;
 
-        // ECMA-267 §13.2: PFI TrackPath field — 1b = Opposite Track Path, 0b = Parallel Track Path.
-        bool oppositeTrackPath = decoded.TrackPath;
+        if(totalBlocks > 0 && layerBreak + 1 >= totalBlocks) return (null, oppositeTrackPath);
 
         return (layerBreak, oppositeTrackPath);
     }

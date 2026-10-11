@@ -801,7 +801,7 @@ partial class Dump
             Spiral.DiscParameters discSpiralParameters = Spiral.DiscParametersFromMediaType(dskType, discIs80Mm);
 
             (ulong? layerBreak, bool oppositeTrackPath) = decodedPfi is not null
-                                                              ? Spiral.LayerBreakFromPfi(decodedPfi)
+                                                              ? Spiral.LayerBreakFromPfi(decodedPfi, blocks)
                                                               : Spiral.LayerBreakFromDi(decodedDi, blocks);
 
             if(discSpiralParameters is not null)
