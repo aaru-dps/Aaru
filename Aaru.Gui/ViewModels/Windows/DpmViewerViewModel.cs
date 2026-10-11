@@ -34,11 +34,17 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Core.Image;
 using Aaru.Gui.Views.Windows;
 using Aaru.Localization;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Aaru.Gui.ViewModels.Windows;
 
-public sealed class DpmViewerViewModel : ViewModelBase
+public sealed partial class DpmViewerViewModel : ViewModelBase
 {
+    [ObservableProperty]
+    string _hoverText;
+    [ObservableProperty]
+    string _viewText;
+
     public DpmViewerViewModel() { }
 
     public DpmViewerViewModel(DpmViewer window, DataPositionMeasurement dpm, DpmAnalysisResult analysis,

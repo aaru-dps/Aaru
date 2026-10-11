@@ -5983,4 +5983,28 @@ Probadores:
     <data name="Title_DPM_of_0" xml:space="preserve">
         <value>Medición de Posición de Datos de {0}</value>
     </data>
+    <data name="DPM_hover_sector_0" xml:space="preserve">
+        <value>Sector {0:N0}</value>
+    </data>
+    <data name="DPM_hover_bin_0_1_layer_2" xml:space="preserve">
+        <value>Bin de {0:N0} a {1:N0}, capa {2}</value>
+    </data>
+    <data name="DPM_hover_turn_0" xml:space="preserve">
+        <value>Vuelta {0:F3}</value>
+    </data>
+    <data name="DPM_hover_density_0" xml:space="preserve">
+        <value>{0:F4}° por sector</value>
+    </data>
+    <data name="DPM_hover_sectors_per_turn_0" xml:space="preserve">
+        <value>{0:F3} sectores por vuelta</value>
+    </data>
+    <data name="DPM_hover_deviation_0" xml:space="preserve">
+        <value>{0:+0.00%;-0.00%;0.00%} respecto a la espiral</value>
+    </data>
+    <data name="DPM_hover_rpm_0_1" xml:space="preserve">
+        <value>{0:F0} RPM en el sector {1:N0}</value>
+    </data>
+    <data name="DPM_view_0_to_1" xml:space="preserve">
+        <value>Mostrando sectores {0:N0} a {1:N0}</value>
+    </data>
 </root>

@@ -48,11 +48,20 @@
     <Design.DataContext>
         <windows:DpmViewerViewModel />
     </Design.DataContext>
-    <Grid RowDefinitions="*"
+    <Grid RowDefinitions="*,Auto"
+          RowSpacing="4"
           Margin="8">
         <controls:DpmPlot Grid.Row="0"
                           x:Name="Plot"
-                          Focusable="True"
                           Analysis="{Binding Analysis, Mode=OneWay}" />
+        <Grid Grid.Row="1"
+              ColumnDefinitions="Auto,*"
+              ColumnSpacing="16">
+            <TextBlock Grid.Column="0"
+                       Text="{Binding ViewText, Mode=OneWay}" />
+            <TextBlock Grid.Column="1"
+                       Text="{Binding HoverText, Mode=OneWay}"
+                       TextTrimming="CharacterEllipsis" />
+        </Grid>
     </Grid>
 </Window>

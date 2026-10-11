@@ -30,6 +30,10 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+using Aaru.Gui.Controls;
+using Aaru.Gui.ViewModels.Windows;
+using Aaru.Localization;
 using Avalonia.Controls;
 
 namespace Aaru.Gui.Views.Windows;
@@ -39,5 +43,28 @@ public sealed partial class DpmViewer : Window
     public DpmViewer()
     {
         InitializeComponent();
+
+        Plot.ViewChanged       += (_, _) => UpdateStatus();
+        Plot.HoveredBinChanged += (_, _) => UpdateStatus();
+    }
+
+    /// <inheritdoc />
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+
+        UpdateStatus();
+    }
+
+    /// <summary>Shows the sectors in view and the bin under the pointer</summary>
+    void UpdateStatus()
+    {
+        if(DataContext is not DpmViewerViewModel vm || vm.Analysis is not {} analysis) return;
+
+        vm.ViewText = string.Format(UI.DPM_view_0_to_1, (ulong)Plot.ViewFirst, (ulong)Plot.ViewLast);
+
+        vm.HoverText = Plot.HoveredBin >= 0
+                           ? string.Join(" · ", DpmPlot.Describe(analysis, Plot.HoveredBin, Plot.HoveredSector))
+                           : "";
     }
 }

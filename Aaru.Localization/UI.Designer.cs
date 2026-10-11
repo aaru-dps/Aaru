@@ -11975,5 +11975,53 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string DPM_hover_sector_0 {
+            get {
+                return ResourceManager.GetString("DPM_hover_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string DPM_hover_bin_0_1_layer_2 {
+            get {
+                return ResourceManager.GetString("DPM_hover_bin_0_1_layer_2", resourceCulture);
+            }
+        }
+        
+        public static string DPM_hover_turn_0 {
+            get {
+                return ResourceManager.GetString("DPM_hover_turn_0", resourceCulture);
+            }
+        }
+        
+        public static string DPM_hover_density_0 {
+            get {
+                return ResourceManager.GetString("DPM_hover_density_0", resourceCulture);
+            }
+        }
+        
+        public static string DPM_hover_sectors_per_turn_0 {
+            get {
+                return ResourceManager.GetString("DPM_hover_sectors_per_turn_0", resourceCulture);
+            }
+        }
+        
+        public static string DPM_hover_deviation_0 {
+            get {
+                return ResourceManager.GetString("DPM_hover_deviation_0", resourceCulture);
+            }
+        }
+        
+        public static string DPM_hover_rpm_0_1 {
+            get {
+                return ResourceManager.GetString("DPM_hover_rpm_0_1", resourceCulture);
+            }
+        }
+        
+        public static string DPM_view_0_to_1 {
+            get {
+                return ResourceManager.GetString("DPM_view_0_to_1", resourceCulture);
+            }
+        }
+        
     }
 }

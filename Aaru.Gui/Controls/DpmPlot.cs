@@ -33,8 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Aaru.Core.Graphics;
 using Aaru.Core.Image;
+using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Localization;
 using Avalonia;
 using Avalonia.Controls;
@@ -99,6 +101,8 @@ public sealed class DpmPlot : Control
     Point                     _dragStart;
     double                    _dragViewFirst;
     double                    _dragViewLast;
+    int                       _hoverBin = -1;
+    Point?                    _hoverPoint;
     Rect                      _plot;
     double                    _viewFirst;
     double                    _viewLast;
@@ -133,8 +137,120 @@ public sealed class DpmPlot : Control
     /// <summary>Last sector in view</summary>
     public double ViewLast => _viewLast;
 
+    /// <summary>Bin under the pointer, -1 if none</summary>
+    public int HoveredBin => _hoverBin;
+
     /// <summary>Raised when the sectors in view change</summary>
     public event EventHandler ViewChanged;
+
+    /// <summary>Raised when the bin under the pointer changes</summary>
+    public event EventHandler HoveredBinChanged;
+
+    /// <summary>Describes a bin, one line per value</summary>
+    /// <param name="analysis">Analysis of the DPM</param>
+    /// <param name="index">Bin</param>
+    /// <param name="sector">Sector inside the bin</param>
+    public static List<string> Describe(DpmAnalysisResult analysis, int index, double sector)
+    {
+        DpmBin bin = analysis.Bins[index];
+
+        List<string> lines =
+        [
+            string.Format(UI.DPM_hover_sector_0, (ulong)Math.Max(0, sector)),
+            string.Format(UI.DPM_hover_bin_0_1_layer_2, bin.FirstLba, bin.EndLba - 1, bin.Layer),
+            DpmInfoViewModel.StatusName(bin.Status),
+            string.Format(UI.DPM_hover_turn_0, bin.Turn),
+            string.Format(UI.DPM_hover_density_0, bin.Density),
+            string.Format(UI.DPM_hover_sectors_per_turn_0, bin.SectorsPerTurn)
+        ];
+
+        if(!double.IsNaN(bin.Deviation)) lines.Add(string.Format(UI.DPM_hover_deviation_0, bin.Deviation));
+
+        if(NearestCalibration(analysis, sector) is {} calibration)
+            lines.Add(string.Format(UI.DPM_hover_rpm_0_1, calibration.Rpm, calibration.Lba));
+
+        return lines;
+    }
+
+    /// <summary>Calibration nearest to a sector</summary>
+    static DpmCalibrationPoint? NearestCalibration(DpmAnalysisResult analysis, double sector)
+    {
+        DpmCalibrationPoint? nearest  = null;
+        double               distance = double.MaxValue;
+
+        foreach(DpmCalibrationPoint calibration in analysis.Calibrations)
+        {
+            double d = Math.Abs(calibration.Lba - sector);
+
+            if(d >= distance) continue;
+
+            distance = d;
+            nearest  = calibration;
+        }
+
+        return nearest;
+    }
+
+    /// <summary>Bin that contains a sector, -1 if none</summary>
+    static int BinAt(DpmAnalysisResult analysis, double sector)
+    {
+        DpmBin[] bins = analysis.Bins;
+        int      low  = 0, high = bins.Length;
+
+        while(low < high)
+        {
+            int middle = low + (high - low) / 2;
+
+            if(bins[middle].EndLba <= sector)
+                low = middle + 1;
+            else
+                high = middle;
+        }
+
+        return low < bins.Length && bins[low].FirstLba <= sector ? low : -1;
+    }
+
+    /// <summary>Updates the bin under the pointer</summary>
+    void Hover(Point point)
+    {
+        if(!_plot.Contains(point) || Analysis is not {} analysis)
+        {
+            ClearHover();
+
+            return;
+        }
+
+        _hoverPoint = point;
+        InvalidateVisual();
+        SetHoveredBin(BinAt(analysis, XToSector(point.X)));
+    }
+
+    /// <summary>Forgets the bin under the pointer</summary>
+    void ClearHover()
+    {
+        _hoverPoint = null;
+        InvalidateVisual();
+        SetHoveredBin(-1);
+    }
+
+    void SetHoveredBin(int bin)
+    {
+        if(bin == _hoverBin) return;
+
+        _hoverBin = bin;
+        HoveredBinChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Sector under the pointer, NaN if none</summary>
+    public double HoveredSector => _hoverPoint is {} point ? XToSector(point.X) : double.NaN;
+
+    /// <inheritdoc />
+    protected override void OnPointerExited(PointerEventArgs e)
+    {
+        base.OnPointerExited(e);
+
+        ClearHover();
+    }
 
     /// <inheritdoc />
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -309,7 +425,12 @@ public sealed class DpmPlot : Control
     {
         base.OnPointerMoved(e);
 
-        if(_drag == Drag.None) return;
+        if(_drag == Drag.None)
+        {
+            Hover(e.GetPosition(this));
+
+            return;
+        }
 
         _dragCurrent = e.GetPosition(this);
 
@@ -459,11 +580,61 @@ public sealed class DpmPlot : Control
         DrawLayerBreaks(context, palette, analysis, plot);
         DrawSectorAxis(context, palette, plot);
 
+        if(_drag == Drag.None && _hoverBin >= 0 && _hoverPoint is {} hover)
+            DrawHover(context, palette, analysis, hover);
+
         if(_drag != Drag.Zoom) return;
 
         Rect band = new Rect(_dragStart, _dragCurrent).Normalize().Intersect(plot);
 
         context.DrawRectangle(palette.Selection, palette.SelectionPen, band);
+    }
+
+    /// <summary>Draws a vertical line at the pointer, the value of the bin in every panel and a box describing it</summary>
+    void DrawHover(DrawingContext context, Palette palette, DpmAnalysisResult analysis, Point hover)
+    {
+        context.DrawLine(palette.CrosshairPen, new Point(hover.X, _plot.Top), new Point(hover.X, _plot.Bottom));
+
+        DpmBin bin = analysis.Bins[_hoverBin];
+        double x   = SectorToX((bin.FirstLba + bin.EndLba) / 2.0, _plot);
+
+        foreach(PanelState panel in _panels)
+        {
+            if(!panel.Visible) continue;
+
+            double value = Value(panel.Kind, bin);
+
+            if(double.IsNaN(value) || double.IsInfinity(value)) continue;
+
+            double y = ValueToY(value, panel.Low, panel.High, panel.Bounds);
+
+            if(y < panel.Bounds.Top || y > panel.Bounds.Bottom) continue;
+
+            context.DrawEllipse(palette.Surface, palette.SeriesPen, new Point(x, y), 4, 4);
+        }
+
+        List<FormattedText> lines = Describe(analysis, _hoverBin, XToSector(hover.X))
+                                   .Select(line => Text(line, palette.PrimaryInk))
+                                   .ToList();
+
+        double width  = lines.Max(static l => l.Width)  + 16;
+        double height = lines.Sum(static l => l.Height) + 12;
+        double left   = hover.X + 16;
+        double top    = hover.Y + 16;
+
+        if(left + width > Bounds.Width) left = hover.X - 16 - width;
+
+        if(top + height > Bounds.Height) top = Math.Max(0, hover.Y - 16 - height);
+
+        context.DrawRectangle(palette.Overlay, palette.FramePen, new Rect(left, top, width, height), 4, 4);
+
+        double lineTop = top + 6;
+
+        foreach(FormattedText line in lines)
+        {
+            context.DrawText(line, new Point(left + 8, lineTop));
+            lineTop += line.Height;
+        }
     }
 
     /// <summary>Splits the plot area between the visible panels by their weight</summary>
@@ -858,6 +1029,8 @@ public sealed class DpmPlot : Control
             LayerPen     = new ImmutablePen(MutedInk, 1, new ImmutableDashStyle([6, 6], 0));
             Selection    = new ImmutableSolidColorBrush(Color.Parse(series), 0.15);
             SelectionPen = new ImmutablePen(Series);
+            CrosshairPen = new ImmutablePen(MutedInk, 1, new ImmutableDashStyle([2, 3], 0));
+            Overlay      = new ImmutableSolidColorBrush(Color.Parse(surface), 0.92);
         }
 
         public ImmutableSolidColorBrush Surface      { get; }
@@ -874,5 +1047,7 @@ public sealed class DpmPlot : Control
         public IPen                     LayerPen     { get; }
         public ImmutableSolidColorBrush Selection    { get; }
         public IPen                     SelectionPen { get; }
+        public IPen                     CrosshairPen { get; }
+        public ImmutableSolidColorBrush Overlay      { get; }
     }
 }
