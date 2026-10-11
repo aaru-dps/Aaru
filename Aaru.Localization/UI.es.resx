@@ -5770,6 +5770,9 @@ Probadores:
     <data name="DPM_end_help" xml:space="preserve">
         <value>Último sector a incluir, por defecto el último sector del medio.</value>
     </data>
+    <data name="DPM_eject_help" xml:space="preserve">
+        <value>Expulsar el medio al terminar la medición.</value>
+    </data>
     <data name="DPM_image_path_help" xml:space="preserve">
         <value>Imagen AaruFormat del medio, a la que se añade la Medición de Posición de Datos.</value>
     </data>

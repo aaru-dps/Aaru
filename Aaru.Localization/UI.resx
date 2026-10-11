@@ -5857,6 +5857,9 @@ Do you want to continue?</value>
     <data name="DPM_end_help" xml:space="preserve">
         <value>Last sector to include, the last sector of the medium by default.</value>
     </data>
+    <data name="DPM_eject_help" xml:space="preserve">
+        <value>Eject the medium when the measurement finishes.</value>
+    </data>
     <data name="DPM_image_path_help" xml:space="preserve">
         <value>AaruFormat image of the medium, where the Data Position Measurement is added.</value>
     </data>

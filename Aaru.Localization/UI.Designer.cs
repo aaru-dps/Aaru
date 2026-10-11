@@ -11549,6 +11549,12 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string DPM_eject_help {
+            get {
+                return ResourceManager.GetString("DPM_eject_help", resourceCulture);
+            }
+        }
+        
         public static string DPM_image_path_help {
             get {
                 return ResourceManager.GetString("DPM_image_path_help", resourceCulture);

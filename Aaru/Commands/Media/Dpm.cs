@@ -73,6 +73,7 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
         AaruLogging.Debug(MODULE_NAME, "--speed={0}",   settings.Speed);
         AaruLogging.Debug(MODULE_NAME, "--start={0}",   settings.Start);
         AaruLogging.Debug(MODULE_NAME, "--end={0}",     settings.End);
+        AaruLogging.Debug(MODULE_NAME, "--eject={0}",   settings.Eject);
         AaruLogging.Debug(MODULE_NAME, "--verbose={0}", settings.Verbose);
 
         // Open the image, which must be an AaruFormat image that can be resumed
@@ -267,6 +268,16 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
                         dpm = measurement.Measure(settings.Start, end, settings.Speed);
                     });
 
+        if(settings.Eject && dev.IsRemovable)
+        {
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask(UI.Ejecting_media).IsIndeterminate();
+                dev.AllowMediumRemoval(out _, dev.Timeout, out _);
+                dev.EjectTray(out _, dev.Timeout, out _);
+            });
+        }
+
         dev.Close();
 
         if(dpm is null) return (int)ErrorNumber.InOutError;
@@ -377,6 +388,10 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
         [CommandOption("--end")]
         [DefaultValue(null)]
         public uint? End { get; init; }
+        [LocalizedDescription(nameof(UI.DPM_eject_help))]
+        [CommandOption("--eject")]
+        [DefaultValue(false)]
+        public bool Eject { get; init; }
         [LocalizedDescription(nameof(UI.Device_path))]
         [CommandArgument(0, "<device-path>")]
         public string DevicePath { get; init; }
