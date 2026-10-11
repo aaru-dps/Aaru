@@ -6007,4 +6007,7 @@ Probadores:
     <data name="DPM_view_0_to_1" xml:space="preserve">
         <value>Mostrando sectores {0:N0} a {1:N0}</value>
     </data>
+    <data name="Title_DPM_status" xml:space="preserve">
+        <value>Estado</value>
+    </data>
 </root>

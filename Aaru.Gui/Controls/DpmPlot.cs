@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Aaru.CommonTypes.Structs;
 using Aaru.Core.Graphics;
 using Aaru.Core.Image;
 using Aaru.Gui.ViewModels.Tabs;
@@ -51,7 +52,9 @@ namespace Aaru.Gui.Controls;
 public enum DpmPlotPanel
 {
     /// <summary>Density of every bin</summary>
-    Density
+    Density,
+    /// <summary>Status of every bin, as a strip of colours</summary>
+    Status
 }
 
 /// <summary>Draws a Data Position Measurement, with independently zoomable axes</summary>
@@ -68,6 +71,7 @@ public sealed class DpmPlot : Control
     const double MARGIN_BOTTOM = 40;
     const double PANEL_GAP     = 14;
     const double FONT_SIZE     = 11;
+    const double STRIP_HEIGHT  = 14;
 
     public static readonly StyledProperty<DpmAnalysisResult?> AnalysisProperty =
         AvaloniaProperty.Register<DpmPlot, DpmAnalysisResult?>(nameof(Analysis));
@@ -121,7 +125,8 @@ public sealed class DpmPlot : Control
 
         _panels =
         [
-            new PanelState(DpmPlotPanel.Density, 3)
+            new PanelState(DpmPlotPanel.Density, 3),
+            new PanelState(DpmPlotPanel.Status,  0, STRIP_HEIGHT)
         ];
     }
 
@@ -266,6 +271,21 @@ public sealed class DpmPlot : Control
         if(Analysis is {} analysis) SetView(analysis.FirstLba, analysis.LastLba);
 
         FitValues();
+    }
+
+    /// <summary>Whether a panel is shown</summary>
+    public bool IsPanelVisible(DpmPlotPanel kind)
+    {
+        return _panels.Find(p => p.Kind == kind)?.Visible == true;
+    }
+
+    /// <summary>Shows or hides a panel</summary>
+    public void SetPanelVisible(DpmPlotPanel kind, bool visible)
+    {
+        if(_panels.Find(p => p.Kind == kind) is not {} panel || panel.Visible == visible) return;
+
+        panel.Visible = visible;
+        InvalidateVisual();
     }
 
     /// <summary>Fits the vertical range of every panel to the bins in view</summary>
@@ -578,6 +598,7 @@ public sealed class DpmPlot : Control
         }
 
         DrawLayerBreaks(context, palette, analysis, plot);
+        DrawLegend(context, palette, analysis);
         DrawSectorAxis(context, palette, plot);
 
         if(_drag == Drag.None && _hoverBin >= 0 && _hoverPoint is {} hover)
@@ -590,7 +611,7 @@ public sealed class DpmPlot : Control
         context.DrawRectangle(palette.Selection, palette.SelectionPen, band);
     }
 
-    /// <summary>Draws a vertical line at the pointer, the value of the bin in every panel and a box describing it</summary>
+    /// <summary>Draws a line at the pointer, the value of the bin in every panel and a box describing it</summary>
     void DrawHover(DrawingContext context, Palette palette, DpmAnalysisResult analysis, Point hover)
     {
         context.DrawLine(palette.CrosshairPen, new Point(hover.X, _plot.Top), new Point(hover.X, _plot.Bottom));
@@ -641,26 +662,30 @@ public sealed class DpmPlot : Control
     void LayoutPanels(Rect plot)
     {
         double weights = 0;
+        double fixedHeight = 0;
         int    visible = 0;
 
         foreach(PanelState panel in _panels)
         {
             if(!panel.Visible) continue;
 
-            weights += panel.Weight;
+            weights     += panel.Weight;
+            fixedHeight += panel.FixedHeight;
             visible++;
         }
 
         if(visible == 0) return;
 
-        double available = plot.Height - PANEL_GAP * (visible - 1);
+        double available = Math.Max(0, plot.Height - PANEL_GAP * (visible - 1) - fixedHeight);
         double top       = plot.Top;
 
         foreach(PanelState panel in _panels)
         {
             if(!panel.Visible) continue;
 
-            double height = Math.Max(1, available * panel.Weight / weights);
+            double height = panel.FixedHeight > 0
+                                ? panel.FixedHeight
+                                : Math.Max(1, weights > 0 ? available * panel.Weight / weights : 1);
             panel.Bounds =  new Rect(plot.Left, top, plot.Width, height);
             top          += height + PANEL_GAP;
         }
@@ -757,9 +782,18 @@ public sealed class DpmPlot : Control
     void DrawPanel(DrawingContext context, Palette palette, DpmAnalysisResult analysis, PanelState panel, int first,
                    int            end)
     {
+        Rect bounds = panel.Bounds;
+
+        if(panel.Kind == DpmPlotPanel.Status)
+        {
+            DrawStatusStrip(context, palette, analysis, bounds, first, end);
+
+            return;
+        }
+
         if(panel.AutoY) AutoRange(panel, analysis, first, end);
 
-        Rect bounds = panel.Bounds;
+        using(context.PushClip(bounds)) DrawUnmeasured(context, palette, analysis, bounds, first, end);
 
         DrawValueAxis(context, palette, panel);
 
@@ -780,6 +814,117 @@ public sealed class DpmPlot : Control
 
         FormattedText title = Text(PanelTitle(panel.Kind), palette.SecondaryInk);
         context.DrawText(title, new Point(bounds.Left + 6, bounds.Top + 4));
+    }
+
+    /// <summary>Colour of a bin status in the strip, null for measured bins</summary>
+    static Color? StatusColor(Palette palette, DpmEntryStatus status)
+    {
+        return status switch
+               {
+                   DpmEntryStatus.Remeasured   => palette.Series.Color,
+                   DpmEntryStatus.Interpolated => palette.Serious,
+                   DpmEntryStatus.Unreadable   => palette.Critical,
+                   DpmEntryStatus.LayerBreak   => palette.MutedInk.Color,
+                   _                           => null
+               };
+    }
+
+    /// <summary>Calls an action for every run of bins with the same status, by horizontal position</summary>
+    void StatusRuns(DpmAnalysisResult analysis, Rect bounds, int first, int end,
+                    Action<DpmEntryStatus, double, double> run)
+    {
+        int i = first;
+
+        while(i < end)
+        {
+            DpmEntryStatus status = analysis.Bins[i].Status;
+            int            j      = i + 1;
+
+            while(j < end && analysis.Bins[j].Status == status) j++;
+
+            double left  = SectorToX(analysis.Bins[i].FirstLba, bounds);
+            double right = SectorToX(analysis.Bins[j - 1].EndLba, bounds);
+
+            run(status, left, Math.Max(right, left + 1));
+
+            i = j;
+        }
+    }
+
+    /// <summary>Draws the status of every bin as a strip of colours, measured bins left blank</summary>
+    void DrawStatusStrip(DrawingContext context, Palette palette, DpmAnalysisResult analysis, Rect bounds, int first,
+                         int            end)
+    {
+        context.FillRectangle(palette.Strip, bounds);
+
+        using(context.PushClip(bounds))
+        {
+            StatusRuns(analysis,
+                       bounds,
+                       first,
+                       end,
+                       (status, left, right) =>
+                       {
+                           if(StatusColor(palette, status) is not {} color) return;
+
+                           context.FillRectangle(new ImmutableSolidColorBrush(color),
+                                                 new Rect(left, bounds.Top, right - left, bounds.Height));
+                       });
+        }
+
+        context.DrawRectangle(null, palette.FramePen, bounds);
+
+        FormattedText title = Text(UI.Title_DPM_status, palette.MutedInk);
+        context.DrawText(title, new Point(bounds.Left - 6 - title.Width, bounds.Center.Y - title.Height / 2));
+    }
+
+    /// <summary>Shades the bins that were not measured, as their values are interpolated</summary>
+    void DrawUnmeasured(DrawingContext context, Palette palette, DpmAnalysisResult analysis, Rect bounds, int first,
+                        int            end)
+    {
+        StatusRuns(analysis,
+                   bounds,
+                   first,
+                   end,
+                   (status, left, right) =>
+                   {
+                       if(status is not (DpmEntryStatus.Interpolated or DpmEntryStatus.Unreadable)) return;
+
+                       Color color = status == DpmEntryStatus.Unreadable ? palette.Critical : palette.Serious;
+
+                       context.FillRectangle(new ImmutableSolidColorBrush(color, 0.25),
+                                             new Rect(left, bounds.Top, right - left, bounds.Height));
+                   });
+    }
+
+    /// <summary>Draws the legend of the statuses in the DPM, over the top right of the first panel</summary>
+    void DrawLegend(DrawingContext context, Palette palette, DpmAnalysisResult analysis)
+    {
+        PanelState panel = _panels.Find(static p => p.Visible);
+
+        if(panel is null) return;
+
+        double right = panel.Bounds.Right - 8;
+        double top   = panel.Bounds.Top   + 4;
+
+        foreach(DpmEntryStatus status in new[]
+                {
+                    DpmEntryStatus.LayerBreak, DpmEntryStatus.Remeasured, DpmEntryStatus.Interpolated,
+                    DpmEntryStatus.Unreadable
+                })
+        {
+            if(analysis.StatusCounts[(int)status] == 0 || StatusColor(palette, status) is not {} color) continue;
+
+            FormattedText label = Text(DpmInfoViewModel.StatusName(status), palette.SecondaryInk);
+
+            right -= label.Width;
+            context.DrawText(label, new Point(right, top));
+            right -= 16;
+            context.FillRectangle(new ImmutableSolidColorBrush(color),
+                                  new Rect(right, top + (label.Height - 10) / 2, 10, 10),
+                                  2);
+            right -= 14;
+        }
     }
 
     /// <summary>Draws the horizontal grid lines and labels of a panel</summary>
@@ -998,15 +1143,19 @@ public sealed class DpmPlot : Control
     }
 
     /// <summary>State of a panel</summary>
-    sealed class PanelState(DpmPlotPanel kind, double weight)
+    /// <param name="kind">Panel</param>
+    /// <param name="weight">Share of the height left by the fixed height panels</param>
+    /// <param name="fixedHeight">Fixed height, 0 to use the weight</param>
+    sealed class PanelState(DpmPlotPanel kind, double weight, double fixedHeight = 0)
     {
-        public DpmPlotPanel Kind    { get; }      = kind;
-        public double       Weight  { get; }      = weight;
-        public bool         Visible { get; set; } = true;
-        public bool         AutoY   { get; set; } = true;
-        public double       Low     { get; set; }
-        public double       High    { get; set; }
-        public Rect         Bounds  { get; set; }
+        public DpmPlotPanel Kind        { get; }      = kind;
+        public double       Weight      { get; }      = weight;
+        public double       FixedHeight { get; }      = fixedHeight;
+        public bool         Visible     { get; set; } = true;
+        public bool         AutoY       { get; set; } = true;
+        public double       Low         { get; set; }
+        public double       High        { get; set; }
+        public Rect         Bounds      { get; set; }
     }
 
     /// <summary>Brushes and pens of a theme</summary>
@@ -1031,6 +1180,7 @@ public sealed class DpmPlot : Control
             SelectionPen = new ImmutablePen(Series);
             CrosshairPen = new ImmutablePen(MutedInk, 1, new ImmutableDashStyle([2, 3], 0));
             Overlay      = new ImmutableSolidColorBrush(Color.Parse(surface), 0.92);
+            Strip        = new ImmutableSolidColorBrush(Color.Parse(grid), 0.5);
         }
 
         public ImmutableSolidColorBrush Surface      { get; }
@@ -1049,5 +1199,6 @@ public sealed class DpmPlot : Control
         public IPen                     SelectionPen { get; }
         public IPen                     CrosshairPen { get; }
         public ImmutableSolidColorBrush Overlay      { get; }
+        public ImmutableSolidColorBrush Strip        { get; }
     }
 }

@@ -12023,5 +12023,11 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Title_DPM_status {
+            get {
+                return ResourceManager.GetString("Title_DPM_status", resourceCulture);
+            }
+        }
+        
     }
 }
