@@ -12035,5 +12035,11 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Title_DPM_rotation_speed {
+            get {
+                return ResourceManager.GetString("Title_DPM_rotation_speed", resourceCulture);
+            }
+        }
+        
     }
 }

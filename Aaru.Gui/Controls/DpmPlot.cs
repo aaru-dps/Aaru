@@ -55,6 +55,8 @@ public enum DpmPlotPanel
     Density,
     /// <summary>Deviation of every bin from the spiral fitted to its layer</summary>
     Deviation,
+    /// <summary>Rotation speed at every calibration</summary>
+    Rpm,
     /// <summary>Status of every bin, as a strip of colours</summary>
     Status
 }
@@ -129,6 +131,7 @@ public sealed class DpmPlot : Control
         [
             new PanelState(DpmPlotPanel.Density,   3),
             new PanelState(DpmPlotPanel.Deviation, 2),
+            new PanelState(DpmPlotPanel.Rpm,       1.2),
             new PanelState(DpmPlotPanel.Status,  0, STRIP_HEIGHT)
         ];
     }
@@ -291,6 +294,12 @@ public sealed class DpmPlot : Control
         InvalidateVisual();
     }
 
+    /// <summary>Whether a panel is drawn, it must be visible and have data</summary>
+    bool Shown(PanelState panel)
+    {
+        return panel.Visible && (panel.Kind != DpmPlotPanel.Rpm || Analysis?.Calibrations.Length > 0);
+    }
+
     /// <summary>Fits the vertical range of every panel to the bins in view</summary>
     public void FitValues()
     {
@@ -343,7 +352,7 @@ public sealed class DpmPlot : Control
     PanelState PanelAt(Point point)
     {
         foreach(PanelState panel in _panels)
-            if(panel.Visible && panel.Bounds.Contains(point))
+            if(Shown(panel) && panel.Bounds.Contains(point))
                 return panel;
 
         return null;
@@ -595,7 +604,7 @@ public sealed class DpmPlot : Control
 
         foreach(PanelState panel in _panels)
         {
-            if(!panel.Visible) continue;
+            if(!Shown(panel)) continue;
 
             DrawPanel(context, palette, analysis, panel, first, end);
         }
@@ -624,7 +633,7 @@ public sealed class DpmPlot : Control
 
         foreach(PanelState panel in _panels)
         {
-            if(!panel.Visible) continue;
+            if(!Shown(panel)) continue;
 
             double value = Value(panel.Kind, bin);
 
@@ -670,7 +679,7 @@ public sealed class DpmPlot : Control
 
         foreach(PanelState panel in _panels)
         {
-            if(!panel.Visible) continue;
+            if(!Shown(panel)) continue;
 
             weights     += panel.Weight;
             fixedHeight += panel.FixedHeight;
@@ -684,7 +693,7 @@ public sealed class DpmPlot : Control
 
         foreach(PanelState panel in _panels)
         {
-            if(!panel.Visible) continue;
+            if(!Shown(panel)) continue;
 
             double height = panel.FixedHeight > 0
                                 ? panel.FixedHeight
@@ -749,6 +758,7 @@ public sealed class DpmPlot : Control
                {
                    DpmPlotPanel.Density   => UI.Title_DPM_degrees_per_sector,
                    DpmPlotPanel.Deviation => UI.Title_DPM_deviation_from_spiral,
+                   DpmPlotPanel.Rpm       => UI.Title_DPM_rotation_speed,
                    _                      => ""
                };
     }
@@ -796,7 +806,13 @@ public sealed class DpmPlot : Control
             return;
         }
 
-        if(panel.AutoY) AutoRange(panel, analysis, first, end);
+        if(panel.AutoY)
+        {
+            if(panel.Kind == DpmPlotPanel.Rpm)
+                AutoRangeRpm(panel, analysis);
+            else
+                AutoRange(panel, analysis, first, end);
+        }
 
         using(context.PushClip(bounds)) DrawUnmeasured(context, palette, analysis, bounds, first, end);
 
@@ -822,6 +838,10 @@ public sealed class DpmPlot : Control
                     DrawBands(context, palette, analysis, panel);
 
                     break;
+                case DpmPlotPanel.Rpm:
+                    DrawCalibrations(context, palette, analysis, panel);
+
+                    break;
             }
 
             DrawSeries(context,
@@ -839,6 +859,71 @@ public sealed class DpmPlot : Control
 
         FormattedText title = Text(PanelTitle(panel.Kind), palette.SecondaryInk);
         context.DrawText(title, new Point(bounds.Left + 6, bounds.Top + 4));
+    }
+
+    /// <summary>Fits the vertical range of the rotation speed to the calibrations in view, or all of them</summary>
+    void AutoRangeRpm(PanelState panel, DpmAnalysisResult analysis)
+    {
+        double minimum = double.MaxValue, maximum = double.MinValue;
+
+        foreach(bool all in new[] { false, true })
+        {
+            foreach(DpmCalibrationPoint calibration in analysis.Calibrations)
+            {
+                if(!all && (calibration.Lba < _viewFirst || calibration.Lba > _viewLast)) continue;
+
+                minimum = Math.Min(minimum, calibration.Rpm);
+                maximum = Math.Max(maximum, calibration.Rpm);
+            }
+
+            if(minimum <= maximum) break;
+        }
+
+        if(minimum > maximum)
+        {
+            minimum = 0;
+            maximum = 1;
+        }
+
+        double padding = Math.Max((maximum - minimum) * 0.1, 50);
+
+        panel.Low  = Math.Max(0, minimum - padding);
+        panel.High = maximum + padding;
+    }
+
+    /// <summary>Draws the rotation speed at every calibration as dots joined by a thin line</summary>
+    void DrawCalibrations(DrawingContext context, Palette palette, DpmAnalysisResult analysis, PanelState panel)
+    {
+        Rect bounds   = panel.Bounds;
+        var  geometry = new StreamGeometry();
+        var  points   = new List<Point>();
+
+        using(StreamGeometryContext path = geometry.Open())
+        {
+            foreach(DpmCalibrationPoint calibration in analysis.Calibrations)
+            {
+                var point = new Point(SectorToX(calibration.Lba, bounds),
+                                      ValueToY(calibration.Rpm, panel.Low, panel.High, bounds));
+
+                if(points.Count == 0)
+                    path.BeginFigure(point, false);
+                else
+                    path.LineTo(point);
+
+                points.Add(point);
+            }
+
+            if(points.Count > 0) path.EndFigure(false);
+        }
+
+        context.DrawGeometry(null, palette.CalibrationPen, geometry);
+
+        foreach(Point point in points)
+        {
+            if(point.X < bounds.Left - 4 || point.X > bounds.Right + 4) continue;
+
+            context.DrawEllipse(palette.Series, palette.SurfacePen, point, 4, 4);
+        }
     }
 
     /// <summary>Draws the bands found by the analysis, the zero line and the band threshold of every layer</summary>
@@ -961,7 +1046,7 @@ public sealed class DpmPlot : Control
     /// <summary>Draws the legend of the statuses in the DPM, over the top right of the first panel</summary>
     void DrawLegend(DrawingContext context, Palette palette, DpmAnalysisResult analysis)
     {
-        PanelState panel = _panels.Find(static p => p.Visible);
+        PanelState panel = _panels.Find(Shown);
 
         if(panel is null) return;
 
@@ -1245,7 +1330,9 @@ public sealed class DpmPlot : Control
             Band         = new ImmutableSolidColorBrush(Color.Parse(secondSeries), 0.18);
             FitPen       = new ImmutablePen(MutedInk, 1, new ImmutableDashStyle([4, 4], 0));
             ZeroPen      = new ImmutablePen(MutedInk);
-            ThresholdPen = new ImmutablePen(SecondSeries, 1, new ImmutableDashStyle([4, 4], 0));
+            ThresholdPen   = new ImmutablePen(SecondSeries, 1, new ImmutableDashStyle([4, 4], 0));
+            CalibrationPen = new ImmutablePen(new ImmutableSolidColorBrush(Color.Parse(series), 0.5));
+            SurfacePen     = new ImmutablePen(Surface, 2);
         }
 
         public ImmutableSolidColorBrush Surface      { get; }
@@ -1268,6 +1355,8 @@ public sealed class DpmPlot : Control
         public ImmutableSolidColorBrush Band         { get; }
         public IPen                     FitPen       { get; }
         public IPen                     ZeroPen      { get; }
-        public IPen                     ThresholdPen { get; }
+        public IPen                     ThresholdPen   { get; }
+        public IPen                     CalibrationPen { get; }
+        public IPen                     SurfacePen     { get; }
     }
 }

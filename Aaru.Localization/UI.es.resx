@@ -6013,4 +6013,7 @@ Probadores:
     <data name="Title_DPM_deviation_from_spiral" xml:space="preserve">
         <value>Desviación respecto a la espiral, %</value>
     </data>
+    <data name="Title_DPM_rotation_speed" xml:space="preserve">
+        <value>Velocidad de rotación en cada calibración, RPM</value>
+    </data>
 </root>

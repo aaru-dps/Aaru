@@ -6100,4 +6100,7 @@ Do you want to continue?</value>
     <data name="Title_DPM_deviation_from_spiral" xml:space="preserve">
         <value>Deviation from the spiral, %</value>
     </data>
+    <data name="Title_DPM_rotation_speed" xml:space="preserve">
+        <value>Rotation speed at every calibration, RPM</value>
+    </data>
 </root>
