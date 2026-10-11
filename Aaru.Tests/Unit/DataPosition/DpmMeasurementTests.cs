@@ -81,6 +81,8 @@ sealed class SimulatedDrive : IDpmDrive
     public List<ushort> RequestedSpeeds { get; } = [];
     /// <summary>Rotation period multiplier past the first layer</summary>
     public double UpperLayerSlowdown { get; init; } = 1.0;
+    /// <summary>Sector past which the period is multiplied by <see cref="UpperLayerSlowdown" />, whatever the medium says</summary>
+    public uint SlowdownFrom { get; init; } = uint.MaxValue;
     /// <summary>Maximum seconds the host takes between commands, random, the disc turning meanwhile</summary>
     public double HostDelay { get; init; }
     /// <summary>Seconds a failed read costs</summary>
@@ -154,8 +156,10 @@ sealed class SimulatedDrive : IDpmDrive
         return _cumulative[k] + (_cumulative[k + 1] - _cumulative[k]) * f;
     }
 
-    double PeriodNow() =>
-        _medium.LayerEnds.Length > 0 && _currentLba > _medium.LayerEnds[0] ? Period * UpperLayerSlowdown : Period;
+    double PeriodNow() => _medium.LayerEnds.Length > 0 && _currentLba > _medium.LayerEnds[0] ||
+                          _currentLba >= SlowdownFrom
+                              ? Period * UpperLayerSlowdown
+                              : Period;
 
     void Advance(double dt)
     {
@@ -219,8 +223,9 @@ public class DpmMeasurementTests
     /// <param name="pitch">Track pitch, m</param>
     /// <param name="layerEnds">Last sector of every layer but the last</param>
     /// <param name="bands">Ranges of sectors, as [start, end), that are 2.3% denser</param>
+    /// <param name="parallel">Whether every layer starts over at the inside, instead of odd layers spiralling back</param>
     static double[] BuildSpiral(uint sectors, int resolution, double sectorLength, double pitch, uint[] layerEnds,
-                                (uint start, uint end)[] bands)
+                                (uint start, uint end)[] bands, bool parallel = false)
     {
         const double r0     = 24.5e-3;
         var          result = new double[sectors / resolution + 2];
@@ -240,7 +245,7 @@ public class DpmMeasurementTests
                 double previousStart = layer == 1 ? 0 : layerEnds[layer - 2] + 1;
                 x = lba - layerStart;
 
-                if(layer % 2 == 1) x = layerEnds[layer - 1] - previousStart - x;
+                if(!parallel && layer % 2 == 1) x = layerEnds[layer - 1] - previousStart - x;
             }
 
             double radius   = Math.Sqrt(r0 * r0 + x * sectorLength * pitch / Math.PI);
@@ -569,5 +574,42 @@ public class DpmMeasurementTests
         }
 
         ShouldMatch(dpm.Value, drive, 0.005, 0.03);
+    }
+
+    [Test]
+    public void FailingCalibrationsDoNotRepeat()
+    {
+        const uint layer0End = 1172271;
+
+        // A parallel track path disc whose layer break is unknown: the geometry bounds expect the second layer to continue
+        // the first, so no calibration there passes, and the drive spins slower on it, so the re-reads ask for them
+        var medium = new DpmMedium
+        {
+            Kind       = DpmMediumKind.Dvd,
+            LastLba    = 2939492,
+            LayerEnds  = [],
+            ChannelBit = 0.293e-6 / 2
+        };
+
+        double[] spiral = BuildSpiral(2939493, 16, 38688 * 0.293e-6 / 2, 0.74e-6, [layer0End], [], true);
+
+        var drive = new SimulatedDrive(medium, spiral, 16, 16, [], 10)
+        {
+            Period             = 0.0115,
+            UpperLayerSlowdown = 1.2,
+            SlowdownFrom       = layer0End + 1
+        };
+
+        var measurement = new DpmMeasurement(drive);
+        measurement.Prepare(0).Should().BeTrue();
+
+        DataPositionMeasurement? dpm = measurement.Measure(1100000, 1300000, 0);
+
+        TestContext.Out.WriteLine($"{measurement.CalibrationAttempts} calibration attempts");
+
+        dpm.Should().NotBeNull();
+
+        // The start, the periodic re-calibrations and one forced attempt per window, not one or more per bin
+        measurement.CalibrationAttempts.Should().BeLessThan(10);
     }
 }
