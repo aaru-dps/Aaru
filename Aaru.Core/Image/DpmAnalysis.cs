@@ -117,6 +117,23 @@ public struct DpmCalibrationPoint
     public double SectorsPerTurn;
 }
 
+/// <summary>A run of bins whose density deviates from the fitted spiral beyond the measurement noise</summary>
+public struct DpmBand
+{
+    /// <summary>First sector of the band</summary>
+    public ulong  FirstLba;
+    /// <summary>Last sector of the band</summary>
+    public ulong  LastLba;
+    /// <summary>Layer of the band</summary>
+    public int    Layer;
+    /// <summary>Bins over the threshold in the band</summary>
+    public int    Bins;
+    /// <summary>Mean relative deviation of the bins over the threshold</summary>
+    public double MeanDeviation;
+    /// <summary>Relative deviation of largest magnitude in the band</summary>
+    public double MaximumDeviation;
+}
+
 /// <summary>Analysis of a DPM</summary>
 public struct DpmAnalysisResult
 {
@@ -146,6 +163,8 @@ public struct DpmAnalysisResult
     public DpmLayerSummary[]     Layers;
     /// <summary>Rotation calibrations</summary>
     public DpmCalibrationPoint[] Calibrations;
+    /// <summary>Regions that deviate from the fitted spiral, usually density bands of copy protections</summary>
+    public DpmBand[]             Bands;
 }
 
 /// <summary>Analyses a Data Position Measurement for display</summary>
@@ -155,6 +174,14 @@ public static class DpmAnalysis
     const double FIT_SIGMAS   = 3.0;
     /// <summary>Minimum measured bins to fit a spiral to a layer</summary>
     const int    MIN_FIT_BINS = 3;
+    /// <summary>Robust sigmas of deviation over which a bin is part of a band</summary>
+    const double BAND_SIGMAS  = 5.0;
+    /// <summary>Minimum relative deviation for a bin to be part of a band</summary>
+    const double MIN_BAND     = 0.005;
+    /// <summary>Minimum bins over the threshold in a band</summary>
+    const int    MIN_RUN      = 3;
+    /// <summary>Bins under the threshold allowed between bins of the same band</summary>
+    const int    MAX_GAP      = 1;
 
     /// <summary>Analyses a DPM</summary>
     /// <param name="dpm">DPM</param>
@@ -211,6 +238,8 @@ public static class DpmAnalysis
 
         for(int l = 0, first = 0; l < result.Layers.Length; first += result.Layers[l].Bins, l++)
             Fit(result.Bins, first, ref result.Layers[l]);
+
+        result.Bands = FindBands(result.Bins, result.Layers);
 
         result.Calibrations = (dpm.Calibrations ?? []).Where(static c => c.RotationPeriod > 0)
                                                       .Select(c => new DpmCalibrationPoint
@@ -322,6 +351,69 @@ public static class DpmAnalysis
         a = (sy - b * sx) / n - b * origin;
 
         return true;
+    }
+
+    /// <summary>Groups the measured bins that deviate from the spiral of their layer into bands</summary>
+    /// <remarks>
+    ///     The sign of the deviation is not considered, as some protections alternate denser and sparser bins. Bins not
+    ///     measured neither extend nor break a band.
+    /// </remarks>
+    static DpmBand[] FindBands(DpmBin[] bins, DpmLayerSummary[] layers)
+    {
+        List<DpmBand> bands = [];
+        List<int>     run   = [];
+        int           gap   = 0;
+
+        void Close()
+        {
+            if(run.Count >= MIN_RUN)
+            {
+                bands.Add(new DpmBand
+                {
+                    FirstLba         = bins[run[0]].FirstLba,
+                    LastLba          = bins[run[^1]].EndLba - 1,
+                    Layer            = bins[run[0]].Layer,
+                    Bins             = run.Count,
+                    MeanDeviation    = run.Average(r => bins[r].Deviation),
+                    MaximumDeviation = run.Select(r => bins[r].Deviation).MaxBy(Math.Abs)
+                });
+            }
+
+            run.Clear();
+            gap = 0;
+        }
+
+        for(int first = 0, l = 0; l < layers.Length; first += layers[l].Bins, l++)
+        {
+            Close();
+
+            if(!layers[l].Fitted) continue;
+
+            double threshold = Math.Max(BAND_SIGMAS * layers[l].DeviationSigma, MIN_BAND);
+
+            for(int i = first; i < first + layers[l].Bins; i++)
+            {
+                if(double.IsNaN(bins[i].Deviation)) continue;
+
+                if(Math.Abs(bins[i].Deviation) > threshold)
+                {
+                    run.Add(i);
+                    gap = 0;
+
+                    continue;
+                }
+
+                if(run.Count == 0) continue;
+
+                gap++;
+
+                if(gap > MAX_GAP) Close();
+            }
+        }
+
+        Close();
+
+        return bands.ToArray();
     }
 
     /// <summary>Middle sector of a bin</summary>
