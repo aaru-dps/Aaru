@@ -100,6 +100,8 @@ public struct DpmLayerSummary
     public double DeviationSigma;
     /// <summary>Relative deviation of largest magnitude of a measured bin from the fitted spiral</summary>
     public double MaximumDeviation;
+    /// <summary>Relative deviation over which a bin is part of a band</summary>
+    public double BandThreshold;
 }
 
 /// <summary>A rotation calibration of a DPM</summary>
@@ -306,6 +308,8 @@ public static class DpmAnalysis
                                                      .DefaultIfEmpty()
                                                      .MaxBy(Math.Abs);
 
+            layer.BandThreshold = Math.Max(BAND_SIGMAS * layer.DeviationSigma, MIN_BAND);
+
             if(pass == 1 || layer.DeviationSigma <= 0) break;
 
             for(int i = 0; i < use.Length; i++)
@@ -389,7 +393,7 @@ public static class DpmAnalysis
 
             if(!layers[l].Fitted) continue;
 
-            double threshold = Math.Max(BAND_SIGMAS * layers[l].DeviationSigma, MIN_BAND);
+            double threshold = layers[l].BandThreshold;
 
             for(int i = first; i < first + layers[l].Bins; i++)
             {

@@ -236,6 +236,7 @@ public class DpmAnalysisTests
 
         result.Layers.Single().Fitted.Should().BeTrue();
         result.Layers.Single().FitB.Should().BePositive();
+        result.Layers.Single().BandThreshold.Should().BeApproximately(0.005, 1e-9);
         result.Bins.Max(static b => Math.Abs(b.Fit / Spiral(b.FirstLba + 250, [], false) - 1))
               .Should()
               .BeLessThan(0.001);
