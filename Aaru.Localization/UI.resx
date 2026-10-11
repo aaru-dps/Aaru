@@ -6055,4 +6055,13 @@ Do you want to continue?</value>
     <data name="DPM_status_layer_break" xml:space="preserve">
         <value>Layer break</value>
     </data>
+    <data name="Title_DPM_sector" xml:space="preserve">
+        <value>Sector</value>
+    </data>
+    <data name="Title_DPM_degrees_per_sector" xml:space="preserve">
+        <value>Degrees per sector</value>
+    </data>
+    <data name="DPM_Layer_0" xml:space="preserve">
+        <value>Layer {0}</value>
+    </data>
 </root>

@@ -11945,5 +11945,23 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Title_DPM_sector {
+            get {
+                return ResourceManager.GetString("Title_DPM_sector", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_degrees_per_sector {
+            get {
+                return ResourceManager.GetString("Title_DPM_degrees_per_sector", resourceCulture);
+            }
+        }
+        
+        public static string DPM_Layer_0 {
+            get {
+                return ResourceManager.GetString("DPM_Layer_0", resourceCulture);
+            }
+        }
+        
     }
 }
