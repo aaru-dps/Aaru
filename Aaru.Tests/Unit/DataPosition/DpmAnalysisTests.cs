@@ -42,7 +42,7 @@ public class DpmAnalysisTests
     const double SECTOR_LENGTH = 17.3e-3;
     const double PITCH         = 1.6e-6;
 
-    /// <summary>Degrees per sector of a spiral at a sector, every odd layer spiralling back inward if opposite</summary>
+    /// <summary>Degrees per sector of a spiral at a sector, odd layers spiralling back inward if opposite</summary>
     static double Spiral(double lba, ulong[] layerEnds, bool opposite)
     {
         double x     = lba;
@@ -69,8 +69,9 @@ public class DpmAnalysisTests
     /// <param name="opposite">Whether odd layers spiral back inward</param>
     /// <param name="noise">Relative standard deviation of the density of every bin</param>
     /// <param name="density">Density changes, multiplying the spiral at a sector</param>
-    static DataPositionMeasurement Build(uint    spacing, ulong sectors, ulong[] layerEnds = null, bool opposite = false,
-                                         double  noise = 0, Func<ulong, double> density = null)
+    static DataPositionMeasurement Build(uint   spacing, ulong sectors, ulong[] layerEnds = null,
+                                         bool   opposite = false, double noise = 0,
+                                         Func<ulong, double> density = null)
     {
         layerEnds ??= [];
 
@@ -226,5 +227,87 @@ public class DpmAnalysisTests
         result.Calibrations[1].Rpm.Should().BeApproximately(1000, 1e-9);
         result.Calibrations[1].SectorsPerTurn.Should().BeApproximately(21.5, 1e-9);
         result.Calibrations[1].Layer.Should().Be(1);
+    }
+
+    [Test]
+    public void FitCleanSpiral()
+    {
+        DpmAnalysisResult result = DpmAnalysis.Analyse(Build(500, 300000, noise: 0.0005)).Value;
+
+        result.Layers.Single().Fitted.Should().BeTrue();
+        result.Layers.Single().FitB.Should().BePositive();
+        result.Bins.Max(static b => Math.Abs(b.Fit / Spiral(b.FirstLba + 250, [], false) - 1))
+              .Should()
+              .BeLessThan(0.001);
+        result.Bands.Should().BeEmpty();
+    }
+
+    [Test]
+    public void FitDenseBand()
+    {
+        DpmAnalysisResult result =
+            DpmAnalysis.Analyse(Build(500,
+                                      300000,
+                                      noise: 0.0005,
+                                      density: static lba => lba is >= 100000 and < 110000 ? 1.023 : 1.0))
+                       .Value;
+
+        DpmBand band = result.Bands.Should().ContainSingle().Subject;
+
+        band.FirstLba.Should().Be(100000);
+        band.LastLba.Should().Be(109999);
+        band.Bins.Should().Be(20);
+        band.MeanDeviation.Should().BeApproximately(0.023, 0.002);
+    }
+
+    [Test]
+    public void FitAlternatingBand()
+    {
+        // Denser and sparser bins one after the other, the fit must not flatten them
+        DpmAnalysisResult result =
+            DpmAnalysis.Analyse(Build(500,
+                                      300000,
+                                      noise: 0.0005,
+                                      density: static lba => lba is >= 200000 and < 205000
+                                                                 ? lba / 500 % 2 == 0 ? 1.02 : 0.98
+                                                                 : 1.0))
+                       .Value;
+
+        DpmBand band = result.Bands.Should().ContainSingle().Subject;
+
+        band.FirstLba.Should().Be(200000);
+        band.Bins.Should().Be(10);
+        Math.Abs(band.MaximumDeviation).Should().BeApproximately(0.02, 0.002);
+    }
+
+    [Test]
+    public void FitOppositeTrackPath()
+    {
+        DpmAnalysisResult result =
+            DpmAnalysis.Analyse(Build(1000, 400000, [199999], true, 0.0005)).Value;
+
+        result.Layers.Should().HaveCount(2);
+        result.Layers.Should().OnlyContain(static l => l.Fitted);
+        result.Layers[0].FitB.Should().BePositive();
+        result.Layers[1].FitB.Should().BeNegative();
+        result.Bands.Should().BeEmpty();
+    }
+
+    [Test]
+    public void FitIgnoresUnmeasuredBins()
+    {
+        // Bins that were interpolated have a wrong density, that must neither bend the fit nor make a band
+        DataPositionMeasurement dpm =
+            Build(500, 300000, noise: 0.0005, density: static lba => lba is >= 50000 and < 55000 ? 1.5 : 1.0);
+
+        for(int i = 101; i <= 110; i++) dpm.Entries[i].Status = DpmEntryStatus.Unreadable;
+
+        DpmAnalysisResult result = DpmAnalysis.Analyse(dpm).Value;
+
+        result.Bins.Count(static b => !b.Measured).Should().Be(10);
+        result.Bins.Where(static b => !b.Measured).Should().OnlyContain(static b => double.IsNaN(b.Deviation));
+        result.Bins.Where(static b => !b.Measured).Should().OnlyContain(static b => !double.IsNaN(b.Fit));
+        result.Layers.Single().MaximumDeviation.Should().BeLessThan(0.005);
+        result.Bands.Should().BeEmpty();
     }
 }
