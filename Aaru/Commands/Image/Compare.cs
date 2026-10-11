@@ -34,13 +34,17 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Core;
+using Aaru.Core.Graphics;
+using Aaru.Core.Image;
 using Aaru.Helpers;
 using Aaru.Localization;
 using Aaru.Logging;
@@ -66,6 +70,7 @@ sealed class CompareCommand : Command<CompareCommand.Settings>
         AaruLogging.Debug(MODULE_NAME, "--input2={0}",       Markup.Escape(settings.ImagePath2 ?? ""));
         AaruLogging.Debug(MODULE_NAME, "--long-sectors={0}", settings.LongSectors);
         AaruLogging.Debug(MODULE_NAME, "--verbose={0}",      settings.Verbose);
+        AaruLogging.Debug(MODULE_NAME, "--dpm-graph={0}",    Markup.Escape(settings.DpmGraph ?? ""));
 
         IFilter inputFilter1 = null;
         IFilter inputFilter2 = null;
@@ -554,7 +559,149 @@ sealed class CompareCommand : Command<CompareCommand.Settings>
         else
             AaruLogging.WriteLine(sb.ToString());
 
+        if(input1Format is IOpticalMediaImage input1Optical && input2Format is IOpticalMediaImage input2Optical)
+            CompareDpm(input1Optical, input2Optical, settings);
+
         return (int)ErrorNumber.NoError;
+    }
+
+    /// <summary>Compares, only to report it, the Data Position Measurements of two images</summary>
+    static void CompareDpm(IOpticalMediaImage image1, IOpticalMediaImage image2, Settings settings)
+    {
+        bool has1 = image1.ReadDpm(out DataPositionMeasurement dpm1) == ErrorNumber.NoError;
+        bool has2 = image2.ReadDpm(out DataPositionMeasurement dpm2) == ErrorNumber.NoError;
+
+        if(!has1 && !has2) return;
+
+        if(!has2)
+        {
+            AaruLogging.WriteLine(UI.Only_first_image_has_DPM);
+
+            return;
+        }
+
+        if(!has1)
+        {
+            AaruLogging.WriteLine(UI.Only_second_image_has_DPM);
+
+            return;
+        }
+
+        DpmComparisonResult result = DpmComparison.Compare(dpm1, dpm2);
+
+        AaruLogging.WriteLine();
+        AaruLogging.WriteLine($"[bold]{UI.Title_DPM_comparison}[/]");
+
+        if(result.TimingUnitDiffers) AaruLogging.WriteLine(UI.DPM_timing_units_differ);
+
+        if(result.TrackPathDiffers) AaruLogging.WriteLine(UI.DPM_track_paths_differ);
+
+        if(result.LayersDiffer) AaruLogging.WriteLine(UI.DPM_layer_boundaries_differ);
+
+        if(result.SpeedDiffers) AaruLogging.WriteLine(UI.DPM_speeds_differ);
+
+        if(result.SpacingDiffers) AaruLogging.WriteLine(UI.DPM_spacings_differ_compared_every_0_sectors, result.Spacing);
+
+        if(result.Verdict == DpmComparisonVerdict.NotComparable)
+        {
+            AaruLogging.WriteLine(UI.DPM_not_comparable_WithMarkup);
+
+            return;
+        }
+
+        Table table = new();
+        table.AddColumn("");
+        table.AddColumn("");
+        table.HideHeaders();
+        table.Columns[0].RightAligned();
+        table.Border(TableBorder.Rounded);
+        table.BorderColor(Color.Yellow);
+
+        table.AddRow(UI.Title_DPM_compared_range,
+                     $"[lime]{string.Format(UI.DPM_sectors_0_to_1_every_2, result.FirstLba, result.LastLba, result.Spacing)}[/]");
+
+        table.AddRow(UI.Title_DPM_bins,
+                     $"[teal]{string.Format(UI.DPM_0_bins_1_not_measured, result.Bins, result.ExcludedBins)}[/]");
+
+        string[] scales = new string[result.Scales.Length];
+
+        for(int i = 0; i < scales.Length; i++)
+        {
+            scales[i] = string.Format(UI.DPM_scale_0_1_ppm, result.Scales[i], (result.Scales[i] - 1.0) * 1e6);
+
+            if(scales.Length > 1) scales[i] = string.Format(UI.DPM_layer_0_1, i, scales[i]);
+        }
+
+        table.AddRow(UI.Title_DPM_calibration_scale, $"[aqua]{string.Join(", ", scales)}[/]");
+
+        table.AddRow(UI.Title_DPM_noise,
+                     $"[aqua]{string.Format(UI.DPM_noise_0_1, result.Noise1, result.Noise2)}[/]");
+
+        table.AddRow(UI.Title_DPM_threshold, $"[aqua]{result.Threshold:P2}[/]");
+
+        table.AddRow(UI.Title_DPM_deviation,
+                     $"[aqua]{Markup.Escape(string.Format(UI.DPM_deviation_0_1_2, result.MedianDeviation, result.Percentile95Deviation, result.MaximumDeviation))}[/]");
+
+        table.AddRow(UI.Title_DPM_isolated_outliers, $"[teal]{result.IsolatedOutliers}[/]");
+
+        AnsiConsole.Write(table);
+
+        AaruLogging.WriteLine(result.Verdict == DpmComparisonVerdict.Match
+                                  ? UI.DPM_match_WithMarkup
+                                  : string.Format(UI.DPM_differ_in_0_regions_WithMarkup, result.Differences.Length));
+
+        if(result.Differences.Length > 0)
+        {
+            const int maxRegions = 10;
+
+            Table regions = new()
+            {
+                Title = new TableTitle(UI.Title_DPM_differing_regions)
+            };
+
+            regions.AddColumn(UI.Title_DPM_first_sector);
+            regions.AddColumn(UI.Title_DPM_last_sector);
+            regions.AddColumn(UI.Title_DPM_mean_deviation);
+            regions.AddColumn(UI.Title_DPM_maximum_deviation);
+
+            foreach(TableColumn column in regions.Columns) column.RightAligned();
+
+            regions.Border(TableBorder.Rounded);
+            regions.BorderColor(Color.Yellow);
+
+            int shown = settings.Verbose ? result.Differences.Length : Math.Min(result.Differences.Length, maxRegions);
+
+            for(int i = 0; i < shown; i++)
+            {
+                DpmDifference difference = result.Differences[i];
+
+                regions.AddRow($"[lime]{difference.FirstLba}[/]",
+                               $"[lime]{difference.LastLba}[/]",
+                               $"[aqua]{difference.MeanDeviation:+0.00%;-0.00%}[/]",
+                               $"[aqua]{difference.MaximumDeviation:+0.00%;-0.00%}[/]");
+            }
+
+            AnsiConsole.Write(regions);
+
+            if(shown < result.Differences.Length)
+                AaruLogging.WriteLine(UI.DPM_and_0_more_regions, result.Differences.Length - shown);
+        }
+
+        if(string.IsNullOrWhiteSpace(settings.DpmGraph)) return;
+
+        try
+        {
+            DpmGraph.WriteComparison(result,
+                                     settings.DpmGraph,
+                                     Path.GetFileName(settings.ImagePath1),
+                                     Path.GetFileName(settings.ImagePath2));
+
+            AaruLogging.WriteLine(UI.Written_DPM_comparison_graph_to_0, Markup.Escape(settings.DpmGraph));
+        }
+        catch(Exception ex)
+        {
+            AaruLogging.Exception(ex, Localization.Core.Error_0, ex.Message);
+        }
     }
 
 #region Nested type: Settings
@@ -571,6 +718,10 @@ sealed class CompareCommand : Command<CompareCommand.Settings>
         [DefaultValue(false)]
         [CommandOption("-r|--long-sectors")]
         public bool LongSectors { get; init; }
+        [LocalizedDescription(nameof(UI.DPM_graph_help))]
+        [DefaultValue(null)]
+        [CommandOption("--dpm-graph")]
+        public string DpmGraph { get; init; }
     }
 
 #endregion

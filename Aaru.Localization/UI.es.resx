@@ -5782,4 +5782,100 @@ Probadores:
     <data name="Measure_DPM_after_dumping" xml:space="preserve">
         <value>Obtener la Medición de Posición de Datos de CDs, DVDs y Blu-rays después de volcarlos.</value>
     </data>
+    <data name="Title_DPM_comparison" xml:space="preserve">
+        <value>Comparación de la Medición de Posición de Datos</value>
+    </data>
+    <data name="Only_first_image_has_DPM" xml:space="preserve">
+        <value>Solo la primera imagen tiene Medición de Posición de Datos.</value>
+    </data>
+    <data name="Only_second_image_has_DPM" xml:space="preserve">
+        <value>Solo la segunda imagen tiene Medición de Posición de Datos.</value>
+    </data>
+    <data name="DPM_timing_units_differ" xml:space="preserve">
+        <value>Las unidades de tiempo difieren, las imágenes son de distintos tipos de medio.</value>
+    </data>
+    <data name="DPM_track_paths_differ" xml:space="preserve">
+        <value>Las trayectorias de pista difieren.</value>
+    </data>
+    <data name="DPM_layer_boundaries_differ" xml:space="preserve">
+        <value>Los límites de capa difieren, cada capa de cualquiera de las imágenes se compara por separado.</value>
+    </data>
+    <data name="DPM_speeds_differ" xml:space="preserve">
+        <value>Medidas a distintas velocidades.</value>
+    </data>
+    <data name="DPM_spacings_differ_compared_every_0_sectors" xml:space="preserve">
+        <value>Medidas con distinto espaciado, comparadas cada {0} sectores.</value>
+    </data>
+    <data name="Title_DPM_compared_range" xml:space="preserve">
+        <value>Rango comparado</value>
+    </data>
+    <data name="DPM_sectors_0_to_1_every_2" xml:space="preserve">
+        <value>Sectores {0} a {1}, cada {2} sectores</value>
+    </data>
+    <data name="Title_DPM_bins" xml:space="preserve">
+        <value>Intervalos comparados</value>
+    </data>
+    <data name="DPM_0_bins_1_not_measured" xml:space="preserve">
+        <value>{0}, {1} más no medidos por ambas</value>
+    </data>
+    <data name="Title_DPM_calibration_scale" xml:space="preserve">
+        <value>Escala de calibración</value>
+    </data>
+    <data name="DPM_scale_0_1_ppm" xml:space="preserve">
+        <value>×{0:F6} ({1:+0;-0;0} ppm)</value>
+    </data>
+    <data name="DPM_layer_0_1" xml:space="preserve">
+        <value>capa {0}: {1}</value>
+    </data>
+    <data name="Title_DPM_noise" xml:space="preserve">
+        <value>Ruido de medición</value>
+    </data>
+    <data name="DPM_noise_0_1" xml:space="preserve">
+        <value>{0:P2} primera, {1:P2} segunda</value>
+    </data>
+    <data name="Title_DPM_threshold" xml:space="preserve">
+        <value>Umbral de diferencia</value>
+    </data>
+    <data name="Title_DPM_deviation" xml:space="preserve">
+        <value>Desviación de densidad</value>
+    </data>
+    <data name="DPM_deviation_0_1_2" xml:space="preserve">
+        <value>mediana {0:P2}, 95% bajo {1:P2}, máxima {2:P2}</value>
+    </data>
+    <data name="Title_DPM_isolated_outliers" xml:space="preserve">
+        <value>Valores atípicos aislados, ignorados</value>
+    </data>
+    <data name="DPM_match_WithMarkup" xml:space="preserve">
+        <value>[green]Las Mediciones de Posición de Datos coinciden dentro del ruido de medición.[/]</value>
+    </data>
+    <data name="DPM_differ_in_0_regions_WithMarkup" xml:space="preserve">
+        <value>[red]Las Mediciones de Posición de Datos difieren en {0} regiones.[/]</value>
+    </data>
+    <data name="DPM_not_comparable_WithMarkup" xml:space="preserve">
+        <value>[yellow]Las Mediciones de Posición de Datos no se pueden comparar.[/]</value>
+    </data>
+    <data name="Title_DPM_differing_regions" xml:space="preserve">
+        <value>Regiones que difieren</value>
+    </data>
+    <data name="Title_DPM_first_sector" xml:space="preserve">
+        <value>Primer sector</value>
+    </data>
+    <data name="Title_DPM_last_sector" xml:space="preserve">
+        <value>Último sector</value>
+    </data>
+    <data name="Title_DPM_mean_deviation" xml:space="preserve">
+        <value>Desviación media</value>
+    </data>
+    <data name="Title_DPM_maximum_deviation" xml:space="preserve">
+        <value>Desviación máxima</value>
+    </data>
+    <data name="DPM_and_0_more_regions" xml:space="preserve">
+        <value>Y {0} regiones más, use el modo detallado para mostrarlas todas.</value>
+    </data>
+    <data name="DPM_graph_help" xml:space="preserve">
+        <value>Ruta donde escribir un gráfico que compara las Mediciones de Posición de Datos de ambas imágenes.</value>
+    </data>
+    <data name="Written_DPM_comparison_graph_to_0" xml:space="preserve">
+        <value>Escrito el gráfico de comparación de la Medición de Posición de Datos en {0}.</value>
+    </data>
 </root>

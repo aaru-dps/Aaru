@@ -11573,5 +11573,197 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Title_DPM_comparison {
+            get {
+                return ResourceManager.GetString("Title_DPM_comparison", resourceCulture);
+            }
+        }
+        
+        public static string Only_first_image_has_DPM {
+            get {
+                return ResourceManager.GetString("Only_first_image_has_DPM", resourceCulture);
+            }
+        }
+        
+        public static string Only_second_image_has_DPM {
+            get {
+                return ResourceManager.GetString("Only_second_image_has_DPM", resourceCulture);
+            }
+        }
+        
+        public static string DPM_timing_units_differ {
+            get {
+                return ResourceManager.GetString("DPM_timing_units_differ", resourceCulture);
+            }
+        }
+        
+        public static string DPM_track_paths_differ {
+            get {
+                return ResourceManager.GetString("DPM_track_paths_differ", resourceCulture);
+            }
+        }
+        
+        public static string DPM_layer_boundaries_differ {
+            get {
+                return ResourceManager.GetString("DPM_layer_boundaries_differ", resourceCulture);
+            }
+        }
+        
+        public static string DPM_speeds_differ {
+            get {
+                return ResourceManager.GetString("DPM_speeds_differ", resourceCulture);
+            }
+        }
+        
+        public static string DPM_spacings_differ_compared_every_0_sectors {
+            get {
+                return ResourceManager.GetString("DPM_spacings_differ_compared_every_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_compared_range {
+            get {
+                return ResourceManager.GetString("Title_DPM_compared_range", resourceCulture);
+            }
+        }
+        
+        public static string DPM_sectors_0_to_1_every_2 {
+            get {
+                return ResourceManager.GetString("DPM_sectors_0_to_1_every_2", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_bins {
+            get {
+                return ResourceManager.GetString("Title_DPM_bins", resourceCulture);
+            }
+        }
+        
+        public static string DPM_0_bins_1_not_measured {
+            get {
+                return ResourceManager.GetString("DPM_0_bins_1_not_measured", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_calibration_scale {
+            get {
+                return ResourceManager.GetString("Title_DPM_calibration_scale", resourceCulture);
+            }
+        }
+        
+        public static string DPM_scale_0_1_ppm {
+            get {
+                return ResourceManager.GetString("DPM_scale_0_1_ppm", resourceCulture);
+            }
+        }
+        
+        public static string DPM_layer_0_1 {
+            get {
+                return ResourceManager.GetString("DPM_layer_0_1", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_noise {
+            get {
+                return ResourceManager.GetString("Title_DPM_noise", resourceCulture);
+            }
+        }
+        
+        public static string DPM_noise_0_1 {
+            get {
+                return ResourceManager.GetString("DPM_noise_0_1", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_threshold {
+            get {
+                return ResourceManager.GetString("Title_DPM_threshold", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_deviation {
+            get {
+                return ResourceManager.GetString("Title_DPM_deviation", resourceCulture);
+            }
+        }
+        
+        public static string DPM_deviation_0_1_2 {
+            get {
+                return ResourceManager.GetString("DPM_deviation_0_1_2", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_isolated_outliers {
+            get {
+                return ResourceManager.GetString("Title_DPM_isolated_outliers", resourceCulture);
+            }
+        }
+        
+        public static string DPM_match_WithMarkup {
+            get {
+                return ResourceManager.GetString("DPM_match_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string DPM_differ_in_0_regions_WithMarkup {
+            get {
+                return ResourceManager.GetString("DPM_differ_in_0_regions_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string DPM_not_comparable_WithMarkup {
+            get {
+                return ResourceManager.GetString("DPM_not_comparable_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_differing_regions {
+            get {
+                return ResourceManager.GetString("Title_DPM_differing_regions", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_first_sector {
+            get {
+                return ResourceManager.GetString("Title_DPM_first_sector", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_last_sector {
+            get {
+                return ResourceManager.GetString("Title_DPM_last_sector", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_mean_deviation {
+            get {
+                return ResourceManager.GetString("Title_DPM_mean_deviation", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_maximum_deviation {
+            get {
+                return ResourceManager.GetString("Title_DPM_maximum_deviation", resourceCulture);
+            }
+        }
+        
+        public static string DPM_and_0_more_regions {
+            get {
+                return ResourceManager.GetString("DPM_and_0_more_regions", resourceCulture);
+            }
+        }
+        
+        public static string DPM_graph_help {
+            get {
+                return ResourceManager.GetString("DPM_graph_help", resourceCulture);
+            }
+        }
+        
+        public static string Written_DPM_comparison_graph_to_0 {
+            get {
+                return ResourceManager.GetString("Written_DPM_comparison_graph_to_0", resourceCulture);
+            }
+        }
+        
     }
 }
