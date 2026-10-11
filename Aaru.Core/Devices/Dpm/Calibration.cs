@@ -340,6 +340,8 @@ public sealed partial class DpmMeasurement
     /// </summary>
     bool Calibrate(uint lba, out double tMs, out double aps)
     {
+        CalibrationAttempts++;
+
         // A calibration stops the progress for a while, say so, or it looks like trouble reading
         if(_showingProgress)
             UpdateProgress?.Invoke(string.Format(Localization.Core.Calibrating_disc_rotation_at_sector_0, lba),
@@ -354,6 +356,35 @@ public sealed partial class DpmMeasurement
                                    _progressEnd);
 
         return calibrated;
+    }
+
+    /// <summary>Calibration window of a sector: its layer and its stretch of <see cref="_recalEvery" /> sectors</summary>
+    ulong CalibrationWindow(uint lba) => (ulong)LayerOf(lba) << 32 | lba / _recalEvery;
+
+    /// <summary>
+    ///     Calibrates at <paramref name="lba" /> unless a calibration already failed in its window. Where calibration
+    ///     fails, e.g. the drive behaves oddly or the geometry is not what the medium says, it would fail again at every
+    ///     bin that asks for one, each costing dozens of sweeps.
+    /// </summary>
+    bool CalibrateUnlessHeld(uint lba, out double tMs, out double aps)
+    {
+        tMs = 0;
+        aps = 0;
+
+        ulong window = CalibrationWindow(lba);
+
+        if(_calibrationHeld.Contains(window)) return false;
+
+        if(Calibrate(lba, out tMs, out aps)) return true;
+
+        _calibrationHeld.Add(window);
+
+        AaruLogging.Debug(MODULE_NAME,
+                          "  no more calibrations in sectors {0}-{1} of this layer",
+                          lba / _recalEvery * _recalEvery,
+                          (lba / _recalEvery + 1) * _recalEvery - 1);
+
+        return false;
     }
 
     /// <summary>Repeats calibration sweeps at <paramref name="lba" /> until two of them agree</summary>
@@ -545,7 +576,7 @@ public sealed partial class DpmMeasurement
                           tLocal,
                           tCurrent);
 
-        if(!Calibrate(lba, out double t, out _)) return -1.0;
+        if(!CalibrateUnlessHeld(lba, out double t, out _)) return -1.0;
 
         AaruLogging.Debug(MODULE_NAME,
                           "  rotation period changed {0:F3} -> {1:F3} ms ({2:+0.00;-0.00}%)",

@@ -79,6 +79,9 @@ public sealed partial class DpmMeasurement
     /// <summary>Kind of the medium, valid after <see cref="Prepare" /></summary>
     public DpmMediumKind Kind => _kind;
 
+    /// <summary>Calibrations attempted, successful or not, by the last measurement</summary>
+    internal int CalibrationAttempts { get; private set; }
+
     /// <summary>Event raised when the progress bar is not longer needed</summary>
     public event EndProgressHandler EndProgress;
     /// <summary>Event raised when a progress bar is needed</summary>
@@ -140,8 +143,10 @@ public sealed partial class DpmMeasurement
         if(!_prepared) return null;
 
         _calibrations.Clear();
+        _calibrationHeld.Clear();
         _cacheHits           = 0;
         _calibrationCount    = 0;
+        CalibrationAttempts  = 0;
         _speedRecalibrations = 0;
         _unreadStreak        = 0;
         _aborted             = false;

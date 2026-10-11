@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using Aaru.Logging;
 
 namespace Aaru.Core.Devices.Dpm;
@@ -62,8 +63,14 @@ public sealed partial class DpmMeasurement
     const double BIN_BREAK = -2.0;
     /// <summary>Rate marker: bin measurement failed</summary>
     const double BIN_FAILED = -1.0;
+    /// <summary>Relative spread off-period re-reads must agree within to be taken as the new rotation period</summary>
+    const double T_ADOPT_AGREE = 0.01;
 
-    readonly double[] _history = new double[CHAIN_T_HIST];
+    /// <summary>Calibration windows, see <see cref="CalibrationWindow" />, where a calibration already failed</summary>
+    readonly HashSet<ulong> _calibrationHeld = [];
+    readonly double[]       _history         = new double[CHAIN_T_HIST];
+    /// <summary>Rotation periods of the consecutive re-reads off the current one</summary>
+    readonly double[] _suspect = new double[CHAIN_T_HIST];
     /// <summary>Degrees per sector from the latest calibration</summary>
     double _apsCal;
     /// <summary>Block just read twice, or <see cref="uint.MaxValue" /></summary>
@@ -71,6 +78,7 @@ public sealed partial class DpmMeasurement
     int  _cacheHits;
     int  _calibrationCount;
     int  _historyCount, _historyPosition;
+    int  _suspectCount;
     /// <summary>Re-calibrations forced by a rotation period change</summary>
     int _speedRecalibrations;
     /// <summary>Current rotation period, ms</summary>
@@ -86,6 +94,7 @@ public sealed partial class DpmMeasurement
         _apsCal          = aps;
         _historyCount    = _historyPosition = 0;
         _tSuspect        = 0;
+        _suspectCount    = 0;
 
         // Calibration moved the head
         _at = uint.MaxValue;
@@ -96,7 +105,14 @@ public sealed partial class DpmMeasurement
         // Calibrate restores the speed if needed
         _calibrationCount++;
 
-        if(!Calibrate(lba, out double t, out double a)) return false;
+        if(!CalibrateUnlessHeld(lba, out double t, out double a))
+        {
+            // A held calibration did not restore the speed, and a failed one moved the head
+            RestoreSpeedIfNeeded();
+            _at = uint.MaxValue;
+
+            return false;
+        }
 
         if(Math.Abs(t - _t) / _t > T_DRIFT_WARN)
         {
@@ -125,10 +141,13 @@ public sealed partial class DpmMeasurement
         {
             _tSuspect++;
 
+            if(_suspectCount < CHAIN_T_HIST) _suspect[_suspectCount++] = tp;
+
             return;
         }
 
         _tSuspect                  = 0;
+        _suspectCount              = 0;
         _history[_historyPosition] = tp;
         _historyPosition           = (_historyPosition + 1) % CHAIN_T_HIST;
 
@@ -137,6 +156,40 @@ public sealed partial class DpmMeasurement
         var tmp = new double[CHAIN_T_HIST];
         Array.Copy(_history, tmp, _historyCount);
         _t = Median(tmp, _historyCount);
+    }
+
+    /// <summary>
+    ///     Takes the rotation period of the re-reads that disagreed with the current one, when they agree among
+    ///     themselves within <see cref="T_ADOPT_AGREE" />. The chained reads only need the period, so this keeps measuring
+    ///     where a calibration fails or is held. Re-reads that disagree among themselves are noise, not a new speed.
+    /// </summary>
+    /// <returns><c>true</c> if the period was taken</returns>
+    bool AdoptSuspectT(uint lba)
+    {
+        int n = _suspectCount;
+        _tSuspect     = 0;
+        _suspectCount = 0;
+
+        if(n < 2) return false;
+
+        var tmp = new double[n];
+        Array.Copy(_suspect, tmp, n);
+        double t = Median(tmp, n);
+
+        for(int i = 0; i < n; i++)
+            if(Math.Abs(_suspect[i] - t) / t > T_ADOPT_AGREE)
+                return false;
+
+        AaruLogging.Debug(MODULE_NAME,
+                          "  rotation period taken from {0} re-reads at sector {1}: {2:F3} -> {3:F3} ms",
+                          n,
+                          lba,
+                          _t,
+                          t);
+
+        ChainSetT(t, _apsCal);
+
+        return true;
     }
 
     /// <summary>
@@ -226,9 +279,8 @@ public sealed partial class DpmMeasurement
                                   "  rotation period off at sector {0} - drive changed speed? Re-calibrating.",
                                   lo);
 
-                _speedRecalibrations++;
-
-                if(!ChainCalibrate(s0)) return -1;
+                // Without a calibration, carry on at the period the re-reads agree on, or at the current one
+                if(ChainCalibrate(s0) || AdoptSuspectT(lo)) _speedRecalibrations++;
             }
 
             if(_at != s0 && ChainReadTwice(s0, false, out _) != 0)
