@@ -270,7 +270,7 @@ public sealed partial class DpmMeasurement
     }
 
     /// <summary>Median of the first <paramref name="n" /> values, sorting them in place</summary>
-    static double Median(double[] values, int n)
+    internal static double Median(double[] values, int n)
     {
         Array.Sort(values, 0, n);
 
