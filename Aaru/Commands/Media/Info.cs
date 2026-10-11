@@ -306,6 +306,21 @@ sealed class MediaInfoCommand : Command<MediaInfoCommand.Settings>
                 }
             }
 
+            if(scsiInfo.DvdPfi2ndLayer != null)
+            {
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_pfi_2ndlayer.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdPfi2ndLayer);
+
+                if(scsiInfo.DecodedPfi2ndLayer.HasValue)
+                {
+                    AaruLogging.WriteLine($"[bold][blue]{Localization.Core.Title_PFI_second_layer}:[/][/]");
+                    AaruLogging.WriteLine(PFI.Prettify(scsiInfo.DecodedPfi2ndLayer));
+                }
+            }
+
             if(scsiInfo.DvdDmi != null)
             {
                 DataFile.WriteTo(MODULE_NAME,

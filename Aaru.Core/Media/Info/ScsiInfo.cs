@@ -473,6 +473,31 @@ public sealed class ScsiInfo
                                             _                => MediaType.DVDROM
                                         };
                         }
+
+                        if(DecodedPfi.Value.Layers > 0)
+                        {
+                            sense = dev.ReadDiscStructure(out cmdBuf,
+                                                          out senseBuf,
+                                                          MmcDiscStructureMediaType.Dvd,
+                                                          0,
+                                                          1,
+                                                          MmcDiscStructureFormat.PhysicalInformation,
+                                                          0,
+                                                          dev.Timeout,
+                                                          out _);
+
+                            if(sense)
+                            {
+                                AaruLogging.Debug(MODULE_NAME,
+                                                  Localization.Core.READ_DISC_STRUCTURE_second_layer_PFI_0,
+                                                  Sense.PrettifySense(senseBuf.ToArray()));
+                            }
+                            else
+                            {
+                                DvdPfi2ndLayer     = cmdBuf;
+                                DecodedPfi2ndLayer = PFI.Decode(cmdBuf, MediaType);
+                            }
+                        }
                     }
                 }
 
@@ -1763,6 +1788,12 @@ public sealed class ScsiInfo
 
     /// <summary>Decoded DVD Physical Format Information</summary>
     public PFI.PhysicalFormatInformation? DecodedPfi { get; }
+
+    /// <summary>Raw DVD Physical Format Information of the second layer</summary>
+    public byte[] DvdPfi2ndLayer { get; }
+
+    /// <summary>Decoded DVD Physical Format Information of the second layer</summary>
+    public PFI.PhysicalFormatInformation? DecodedPfi2ndLayer { get; }
 
     /// <summary>Raw DVD Disc Manufacturing Information</summary>
     public byte[] DvdDmi { get; }

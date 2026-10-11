@@ -2250,6 +2250,13 @@
     <value>READ DISC STRUCTURE: PFI
 {0}</value>
   </data>
+    <data name="READ_DISC_STRUCTURE_second_layer_PFI_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: PFI de la segunda capa
+{0}</value>
+  </data>
+    <data name="Title_PFI_second_layer" xml:space="preserve">
+    <value>PFI de la segunda capa</value>
+  </data>
     <data name="READ_DISC_STRUCTURE_DMI_0" xml:space="preserve">
     <value>READ DISC STRUCTURE: DMI
 {0}</value>

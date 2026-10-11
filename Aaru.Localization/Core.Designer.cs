@@ -5624,6 +5624,18 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string READ_DISC_STRUCTURE_second_layer_PFI_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_second_layer_PFI_0", resourceCulture);
+            }
+        }
+        
+        public static string Title_PFI_second_layer {
+            get {
+                return ResourceManager.GetString("Title_PFI_second_layer", resourceCulture);
+            }
+        }
+        
         public static string READ_DISC_STRUCTURE_DMI_0 {
             get {
                 return ResourceManager.GetString("READ_DISC_STRUCTURE_DMI_0", resourceCulture);
