@@ -542,7 +542,11 @@ public static class DpmGraph
     }
 
     /// <summary>Round tick values covering a range</summary>
-    static double[] NiceTicks(double low, double high, int count)
+    /// <param name="low">Start of the range</param>
+    /// <param name="high">End of the range</param>
+    /// <param name="count">Approximate number of ticks</param>
+    /// <returns>Ticks at multiples of 1, 2 or 5 times a power of ten inside the range</returns>
+    public static double[] NiceTicks(double low, double high, int count)
     {
         double range = high - low;
 
