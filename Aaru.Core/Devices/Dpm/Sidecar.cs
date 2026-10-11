@@ -46,16 +46,21 @@ public static class DpmSidecar
     /// <summary>Writes the DPM graph as <c>prefix.dpm.png</c></summary>
     /// <param name="dpm">DPM</param>
     /// <param name="prefix">Path prefix of the image</param>
-    public static void Write(DataPositionMeasurement dpm, string prefix)
+    /// <returns><c>true</c> if the graph was written, <c>false</c> otherwise</returns>
+    public static bool Write(DataPositionMeasurement dpm, string prefix)
     {
         try
         {
             DpmGraph.Write(dpm, prefix + ".dpm.png", Path.GetFileName(prefix));
+
+            return true;
         }
         catch(Exception ex)
         {
             AaruLogging.Debug(MODULE_NAME, "Could not write the DPM graph: {0}", ex.Message);
             AaruLogging.Exception(ex, "Could not write the DPM graph");
+
+            return false;
         }
     }
 }

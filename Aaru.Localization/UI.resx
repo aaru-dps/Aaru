@@ -5965,4 +5965,16 @@ Do you want to continue?</value>
     <data name="Written_DPM_comparison_graph_to_0" xml:space="preserve">
         <value>Written Data Position Measurement comparison graph to {0}.</value>
     </data>
+    <data name="Image_Dpm_Graph_Command_Description" xml:space="preserve">
+        <value>Writes the Data Position Measurement graph of an image.</value>
+    </data>
+    <data name="Image_has_no_DPM" xml:space="preserve">
+        <value>The image does not have a Data Position Measurement.</value>
+    </data>
+    <data name="Written_DPM_graph_to_0" xml:space="preserve">
+        <value>Written Data Position Measurement graph to {0}.</value>
+    </data>
+    <data name="Error_writing_DPM_graph" xml:space="preserve">
+        <value>Error writing the Data Position Measurement graph.</value>
+    </data>
 </root>

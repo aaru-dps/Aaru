@@ -396,6 +396,9 @@ class MainClass
                                                   image.AddCommand<DecodeCommand>("decode")
                                                        .WithDescription(UI.Image_Decode_Command_Description);
 
+                                                  image.AddCommand<DpmGraphCommand>("dpm-graph")
+                                                       .WithDescription(UI.Image_Dpm_Graph_Command_Description);
+
                                                   image.AddCommand<EntropyCommand>("entropy")
                                                        .WithDescription(UI.Image_Entropy_Command_Description);
 

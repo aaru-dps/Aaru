@@ -5878,4 +5878,16 @@ Probadores:
     <data name="Written_DPM_comparison_graph_to_0" xml:space="preserve">
         <value>Escrito el gráfico de comparación de la Medición de Posición de Datos en {0}.</value>
     </data>
+    <data name="Image_Dpm_Graph_Command_Description" xml:space="preserve">
+        <value>Escribe el gráfico de la Medición de Posición de Datos de una imagen.</value>
+    </data>
+    <data name="Image_has_no_DPM" xml:space="preserve">
+        <value>La imagen no tiene una Medición de Posición de Datos.</value>
+    </data>
+    <data name="Written_DPM_graph_to_0" xml:space="preserve">
+        <value>Escrito el gráfico de la Medición de Posición de Datos en {0}.</value>
+    </data>
+    <data name="Error_writing_DPM_graph" xml:space="preserve">
+        <value>Error escribiendo el gráfico de la Medición de Posición de Datos.</value>
+    </data>
 </root>
