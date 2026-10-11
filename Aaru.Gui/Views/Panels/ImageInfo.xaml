@@ -734,6 +734,18 @@
                 <ContentControl Content="{Binding DvdInfo, Mode=OneWay}"
                                 Margin="8" />
             </TabItem>
+            <TabItem IsVisible="{Binding !!DpmInfo, Mode=OneWay}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="4">
+                        <ic:FluentIcon Icon="DataLine" />
+                        <TextBlock Text="{x:Static localization:UI.Title_DPM}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
+                <ContentControl Content="{Binding DpmInfo, Mode=OneWay}"
+                                Margin="8" />
+            </TabItem>
             <TabItem IsVisible="{Binding !!FluxInfo, Mode=OneWay}">
                 <TabItem.Header>
                     <controls:SpectreTextBlock Text="Flux Captures" />

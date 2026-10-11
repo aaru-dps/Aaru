@@ -5977,4 +5977,82 @@ Do you want to continue?</value>
     <data name="Error_writing_DPM_graph" xml:space="preserve">
         <value>Error writing the Data Position Measurement graph.</value>
     </data>
+    <data name="Title_DPM" xml:space="preserve">
+        <value>Data Position Measurement</value>
+    </data>
+    <data name="Title_DPM_medium" xml:space="preserve">
+        <value>Medium</value>
+    </data>
+    <data name="DPM_medium_unknown" xml:space="preserve">
+        <value>Unknown</value>
+    </data>
+    <data name="Title_DPM_speed" xml:space="preserve">
+        <value>Measured at</value>
+    </data>
+    <data name="DPM_speed_0" xml:space="preserve">
+        <value>{0}x</value>
+    </data>
+    <data name="DPM_speed_maximum" xml:space="preserve">
+        <value>Maximum speed</value>
+    </data>
+    <data name="DPM_speed_unknown" xml:space="preserve">
+        <value>Unknown speed</value>
+    </data>
+    <data name="Title_DPM_layers" xml:space="preserve">
+        <value>Layers</value>
+    </data>
+    <data name="Title_DPM_track_path" xml:space="preserve">
+        <value>Track path</value>
+    </data>
+    <data name="DPM_track_path_opposite" xml:space="preserve">
+        <value>Opposite</value>
+    </data>
+    <data name="DPM_track_path_parallel" xml:space="preserve">
+        <value>Parallel</value>
+    </data>
+    <data name="Title_DPM_entries" xml:space="preserve">
+        <value>Entries</value>
+    </data>
+    <data name="DPM_0_entries_every_1_sectors" xml:space="preserve">
+        <value>{0} entries every {1} sectors</value>
+    </data>
+    <data name="Title_DPM_sectors" xml:space="preserve">
+        <value>Sectors</value>
+    </data>
+    <data name="DPM_0_to_1" xml:space="preserve">
+        <value>{0} to {1}</value>
+    </data>
+    <data name="Title_DPM_turns" xml:space="preserve">
+        <value>Turns</value>
+    </data>
+    <data name="Title_DPM_calibrations" xml:space="preserve">
+        <value>Calibrations</value>
+    </data>
+    <data name="Title_DPM_bands" xml:space="preserve">
+        <value>Bands off the spiral</value>
+    </data>
+    <data name="Title_DPM_bins_by_status" xml:space="preserve">
+        <value>Bins by status</value>
+    </data>
+    <data name="DPM_0_bins_1" xml:space="preserve">
+        <value>{0} ({1:P2})</value>
+    </data>
+    <data name="DPM_status_unknown" xml:space="preserve">
+        <value>Status not recorded</value>
+    </data>
+    <data name="DPM_status_measured" xml:space="preserve">
+        <value>Measured</value>
+    </data>
+    <data name="DPM_status_remeasured" xml:space="preserve">
+        <value>Measured again</value>
+    </data>
+    <data name="DPM_status_interpolated" xml:space="preserve">
+        <value>Not measured, interpolated</value>
+    </data>
+    <data name="DPM_status_unreadable" xml:space="preserve">
+        <value>Unreadable, interpolated</value>
+    </data>
+    <data name="DPM_status_layer_break" xml:space="preserve">
+        <value>Layer break</value>
+    </data>
 </root>

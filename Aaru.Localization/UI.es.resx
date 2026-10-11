@@ -5890,4 +5890,82 @@ Probadores:
     <data name="Error_writing_DPM_graph" xml:space="preserve">
         <value>Error escribiendo el gráfico de la Medición de Posición de Datos.</value>
     </data>
+    <data name="Title_DPM" xml:space="preserve">
+        <value>Medición de Posición de Datos</value>
+    </data>
+    <data name="Title_DPM_medium" xml:space="preserve">
+        <value>Medio</value>
+    </data>
+    <data name="DPM_medium_unknown" xml:space="preserve">
+        <value>Desconocido</value>
+    </data>
+    <data name="Title_DPM_speed" xml:space="preserve">
+        <value>Medida a</value>
+    </data>
+    <data name="DPM_speed_0" xml:space="preserve">
+        <value>{0}x</value>
+    </data>
+    <data name="DPM_speed_maximum" xml:space="preserve">
+        <value>Velocidad máxima</value>
+    </data>
+    <data name="DPM_speed_unknown" xml:space="preserve">
+        <value>Velocidad desconocida</value>
+    </data>
+    <data name="Title_DPM_layers" xml:space="preserve">
+        <value>Capas</value>
+    </data>
+    <data name="Title_DPM_track_path" xml:space="preserve">
+        <value>Recorrido de pista</value>
+    </data>
+    <data name="DPM_track_path_opposite" xml:space="preserve">
+        <value>Opuesto</value>
+    </data>
+    <data name="DPM_track_path_parallel" xml:space="preserve">
+        <value>Paralelo</value>
+    </data>
+    <data name="Title_DPM_entries" xml:space="preserve">
+        <value>Entradas</value>
+    </data>
+    <data name="DPM_0_entries_every_1_sectors" xml:space="preserve">
+        <value>{0} entradas cada {1} sectores</value>
+    </data>
+    <data name="Title_DPM_sectors" xml:space="preserve">
+        <value>Sectores</value>
+    </data>
+    <data name="DPM_0_to_1" xml:space="preserve">
+        <value>{0} a {1}</value>
+    </data>
+    <data name="Title_DPM_turns" xml:space="preserve">
+        <value>Vueltas</value>
+    </data>
+    <data name="Title_DPM_calibrations" xml:space="preserve">
+        <value>Calibraciones</value>
+    </data>
+    <data name="Title_DPM_bands" xml:space="preserve">
+        <value>Bandas fuera de la espiral</value>
+    </data>
+    <data name="Title_DPM_bins_by_status" xml:space="preserve">
+        <value>Bins por estado</value>
+    </data>
+    <data name="DPM_0_bins_1" xml:space="preserve">
+        <value>{0} ({1:P2})</value>
+    </data>
+    <data name="DPM_status_unknown" xml:space="preserve">
+        <value>Estado no registrado</value>
+    </data>
+    <data name="DPM_status_measured" xml:space="preserve">
+        <value>Medidos</value>
+    </data>
+    <data name="DPM_status_remeasured" xml:space="preserve">
+        <value>Medidos de nuevo</value>
+    </data>
+    <data name="DPM_status_interpolated" xml:space="preserve">
+        <value>No medidos, interpolados</value>
+    </data>
+    <data name="DPM_status_unreadable" xml:space="preserve">
+        <value>Ilegibles, interpolados</value>
+    </data>
+    <data name="DPM_status_layer_break" xml:space="preserve">
+        <value>Cambio de capa</value>
+    </data>
 </root>

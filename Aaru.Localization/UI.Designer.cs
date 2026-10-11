@@ -11789,5 +11789,161 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Title_DPM {
+            get {
+                return ResourceManager.GetString("Title_DPM", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_medium {
+            get {
+                return ResourceManager.GetString("Title_DPM_medium", resourceCulture);
+            }
+        }
+        
+        public static string DPM_medium_unknown {
+            get {
+                return ResourceManager.GetString("DPM_medium_unknown", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_speed {
+            get {
+                return ResourceManager.GetString("Title_DPM_speed", resourceCulture);
+            }
+        }
+        
+        public static string DPM_speed_0 {
+            get {
+                return ResourceManager.GetString("DPM_speed_0", resourceCulture);
+            }
+        }
+        
+        public static string DPM_speed_maximum {
+            get {
+                return ResourceManager.GetString("DPM_speed_maximum", resourceCulture);
+            }
+        }
+        
+        public static string DPM_speed_unknown {
+            get {
+                return ResourceManager.GetString("DPM_speed_unknown", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_layers {
+            get {
+                return ResourceManager.GetString("Title_DPM_layers", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_track_path {
+            get {
+                return ResourceManager.GetString("Title_DPM_track_path", resourceCulture);
+            }
+        }
+        
+        public static string DPM_track_path_opposite {
+            get {
+                return ResourceManager.GetString("DPM_track_path_opposite", resourceCulture);
+            }
+        }
+        
+        public static string DPM_track_path_parallel {
+            get {
+                return ResourceManager.GetString("DPM_track_path_parallel", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_entries {
+            get {
+                return ResourceManager.GetString("Title_DPM_entries", resourceCulture);
+            }
+        }
+        
+        public static string DPM_0_entries_every_1_sectors {
+            get {
+                return ResourceManager.GetString("DPM_0_entries_every_1_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_sectors {
+            get {
+                return ResourceManager.GetString("Title_DPM_sectors", resourceCulture);
+            }
+        }
+        
+        public static string DPM_0_to_1 {
+            get {
+                return ResourceManager.GetString("DPM_0_to_1", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_turns {
+            get {
+                return ResourceManager.GetString("Title_DPM_turns", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_calibrations {
+            get {
+                return ResourceManager.GetString("Title_DPM_calibrations", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_bands {
+            get {
+                return ResourceManager.GetString("Title_DPM_bands", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_bins_by_status {
+            get {
+                return ResourceManager.GetString("Title_DPM_bins_by_status", resourceCulture);
+            }
+        }
+        
+        public static string DPM_0_bins_1 {
+            get {
+                return ResourceManager.GetString("DPM_0_bins_1", resourceCulture);
+            }
+        }
+        
+        public static string DPM_status_unknown {
+            get {
+                return ResourceManager.GetString("DPM_status_unknown", resourceCulture);
+            }
+        }
+        
+        public static string DPM_status_measured {
+            get {
+                return ResourceManager.GetString("DPM_status_measured", resourceCulture);
+            }
+        }
+        
+        public static string DPM_status_remeasured {
+            get {
+                return ResourceManager.GetString("DPM_status_remeasured", resourceCulture);
+            }
+        }
+        
+        public static string DPM_status_interpolated {
+            get {
+                return ResourceManager.GetString("DPM_status_interpolated", resourceCulture);
+            }
+        }
+        
+        public static string DPM_status_unreadable {
+            get {
+                return ResourceManager.GetString("DPM_status_unreadable", resourceCulture);
+            }
+        }
+        
+        public static string DPM_status_layer_break {
+            get {
+                return ResourceManager.GetString("DPM_status_layer_break", resourceCulture);
+            }
+        }
+        
     }
 }

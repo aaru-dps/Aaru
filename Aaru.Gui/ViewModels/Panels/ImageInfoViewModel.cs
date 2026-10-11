@@ -41,6 +41,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Core.Image;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
@@ -811,6 +812,22 @@ public sealed class ImageInfoViewModel : ViewModelBase
                 // ignored
                 SentrySdk.CaptureException(ex);
             }
+
+            try
+            {
+                if(opticalMediaImage.ReadDpm(out DataPositionMeasurement dpm) == ErrorNumber.NoError &&
+                   DpmAnalysis.Analyse(dpm) is {} analysis)
+                {
+                    DpmInfo = new DpmInfo
+                    {
+                        DataContext = new DpmInfoViewModel(dpm, analysis)
+                    };
+                }
+            }
+            catch(Exception ex)
+            {
+                SentrySdk.CaptureException(ex);
+            }
         }
 
         if(imageFormat is IFluxImage fluxImage)
@@ -857,6 +874,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
     public PcmciaInfo                              PcmciaInfo                { get; }
     public SdMmcInfo                               SdMmcInfo                 { get; }
     public FluxInfo                                FluxInfo                  { get; }
+    public DpmInfo                                 DpmInfo                   { get; }
     public IImage                                  MediaLogo                 { get; }
     public string                                  ImagePathText             { get; }
     public string                                  FilterText                { get; }
