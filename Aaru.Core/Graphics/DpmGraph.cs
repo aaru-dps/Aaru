@@ -34,6 +34,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using Aaru.CommonTypes.Structs;
+using Aaru.Core.Image;
 using SkiaSharp;
 
 namespace Aaru.Core.Graphics;
@@ -54,14 +55,15 @@ public static class DpmGraph
     const float PANEL_GAP     = 70;
     const float MARGIN_BOTTOM = 70;
 
-    static readonly SKColor Surface       = SKColor.Parse("#1a1a19");
-    static readonly SKColor PrimaryInk    = SKColor.Parse("#ffffff");
-    static readonly SKColor SecondaryInk  = SKColor.Parse("#c3c2b7");
-    static readonly SKColor MutedInk      = SKColor.Parse("#898781");
-    static readonly SKColor Gridline      = SKColor.Parse("#2c2c2a");
-    static readonly SKColor Series        = SKColor.Parse("#3987e5");
-    static readonly SKColor Serious       = SKColor.Parse("#ec835a");
-    static readonly SKColor Critical      = SKColor.Parse("#d03b3b");
+    static readonly SKColor Surface      = SKColor.Parse("#1a1a19");
+    static readonly SKColor PrimaryInk   = SKColor.Parse("#ffffff");
+    static readonly SKColor SecondaryInk = SKColor.Parse("#c3c2b7");
+    static readonly SKColor MutedInk     = SKColor.Parse("#898781");
+    static readonly SKColor Gridline     = SKColor.Parse("#2c2c2a");
+    static readonly SKColor Series       = SKColor.Parse("#3987e5");
+    static readonly SKColor SecondSeries = SKColor.Parse("#d95926");
+    static readonly SKColor Serious      = SKColor.Parse("#ec835a");
+    static readonly SKColor Critical     = SKColor.Parse("#d03b3b");
 
     /// <summary>Writes the graph of a DPM as a PNG</summary>
     /// <param name="dpm">DPM</param>
@@ -82,8 +84,8 @@ public static class DpmGraph
         for(int j = 0; j < nb; j++)
         {
             density[j] = (entries[j + 1].Angle - entries[j].Angle) *
-                         360.0                                       /
-                         Dpm.UNITS_PER_TURN                          /
+                         360.0              /
+                         Dpm.UNITS_PER_TURN /
                          (entries[j + 1].Lba - entries[j].Lba);
 
             if(entries[j + 1].Status is DpmEntryStatus.Interpolated or DpmEntryStatus.Unreadable) continue;
@@ -106,14 +108,14 @@ public static class DpmGraph
         double lastLba  = entries[^1].Lba;
 
         bool  hasCalibrations = dpm.Calibrations is { Length: > 0 };
-        float plotRight       = WIDTH - MARGIN_RIGHT;
-        float plotBottom      = HEIGHT - MARGIN_BOTTOM;
-        float densityTop      = TITLE_HEIGHT;
-        float densityBottom   = hasCalibrations ? densityTop + (plotBottom - densityTop - PANEL_GAP) * 0.72f : plotBottom;
-        float rpmTop          = densityBottom + PANEL_GAP;
+        float plotRight = WIDTH - MARGIN_RIGHT;
+        float plotBottom = HEIGHT - MARGIN_BOTTOM;
+        float densityTop = TITLE_HEIGHT;
+        float densityBottom = hasCalibrations ? densityTop + (plotBottom - densityTop - PANEL_GAP) * 0.72f : plotBottom;
+        float rpmTop = densityBottom + PANEL_GAP;
 
-        float X(double lba) => (float)(MARGIN_LEFT + (lba - firstLba) / Math.Max(1, lastLba - firstLba) *
-                                       (plotRight - MARGIN_LEFT));
+        float X(double lba) =>
+            (float)(MARGIN_LEFT + (lba - firstLba) / Math.Max(1, lastLba - firstLba) * (plotRight - MARGIN_LEFT));
 
         float Y(double value, double low, double high, float top, float bottom) =>
             (float)(bottom - (value - low) / (high - low) * (bottom - top));
@@ -125,6 +127,7 @@ public static class DpmGraph
         ink.IsAntialias = true;
 
         ink.Color = PrimaryInk;
+
         canvas.DrawText(string.IsNullOrWhiteSpace(name) ? "Data Position Measurement" : name,
                         MARGIN_LEFT,
                         40,
@@ -197,8 +200,9 @@ public static class DpmGraph
                 float x = X((entries[j].Lba + entries[j + 1].Lba) / 2.0);
                 float y = Y(density[j], minimum, maximum, densityTop, densityBottom);
 
-                if(j == 0 || dpm.LayerEnds is { Length: > 0 } && Dpm.LayerOf(dpm, entries[j].Lba) !=
-                   Dpm.LayerOf(dpm, entries[j - 1].Lba))
+                if(j == 0 ||
+                   dpm.LayerEnds is { Length: > 0 } &&
+                   Dpm.LayerOf(dpm, entries[j].Lba) != Dpm.LayerOf(dpm, entries[j - 1].Lba))
                     densityPath.MoveTo(x, y);
                 else
                     densityPath.LineTo(x, y);
@@ -222,8 +226,8 @@ public static class DpmGraph
             float textWidth = labelFont.MeasureText(label);
             legendX -= textWidth;
             canvas.DrawText(label, legendX, 68, SKTextAlign.Left, labelFont, ink);
-            legendX -= 22;
-            shade.Color = color.WithAlpha(128);
+            legendX     -= 22;
+            shade.Color =  color.WithAlpha(128);
             canvas.DrawRoundRect(legendX, 55, 14, 14, 2, 2, shade);
             legendX -= 24;
         }
@@ -240,12 +244,17 @@ public static class DpmGraph
             }
 
             double rpmPadding = Math.Max((rpmMax - rpmMin) * 0.1, 50);
-            rpmMin = Math.Max(0, rpmMin - rpmPadding);
+            rpmMin =  Math.Max(0, rpmMin - rpmPadding);
             rpmMax += rpmPadding;
 
             ink.Color = SecondaryInk;
-            canvas.DrawText("Rotation speed at every calibration, RPM", MARGIN_LEFT, rpmTop - 14, SKTextAlign.Left,
-                            labelFont, ink);
+
+            canvas.DrawText("Rotation speed at every calibration, RPM",
+                            MARGIN_LEFT,
+                            rpmTop - 14,
+                            SKTextAlign.Left,
+                            labelFont,
+                            ink);
 
             DrawGrid(canvas, labelFont, rpmMin, rpmMax, rpmTop, plotBottom, "F0", Y);
 
@@ -271,20 +280,243 @@ public static class DpmGraph
         ink.Color = MutedInk;
 
         foreach(double tick in NiceTicks(firstLba, lastLba, 8))
-            canvas.DrawText(tick.ToString("N0", CultureInfo.InvariantCulture), X(tick), plotBottom + 24,
-                            SKTextAlign.Center, labelFont, ink);
+            canvas.DrawText(tick.ToString("N0", CultureInfo.InvariantCulture),
+                            X(tick),
+                            plotBottom + 24,
+                            SKTextAlign.Center,
+                            labelFont,
+                            ink);
 
         canvas.DrawText("Sector", (MARGIN_LEFT + plotRight) / 2, plotBottom + 52, SKTextAlign.Center, labelFont, ink);
 
-        using var image = SKImage.FromBitmap(bitmap);
-        using SKData data = image.Encode(SKEncodedImageFormat.Png, 100);
-        using var stream = new FileStream(path, FileMode.Create);
+        using var    image  = SKImage.FromBitmap(bitmap);
+        using SKData data   = image.Encode(SKEncodedImageFormat.Png, 100);
+        using var    stream = new FileStream(path, FileMode.Create);
+        data.SaveTo(stream);
+    }
+
+    /// <summary>Writes a graph comparing two DPMs as a PNG</summary>
+    /// <remarks>
+    ///     The top panel overlays the density of both DPMs on the comparison grid, the second one divided by the
+    ///     calibration scale. The bottom panel shows the relative deviation of the second against the first, with the
+    ///     difference threshold as a band. Regions that differ are shaded on both.
+    /// </remarks>
+    /// <param name="comparison">Comparison of both DPMs</param>
+    /// <param name="path">Path to the PNG file</param>
+    /// <param name="name1">Name of the first image</param>
+    /// <param name="name2">Name of the second image</param>
+    public static void WriteComparison(DpmComparisonResult comparison, string path, string name1, string name2)
+    {
+        using var bitmap = new SKBitmap(WIDTH, HEIGHT);
+        using var canvas = new SKCanvas(bitmap);
+
+        canvas.Clear(Surface);
+
+        DpmComparisonBin[] bins    = comparison.Grid ?? [];
+        double             minimum = double.MaxValue, maximum = double.MinValue;
+        double             devMax  = comparison.Threshold * 2;
+
+        foreach(DpmComparisonBin bin in bins)
+        {
+            if(!bin.Valid) continue;
+
+            double scaled = bin.Density2 / comparison.Scales[bin.Segment];
+            minimum = Math.Min(minimum, Math.Min(bin.Density1, scaled));
+            maximum = Math.Max(maximum, Math.Max(bin.Density1, scaled));
+            devMax  = Math.Max(devMax,  Math.Abs(bin.Deviation));
+        }
+
+        if(minimum > maximum)
+        {
+            minimum = 0;
+            maximum = 1;
+        }
+
+        double padding = Math.Max((maximum - minimum) * 0.05, maximum * 0.001);
+        minimum -= padding;
+        maximum += padding;
+        devMax  *= 1.1;
+
+        double firstLba = comparison.FirstLba;
+        double lastLba  = comparison.LastLba;
+
+        float plotRight     = WIDTH  - MARGIN_RIGHT;
+        float plotBottom    = HEIGHT - MARGIN_BOTTOM;
+        float densityTop    = TITLE_HEIGHT;
+        float densityBottom = densityTop    + (plotBottom - densityTop - PANEL_GAP) * 0.6f;
+        float deviationTop  = densityBottom + PANEL_GAP;
+
+        float X(double lba) =>
+            (float)(MARGIN_LEFT + (lba - firstLba) / Math.Max(1, lastLba - firstLba) * (plotRight - MARGIN_LEFT));
+
+        float Y(double value, double low, double high, float top, float bottom) =>
+            (float)(bottom - (value - low) / (high - low) * (bottom - top));
+
+        using var titleFont = new SKFont(SKTypeface.Default, 26);
+        using var labelFont = new SKFont(SKTypeface.Default, 16);
+
+        using var ink = new SKPaint();
+        ink.IsAntialias = true;
+
+        ink.Color = PrimaryInk;
+        canvas.DrawText($"{name1} vs. {name2}", MARGIN_LEFT, 40, SKTextAlign.Left, titleFont, ink);
+
+        string scales = string.Join(", ",
+                                    Array.ConvertAll(comparison.Scales,
+                                                     s => s.ToString("F6", CultureInfo.InvariantCulture)));
+
+        ink.Color = SecondaryInk;
+
+        canvas.DrawText(string.Format(CultureInfo.InvariantCulture,
+                                      "Degrees per sector by sector, every {0} sectors. Second divided by calibration scale {1}. {2} differing regions.",
+                                      comparison.Spacing,
+                                      scales,
+                                      comparison.Differences?.Length ?? 0),
+                        MARGIN_LEFT,
+                        68,
+                        SKTextAlign.Left,
+                        labelFont,
+                        ink);
+
+        // Differing regions and unmeasured bins, behind everything else
+        using var shade = new SKPaint();
+
+        shade.Color = MutedInk.WithAlpha(40);
+
+        foreach(DpmComparisonBin bin in bins)
+        {
+            if(bin.Valid) continue;
+
+            float left  = X(bin.FirstLba);
+            float right = Math.Max(X(bin.EndLba), left + 1);
+            canvas.DrawRect(left, densityTop,   right - left, densityBottom - densityTop,   shade);
+            canvas.DrawRect(left, deviationTop, right - left, plotBottom    - deviationTop, shade);
+        }
+
+        shade.Color = Critical.WithAlpha(64);
+
+        foreach(DpmDifference difference in comparison.Differences ?? [])
+        {
+            float left  = X(difference.FirstLba);
+            float right = Math.Max(X(difference.LastLba + 1), left + 2);
+            canvas.DrawRect(left, densityTop,   right - left, densityBottom - densityTop,   shade);
+            canvas.DrawRect(left, deviationTop, right - left, plotBottom    - deviationTop, shade);
+        }
+
+        DrawGrid(canvas, labelFont, minimum, maximum, densityTop, densityBottom, "F3", Y);
+
+        using var line = new SKPaint();
+        line.IsAntialias = true;
+        line.StrokeWidth = 2;
+        line.Style       = SKPaintStyle.Stroke;
+        line.StrokeJoin  = SKStrokeJoin.Round;
+
+        void DrawSeries(Func<DpmComparisonBin, double> value, double low, double high, float top, float bottom,
+                        SKColor                        color)
+        {
+            using var series = new SKPath();
+            bool      broken = true;
+
+            for(int j = 0; j < bins.Length; j++)
+            {
+                // Break the line at unmeasured bins and segment changes
+                if(!bins[j].Valid || j > 0 && bins[j].Segment != bins[j - 1].Segment)
+                {
+                    broken = true;
+
+                    if(!bins[j].Valid) continue;
+                }
+
+                float x = X((bins[j].FirstLba + bins[j].EndLba) / 2.0);
+                float y = Y(value(bins[j]), low, high, top, bottom);
+
+                if(broken)
+                    series.MoveTo(x, y);
+                else
+                    series.LineTo(x, y);
+
+                broken = false;
+            }
+
+            line.Color = color;
+            canvas.DrawPath(series, line);
+        }
+
+        DrawSeries(static b => b.Density1, minimum, maximum, densityTop, densityBottom, Series);
+
+        DrawSeries(b => b.Density2 / comparison.Scales[b.Segment],
+                   minimum,
+                   maximum,
+                   densityTop,
+                   densityBottom,
+                   SecondSeries);
+
+        // Legend, the two series and the differing regions
+        float legendX = plotRight;
+
+        foreach((SKColor color, string label, bool region) in new[]
+                {
+                    (Critical, "Differs", true), (SecondSeries, "Second", false), (Series, "First", false)
+                })
+        {
+            if(region && comparison.Differences is not { Length: > 0 }) continue;
+
+            float textWidth = labelFont.MeasureText(label);
+            legendX   -= textWidth;
+            ink.Color =  SecondaryInk;
+            canvas.DrawText(label, legendX, 68, SKTextAlign.Left, labelFont, ink);
+            legendX     -= 22;
+            shade.Color =  region ? color.WithAlpha(128) : color;
+            canvas.DrawRoundRect(legendX, 55, 14, 14, 2, 2, shade);
+            legendX -= 24;
+        }
+
+        // Deviation panel, with the threshold band
+        ink.Color = SecondaryInk;
+
+        canvas.DrawText(string.Format(CultureInfo.InvariantCulture,
+                                      "Relative deviation of the second against the first, %. Threshold ±{0:F2}%.",
+                                      comparison.Threshold * 100),
+                        MARGIN_LEFT,
+                        deviationTop - 14,
+                        SKTextAlign.Left,
+                        labelFont,
+                        ink);
+
+        shade.Color = Gridline.WithAlpha(160);
+
+        float bandTop    = Y(comparison.Threshold  * 100, -devMax * 100, devMax * 100, deviationTop, plotBottom);
+        float bandBottom = Y(-comparison.Threshold * 100, -devMax * 100, devMax * 100, deviationTop, plotBottom);
+        canvas.DrawRect(MARGIN_LEFT, bandTop, plotRight - MARGIN_LEFT, bandBottom - bandTop, shade);
+
+        DrawGrid(canvas, labelFont, -devMax * 100, devMax * 100, deviationTop, plotBottom, "F1", Y);
+
+        DrawSeries(static b => b.Deviation * 100, -devMax * 100, devMax * 100, deviationTop, plotBottom, Series);
+
+        // Sector axis, shared by both panels
+        ink.Color = MutedInk;
+
+        foreach(double tick in NiceTicks(firstLba, lastLba, 8))
+        {
+            canvas.DrawText(tick.ToString("N0", CultureInfo.InvariantCulture),
+                            X(tick),
+                            plotBottom + 24,
+                            SKTextAlign.Center,
+                            labelFont,
+                            ink);
+        }
+
+        canvas.DrawText("Sector", (MARGIN_LEFT + plotRight) / 2, plotBottom + 52, SKTextAlign.Center, labelFont, ink);
+
+        using var    image  = SKImage.FromBitmap(bitmap);
+        using SKData data   = image.Encode(SKEncodedImageFormat.Png, 100);
+        using var    stream = new FileStream(path, FileMode.Create);
         data.SaveTo(stream);
     }
 
     /// <summary>Draws hairline gridlines and value labels for a panel</summary>
-    static void DrawGrid(SKCanvas canvas, SKFont font, double low, double high, float top, float bottom,
-                         string format, Func<double, double, double, float, float, float> y)
+    static void DrawGrid(SKCanvas canvas, SKFont font, double low, double high, float top, float bottom, string format,
+                         Func<double, double, double, float, float, float> y)
     {
         using var grid = new SKPaint();
         grid.Color       = Gridline;
@@ -300,8 +532,12 @@ public static class DpmGraph
 
             canvas.DrawLine(MARGIN_LEFT, position, WIDTH - MARGIN_RIGHT, position, grid);
 
-            canvas.DrawText(tick.ToString(format, CultureInfo.InvariantCulture), MARGIN_LEFT - 10, position + 5,
-                            SKTextAlign.Right, font, ink);
+            canvas.DrawText(tick.ToString(format, CultureInfo.InvariantCulture),
+                            MARGIN_LEFT - 10,
+                            position    + 5,
+                            SKTextAlign.Right,
+                            font,
+                            ink);
         }
     }
 
