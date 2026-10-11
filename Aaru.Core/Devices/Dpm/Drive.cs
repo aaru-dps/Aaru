@@ -38,7 +38,9 @@ using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.Core.Graphics;
 using Aaru.Decoders.DVD;
+using Aaru.Decoders.SCSI;
 using Aaru.Devices;
+using Aaru.Logging;
 
 namespace Aaru.Core.Devices.Dpm;
 
@@ -116,6 +118,7 @@ public interface IDpmDrive
 /// </remarks>
 public sealed class DeviceDpmDrive : IDpmDrive
 {
+    const string MODULE_NAME      = "DPM";
     const uint   TIMEOUT          = 20;
     const ushort DECOY_MAX_BLOCKS = 64;
 
@@ -156,7 +159,16 @@ public sealed class DeviceDpmDrive : IDpmDrive
         sincePrevious = _previousEnd == 0 ? elapsed : (long)((end - _previousEnd) * (1e9 / Stopwatch.Frequency));
         _previousEnd  = end;
 
-        return error == 0 && !sense;
+        if(error == 0 && !sense) return true;
+
+        // A failed read marks its sectors unreadable, say why the drive refused it
+        AaruLogging.Debug(MODULE_NAME,
+                          "  read of sector {0} failed after {1:F0} ms: {2}",
+                          lba,
+                          elapsed / 1e6,
+                          sense ? Sense.PrettifySense(_dev.SenseBuffer)?.Trim() : $"error {error}");
+
+        return false;
     }
 
     /// <inheritdoc />
