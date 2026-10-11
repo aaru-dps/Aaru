@@ -37,10 +37,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
         xmlns:controls="clr-namespace:Aaru.Gui.Controls"
+        xmlns:models="clr-namespace:Aaru.Gui.Models"
         xmlns:localization="clr-namespace:Aaru.Localization;assembly=Aaru.Localization"
         xmlns:ic="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
         mc:Ignorable="d"
-        Width="1200"
+        Width="1400"
         Height="720"
         d:DesignWidth="1200"
         d:DesignHeight="720"
@@ -51,9 +52,11 @@
         <windows:DpmViewerViewModel />
     </Design.DataContext>
     <Grid RowDefinitions="Auto,*,Auto"
+          ColumnDefinitions="*,Auto"
           RowSpacing="4"
           Margin="8">
         <WrapPanel Grid.Row="0"
+                   Grid.ColumnSpan="2"
                    Orientation="Horizontal">
             <ToggleButton Margin="2"
                           IsChecked="{Binding ShowDensity, Mode=TwoWay}"
@@ -93,6 +96,7 @@
             </Button>
         </WrapPanel>
         <controls:DpmPlot Grid.Row="1"
+                          Grid.Column="0"
                           x:Name="Plot"
                           Analysis="{Binding Analysis, Mode=OneWay}"
                           DensityUnit="{Binding DensityUnit, Mode=OneWay}"
@@ -100,7 +104,219 @@
                           ShowDeviation="{Binding ShowDeviation, Mode=OneWay}"
                           ShowRpm="{Binding ShowRpm, Mode=OneWay}"
                           ShowStatus="{Binding ShowStatus, Mode=OneWay}" />
+        <ScrollViewer Grid.Row="1"
+                      Grid.Column="1"
+                      Width="420"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="4"
+                        Margin="8,0,0,0">
+                <TextBlock Text="{x:Static localization:UI.DPM_select_row_to_zoom}"
+                           TextWrapping="Wrap"
+                           Opacity="0.7" />
+                <Expander Header="{x:Static localization:UI.Title_DPM_summary}"
+                          HorizontalAlignment="Stretch"
+                          IsExpanded="True">
+                    <ItemsControl ItemsSource="{Binding Summary, Mode=OneWay}"
+                                  Grid.IsSharedSizeScope="True">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:DpmSummaryModel">
+                                <Grid ColumnSpacing="8"
+                                      Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"
+                                                          SharedSizeGroup="Label" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding Label, Mode=OneWay}"
+                                               FontWeight="SemiBold" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Value, Mode=OneWay}"
+                                               TextWrapping="Wrap" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+                <Expander Header="{x:Static localization:UI.Title_DPM_layers}"
+                          HorizontalAlignment="Stretch"
+                          IsExpanded="True">
+                    <DataGrid ItemsSource="{Binding Layers, Mode=OneWay}"
+                              SelectedItem="{Binding SelectedLayer, Mode=TwoWay}"
+                              SelectionMode="Single"
+                              IsReadOnly="True"
+                              MaxHeight="260"
+                              AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Layer, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_layer}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding FirstLba, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_first_sector}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding LastLba, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_last_sector}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding Bins, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_bin_count}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding Turns, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_turns}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding Density, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_density_range}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding MedianDensity, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_median_density}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding SectorsPerTurn, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_sectors_per_turn_range}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding Noise, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_spiral_noise}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="{x:Static localization:UI.Title_DPM_bands}"
+                          HorizontalAlignment="Stretch"
+                      IsVisible="{Binding !!Bands.Count, Mode=OneWay}"
+                          IsExpanded="True">
+                    <DataGrid ItemsSource="{Binding Bands, Mode=OneWay}"
+                              SelectedItem="{Binding SelectedBand, Mode=TwoWay}"
+                              SelectionMode="Single"
+                              IsReadOnly="True"
+                              MaxHeight="260"
+                              AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding FirstLba, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_first_sector}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding LastLba, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_last_sector}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding Layer, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_layer}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding MeanDeviation, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_mean_deviation}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding MaximumDeviation, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_maximum_deviation}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="{x:Static localization:UI.Title_DPM_calibrations}"
+                          HorizontalAlignment="Stretch"
+                      IsVisible="{Binding !!Calibrations.Count, Mode=OneWay}"
+                          IsExpanded="False">
+                    <DataGrid ItemsSource="{Binding Calibrations, Mode=OneWay}"
+                              SelectedItem="{Binding SelectedCalibration, Mode=TwoWay}"
+                              SelectionMode="Single"
+                              IsReadOnly="True"
+                              MaxHeight="260"
+                              AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Lba, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_sector}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding Layer, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_layer}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding Rpm, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_rpm}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding Period, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_period_ms}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding SectorsPerTurn, Mode=OneWay}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{x:Static localization:UI.Title_DPM_sectors_per_turn}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
         <Grid Grid.Row="2"
+              Grid.ColumnSpan="2"
               ColumnDefinitions="Auto,*"
               ColumnSpacing="16">
             <TextBlock Grid.Column="0"

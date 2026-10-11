@@ -30,9 +30,14 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Image;
 using Aaru.Gui.Controls;
+using Aaru.Gui.Models;
+using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.Views.Windows;
 using Aaru.Localization;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -43,6 +48,12 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
 {
     [ObservableProperty]
     string _hoverText;
+    [ObservableProperty]
+    DpmBandModel _selectedBand;
+    [ObservableProperty]
+    DpmCalibrationModel _selectedCalibration;
+    [ObservableProperty]
+    DpmLayerModel _selectedLayer;
     [ObservableProperty]
     bool _showDensity = true;
     [ObservableProperty]
@@ -57,7 +68,13 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
     [ObservableProperty]
     string _viewText;
 
-    public DpmViewerViewModel() { }
+    public DpmViewerViewModel()
+    {
+        Summary      = [];
+        Layers       = [];
+        Calibrations = [];
+        Bands        = [];
+    }
 
     public DpmViewerViewModel(DpmViewer window, DataPositionMeasurement dpm, DpmAnalysisResult analysis,
                               string    imageName)
@@ -66,6 +83,78 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
         Analysis  = analysis;
         ImageName = imageName;
         Title     = string.Format(UI.Title_DPM_of_0, imageName);
+
+        Summary = new ObservableCollection<DpmSummaryModel>(DpmInfoViewModel.BuildSummary(analysis));
+
+        Layers = new ObservableCollection<DpmLayerModel>(analysis.Layers.Select(static l => new DpmLayerModel
+        {
+            Layer          = l.Layer,
+            FirstLba       = l.FirstLba,
+            LastLba        = l.LastLba,
+            Bins           = l.Bins,
+            Turns          = l.Turns.ToString("F2"),
+            Density        = string.Format(UI.DPM_0_to_1_range, l.MinimumDensity.ToString("F4"),
+                                           l.MaximumDensity.ToString("F4")),
+            MedianDensity  = l.MedianDensity.ToString("F4"),
+            SectorsPerTurn = string.Format(UI.DPM_0_to_1_range, l.FirstSectorsPerTurn.ToString("F3"),
+                                           l.LastSectorsPerTurn.ToString("F3")),
+            Noise          = l.Fitted ? l.DeviationSigma.ToString("P3") : ""
+        }));
+
+        Calibrations = new ObservableCollection<DpmCalibrationModel>(analysis.Calibrations.Select(static c =>
+            new DpmCalibrationModel
+            {
+                Lba            = c.Lba,
+                Layer          = c.Layer,
+                Rpm            = c.Rpm.ToString("F1"),
+                Period         = c.RotationPeriod.ToString("F3"),
+                SectorsPerTurn = c.SectorsPerTurn.ToString("F3")
+            }));
+
+        Bands = new ObservableCollection<DpmBandModel>(analysis.Bands.Select(static b => new DpmBandModel
+        {
+            FirstLba         = b.FirstLba,
+            LastLba          = b.LastLba,
+            Layer            = b.Layer,
+            MeanDeviation    = b.MeanDeviation.ToString("+0.00%;-0.00%"),
+            MaximumDeviation = b.MaximumDeviation.ToString("+0.00%;-0.00%")
+        }));
+    }
+
+    /// <summary>Raised to show a range of sectors in the graph</summary>
+    public event EventHandler<(double first, double last)> ZoomRequested;
+
+    public ObservableCollection<DpmSummaryModel>     Summary      { get; }
+    public ObservableCollection<DpmLayerModel>       Layers       { get; }
+    public ObservableCollection<DpmCalibrationModel> Calibrations { get; }
+    public ObservableCollection<DpmBandModel>        Bands        { get; }
+
+    partial void OnSelectedLayerChanged(DpmLayerModel value)
+    {
+        if(value != null) ZoomRequested?.Invoke(this, (value.FirstLba, value.LastLba));
+    }
+
+    partial void OnSelectedBandChanged(DpmBandModel value)
+    {
+        if(value != null) ShowRegion(value.FirstLba, value.LastLba);
+    }
+
+    partial void OnSelectedCalibrationChanged(DpmCalibrationModel value)
+    {
+        if(value is null || Analysis is not {} analysis) return;
+
+        // Some bins each side of the calibration
+        double half = 25.0 * analysis.NominalSpacing;
+
+        ZoomRequested?.Invoke(this, (value.Lba - half, value.Lba + half));
+    }
+
+    /// <summary>Shows a region of sectors with as many sectors again around it</summary>
+    void ShowRegion(ulong first, ulong last)
+    {
+        double margin = Math.Max((last - first + 1) / 2.0, 4.0 * (Analysis?.NominalSpacing ?? 1));
+
+        ZoomRequested?.Invoke(this, (first - margin, last + 1 + margin));
     }
 
     public DataPositionMeasurement Dpm         { get; }

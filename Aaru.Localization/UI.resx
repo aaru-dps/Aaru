@@ -6121,4 +6121,37 @@ Do you want to continue?</value>
     <data name="ButtonLabel_Fit_values" xml:space="preserve">
         <value>Fit values</value>
     </data>
+    <data name="Title_DPM_summary" xml:space="preserve">
+        <value>Summary</value>
+    </data>
+    <data name="Title_DPM_layer" xml:space="preserve">
+        <value>Layer</value>
+    </data>
+    <data name="Title_DPM_bin_count" xml:space="preserve">
+        <value>Bins</value>
+    </data>
+    <data name="Title_DPM_density_range" xml:space="preserve">
+        <value>Density, °/sector</value>
+    </data>
+    <data name="Title_DPM_median_density" xml:space="preserve">
+        <value>Median, °/sector</value>
+    </data>
+    <data name="Title_DPM_sectors_per_turn_range" xml:space="preserve">
+        <value>Sectors per turn</value>
+    </data>
+    <data name="Title_DPM_spiral_noise" xml:space="preserve">
+        <value>Noise around the spiral</value>
+    </data>
+    <data name="Title_DPM_rpm" xml:space="preserve">
+        <value>RPM</value>
+    </data>
+    <data name="Title_DPM_period_ms" xml:space="preserve">
+        <value>Period, ms</value>
+    </data>
+    <data name="DPM_0_to_1_range" xml:space="preserve">
+        <value>{0} – {1}</value>
+    </data>
+    <data name="DPM_select_row_to_zoom" xml:space="preserve">
+        <value>Select a row to show it in the graph.</value>
+    </data>
 </root>

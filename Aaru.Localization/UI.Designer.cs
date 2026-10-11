@@ -12077,5 +12077,71 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Title_DPM_summary {
+            get {
+                return ResourceManager.GetString("Title_DPM_summary", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_layer {
+            get {
+                return ResourceManager.GetString("Title_DPM_layer", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_bin_count {
+            get {
+                return ResourceManager.GetString("Title_DPM_bin_count", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_density_range {
+            get {
+                return ResourceManager.GetString("Title_DPM_density_range", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_median_density {
+            get {
+                return ResourceManager.GetString("Title_DPM_median_density", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_sectors_per_turn_range {
+            get {
+                return ResourceManager.GetString("Title_DPM_sectors_per_turn_range", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_spiral_noise {
+            get {
+                return ResourceManager.GetString("Title_DPM_spiral_noise", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_rpm {
+            get {
+                return ResourceManager.GetString("Title_DPM_rpm", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_period_ms {
+            get {
+                return ResourceManager.GetString("Title_DPM_period_ms", resourceCulture);
+            }
+        }
+        
+        public static string DPM_0_to_1_range {
+            get {
+                return ResourceManager.GetString("DPM_0_to_1_range", resourceCulture);
+            }
+        }
+        
+        public static string DPM_select_row_to_zoom {
+            get {
+                return ResourceManager.GetString("DPM_select_row_to_zoom", resourceCulture);
+            }
+        }
+        
     }
 }

@@ -6034,4 +6034,37 @@ Probadores:
     <data name="ButtonLabel_Fit_values" xml:space="preserve">
         <value>Ajustar valores</value>
     </data>
+    <data name="Title_DPM_summary" xml:space="preserve">
+        <value>Resumen</value>
+    </data>
+    <data name="Title_DPM_layer" xml:space="preserve">
+        <value>Capa</value>
+    </data>
+    <data name="Title_DPM_bin_count" xml:space="preserve">
+        <value>Bins</value>
+    </data>
+    <data name="Title_DPM_density_range" xml:space="preserve">
+        <value>Densidad, °/sector</value>
+    </data>
+    <data name="Title_DPM_median_density" xml:space="preserve">
+        <value>Mediana, °/sector</value>
+    </data>
+    <data name="Title_DPM_sectors_per_turn_range" xml:space="preserve">
+        <value>Sectores por vuelta</value>
+    </data>
+    <data name="Title_DPM_spiral_noise" xml:space="preserve">
+        <value>Ruido respecto a la espiral</value>
+    </data>
+    <data name="Title_DPM_rpm" xml:space="preserve">
+        <value>RPM</value>
+    </data>
+    <data name="Title_DPM_period_ms" xml:space="preserve">
+        <value>Periodo, ms</value>
+    </data>
+    <data name="DPM_0_to_1_range" xml:space="preserve">
+        <value>{0} – {1}</value>
+    </data>
+    <data name="DPM_select_row_to_zoom" xml:space="preserve">
+        <value>Seleccione una fila para mostrarla en el gráfico.</value>
+    </data>
 </root>

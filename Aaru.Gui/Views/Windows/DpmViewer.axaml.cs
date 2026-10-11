@@ -54,6 +54,9 @@ public sealed partial class DpmViewer : Window
     {
         base.OnDataContextChanged(e);
 
+        if(DataContext is DpmViewerViewModel vm)
+            vm.ZoomRequested += (_, range) => Plot.SetView(range.first, range.last);
+
         UpdateStatus();
     }
 
