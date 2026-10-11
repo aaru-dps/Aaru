@@ -275,7 +275,7 @@ public sealed partial class DpmMeasurement
             }
 
             // Restores the speed first
-            if(rate[j] >= 0 && _bad.Count != _badRestored) ChainCalibrate(lo);
+            if(rate[j] >= 0 && _readErrors != _errorsRestored) ChainCalibrate(lo);
 
             if(rate[j] >= 0 && skipN > 0)
             {
@@ -307,7 +307,7 @@ public sealed partial class DpmMeasurement
                 _at           = uint.MaxValue;
 
                 // The walk back hit the edge
-                if(_bad.Count != _badRestored) ChainCalibrate(lo);
+                if(_readErrors != _errorsRestored) ChainCalibrate(lo);
             }
 
             if(rate[j] >= 0) skipN = 0;

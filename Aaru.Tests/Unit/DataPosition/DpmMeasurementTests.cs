@@ -89,6 +89,8 @@ sealed class SimulatedDrive : IDpmDrive
     public double FailureCost { get; init; } = 2.0;
     /// <summary>Reads that hit unreadable sectors</summary>
     public int FailedReads { get; private set; }
+    /// <summary>Sectors whose first read fails, as a drive having a bad moment</summary>
+    public HashSet<uint> FailOnce { get; init; } = [];
 
     /// <inheritdoc />
     public long Now => (long)(_time * 1e9);
@@ -182,7 +184,7 @@ sealed class SimulatedDrive : IDpmDrive
 
         for(uint s = first; s < last; s++)
         {
-            if(!_unreadable.Contains(s)) continue;
+            if(!_unreadable.Contains(s) && !FailOnce.Remove(s)) continue;
 
             // The drive retries, then fails
             FailedReads++;
@@ -363,6 +365,39 @@ public class DpmMeasurementTests
 
         // Known unreadable sectors are never read
         drive.FailedReads.Should().BeLessThan(40);
+    }
+
+    [Test]
+    public void SectorsTheDumpReadAreRetried()
+    {
+        var medium = new DpmMedium
+        {
+            Kind      = DpmMediumKind.Cd,
+            LastLba   = 334188,
+            LayerEnds = []
+        };
+
+        double[] spiral = BuildSpiral(334189, 50, 1.2 / 75, 1.6e-6, [], [(2000, 6000)]);
+
+        var drive = new SimulatedDrive(medium, spiral, 50, 1, [], 4)
+        {
+            FailOnce = [5000, 7550, 10000]
+        };
+
+        var measurement = new DpmMeasurement(drive);
+        measurement.Prepare(0).Should().BeTrue();
+
+        // The dump read every sector
+        measurement.SeedUnreadable([]);
+
+        DataPositionMeasurement? dpm = measurement.Measure(0, 12000, 0);
+
+        dpm.Should().NotBeNull();
+        drive.FailOnce.Should().BeEmpty();
+        drive.FailedReads.Should().Be(3);
+        dpm.Value.Entries.Should().NotContain(e => e.Status == DpmEntryStatus.Unreadable);
+
+        ShouldMatch(dpm.Value, drive, 0.005, 0.03);
     }
 
     [Test]

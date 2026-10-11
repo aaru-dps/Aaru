@@ -204,7 +204,7 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
             return (int)ErrorNumber.InvalidArgument;
         }
 
-        // Sectors the dump could not read are never read again
+        // Sectors the dump could not read are never read again, and the others get a second chance
         string resumePath = ResumeSidecar.FindResumePath(settings.ImagePath, null);
 
         if(resumePath?.EndsWith(".json", StringComparison.OrdinalIgnoreCase) == true)
@@ -217,11 +217,11 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
                     (JsonSerializer.Deserialize(fs, typeof(ResumeJson), ResumeJsonContext.Default) as ResumeJson)
                   ?.Resume;
 
+                // Seeded even when empty, it tells the measurement every other sector was read
+                if(resume is not null) measurement.SeedUnreadable(resume.BadBlocks ?? []);
+
                 if(resume?.BadBlocks is { Count: > 0 })
-                {
-                    measurement.SeedUnreadable(resume.BadBlocks);
                     AaruLogging.WriteLine(UI.Skipping_0_sectors_the_dump_could_not_read, resume.BadBlocks.Count);
-                }
             }
             catch(Exception ex)
             {

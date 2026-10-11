@@ -403,12 +403,12 @@ public sealed partial class DpmMeasurement
         for(int attempt = 0; attempt < CAL_ATTEMPTS && !_aborted; attempt++)
         {
             RestoreSpeedIfNeeded();
-            int badBefore = _bad.Count;
+            int errorsBefore = _readErrors;
 
             if(!CalibrateOnce(lba, out double t, out double a)) continue;
 
-            // Hit a new unreadable sector, the drive may have slowed partway, so don't trust it
-            if(_bad.Count != badBefore) continue;
+            // A read failed, the drive may have slowed partway, so don't trust it
+            if(_readErrors != errorsBefore) continue;
 
             if(a < lo || a > hi)
             {

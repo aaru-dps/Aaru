@@ -51,8 +51,16 @@ public sealed partial class DpmMeasurement
 
     /// <summary>Unreadable timing units. A failed read is remembered and never retried.</summary>
     readonly HashSet<uint> _bad = [];
-    /// <summary>Unreadable units when the speed was last restored</summary>
-    int _badRestored;
+    /// <summary>Timing units the dump read that failed once here, the next failure makes them unreadable</summary>
+    readonly HashSet<uint> _failedOnce = [];
+    /// <summary>Whether the sectors the dump could not read are known, so any other sector was read by it</summary>
+    bool _dumpKnown;
+    /// <summary>Whether the last read failed</summary>
+    bool _lastReadFailed;
+    /// <summary>Failed reads so far</summary>
+    int _readErrors;
+    /// <summary>Failed reads when the speed was last restored</summary>
+    int _errorsRestored;
     /// <summary>Last sector read successfully</summary>
     uint _lastGood;
 
@@ -70,7 +78,10 @@ public sealed partial class DpmMeasurement
                           _unit > 1 ? "its block" : "it");
     }
 
-    /// <summary>Marks sectors already known to be unreadable, so they are never read</summary>
+    /// <summary>
+    ///     Marks sectors already known to be unreadable, so they are never read. The list is taken as complete: any
+    ///     other sector was read by the dump, so a read of it that fails is retried once before giving it up.
+    /// </summary>
     /// <param name="sectors">Unreadable sectors, e.g. from a dump</param>
     public void SeedUnreadable(IEnumerable<ulong> sectors)
     {
@@ -78,8 +89,7 @@ public sealed partial class DpmMeasurement
             if(sector <= uint.MaxValue)
                 _bad.Add((uint)sector / _unit);
 
-        // Known before measuring, so the drive has not slowed down because of them
-        _badRestored = _bad.Count;
+        _dumpKnown = true;
     }
 
     /// <summary>Single sector read, timed, that remembers failures</summary>
@@ -98,12 +108,27 @@ public sealed partial class DpmMeasurement
 
         if(!_drive.TimedRead(lba, out elapsed, out sincePrevious))
         {
+            _readErrors++;
+
+            // The dump read it, so this may be the drive having a bad moment, unless it follows other failures, as in an
+            // area that went bad since the dump
+            bool retry = _dumpKnown && !_lastReadFailed && _unreadStreak == 0 && _failedOnce.Add(lba / _unit);
+            _lastReadFailed = true;
+
+            if(retry)
+            {
+                AaruLogging.Debug(MODULE_NAME, "  sector {0} failed to read, but the dump read it - will retry", lba);
+
+                return false;
+            }
+
             MarkBad(lba);
 
             return false;
         }
 
-        _lastGood = lba;
+        _lastGood       = lba;
+        _lastReadFailed = false;
 
         return true;
     }
@@ -116,7 +141,7 @@ public sealed partial class DpmMeasurement
     /// <returns><c>true</c> if the speed was restored</returns>
     bool RestoreSpeedIfNeeded()
     {
-        if(_bad.Count == _badRestored) return false;
+        if(_readErrors == _errorsRestored) return false;
 
         AaruLogging.Debug(MODULE_NAME,
                           "  after unreadable sectors: re-sending SET CD SPEED (drives slow down after read errors)");
@@ -125,7 +150,7 @@ public sealed partial class DpmMeasurement
 
         // Settle on a sector known to read, not one inside the bad area
         SpinUpSettle(_lastGood);
-        _badRestored = _bad.Count;
+        _errorsRestored = _readErrors;
 
         return true;
     }
