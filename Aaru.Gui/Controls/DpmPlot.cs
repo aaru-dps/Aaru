@@ -53,6 +53,8 @@ public enum DpmPlotPanel
 {
     /// <summary>Density of every bin</summary>
     Density,
+    /// <summary>Deviation of every bin from the spiral fitted to its layer</summary>
+    Deviation,
     /// <summary>Status of every bin, as a strip of colours</summary>
     Status
 }
@@ -125,7 +127,8 @@ public sealed class DpmPlot : Control
 
         _panels =
         [
-            new PanelState(DpmPlotPanel.Density, 3),
+            new PanelState(DpmPlotPanel.Density,   3),
+            new PanelState(DpmPlotPanel.Deviation, 2),
             new PanelState(DpmPlotPanel.Status,  0, STRIP_HEIGHT)
         ];
     }
@@ -733,8 +736,9 @@ public sealed class DpmPlot : Control
     {
         return kind switch
                {
-                   DpmPlotPanel.Density => bin.Density,
-                   _                    => double.NaN
+                   DpmPlotPanel.Density   => bin.Density,
+                   DpmPlotPanel.Deviation => bin.Deviation * 100,
+                   _                      => double.NaN
                };
     }
 
@@ -743,8 +747,9 @@ public sealed class DpmPlot : Control
     {
         return kind switch
                {
-                   DpmPlotPanel.Density => UI.Title_DPM_degrees_per_sector,
-                   _                    => ""
+                   DpmPlotPanel.Density   => UI.Title_DPM_degrees_per_sector,
+                   DpmPlotPanel.Deviation => UI.Title_DPM_deviation_from_spiral,
+                   _                      => ""
                };
     }
 
@@ -799,6 +804,26 @@ public sealed class DpmPlot : Control
 
         using(context.PushClip(bounds))
         {
+            switch(panel.Kind)
+            {
+                case DpmPlotPanel.Density:
+                    DrawSeries(context,
+                               analysis,
+                               bounds,
+                               first,
+                               end,
+                               static bin => bin.Fit,
+                               panel.Low,
+                               panel.High,
+                               palette.FitPen);
+
+                    break;
+                case DpmPlotPanel.Deviation:
+                    DrawBands(context, palette, analysis, panel);
+
+                    break;
+            }
+
             DrawSeries(context,
                        analysis,
                        bounds,
@@ -814,6 +839,42 @@ public sealed class DpmPlot : Control
 
         FormattedText title = Text(PanelTitle(panel.Kind), palette.SecondaryInk);
         context.DrawText(title, new Point(bounds.Left + 6, bounds.Top + 4));
+    }
+
+    /// <summary>Draws the bands found by the analysis, the zero line and the band threshold of every layer</summary>
+    void DrawBands(DrawingContext context, Palette palette, DpmAnalysisResult analysis, PanelState panel)
+    {
+        Rect bounds = panel.Bounds;
+
+        foreach(DpmBand band in analysis.Bands)
+        {
+            if(band.LastLba + 1 < _viewFirst || band.FirstLba > _viewLast) continue;
+
+            double left  = SectorToX(band.FirstLba,    bounds);
+            double right = SectorToX(band.LastLba + 1, bounds);
+
+            context.FillRectangle(palette.Band, new Rect(left, bounds.Top, Math.Max(right - left, 2), bounds.Height));
+        }
+
+        double zero = ValueToY(0, panel.Low, panel.High, bounds);
+        context.DrawLine(palette.ZeroPen, new Point(bounds.Left, zero), new Point(bounds.Right, zero));
+
+        foreach(DpmLayerSummary layer in analysis.Layers)
+        {
+            if(!layer.Fitted) continue;
+
+            double left  = Math.Max(SectorToX(layer.FirstLba, bounds), bounds.Left);
+            double right = Math.Min(SectorToX(layer.LastLba,  bounds), bounds.Right);
+
+            if(right <= left) continue;
+
+            foreach(double threshold in new[] { layer.BandThreshold * 100, -layer.BandThreshold * 100 })
+            {
+                double y = ValueToY(threshold, panel.Low, panel.High, bounds);
+
+                context.DrawLine(palette.ThresholdPen, new Point(left, y), new Point(right, y));
+            }
+        }
     }
 
     /// <summary>Colour of a bin status in the strip, null for measured bins</summary>
@@ -960,7 +1021,7 @@ public sealed class DpmPlot : Control
             context.DrawLine(palette.LayerPen, new Point(x, plot.Top), new Point(x, plot.Bottom));
 
             FormattedText label = Text(string.Format(UI.DPM_Layer_0, i + 1), palette.SecondaryInk);
-            context.DrawText(label, new Point(x + 4, plot.Top + 4));
+            context.DrawText(label, new Point(x + 4, plot.Top + 6 + label.Height));
         }
     }
 
@@ -1181,6 +1242,10 @@ public sealed class DpmPlot : Control
             CrosshairPen = new ImmutablePen(MutedInk, 1, new ImmutableDashStyle([2, 3], 0));
             Overlay      = new ImmutableSolidColorBrush(Color.Parse(surface), 0.92);
             Strip        = new ImmutableSolidColorBrush(Color.Parse(grid), 0.5);
+            Band         = new ImmutableSolidColorBrush(Color.Parse(secondSeries), 0.18);
+            FitPen       = new ImmutablePen(MutedInk, 1, new ImmutableDashStyle([4, 4], 0));
+            ZeroPen      = new ImmutablePen(MutedInk);
+            ThresholdPen = new ImmutablePen(SecondSeries, 1, new ImmutableDashStyle([4, 4], 0));
         }
 
         public ImmutableSolidColorBrush Surface      { get; }
@@ -1200,5 +1265,9 @@ public sealed class DpmPlot : Control
         public IPen                     CrosshairPen { get; }
         public ImmutableSolidColorBrush Overlay      { get; }
         public ImmutableSolidColorBrush Strip        { get; }
+        public ImmutableSolidColorBrush Band         { get; }
+        public IPen                     FitPen       { get; }
+        public IPen                     ZeroPen      { get; }
+        public IPen                     ThresholdPen { get; }
     }
 }

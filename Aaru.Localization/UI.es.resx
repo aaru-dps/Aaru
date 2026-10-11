@@ -6010,4 +6010,7 @@ Probadores:
     <data name="Title_DPM_status" xml:space="preserve">
         <value>Estado</value>
     </data>
+    <data name="Title_DPM_deviation_from_spiral" xml:space="preserve">
+        <value>Desviación respecto a la espiral, %</value>
+    </data>
 </root>

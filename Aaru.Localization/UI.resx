@@ -6097,4 +6097,7 @@ Do you want to continue?</value>
     <data name="Title_DPM_status" xml:space="preserve">
         <value>Status</value>
     </data>
+    <data name="Title_DPM_deviation_from_spiral" xml:space="preserve">
+        <value>Deviation from the spiral, %</value>
+    </data>
 </root>

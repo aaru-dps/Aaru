@@ -12029,5 +12029,11 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Title_DPM_deviation_from_spiral {
+            get {
+                return ResourceManager.GetString("Title_DPM_deviation_from_spiral", resourceCulture);
+            }
+        }
+        
     }
 }
