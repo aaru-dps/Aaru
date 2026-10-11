@@ -38,6 +38,7 @@ using Aaru.Core.Image;
 using Aaru.Localization;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Styling;
@@ -90,12 +91,22 @@ public sealed class DpmPlot : Control
                                                "#c23030");
 
     readonly List<PanelState> _panels;
+    Drag                      _drag;
+    Point                     _dragCurrent;
+    PanelState                _dragPanel;
+    double                    _dragPanelHigh;
+    double                    _dragPanelLow;
+    Point                     _dragStart;
+    double                    _dragViewFirst;
+    double                    _dragViewLast;
+    Rect                      _plot;
     double                    _viewFirst;
     double                    _viewLast;
 
     static DpmPlot()
     {
         AffectsRender<DpmPlot>(AnalysisProperty);
+        FocusableProperty.OverrideDefaultValue<DpmPlot>(true);
     }
 
     public DpmPlot()
@@ -116,6 +127,15 @@ public sealed class DpmPlot : Control
         set => SetValue(AnalysisProperty, value);
     }
 
+    /// <summary>First sector in view</summary>
+    public double ViewFirst => _viewFirst;
+
+    /// <summary>Last sector in view</summary>
+    public double ViewLast => _viewLast;
+
+    /// <summary>Raised when the sectors in view change</summary>
+    public event EventHandler ViewChanged;
+
     /// <inheritdoc />
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
@@ -127,15 +147,280 @@ public sealed class DpmPlot : Control
     /// <summary>Shows the whole DPM, with every vertical range automatic</summary>
     public void ResetView()
     {
-        if(Analysis is {} analysis)
-        {
-            _viewFirst = analysis.FirstLba;
-            _viewLast  = analysis.LastLba;
-        }
+        if(Analysis is {} analysis) SetView(analysis.FirstLba, analysis.LastLba);
 
+        FitValues();
+    }
+
+    /// <summary>Fits the vertical range of every panel to the bins in view</summary>
+    public void FitValues()
+    {
         foreach(PanelState panel in _panels) panel.AutoY = true;
 
         InvalidateVisual();
+    }
+
+    /// <summary>Shows a range of sectors, keeping it inside the DPM and at least a few bins wide</summary>
+    /// <param name="first">First sector</param>
+    /// <param name="last">Last sector</param>
+    public void SetView(double first, double last)
+    {
+        if(Analysis is not {} analysis) return;
+
+        double minimum = analysis.FirstLba;
+        double maximum = analysis.LastLba;
+        double width   = Math.Max(last - first, Math.Min(4.0 * analysis.NominalSpacing, maximum - minimum));
+
+        width = Math.Min(width, maximum - minimum);
+
+        double middle = (first + last) / 2;
+        first = Math.Clamp(middle - width / 2, minimum, maximum - width);
+
+        _viewFirst = first;
+        _viewLast  = first + width;
+
+        InvalidateVisual();
+        ViewChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Zooms the sectors in view around a sector</summary>
+    /// <param name="factor">Less than 1 to zoom in, more than 1 to zoom out</param>
+    /// <param name="sector">Sector that stays in place</param>
+    void ZoomSectors(double factor, double sector)
+    {
+        SetView(sector - (sector - _viewFirst) * factor, sector + (_viewLast - sector) * factor);
+    }
+
+    /// <summary>Moves the sectors in view</summary>
+    /// <param name="fraction">Fraction of the sectors in view to move, positive to the right</param>
+    void PanSectors(double fraction)
+    {
+        double offset = (_viewLast - _viewFirst) * fraction;
+
+        SetView(_viewFirst + offset, _viewLast + offset);
+    }
+
+    /// <summary>Panel at a point, if any</summary>
+    PanelState PanelAt(Point point)
+    {
+        foreach(PanelState panel in _panels)
+            if(panel.Visible && panel.Bounds.Contains(point))
+                return panel;
+
+        return null;
+    }
+
+    /// <summary>Sector at a horizontal position</summary>
+    double XToSector(double x)
+    {
+        return _viewFirst + (x - _plot.Left) / _plot.Width * (_viewLast - _viewFirst);
+    }
+
+    /// <summary>Value at a vertical position of a panel</summary>
+    static double YToValue(double y, PanelState panel)
+    {
+        return panel.Low + (panel.Bounds.Bottom - y) / panel.Bounds.Height * (panel.High - panel.Low);
+    }
+
+    /// <inheritdoc />
+    protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
+    {
+        base.OnPointerWheelChanged(e);
+
+        if(Analysis is null) return;
+
+        Point  point  = e.GetPosition(this);
+        double factor = Math.Pow(1.25, -e.Delta.Y);
+
+        if(e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            // Zoom the values of the panel under the pointer, keeping the value under it in place
+            if(PanelAt(point) is not {} panel) return;
+
+            double value = YToValue(point.Y, panel);
+
+            panel.AutoY = false;
+            panel.Low   = value - (value - panel.Low)  * factor;
+            panel.High  = value + (panel.High - value) * factor;
+
+            InvalidateVisual();
+        }
+        else if(e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+            PanSectors(-(e.Delta.Y + e.Delta.X) * 0.1);
+        else
+            ZoomSectors(factor, XToSector(Math.Clamp(point.X, _plot.Left, _plot.Right)));
+
+        e.Handled = true;
+    }
+
+    /// <inheritdoc />
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        base.OnPointerPressed(e);
+
+        if(Analysis is null) return;
+
+        Focus();
+
+        Point                 point      = e.GetPosition(this);
+        PointerPointProperties properties = e.GetCurrentPoint(this).Properties;
+
+        if(properties.IsLeftButtonPressed && e.ClickCount == 2)
+        {
+            // Double click fits the values of a panel, or everything outside them
+            if(PanelAt(point) is {} panel)
+            {
+                panel.AutoY = true;
+                InvalidateVisual();
+            }
+            else
+                ResetView();
+
+            e.Handled = true;
+
+            return;
+        }
+
+        if(properties.IsLeftButtonPressed)
+            _drag = Drag.Pan;
+        else if(properties.IsRightButtonPressed)
+            _drag = Drag.Zoom;
+        else
+            return;
+
+        _dragStart     = point;
+        _dragCurrent   = point;
+        _dragViewFirst = _viewFirst;
+        _dragViewLast  = _viewLast;
+        _dragPanel     = PanelAt(point);
+
+        if(_dragPanel != null)
+        {
+            _dragPanelLow  = _dragPanel.Low;
+            _dragPanelHigh = _dragPanel.High;
+        }
+
+        e.Pointer.Capture(this);
+        e.Handled = true;
+    }
+
+    /// <inheritdoc />
+    protected override void OnPointerMoved(PointerEventArgs e)
+    {
+        base.OnPointerMoved(e);
+
+        if(_drag == Drag.None) return;
+
+        _dragCurrent = e.GetPosition(this);
+
+        if(_drag == Drag.Zoom)
+        {
+            InvalidateVisual();
+
+            return;
+        }
+
+        double sectors = (_dragCurrent.X - _dragStart.X) / _plot.Width * (_dragViewLast - _dragViewFirst);
+
+        SetView(_dragViewFirst - sectors, _dragViewLast - sectors);
+
+        // Control also moves the values of the panel where the drag started
+        if(!e.KeyModifiers.HasFlag(KeyModifiers.Control) || _dragPanel is null) return;
+
+        double values = (_dragCurrent.Y - _dragStart.Y) / _dragPanel.Bounds.Height * (_dragPanelHigh - _dragPanelLow);
+
+        _dragPanel.AutoY = false;
+        _dragPanel.Low   = _dragPanelLow  + values;
+        _dragPanel.High  = _dragPanelHigh + values;
+
+        InvalidateVisual();
+    }
+
+    /// <inheritdoc />
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        base.OnPointerReleased(e);
+
+        if(_drag == Drag.None) return;
+
+        Drag drag = _drag;
+        _drag = Drag.None;
+        e.Pointer.Capture(null);
+
+        if(drag != Drag.Zoom) return;
+
+        Rect band = new Rect(_dragStart, _dragCurrent).Normalize();
+
+        // Zoom to the selected sectors, and to the selected values of the panel where it started
+        if(band.Width >= 4)
+            SetView(XToSector(Math.Max(band.Left, _plot.Left)), XToSector(Math.Min(band.Right, _plot.Right)));
+
+        if(band.Height >= 4 && _dragPanel != null)
+        {
+            double top    = Math.Max(band.Top,    _dragPanel.Bounds.Top);
+            double bottom = Math.Min(band.Bottom, _dragPanel.Bounds.Bottom);
+
+            if(bottom > top)
+            {
+                double low  = YToValue(bottom, _dragPanel);
+                double high = YToValue(top,    _dragPanel);
+
+                _dragPanel.AutoY = false;
+                _dragPanel.Low   = low;
+                _dragPanel.High  = high;
+            }
+        }
+
+        InvalidateVisual();
+    }
+
+    /// <inheritdoc />
+    protected override void OnPointerCaptureLost(PointerCaptureLostEventArgs e)
+    {
+        base.OnPointerCaptureLost(e);
+
+        if(_drag == Drag.None) return;
+
+        _drag = Drag.None;
+        InvalidateVisual();
+    }
+
+    /// <inheritdoc />
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+
+        if(Analysis is null) return;
+
+        double middle = (_viewFirst + _viewLast) / 2;
+
+        switch(e.Key)
+        {
+            case Key.Home:
+                ResetView();
+
+                break;
+            case Key.Add or Key.OemPlus:
+                ZoomSectors(0.8, middle);
+
+                break;
+            case Key.Subtract or Key.OemMinus:
+                ZoomSectors(1.25, middle);
+
+                break;
+            case Key.Left:
+                PanSectors(-0.1);
+
+                break;
+            case Key.Right:
+                PanSectors(0.1);
+
+                break;
+            default:
+                return;
+        }
+
+        e.Handled = true;
     }
 
     /// <inheritdoc />
@@ -147,12 +432,18 @@ public sealed class DpmPlot : Control
 
         if(Analysis is not { Bins.Length: > 0 } analysis) return;
 
-        if(_viewLast <= _viewFirst) ResetView();
+        if(_viewLast <= _viewFirst)
+        {
+            _viewFirst = analysis.FirstLba;
+            _viewLast  = analysis.LastLba;
+        }
 
-        Rect plot = new Rect(MARGIN_LEFT,
-                             MARGIN_TOP,
-                             Math.Max(1, Bounds.Width  - MARGIN_LEFT - MARGIN_RIGHT),
-                             Math.Max(1, Bounds.Height - MARGIN_TOP  - MARGIN_BOTTOM));
+        _plot = new Rect(MARGIN_LEFT,
+                         MARGIN_TOP,
+                         Math.Max(1, Bounds.Width  - MARGIN_LEFT - MARGIN_RIGHT),
+                         Math.Max(1, Bounds.Height - MARGIN_TOP  - MARGIN_BOTTOM));
+
+        Rect plot = _plot;
 
         LayoutPanels(plot);
 
@@ -167,6 +458,12 @@ public sealed class DpmPlot : Control
 
         DrawLayerBreaks(context, palette, analysis, plot);
         DrawSectorAxis(context, palette, plot);
+
+        if(_drag != Drag.Zoom) return;
+
+        Rect band = new Rect(_dragStart, _dragCurrent).Normalize().Intersect(plot);
+
+        context.DrawRectangle(palette.Selection, palette.SelectionPen, band);
     }
 
     /// <summary>Splits the plot area between the visible panels by their weight</summary>
@@ -363,7 +660,9 @@ public sealed class DpmPlot : Control
             context.DrawLine(palette.GridPen, new Point(x, plot.Bottom), new Point(x, plot.Bottom + 4));
 
             FormattedText label = Text(tick.ToString("N0", CultureInfo.CurrentCulture), palette.MutedInk);
-            context.DrawText(label, new Point(x - label.Width / 2, plot.Bottom + 6));
+            context.DrawText(label,
+                             new Point(Math.Clamp(x - label.Width / 2, 0, Math.Max(0, Bounds.Width - label.Width)),
+                                       plot.Bottom + 6));
         }
 
         FormattedText title = Text(UI.Title_DPM_sector, palette.SecondaryInk);
@@ -519,6 +818,14 @@ public sealed class DpmPlot : Control
                                  brush);
     }
 
+    /// <summary>What dragging the pointer does</summary>
+    enum Drag
+    {
+        None,
+        Pan,
+        Zoom
+    }
+
     /// <summary>State of a panel</summary>
     sealed class PanelState(DpmPlotPanel kind, double weight)
     {
@@ -549,6 +856,8 @@ public sealed class DpmPlot : Control
             FramePen     = new ImmutablePen(new ImmutableSolidColorBrush(Color.Parse(grid)), 1.5);
             SeriesPen    = new ImmutablePen(Series, 1.5, null, PenLineCap.Round, PenLineJoin.Round);
             LayerPen     = new ImmutablePen(MutedInk, 1, new ImmutableDashStyle([6, 6], 0));
+            Selection    = new ImmutableSolidColorBrush(Color.Parse(series), 0.15);
+            SelectionPen = new ImmutablePen(Series);
         }
 
         public ImmutableSolidColorBrush Surface      { get; }
@@ -563,5 +872,7 @@ public sealed class DpmPlot : Control
         public IPen                     FramePen     { get; }
         public IPen                     SeriesPen    { get; }
         public IPen                     LayerPen     { get; }
+        public ImmutableSolidColorBrush Selection    { get; }
+        public IPen                     SelectionPen { get; }
     }
 }
