@@ -32,6 +32,7 @@
 
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Image;
+using Aaru.Gui.Controls;
 using Aaru.Gui.Views.Windows;
 using Aaru.Localization;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -42,6 +43,17 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
 {
     [ObservableProperty]
     string _hoverText;
+    [ObservableProperty]
+    bool _showDensity = true;
+    [ObservableProperty]
+    bool _showDeviation = true;
+    [ObservableProperty]
+    bool _showRpm = true;
+    [ObservableProperty]
+    bool _showStatus = true;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DensityUnit))]
+    int _unitIndex;
     [ObservableProperty]
     string _viewText;
 
@@ -56,8 +68,10 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
         Title     = string.Format(UI.Title_DPM_of_0, imageName);
     }
 
-    public DataPositionMeasurement Dpm       { get; }
-    public DpmAnalysisResult?      Analysis  { get; }
-    public string                  ImageName { get; }
-    public string                  Title     { get; }
+    public DataPositionMeasurement Dpm         { get; }
+    public DpmAnalysisResult?      Analysis    { get; }
+    public string                  ImageName   { get; }
+    public string                  Title       { get; }
+    public bool                    HasRpm      => Analysis?.Calibrations.Length > 0;
+    public DpmDensityUnit          DensityUnit => (DpmDensityUnit)UnitIndex;
 }

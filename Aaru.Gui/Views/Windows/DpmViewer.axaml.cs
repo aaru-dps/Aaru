@@ -35,6 +35,7 @@ using Aaru.Gui.Controls;
 using Aaru.Gui.ViewModels.Windows;
 using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace Aaru.Gui.Views.Windows;
 
@@ -54,6 +55,16 @@ public sealed partial class DpmViewer : Window
         base.OnDataContextChanged(e);
 
         UpdateStatus();
+    }
+
+    void OnResetZoom(object sender, RoutedEventArgs e)
+    {
+        Plot.ResetView();
+    }
+
+    void OnFitValues(object sender, RoutedEventArgs e)
+    {
+        Plot.FitValues();
     }
 
     /// <summary>Shows the sectors in view and the bin under the pointer</summary>

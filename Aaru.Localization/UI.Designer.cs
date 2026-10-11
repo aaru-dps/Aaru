@@ -12041,5 +12041,41 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Title_DPM_sectors_per_turn {
+            get {
+                return ResourceManager.GetString("Title_DPM_sectors_per_turn", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_density {
+            get {
+                return ResourceManager.GetString("Title_DPM_density", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_deviation_short {
+            get {
+                return ResourceManager.GetString("Title_DPM_deviation_short", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_rotation_speed_short {
+            get {
+                return ResourceManager.GetString("Title_DPM_rotation_speed_short", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Reset_zoom {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Reset_zoom", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Fit_values {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Fit_values", resourceCulture);
+            }
+        }
+        
     }
 }

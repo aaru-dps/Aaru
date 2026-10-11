@@ -37,6 +37,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
         xmlns:controls="clr-namespace:Aaru.Gui.Controls"
+        xmlns:localization="clr-namespace:Aaru.Localization;assembly=Aaru.Localization"
+        xmlns:ic="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
         mc:Ignorable="d"
         Width="1200"
         Height="720"
@@ -48,13 +50,57 @@
     <Design.DataContext>
         <windows:DpmViewerViewModel />
     </Design.DataContext>
-    <Grid RowDefinitions="*,Auto"
+    <Grid RowDefinitions="Auto,*,Auto"
           RowSpacing="4"
           Margin="8">
-        <controls:DpmPlot Grid.Row="0"
+        <WrapPanel Grid.Row="0"
+                   Orientation="Horizontal">
+            <ToggleButton Margin="2"
+                          IsChecked="{Binding ShowDensity, Mode=TwoWay}"
+                          Content="{x:Static localization:UI.Title_DPM_density}" />
+            <ToggleButton Margin="2"
+                          IsChecked="{Binding ShowDeviation, Mode=TwoWay}"
+                          Content="{x:Static localization:UI.Title_DPM_deviation_short}" />
+            <ToggleButton Margin="2"
+                          IsChecked="{Binding ShowRpm, Mode=TwoWay}"
+                          IsVisible="{Binding HasRpm, Mode=OneWay}"
+                          Content="{x:Static localization:UI.Title_DPM_rotation_speed_short}" />
+            <ToggleButton Margin="2"
+                          IsChecked="{Binding ShowStatus, Mode=TwoWay}"
+                          Content="{x:Static localization:UI.Title_DPM_status}" />
+            <ComboBox Margin="8,2,2,2"
+                      SelectedIndex="{Binding UnitIndex, Mode=TwoWay}">
+                <ComboBoxItem Content="{x:Static localization:UI.Title_DPM_degrees_per_sector}" />
+                <ComboBoxItem Content="{x:Static localization:UI.Title_DPM_sectors_per_turn}" />
+            </ComboBox>
+            <Button Margin="8,2,2,2"
+                    Click="OnResetZoom">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="4">
+                    <ic:FluentIcon Icon="ZoomFit" />
+                    <TextBlock Text="{x:Static localization:UI.ButtonLabel_Reset_zoom}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+            <Button Margin="2"
+                    Click="OnFitValues">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="4">
+                    <ic:FluentIcon Icon="ArrowAutofitHeight" />
+                    <TextBlock Text="{x:Static localization:UI.ButtonLabel_Fit_values}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </WrapPanel>
+        <controls:DpmPlot Grid.Row="1"
                           x:Name="Plot"
-                          Analysis="{Binding Analysis, Mode=OneWay}" />
-        <Grid Grid.Row="1"
+                          Analysis="{Binding Analysis, Mode=OneWay}"
+                          DensityUnit="{Binding DensityUnit, Mode=OneWay}"
+                          ShowDensity="{Binding ShowDensity, Mode=OneWay}"
+                          ShowDeviation="{Binding ShowDeviation, Mode=OneWay}"
+                          ShowRpm="{Binding ShowRpm, Mode=OneWay}"
+                          ShowStatus="{Binding ShowStatus, Mode=OneWay}" />
+        <Grid Grid.Row="2"
               ColumnDefinitions="Auto,*"
               ColumnSpacing="16">
             <TextBlock Grid.Column="0"

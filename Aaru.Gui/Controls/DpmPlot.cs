@@ -61,6 +61,15 @@ public enum DpmPlotPanel
     Status
 }
 
+/// <summary>Unit of the density of the DPM plot</summary>
+public enum DpmDensityUnit
+{
+    /// <summary>Degrees per sector</summary>
+    DegreesPerSector,
+    /// <summary>Sectors per turn</summary>
+    SectorsPerTurn
+}
+
 /// <summary>Draws a Data Position Measurement, with independently zoomable axes</summary>
 /// <remarks>
 ///     Every panel is redrawn from the data at the current ranges, so zooming changes the proportions of the axes and
@@ -76,6 +85,21 @@ public sealed class DpmPlot : Control
     const double PANEL_GAP     = 14;
     const double FONT_SIZE     = 11;
     const double STRIP_HEIGHT  = 14;
+
+    public static readonly StyledProperty<DpmDensityUnit> DensityUnitProperty =
+        AvaloniaProperty.Register<DpmPlot, DpmDensityUnit>(nameof(DensityUnit));
+
+    public static readonly StyledProperty<bool> ShowDensityProperty =
+        AvaloniaProperty.Register<DpmPlot, bool>(nameof(ShowDensity), true);
+
+    public static readonly StyledProperty<bool> ShowDeviationProperty =
+        AvaloniaProperty.Register<DpmPlot, bool>(nameof(ShowDeviation), true);
+
+    public static readonly StyledProperty<bool> ShowRpmProperty =
+        AvaloniaProperty.Register<DpmPlot, bool>(nameof(ShowRpm), true);
+
+    public static readonly StyledProperty<bool> ShowStatusProperty =
+        AvaloniaProperty.Register<DpmPlot, bool>(nameof(ShowStatus), true);
 
     public static readonly StyledProperty<DpmAnalysisResult?> AnalysisProperty =
         AvaloniaProperty.Register<DpmPlot, DpmAnalysisResult?>(nameof(Analysis));
@@ -117,7 +141,7 @@ public sealed class DpmPlot : Control
 
     static DpmPlot()
     {
-        AffectsRender<DpmPlot>(AnalysisProperty);
+        AffectsRender<DpmPlot>(AnalysisProperty, DensityUnitProperty);
         FocusableProperty.OverrideDefaultValue<DpmPlot>(true);
     }
 
@@ -140,6 +164,41 @@ public sealed class DpmPlot : Control
     {
         get => GetValue(AnalysisProperty);
         set => SetValue(AnalysisProperty, value);
+    }
+
+    /// <summary>Unit of the density</summary>
+    public DpmDensityUnit DensityUnit
+    {
+        get => GetValue(DensityUnitProperty);
+        set => SetValue(DensityUnitProperty, value);
+    }
+
+    /// <summary>Whether the density panel is shown</summary>
+    public bool ShowDensity
+    {
+        get => GetValue(ShowDensityProperty);
+        set => SetValue(ShowDensityProperty, value);
+    }
+
+    /// <summary>Whether the deviation panel is shown</summary>
+    public bool ShowDeviation
+    {
+        get => GetValue(ShowDeviationProperty);
+        set => SetValue(ShowDeviationProperty, value);
+    }
+
+    /// <summary>Whether the rotation speed panel is shown</summary>
+    public bool ShowRpm
+    {
+        get => GetValue(ShowRpmProperty);
+        set => SetValue(ShowRpmProperty, value);
+    }
+
+    /// <summary>Whether the status strip is shown</summary>
+    public bool ShowStatus
+    {
+        get => GetValue(ShowStatusProperty);
+        set => SetValue(ShowStatusProperty, value);
     }
 
     /// <summary>First sector in view</summary>
@@ -268,7 +327,19 @@ public sealed class DpmPlot : Control
     {
         base.OnPropertyChanged(change);
 
-        if(change.Property == AnalysisProperty) ResetView();
+        if(change.Property == AnalysisProperty)
+            ResetView();
+        else if(change.Property == DensityUnitProperty)
+        {
+            if(_panels.Find(static p => p.Kind == DpmPlotPanel.Density) is {} density) density.AutoY = true;
+        }
+        else if(change.Property == ShowDensityProperty)
+            SetPanelVisible(DpmPlotPanel.Density, change.GetNewValue<bool>());
+        else if(change.Property == ShowDeviationProperty)
+            SetPanelVisible(DpmPlotPanel.Deviation, change.GetNewValue<bool>());
+        else if(change.Property == ShowRpmProperty)
+            SetPanelVisible(DpmPlotPanel.Rpm, change.GetNewValue<bool>());
+        else if(change.Property == ShowStatusProperty) SetPanelVisible(DpmPlotPanel.Status, change.GetNewValue<bool>());
     }
 
     /// <summary>Shows the whole DPM, with every vertical range automatic</summary>
@@ -741,22 +812,26 @@ public sealed class DpmPlot : Control
     }
 
     /// <summary>Value a panel plots for a bin, NaN if it has none</summary>
-    static double Value(DpmPlotPanel kind, DpmBin bin)
+    double Value(DpmPlotPanel kind, DpmBin bin)
     {
         return kind switch
                {
-                   DpmPlotPanel.Density   => bin.Density,
+                   DpmPlotPanel.Density => DensityUnit == DpmDensityUnit.SectorsPerTurn
+                                               ? bin.SectorsPerTurn
+                                               : bin.Density,
                    DpmPlotPanel.Deviation => bin.Deviation * 100,
                    _                      => double.NaN
                };
     }
 
     /// <summary>Title of a panel</summary>
-    static string PanelTitle(DpmPlotPanel kind)
+    string PanelTitle(DpmPlotPanel kind)
     {
         return kind switch
                {
-                   DpmPlotPanel.Density   => UI.Title_DPM_degrees_per_sector,
+                   DpmPlotPanel.Density => DensityUnit == DpmDensityUnit.SectorsPerTurn
+                                               ? UI.Title_DPM_sectors_per_turn
+                                               : UI.Title_DPM_degrees_per_sector,
                    DpmPlotPanel.Deviation => UI.Title_DPM_deviation_from_spiral,
                    DpmPlotPanel.Rpm       => UI.Title_DPM_rotation_speed,
                    _                      => ""
@@ -764,7 +839,7 @@ public sealed class DpmPlot : Control
     }
 
     /// <summary>Fits the vertical range of a panel to the measured bins in view</summary>
-    static void AutoRange(PanelState panel, DpmAnalysisResult analysis, int first, int end)
+    void AutoRange(PanelState panel, DpmAnalysisResult analysis, int first, int end)
     {
         double minimum = double.MaxValue, maximum = double.MinValue;
 
@@ -828,7 +903,7 @@ public sealed class DpmPlot : Control
                                bounds,
                                first,
                                end,
-                               static bin => bin.Fit,
+                               bin => DensityUnit == DpmDensityUnit.SectorsPerTurn ? 360.0 / bin.Fit : bin.Fit,
                                panel.Low,
                                panel.High,
                                palette.FitPen);

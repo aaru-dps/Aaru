@@ -6103,4 +6103,22 @@ Do you want to continue?</value>
     <data name="Title_DPM_rotation_speed" xml:space="preserve">
         <value>Rotation speed at every calibration, RPM</value>
     </data>
+    <data name="Title_DPM_sectors_per_turn" xml:space="preserve">
+        <value>Sectors per turn</value>
+    </data>
+    <data name="Title_DPM_density" xml:space="preserve">
+        <value>Density</value>
+    </data>
+    <data name="Title_DPM_deviation_short" xml:space="preserve">
+        <value>Deviation</value>
+    </data>
+    <data name="Title_DPM_rotation_speed_short" xml:space="preserve">
+        <value>Rotation speed</value>
+    </data>
+    <data name="ButtonLabel_Reset_zoom" xml:space="preserve">
+        <value>Reset zoom</value>
+    </data>
+    <data name="ButtonLabel_Fit_values" xml:space="preserve">
+        <value>Fit values</value>
+    </data>
 </root>

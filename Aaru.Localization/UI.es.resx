@@ -6016,4 +6016,22 @@ Probadores:
     <data name="Title_DPM_rotation_speed" xml:space="preserve">
         <value>Velocidad de rotación en cada calibración, RPM</value>
     </data>
+    <data name="Title_DPM_sectors_per_turn" xml:space="preserve">
+        <value>Sectores por vuelta</value>
+    </data>
+    <data name="Title_DPM_density" xml:space="preserve">
+        <value>Densidad</value>
+    </data>
+    <data name="Title_DPM_deviation_short" xml:space="preserve">
+        <value>Desviación</value>
+    </data>
+    <data name="Title_DPM_rotation_speed_short" xml:space="preserve">
+        <value>Velocidad de rotación</value>
+    </data>
+    <data name="ButtonLabel_Reset_zoom" xml:space="preserve">
+        <value>Restablecer zoom</value>
+    </data>
+    <data name="ButtonLabel_Fit_values" xml:space="preserve">
+        <value>Ajustar valores</value>
+    </data>
 </root>
