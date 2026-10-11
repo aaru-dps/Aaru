@@ -11963,5 +11963,17 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string ButtonLabel_Open_DPM_graph {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Open_DPM_graph", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_of_0 {
+            get {
+                return ResourceManager.GetString("Title_DPM_of_0", resourceCulture);
+            }
+        }
+        
     }
 }

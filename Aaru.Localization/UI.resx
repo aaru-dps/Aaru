@@ -6064,4 +6064,10 @@ Do you want to continue?</value>
     <data name="DPM_Layer_0" xml:space="preserve">
         <value>Layer {0}</value>
     </data>
+    <data name="ButtonLabel_Open_DPM_graph" xml:space="preserve">
+        <value>Open graph</value>
+    </data>
+    <data name="Title_DPM_of_0" xml:space="preserve">
+        <value>Data Position Measurement of {0}</value>
+    </data>
 </root>

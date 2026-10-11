@@ -5977,4 +5977,10 @@ Probadores:
     <data name="DPM_Layer_0" xml:space="preserve">
         <value>Capa {0}</value>
     </data>
+    <data name="ButtonLabel_Open_DPM_graph" xml:space="preserve">
+        <value>Abrir gráfico</value>
+    </data>
+    <data name="Title_DPM_of_0" xml:space="preserve">
+        <value>Medición de Posición de Datos de {0}</value>
+    </data>
 </root>

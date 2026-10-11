@@ -33,27 +33,53 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Image;
 using Aaru.Gui.Models;
+using Aaru.Gui.ViewModels.Windows;
+using Aaru.Gui.Views.Windows;
 using Aaru.Localization;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class DpmInfoViewModel : ViewModelBase
 {
+    readonly string _imageName;
+    DpmViewer       _viewer;
+
     public DpmInfoViewModel() => Summary = [];
 
-    public DpmInfoViewModel(DataPositionMeasurement dpm, DpmAnalysisResult analysis)
+    public DpmInfoViewModel(DataPositionMeasurement dpm, DpmAnalysisResult analysis, string imageName)
     {
-        Dpm      = dpm;
-        Analysis = analysis;
-        Summary  = new ObservableCollection<DpmSummaryModel>(BuildSummary(analysis));
+        Dpm              = dpm;
+        Analysis         = analysis;
+        _imageName       = imageName;
+        Summary          = new ObservableCollection<DpmSummaryModel>(BuildSummary(analysis));
+        OpenGraphCommand = new RelayCommand(OpenGraph);
     }
 
-    public DataPositionMeasurement               Dpm      { get; }
-    public DpmAnalysisResult                     Analysis { get; }
-    public ObservableCollection<DpmSummaryModel> Summary  { get; }
+    public DataPositionMeasurement               Dpm              { get; }
+    public DpmAnalysisResult                     Analysis         { get; }
+    public ObservableCollection<DpmSummaryModel> Summary          { get; }
+    public ICommand                              OpenGraphCommand { get; }
+
+    void OpenGraph()
+    {
+        if(_viewer != null)
+        {
+            _viewer.Activate();
+
+            return;
+        }
+
+        _viewer             = new DpmViewer();
+        _viewer.DataContext = new DpmViewerViewModel(_viewer, Dpm, Analysis, _imageName);
+        _viewer.Closed      += (_, _) => _viewer = null;
+
+        _viewer.Show();
+    }
 
     /// <summary>Builds the rows that summarize a DPM analysis</summary>
     internal static IEnumerable<DpmSummaryModel> BuildSummary(DpmAnalysisResult analysis)

@@ -37,6 +37,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs"
              xmlns:models="clr-namespace:Aaru.Gui.Models"
+             xmlns:localization="clr-namespace:Aaru.Localization;assembly=Aaru.Localization"
+             xmlns:ic="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
@@ -65,6 +67,15 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+            <Button Command="{Binding OpenGraphCommand, Mode=OneWay}"
+                    HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="4">
+                    <ic:FluentIcon Icon="DataLine" />
+                    <TextBlock Text="{x:Static localization:UI.ButtonLabel_Open_DPM_graph}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

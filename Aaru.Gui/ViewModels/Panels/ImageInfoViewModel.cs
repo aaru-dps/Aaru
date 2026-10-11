@@ -820,7 +820,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
                 {
                     DpmInfo = new DpmInfo
                     {
-                        DataContext = new DpmInfoViewModel(dpm, analysis)
+                        DataContext = new DpmInfoViewModel(dpm, analysis, System.IO.Path.GetFileName(imagePath))
                     };
                 }
             }
