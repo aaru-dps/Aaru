@@ -48,9 +48,9 @@ public class V3 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 469652,
             SectorSize    = 2048,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            Md5           = "cafcd998298d8d1d447ab2e567638c9e",
+            LongMd5       = "092b4207604685c6b274068b6eca52c0",
+            SubchannelMd5 = "607c53d8ea5589bbc8a3e4ff5857cb5d",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -58,28 +58,19 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 469651,
-                    Pregap  = 0,
-                    Flags   = 0
+                    Pregap  = 150,
+                    Flags   = 4
                 }
             ]
         },
         new()
         {
-            TestFile   = "hdd.chd",
-            MediaType  = MediaType.GENERIC_HDD,
-            Sectors    = 251904,
-            SectorSize = 512,
-            Md5        = "43476343f53a177dd57b68dd769917aa"
-        },
-        new()
-        {
-            TestFile      = "pcengine.chd",
-            MediaType     = MediaType.CDROM,
-            Sectors       = 160506,
-            SectorSize    = 2352,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            TestFile   = "pcengine.chd",
+            MediaType  = MediaType.CDROM,
+            Sectors    = 160506,
+            SectorSize = 2352,
+            Md5        = "0dac1b20a9dc65c4ed1b11f6160ed983",
+            LongMd5    = "f1c1dbe1cd9df11fe2c1f0a97130c25f",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -87,7 +78,7 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 3439,
-                    Pregap  = 0,
+                    Pregap  = 150,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
@@ -96,131 +87,130 @@ public class V3 : OpticalMediaImageTest
                     Start   = 3440,
                     End     = 38313,
                     Pregap  = 0,
-                    Flags   = 0
+                    Flags   = 4
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 38316,
-                    End     = 46918,
+                    Start   = 38314,
+                    End     = 46916,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 46920,
-                    End     = 53203,
+                    Start   = 46917,
+                    End     = 53200,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 53204,
-                    End     = 61521,
+                    Start   = 53201,
+                    End     = 61518,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 61524,
-                    End     = 68267,
+                    Start   = 61519,
+                    End     = 68262,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 68268,
-                    End     = 75101,
+                    Start   = 68263,
+                    End     = 75096,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 75104,
-                    End     = 82836,
+                    Start   = 75097,
+                    End     = 82829,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 82840,
-                    End     = 86190,
+                    Start   = 82830,
+                    End     = 86180,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 86192,
-                    End     = 90977,
+                    Start   = 86181,
+                    End     = 90966,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 90980,
-                    End     = 98986,
+                    Start   = 90967,
+                    End     = 98973,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 98988,
-                    End     = 106406,
+                    Start   = 98974,
+                    End     = 106392,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 106408,
-                    End     = 111952,
+                    Start   = 106393,
+                    End     = 111937,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 111956,
-                    End     = 119987,
+                    Start   = 111938,
+                    End     = 119969,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 119988,
-                    End     = 125796,
+                    Start   = 119970,
+                    End     = 125778,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 125800,
-                    End     = 160526,
+                    Start   = 125779,
+                    End     = 160505,
                     Pregap  = 0,
-                    Flags   = 0
+                    Flags   = 4
                 }
             ]
         },
         new()
         {
-            TestFile      = "pcfx.chd",
-            MediaType     = MediaType.CDROM,
-            Sectors       = 246380,
-            SectorSize    = 2352,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            TestFile   = "pcfx.chd",
+            MediaType  = MediaType.CDROM,
+            Sectors    = 246380,
+            SectorSize = 2352,
+            Md5        = "bc514cb4f3c7e2ee6857b2a3d470278b",
+            LongMd5    = "dac5dc0961fa435da3c7d433477cda1a",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -228,62 +218,62 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 4244,
+                    Pregap  = 150,
+                    Flags   = 0
+                },
+                new TrackInfoTestExpected
+                {
+                    Session = 1,
+                    Start   = 4245,
+                    End     = 4758,
+                    Pregap  = 0,
+                    Flags   = 4
+                },
+                new TrackInfoTestExpected
+                {
+                    Session = 1,
+                    Start   = 4759,
+                    End     = 5790,
+                    Pregap  = 0,
+                    Flags   = 4
+                },
+                new TrackInfoTestExpected
+                {
+                    Session = 1,
+                    Start   = 5791,
+                    End     = 41908,
+                    Pregap  = 0,
+                    Flags   = 4
+                },
+                new TrackInfoTestExpected
+                {
+                    Session = 1,
+                    Start   = 41909,
+                    End     = 220494,
+                    Pregap  = 0,
+                    Flags   = 4
+                },
+                new TrackInfoTestExpected
+                {
+                    Session = 1,
+                    Start   = 220495,
+                    End     = 225345,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 4248,
-                    End     = 4761,
+                    Start   = 225346,
+                    End     = 235197,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 4764,
-                    End     = 5795,
-                    Pregap  = 0,
-                    Flags   = 0
-                },
-                new TrackInfoTestExpected
-                {
-                    Session = 1,
-                    Start   = 5796,
-                    End     = 41913,
-                    Pregap  = 0,
-                    Flags   = 0
-                },
-                new TrackInfoTestExpected
-                {
-                    Session = 1,
-                    Start   = 41916,
-                    End     = 220501,
-                    Pregap  = 0,
-                    Flags   = 0
-                },
-                new TrackInfoTestExpected
-                {
-                    Session = 1,
-                    Start   = 220504,
-                    End     = 225354,
-                    Pregap  = 0,
-                    Flags   = 0
-                },
-                new TrackInfoTestExpected
-                {
-                    Session = 1,
-                    Start   = 225356,
-                    End     = 235207,
-                    Pregap  = 0,
-                    Flags   = 0
-                },
-                new TrackInfoTestExpected
-                {
-                    Session = 1,
-                    Start   = 235208,
-                    End     = 246389,
+                    Start   = 235198,
+                    End     = 246379,
                     Pregap  = 0,
                     Flags   = 0
                 }
@@ -295,9 +285,9 @@ public class V3 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 247073,
             SectorSize    = 2352,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            Md5           = "1787cdeab550752d159a8ecca62fe386",
+            LongMd5       = "1787cdeab550752d159a8ecca62fe386",
+            SubchannelMd5 = "4fa3d7dd5e1710878ac318986a677fb3",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -305,110 +295,110 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 16548,
+                    Pregap  = 150,
+                    Flags   = 0
+                },
+                new TrackInfoTestExpected
+                {
+                    Session = 1,
+                    Start   = 16549,
+                    End     = 30050,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 16552,
-                    End     = 30053,
+                    Start   = 30051,
+                    End     = 47949,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 30056,
-                    End     = 47954,
+                    Start   = 47950,
+                    End     = 63313,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 47956,
-                    End     = 63319,
+                    Start   = 63314,
+                    End     = 78924,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 63320,
-                    End     = 78930,
+                    Start   = 78925,
+                    End     = 94731,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 78932,
-                    End     = 94738,
+                    Start   = 94732,
+                    End     = 117124,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 94740,
-                    End     = 117132,
+                    Start   = 117125,
+                    End     = 136165,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 117136,
-                    End     = 136176,
+                    Start   = 136166,
+                    End     = 154071,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 136180,
-                    End     = 154085,
+                    Start   = 154072,
+                    End     = 170750,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 154088,
-                    End     = 170766,
+                    Start   = 170751,
+                    End     = 186538,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 170768,
-                    End     = 186555,
+                    Start   = 186539,
+                    End     = 201798,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 186556,
-                    End     = 201815,
+                    Start   = 201799,
+                    End     = 224448,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 201816,
-                    End     = 224465,
-                    Pregap  = 0,
-                    Flags   = 0
-                },
-                new TrackInfoTestExpected
-                {
-                    Session = 1,
-                    Start   = 224468,
-                    End     = 247091,
+                    Start   = 224449,
+                    End     = 247072,
                     Pregap  = 0,
                     Flags   = 0
                 }
@@ -420,9 +410,9 @@ public class V3 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
             SectorSize    = 2048,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "d81b6abcfa5f84ba0647f38f86cc8fc8",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -430,8 +420,8 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 254264,
-                    Pregap  = 0,
-                    Flags   = 0
+                    Pregap  = 150,
+                    Flags   = 4
                 }
             ]
         },
@@ -441,9 +431,9 @@ public class V3 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
             SectorSize    = 2048,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "935c5d899c1cf0e46fa571df99400253",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -451,8 +441,8 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 254264,
-                    Pregap  = 0,
-                    Flags   = 0
+                    Pregap  = 150,
+                    Flags   = 4
                 }
             ]
         },
@@ -462,9 +452,9 @@ public class V3 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 308224,
             SectorSize    = 2048,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            Md5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5       = "3af5f943ddb9427d9c63a4ce3b704db9",
+            SubchannelMd5 = "2e9b8107254e46b7be689105f680ee84",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -472,8 +462,8 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 308223,
-                    Pregap  = 0,
-                    Flags   = 0
+                    Pregap  = 150,
+                    Flags   = 4
                 }
             ]
         },
@@ -483,9 +473,9 @@ public class V3 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 28953,
             SectorSize    = 2352,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            Md5           = "08629b564dc094927b657b8b9d2106d6",
+            LongMd5       = "08629b564dc094927b657b8b9d2106d6",
+            SubchannelMd5 = "4747b7451c06564582940008522c40a4",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -493,14 +483,14 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 14404,
-                    Pregap  = 0,
+                    Pregap  = 150,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 14408,
-                    End     = 28955,
+                    Start   = 14405,
+                    End     = 28952,
                     Pregap  = 0,
                     Flags   = 0
                 }
@@ -508,13 +498,13 @@ public class V3 : OpticalMediaImageTest
         },
         new()
         {
-            TestFile      = "test_multi_karaoke_sample.chd",
+            TestFile      = "test_multi_karaoke_sampler.chd",
             MediaType     = MediaType.CDROM,
             Sectors       = 329008,
             SectorSize    = 2352,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            Md5           = "f09312ba25a479fb81912a2965babd22",
+            LongMd5       = "f48603d11883593f45ec4a3824681e4e",
+            SubchannelMd5 = "ed0ca0f9bcdd0ebae2671549bf13311e",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -522,126 +512,126 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 1736,
+                    Pregap  = 150,
+                    Flags   = 4
+                },
+                new TrackInfoTestExpected
+                {
+                    Session = 1,
+                    Start   = 1737,
+                    End     = 32598,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 1740,
-                    End     = 32601,
+                    Start   = 32599,
+                    End     = 52521,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 32604,
-                    End     = 52526,
+                    Start   = 52522,
+                    End     = 70153,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 52528,
-                    End     = 70159,
+                    Start   = 70154,
+                    End     = 99947,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 70160,
-                    End     = 99953,
+                    Start   = 99948,
+                    End     = 119610,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 99956,
-                    End     = 119618,
+                    Start   = 119611,
+                    End     = 136848,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 119620,
-                    End     = 136857,
+                    Start   = 136849,
+                    End     = 155639,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 136860,
-                    End     = 155650,
+                    Start   = 155640,
+                    End     = 175675,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 155652,
-                    End     = 175687,
+                    Start   = 175676,
+                    End     = 206310,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 175688,
-                    End     = 206322,
+                    Start   = 206311,
+                    End     = 226299,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 206324,
-                    End     = 226312,
+                    Start   = 226300,
+                    End     = 244204,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 226316,
-                    End     = 244220,
+                    Start   = 244205,
+                    End     = 273814,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 244224,
-                    End     = 273833,
+                    Start   = 273815,
+                    End     = 293601,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 273836,
-                    End     = 293622,
+                    Start   = 293602,
+                    End     = 310560,
                     Pregap  = 0,
                     Flags   = 0
                 },
                 new TrackInfoTestExpected
                 {
                     Session = 1,
-                    Start   = 293624,
-                    End     = 310582,
-                    Pregap  = 0,
-                    Flags   = 0
-                },
-                new TrackInfoTestExpected
-                {
-                    Session = 1,
-                    Start   = 310584,
-                    End     = 329030,
+                    Start   = 310561,
+                    End     = 329007,
                     Pregap  = 0,
                     Flags   = 0
                 }
@@ -653,9 +643,9 @@ public class V3 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 8133,
             SectorSize    = 2048,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            Md5           = "5a62e796e3d3224d4d7c4a94fa067947",
+            LongMd5       = "84ce0389b12772b371bf93b9ef9cd0d6",
+            SubchannelMd5 = "90f2548c86ea8fc9cde74ac89c01fad7",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -663,8 +653,8 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 8132,
-                    Pregap  = 0,
-                    Flags   = 0
+                    Pregap  = 150,
+                    Flags   = 4
                 }
             ]
         },
@@ -674,9 +664,9 @@ public class V3 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 48794,
             SectorSize    = 2336,
-            Md5           = "UNKNOWN",
-            LongMd5       = "UNKNOWN",
-            SubchannelMd5 = "UNKNOWN",
+            Md5           = "9500676e0400f6e734f50df65469b69c",
+            LongMd5       = "23e2214500204f2c42ca2989f928fea2",
+            SubchannelMd5 = "f738847620ace3f333dbc305321820a1",
             Tracks =
             [
                 new TrackInfoTestExpected
@@ -684,8 +674,8 @@ public class V3 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 1251,
-                    Pregap  = 0,
-                    Flags   = 0
+                    Pregap  = 150,
+                    Flags   = 4
                 },
                 new TrackInfoTestExpected
                 {
@@ -693,7 +683,7 @@ public class V3 : OpticalMediaImageTest
                     Start   = 1252,
                     End     = 48793,
                     Pregap  = 0,
-                    Flags   = 0
+                    Flags   = 4
                 }
             ]
         }
