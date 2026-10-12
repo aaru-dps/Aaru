@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -119,6 +120,7 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
         ClearComparisonCommand = new RelayCommand(ClearComparison);
         SaveGraphCommand       = new AsyncRelayCommand(SaveGraphAsync);
         SaveViewCommand        = new AsyncRelayCommand(SaveViewAsync);
+        ExportCsvCommand       = new AsyncRelayCommand(ExportCsvAsync);
 
         Summary = new ObservableCollection<DpmSummaryModel>(DpmInfoViewModel.BuildSummary(analysis));
 
@@ -170,6 +172,7 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
     public ICommand                                  ClearComparisonCommand { get; }
     public ICommand                                  SaveGraphCommand       { get; }
     public ICommand                                  SaveViewCommand        { get; }
+    public ICommand                                  ExportCsvCommand       { get; }
     public bool                                      IsComparing            => Comparison.HasValue;
 
     partial void OnSelectedDifferenceChanged(DpmBandModel value)
@@ -250,6 +253,65 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
         {
             SentrySdk.CaptureException(ex);
             await ShowErrorAsync(UI.Error_writing_DPM_graph);
+        }
+    }
+
+    /// <summary>Exports the bins and calibrations as CSV, one table after the other</summary>
+    async Task ExportCsvAsync()
+    {
+        string path = await AskSavePathAsync(UI.ButtonLabel_Export_DPM_as_CSV, "csv", "CSV");
+
+        if(path is null || Analysis is not {} analysis) return;
+
+        try
+        {
+            await Task.Run(() => WriteCsv(analysis, path));
+        }
+        catch(Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+            await ShowErrorAsync(UI.Error_writing_DPM_CSV);
+        }
+    }
+
+    /// <summary>Writes the bins and calibrations as CSV, with invariant number formats</summary>
+    static void WriteCsv(DpmAnalysisResult analysis, string path)
+    {
+        CultureInfo invariant = CultureInfo.InvariantCulture;
+
+        using var writer = new StreamWriter(path);
+
+        writer.WriteLine("first_lba,end_lba,layer,status,degrees_per_sector,sectors_per_turn,turn,fit,deviation");
+
+        foreach(DpmBin bin in analysis.Bins)
+        {
+            writer.WriteLine(string.Format(invariant,
+                                           "{0},{1},{2},{3},{4:R},{5:R},{6:R},{7:R},{8:R}",
+                                           bin.FirstLba,
+                                           bin.EndLba,
+                                           bin.Layer,
+                                           bin.Status,
+                                           bin.Density,
+                                           bin.SectorsPerTurn,
+                                           bin.Turn,
+                                           bin.Fit,
+                                           bin.Deviation));
+        }
+
+        if(analysis.Calibrations.Length == 0) return;
+
+        writer.WriteLine();
+        writer.WriteLine("calibration_lba,layer,rpm,rotation_period_ms,sectors_per_turn");
+
+        foreach(DpmCalibrationPoint calibration in analysis.Calibrations)
+        {
+            writer.WriteLine(string.Format(invariant,
+                                           "{0},{1},{2:R},{3:R},{4:R}",
+                                           calibration.Lba,
+                                           calibration.Layer,
+                                           calibration.Rpm,
+                                           calibration.RotationPeriod,
+                                           calibration.SectorsPerTurn));
         }
     }
 

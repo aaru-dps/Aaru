@@ -12197,5 +12197,17 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string ButtonLabel_Export_DPM_as_CSV {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Export_DPM_as_CSV", resourceCulture);
+            }
+        }
+        
+        public static string Error_writing_DPM_CSV {
+            get {
+                return ResourceManager.GetString("Error_writing_DPM_CSV", resourceCulture);
+            }
+        }
+        
     }
 }

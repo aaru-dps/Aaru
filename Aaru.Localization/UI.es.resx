@@ -6094,4 +6094,10 @@ Probadores:
     <data name="ButtonLabel_Save_DPM_view_as_PNG" xml:space="preserve">
         <value>Guardar vista como PNG…</value>
     </data>
+    <data name="ButtonLabel_Export_DPM_as_CSV" xml:space="preserve">
+        <value>Exportar como CSV…</value>
+    </data>
+    <data name="Error_writing_DPM_CSV" xml:space="preserve">
+        <value>Error escribiendo la Medición de Posición de Datos como CSV.</value>
+    </data>
 </root>
