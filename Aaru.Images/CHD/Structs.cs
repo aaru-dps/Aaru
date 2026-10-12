@@ -329,6 +329,21 @@ public sealed partial class Chd
 
 #endregion
 
+#region Nested type: TrackMapping
+
+    /// <summary>Where the frames of a CD track are stored inside the CHD</summary>
+    struct TrackMapping
+    {
+        /// <summary>CHD frame holding the first stored sector of the track</summary>
+        public ulong ChdFrame;
+        /// <summary>First sector of the track that is stored in the CHD</summary>
+        public ulong StoredStart;
+        /// <summary>Number of sectors of the track that are stored in the CHD</summary>
+        public ulong StoredFrames;
+    }
+
+#endregion
+
 #region Nested type: TrackOld
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

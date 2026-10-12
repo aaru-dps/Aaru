@@ -77,6 +77,7 @@ public sealed partial class Chd
     const int MAX_CACHE_SIZE = 16777216;
 
     const int CD_MAX_SECTOR_DATA  = 2352;
+    const int CD_TRACK_PADDING    = 4;
     const int CD_MAX_SUBCODE_DATA = 96;
     const int CD_FRAME_SIZE       = CD_MAX_SECTOR_DATA + CD_MAX_SUBCODE_DATA;
 

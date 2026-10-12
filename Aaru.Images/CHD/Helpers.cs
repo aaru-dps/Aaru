@@ -46,14 +46,125 @@ namespace Aaru.Images;
 
 public sealed partial class Chd
 {
-    Track GetTrack(ulong sector)
+    Track GetTrack(ulong sector) =>
+        _tracks.Values.FirstOrDefault(t => sector >= t.StartSector && sector <= t.EndSector) ?? new Track();
+
+    /// <summary>Lays out a CD track as MAME does, recording where its frames are stored in the CHD</summary>
+    /// <param name="aaruTrack">Track to lay out</param>
+    /// <param name="frames">Frames stored in the CHD for this track, including the pregap if stored</param>
+    /// <param name="extraFrames">Frames of padding stored after the track</param>
+    /// <param name="pregap">Pregap length</param>
+    /// <param name="pregapStored">Whether the pregap is stored in the CHD</param>
+    /// <param name="postgap">Postgap length, never stored in the CHD</param>
+    /// <param name="currentSector">Next logical sector, updated</param>
+    /// <param name="currentFrame">Next CHD frame, updated</param>
+    void AddCdTrack(Track    aaruTrack,     uint      frames, uint extraFrames, uint pregap, bool pregapStored,
+                    uint     postgap, ref ulong currentSector, ref ulong currentFrame)
     {
-        var track = new Track();
+        ulong chdFrame = currentFrame;
+        ulong stored   = frames;
 
-        foreach(KeyValuePair<ulong, uint> kvp in _offsetmap.Where(kvp => sector >= kvp.Key))
-            _tracks.TryGetValue(kvp.Value, out track);
+        currentFrame += frames + extraFrames;
 
-        return track;
+        aaruTrack.StartSector = currentSector;
+
+        if(aaruTrack.Sequence == 1)
+        {
+            // First track pregap lives in negative sectors, so a stored one is skipped
+            if(pregapStored && pregap > 0 && pregap < frames)
+            {
+                chdFrame += pregap;
+                stored   -= pregap;
+            }
+
+            aaruTrack.Pregap = pregap <= 150 ? 150 : pregap;
+            aaruTrack.Indexes.Add(0, -1 * (int)aaruTrack.Pregap);
+            aaruTrack.Indexes.Add(1, (int)currentSector);
+
+            _trackMappings[aaruTrack.Sequence] = new TrackMapping
+            {
+                ChdFrame     = chdFrame,
+                StoredStart  = currentSector,
+                StoredFrames = stored
+            };
+
+            currentSector += stored;
+        }
+        else
+        {
+            if(pregap > 0)
+            {
+                aaruTrack.Pregap = pregap;
+                aaruTrack.Indexes.Add(0, (int)currentSector);
+                aaruTrack.Indexes.Add(1, (int)(currentSector + pregap));
+            }
+            else
+                aaruTrack.Indexes.Add(1, (int)currentSector);
+
+            // A pregap that is not stored still takes sectors in front of the stored ones
+            if(!pregapStored) currentSector += pregap;
+
+            _trackMappings[aaruTrack.Sequence] = new TrackMapping
+            {
+                ChdFrame     = chdFrame,
+                StoredStart  = pregapStored ? aaruTrack.StartSector : currentSector,
+                StoredFrames = stored
+            };
+
+            currentSector += stored;
+        }
+
+        // Postgap is never stored
+        currentSector += postgap;
+
+        aaruTrack.EndSector = currentSector - 1;
+    }
+
+    /// <summary>Frames chdman adds after a track so it fills a multiple of CD_TRACK_PADDING frames</summary>
+    static uint PadFrames(uint frames) => (frames + CD_TRACK_PADDING - 1) / CD_TRACK_PADDING * CD_TRACK_PADDING - frames;
+
+    /// <summary>Gets the data and subchannel of a CD sector, as stored in its CHD frame</summary>
+    /// <param name="sectorAddress">Sector</param>
+    /// <param name="track">Track containing the sector</param>
+    /// <param name="sector">Data followed by subchannel, zeroed when the sector is not stored</param>
+    /// <param name="stored">Whether the sector is stored in the CHD</param>
+    ErrorNumber GetCdSector(ulong sectorAddress, Track track, out byte[] sector, out bool stored)
+    {
+        uint sectorSize = (uint)track.RawBytesPerSector +
+                          (track.SubchannelType != TrackSubchannelType.None ? 96u : 0u);
+
+        stored = false;
+
+        if(!_trackMappings.TryGetValue(track.Sequence, out TrackMapping mapping) ||
+           sectorAddress < mapping.StoredStart                                    ||
+           sectorAddress >= mapping.StoredStart + mapping.StoredFrames)
+        {
+            sector = new byte[sectorSize];
+
+            return ErrorNumber.NoError;
+        }
+
+        stored = true;
+
+        if(_sectorCache.TryGetValue(sectorAddress, out sector)) return ErrorNumber.NoError;
+
+        // Every CD frame takes CD_FRAME_SIZE bytes in a hunk, whatever the track stores
+        ulong frame  = mapping.ChdFrame + (sectorAddress - mapping.StoredStart);
+        ulong hunkNo = frame / _sectorsPerHunk;
+        ulong secOff = frame % _sectorsPerHunk * CD_FRAME_SIZE;
+
+        ErrorNumber errno = GetHunk(hunkNo, out byte[] hunk);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        sector = new byte[sectorSize];
+        Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
+
+        if(_sectorCache.Count >= _maxSectorCache) _sectorCache.Clear();
+
+        _sectorCache.Add(sectorAddress, sector);
+
+        return ErrorNumber.NoError;
     }
 
     ulong GetAbsoluteSector(ulong relativeSector, uint track)

@@ -446,12 +446,14 @@ public sealed partial class Chd
             _isCdrom   = false;
             _isHdd     = false;
             _isGdrom   = false;
-            _swapAudio = false;
-            _tracks    = new Dictionary<uint, Track>();
+            _swapAudio     = false;
+            _tracks        = new Dictionary<uint, Track>();
+            _trackMappings = new Dictionary<uint, TrackMapping>();
 
             AaruLogging.Debug(MODULE_NAME, Localization.Reading_metadata);
 
             ulong currentSector = 0;
+            ulong currentFrame  = 0;
             uint  currentTrack  = 1;
 
             while(nextMetaOff > 0)
@@ -518,6 +520,7 @@ public sealed partial class Chd
                         if(chdTracksNumber > 99) chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
                         currentSector = 0;
+                        currentFrame  = 0;
 
                         for(uint i = 0; i < chdTracksNumber; i++)
                         {
@@ -615,18 +618,21 @@ public sealed partial class Chd
                             }
 
                             aaruTrack.Description = string.Format(Localization.Track_0, i + 1);
-                            aaruTrack.EndSector   = currentSector + chdTrack.frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
                             aaruTrack.Filter      = imageFilter;
-                            aaruTrack.StartSector = currentSector;
                             aaruTrack.Sequence    = i + 1;
                             aaruTrack.Session     = 1;
 
-                            if(aaruTrack.Sequence == 1) aaruTrack.Indexes.Add(0, -150);
+                            AddCdTrack(aaruTrack,
+                                       chdTrack.frames,
+                                       chdTrack.extraFrames,
+                                       0,
+                                       false,
+                                       0,
+                                       ref currentSector,
+                                       ref currentFrame);
 
-                            aaruTrack.Indexes.Add(1, (int)currentSector);
-                            currentSector += chdTrack.frames + chdTrack.extraFrames;
                             _tracks.Add(aaruTrack.Sequence, aaruTrack);
                         }
 
@@ -761,18 +767,21 @@ public sealed partial class Chd
                             }
 
                             aaruTrack.Description = string.Format(Localization.Track_0, trackNo);
-                            aaruTrack.EndSector   = currentSector + frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
                             aaruTrack.Filter      = imageFilter;
-                            aaruTrack.StartSector = currentSector;
                             aaruTrack.Sequence    = trackNo;
                             aaruTrack.Session     = 1;
 
-                            if(aaruTrack.Sequence == 1) aaruTrack.Indexes.Add(0, -150);
+                            AddCdTrack(aaruTrack,
+                                       frames,
+                                       PadFrames(frames),
+                                       0,
+                                       false,
+                                       0,
+                                       ref currentSector,
+                                       ref currentFrame);
 
-                            aaruTrack.Indexes.Add(1, (int)currentSector);
-                            currentSector += frames;
                             currentTrack++;
                             _tracks.Add(aaruTrack.Sequence, aaruTrack);
                         }
@@ -812,16 +821,13 @@ public sealed partial class Chd
 
                             var pregap = uint.Parse(cht2Match.Groups["pregap"].Value);
 
-                            // What is this, really? Same as track type?
+                            // Track type of the pregap, prefixed with 'V' when the pregap is stored in the CHD
                             string pregapType = cht2Match.Groups["pgtype"].Value;
 
                             // Read above, but for subchannel
                             string pregapSubType = cht2Match.Groups["pgsub"].Value;
 
-                            // This is a recommendation (shall) of 150 sectors at the end of the last data track,
-                            // or of any data track followed by an audio track, according to Yellow Book.
-                            // It is indistinguishable from normal data.
-                            // TODO: Does CHD store it, or like CDRWin, ignores it?
+                            // Postgap is never stored in the CHD
                             var postgap = uint.Parse(cht2Match.Groups["postgap"].Value);
 
                             if(trackNo != currentTrack)
@@ -920,39 +926,22 @@ public sealed partial class Chd
                             }
 
                             aaruTrack.Description = string.Format(Localization.Track_0, trackNo);
-                            aaruTrack.EndSector   = currentSector + frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
                             aaruTrack.Filter      = imageFilter;
-                            aaruTrack.StartSector = currentSector;
                             aaruTrack.Sequence    = trackNo;
                             aaruTrack.Session     = 1;
 
-                            if(aaruTrack.Sequence == 1)
-                            {
-                                if(pregap <= 150)
-                                {
-                                    aaruTrack.Indexes.Add(0, -150);
-                                    aaruTrack.Pregap = 150;
-                                }
-                                else
-                                {
-                                    aaruTrack.Indexes.Add(0, -1 * (int)pregap);
-                                    aaruTrack.Pregap = pregap;
-                                }
+                            // Pregap is only stored in the CHD when its type is prefixed with 'V'
+                            AddCdTrack(aaruTrack,
+                                       frames,
+                                       PadFrames(frames),
+                                       pregap,
+                                       pregapType.StartsWith('V'),
+                                       postgap,
+                                       ref currentSector,
+                                       ref currentFrame);
 
-                                aaruTrack.Indexes.Add(1, (int)currentSector);
-                            }
-                            else if(pregap > 0)
-                            {
-                                aaruTrack.Indexes.Add(0, (int)currentSector);
-                                aaruTrack.Pregap = pregap;
-                                aaruTrack.Indexes.Add(1, (int)(currentSector + pregap));
-                            }
-                            else
-                                aaruTrack.Indexes.Add(1, (int)currentSector);
-
-                            currentSector += frames;
                             currentTrack++;
                             _tracks.Add(aaruTrack.Sequence, aaruTrack);
                         }
@@ -995,7 +984,7 @@ public sealed partial class Chd
                             string subtype   = chgdMatch.Groups["sub_type"].Value;
                             string trackType = chgdMatch.Groups["track_type"].Value;
 
-                            // TODO: Check pregap, postgap and pad behaviour
+                            // Pad frames are stored as part of the track frames, so they need no special handling
                             var    pregap        = uint.Parse(chgdMatch.Groups["pregap"].Value);
                             string pregapType    = chgdMatch.Groups["pgtype"].Value;
                             string pregapSubType = chgdMatch.Groups["pgsub"].Value;
@@ -1098,39 +1087,22 @@ public sealed partial class Chd
                             }
 
                             aaruTrack.Description = string.Format(Localization.Track_0, trackNo);
-                            aaruTrack.EndSector   = currentSector + frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
                             aaruTrack.Filter      = imageFilter;
-                            aaruTrack.StartSector = currentSector;
                             aaruTrack.Sequence    = trackNo;
                             aaruTrack.Session     = (ushort)(trackNo > 2 ? 2 : 1);
 
-                            if(aaruTrack.Sequence == 1)
-                            {
-                                if(pregap <= 150)
-                                {
-                                    aaruTrack.Indexes.Add(0, -150);
-                                    aaruTrack.Pregap = 150;
-                                }
-                                else
-                                {
-                                    aaruTrack.Indexes.Add(0, -1 * (int)pregap);
-                                    aaruTrack.Pregap = pregap;
-                                }
+                            // Pregap is only stored in the CHD when its type is prefixed with 'V'
+                            AddCdTrack(aaruTrack,
+                                       frames,
+                                       PadFrames(frames),
+                                       pregap,
+                                       pregapType.StartsWith('V'),
+                                       postgap,
+                                       ref currentSector,
+                                       ref currentFrame);
 
-                                aaruTrack.Indexes.Add(1, (int)currentSector);
-                            }
-                            else if(pregap > 0)
-                            {
-                                aaruTrack.Indexes.Add(0, (int)currentSector);
-                                aaruTrack.Pregap = pregap;
-                                aaruTrack.Indexes.Add(1, (int)(currentSector + pregap));
-                            }
-                            else
-                                aaruTrack.Indexes.Add(1, (int)currentSector);
-
-                            currentSector += frames;
                             currentTrack++;
                             _tracks.Add(aaruTrack.Sequence, aaruTrack);
                         }
@@ -1216,7 +1188,6 @@ public sealed partial class Chd
 
         if(_isCdrom || _isGdrom)
         {
-            _offsetmap  = new Dictionary<ulong, uint>();
             _partitions = [];
             ulong partPos = 0;
 
@@ -1234,7 +1205,6 @@ public sealed partial class Chd
                 };
 
                 partPos += partition.Length;
-                _offsetmap.Add(aaruTrack.StartSector, aaruTrack.Sequence);
 
                 if(aaruTrack.SubchannelType != TrackSubchannelType.None)
                 {
@@ -1338,42 +1308,38 @@ public sealed partial class Chd
 
         if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        Track track = _isHdd ? new Track() : GetTrack(sectorAddress);
-        uint  sectorSize;
-
-        if(!_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
-        {
-            if(_isHdd)
-                sectorSize = _imageInfo.SectorSize;
-            else
-            {
-                sectorSize = (uint)track.RawBytesPerSector +
-                             (track.SubchannelType != TrackSubchannelType.None ? 96u : 0u);
-            }
-
-            ulong hunkNo = sectorAddress                   / _sectorsPerHunk;
-            ulong secOff = sectorAddress % _sectorsPerHunk * sectorSize;
-
-            ErrorNumber errno = GetHunk(hunkNo, out byte[] hunk);
-
-            if(errno != ErrorNumber.NoError) return errno;
-
-            sector = new byte[sectorSize];
-            Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
-
-            if(_sectorCache.Count >= _maxSectorCache) _sectorCache.Clear();
-
-            _sectorCache.Add(sectorAddress, sector);
-        }
-
         if(_isHdd)
         {
-            buffer = sector;
+            if(!_sectorCache.TryGetValue(sectorAddress, out byte[] hddSector))
+            {
+                ulong hunkNo = sectorAddress                   / _sectorsPerHunk;
+                ulong secOff = sectorAddress % _sectorsPerHunk * _imageInfo.SectorSize;
+
+                ErrorNumber hddErrno = GetHunk(hunkNo, out byte[] hunk);
+
+                if(hddErrno != ErrorNumber.NoError) return hddErrno;
+
+                hddSector = new byte[_imageInfo.SectorSize];
+                Array.Copy(hunk, (int)secOff, hddSector, 0, hddSector.Length);
+
+                if(_sectorCache.Count >= _maxSectorCache) _sectorCache.Clear();
+
+                _sectorCache.Add(sectorAddress, hddSector);
+            }
+
+            buffer = hddSector;
 
             sectorStatus = SectorStatus.Dumped;
 
             return ErrorNumber.NoError;
         }
+
+        Track track = GetTrack(sectorAddress);
+        uint  sectorSize;
+
+        ErrorNumber errno = GetCdSector(sectorAddress, track, out byte[] sector, out bool stored);
+
+        if(errno != ErrorNumber.NoError) return errno;
 
         uint sectorOffset;
         var  mode2 = false;
@@ -1450,7 +1416,7 @@ public sealed partial class Chd
                 return ErrorNumber.NotSupported;
         }
 
-        sectorStatus = SectorStatus.Dumped;
+        sectorStatus = stored ? SectorStatus.Dumped : SectorStatus.NotDumped;
         buffer       = new byte[sectorSize];
 
         if(mode2)
@@ -1820,28 +1786,11 @@ public sealed partial class Chd
 
         Track track = GetTrack(sectorAddress);
 
-        if(!_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
-        {
-            uint sectorSize = (uint)track.RawBytesPerSector +
-                              (track.SubchannelType != TrackSubchannelType.None ? 96u : 0u);
+        ErrorNumber errno = GetCdSector(sectorAddress, track, out byte[] sector, out bool stored);
 
-            ulong hunkNo = sectorAddress                   / _sectorsPerHunk;
-            ulong secOff = sectorAddress % _sectorsPerHunk * sectorSize;
+        if(errno != ErrorNumber.NoError) return errno;
 
-            ErrorNumber errno = GetHunk(hunkNo, out byte[] hunk);
-
-            if(errno != ErrorNumber.NoError) return errno;
-
-            sectorStatus = SectorStatus.Dumped;
-            sector       = new byte[sectorSize];
-            Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
-
-            if(_sectorCache.Count >= _maxSectorCache) _sectorCache.Clear();
-
-            _sectorCache.Add(sectorAddress, sector);
-        }
-
-        sectorStatus = SectorStatus.Dumped;
+        sectorStatus = stored ? SectorStatus.Dumped : SectorStatus.NotDumped;
         buffer       = new byte[track.RawBytesPerSector];
 
         if(track.Type == TrackType.Audio && _swapAudio)

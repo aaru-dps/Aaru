@@ -69,7 +69,6 @@ public sealed partial class Chd : IOpticalMediaImage, IVerifiableImage
     uint                      _mapVersion;
     int                       _maxBlockCache;
     int                       _maxSectorCache;
-    Dictionary<ulong, uint>   _offsetmap;
     List<Partition>           _partitions;
     byte[]                    _rawMap;
     SectorBuilder             _sectorBuilder;
@@ -77,6 +76,7 @@ public sealed partial class Chd : IOpticalMediaImage, IVerifiableImage
     uint                      _sectorsPerHunk;
     bool                      _swapAudio;
     uint                      _totalHunks;
+    Dictionary<uint, TrackMapping> _trackMappings;
     Dictionary<uint, Track>   _tracks;
     uint                      _unitBytes;
 
