@@ -515,10 +515,14 @@ public sealed partial class Chd
                             return ErrorNumber.NotSupported;
                         }
 
-                        var chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
+                        // Written in the host endianness of whoever created it
+                        bool chcdLittleEndian = BigEndianBitConverter.ToUInt32(meta, 0) > 99;
 
-                        // Byteswapped
-                        if(chdTracksNumber > 99) chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
+                        uint ReadChcd(int offset) => chcdLittleEndian
+                                                         ? BitConverter.ToUInt32(meta, offset)
+                                                         : BigEndianBitConverter.ToUInt32(meta, offset);
+
+                        uint chdTracksNumber = ReadChcd(0);
 
                         currentSector = 0;
                         currentFrame  = 0;
@@ -527,12 +531,12 @@ public sealed partial class Chd
                         {
                             var chdTrack = new TrackOld
                             {
-                                type        = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 0)),
-                                subType     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 4)),
-                                dataSize    = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 8)),
-                                subSize     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 12)),
-                                frames      = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 16)),
-                                extraFrames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 20))
+                                type        = ReadChcd((int)(4 + i * 24 + 0)),
+                                subType     = ReadChcd((int)(4 + i * 24 + 4)),
+                                dataSize    = ReadChcd((int)(4 + i * 24 + 8)),
+                                subSize     = ReadChcd((int)(4 + i * 24 + 12)),
+                                frames      = ReadChcd((int)(4 + i * 24 + 16)),
+                                extraFrames = ReadChcd((int)(4 + i * 24 + 20))
                             };
 
                             var aaruTrack = new Track();
