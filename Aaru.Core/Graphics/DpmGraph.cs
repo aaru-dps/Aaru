@@ -47,8 +47,16 @@ namespace Aaru.Core.Graphics;
 /// </remarks>
 public static class DpmGraph
 {
-    const int   WIDTH         = 1600;
-    const int   HEIGHT        = 900;
+    /// <summary>Default width of the graph, in pixels</summary>
+    public const int DEFAULT_WIDTH = 1600;
+    /// <summary>Default height of the graph, in pixels</summary>
+    public const int DEFAULT_HEIGHT = 900;
+    /// <summary>Smallest width or height of the graph, in pixels</summary>
+    public const int MIN_SIZE = 320;
+    /// <summary>Largest width or height of the graph, in pixels</summary>
+    public const int MAX_SIZE = 16384;
+    /// <summary>Height everything is laid out in, scaled to the height of the graph</summary>
+    const int   HEIGHT        = DEFAULT_HEIGHT;
     const float MARGIN_LEFT   = 110;
     const float MARGIN_RIGHT  = 40;
     const float TITLE_HEIGHT  = 90;
@@ -69,12 +77,17 @@ public static class DpmGraph
     /// <param name="dpm">DPM</param>
     /// <param name="path">Path to the PNG file</param>
     /// <param name="name">Name of the image, shown as the title</param>
-    public static void Write(DataPositionMeasurement dpm, string path, string name)
+    /// <param name="width">Width in pixels</param>
+    /// <param name="height">Height in pixels, text and lines are scaled with it</param>
+    public static void Write(DataPositionMeasurement dpm, string path, string name, int width = DEFAULT_WIDTH,
+                             int                     height = DEFAULT_HEIGHT)
     {
-        using var bitmap = new SKBitmap(WIDTH, HEIGHT);
+        using var bitmap = new SKBitmap(CheckSize(width), CheckSize(height));
         using var canvas = new SKCanvas(bitmap);
 
         canvas.Clear(Surface);
+
+        float layoutWidth = Layout(canvas, width, height);
 
         DpmEntry[] entries = dpm.Entries;
         int        nb      = entries.Length - 1;
@@ -108,7 +121,7 @@ public static class DpmGraph
         double lastLba  = entries[^1].Lba;
 
         bool  hasCalibrations = dpm.Calibrations is { Length: > 0 };
-        float plotRight = WIDTH - MARGIN_RIGHT;
+        float plotRight = layoutWidth - MARGIN_RIGHT;
         float plotBottom = HEIGHT - MARGIN_BOTTOM;
         float densityTop = TITLE_HEIGHT;
         float densityBottom = hasCalibrations ? densityTop + (plotBottom - densityTop - PANEL_GAP) * 0.72f : plotBottom;
@@ -165,7 +178,7 @@ public static class DpmGraph
             canvas.DrawRect(left, densityTop, right - left, densityBottom - densityTop, shade);
         }
 
-        DrawGrid(canvas, labelFont, minimum, maximum, densityTop, densityBottom, "F3", Y);
+        DrawGrid(canvas, labelFont, layoutWidth, minimum, maximum, densityTop, densityBottom, "F3", Y);
 
         // Layer boundaries
         using var layerPaint = new SKPaint();
@@ -256,7 +269,7 @@ public static class DpmGraph
                             labelFont,
                             ink);
 
-            DrawGrid(canvas, labelFont, rpmMin, rpmMax, rpmTop, plotBottom, "F0", Y);
+            DrawGrid(canvas, labelFont, layoutWidth, rpmMin, rpmMax, rpmTop, plotBottom, "F0", Y);
 
             using var dot = new SKPaint();
             dot.IsAntialias = true;
@@ -279,7 +292,7 @@ public static class DpmGraph
         // Sector axis, shared by both panels
         ink.Color = MutedInk;
 
-        foreach(double tick in NiceTicks(firstLba, lastLba, 8))
+        foreach(double tick in NiceTicks(firstLba, lastLba, Math.Max(2, (int)(layoutWidth / 200))))
             canvas.DrawText(tick.ToString("N0", CultureInfo.InvariantCulture),
                             X(tick),
                             plotBottom + 24,
@@ -305,12 +318,17 @@ public static class DpmGraph
     /// <param name="path">Path to the PNG file</param>
     /// <param name="name1">Name of the first image</param>
     /// <param name="name2">Name of the second image</param>
-    public static void WriteComparison(DpmComparisonResult comparison, string path, string name1, string name2)
+    /// <param name="width">Width in pixels</param>
+    /// <param name="height">Height in pixels, text and lines are scaled with it</param>
+    public static void WriteComparison(DpmComparisonResult comparison, string path, string name1, string name2,
+                                       int                 width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT)
     {
-        using var bitmap = new SKBitmap(WIDTH, HEIGHT);
+        using var bitmap = new SKBitmap(CheckSize(width), CheckSize(height));
         using var canvas = new SKCanvas(bitmap);
 
         canvas.Clear(Surface);
+
+        float layoutWidth = Layout(canvas, width, height);
 
         DpmComparisonBin[] bins    = comparison.Grid ?? [];
         double             minimum = double.MaxValue, maximum = double.MinValue;
@@ -340,7 +358,7 @@ public static class DpmGraph
         double firstLba = comparison.FirstLba;
         double lastLba  = comparison.LastLba;
 
-        float plotRight     = WIDTH  - MARGIN_RIGHT;
+        float plotRight     = layoutWidth - MARGIN_RIGHT;
         float plotBottom    = HEIGHT - MARGIN_BOTTOM;
         float densityTop    = TITLE_HEIGHT;
         float densityBottom = densityTop    + (plotBottom - densityTop - PANEL_GAP) * 0.6f;
@@ -403,7 +421,7 @@ public static class DpmGraph
             canvas.DrawRect(left, deviationTop, right - left, plotBottom    - deviationTop, shade);
         }
 
-        DrawGrid(canvas, labelFont, minimum, maximum, densityTop, densityBottom, "F3", Y);
+        DrawGrid(canvas, labelFont, layoutWidth, minimum, maximum, densityTop, densityBottom, "F3", Y);
 
         using var line = new SKPaint();
         line.IsAntialias = true;
@@ -489,14 +507,14 @@ public static class DpmGraph
         float bandBottom = Y(-comparison.Threshold * 100, -devMax * 100, devMax * 100, deviationTop, plotBottom);
         canvas.DrawRect(MARGIN_LEFT, bandTop, plotRight - MARGIN_LEFT, bandBottom - bandTop, shade);
 
-        DrawGrid(canvas, labelFont, -devMax * 100, devMax * 100, deviationTop, plotBottom, "F1", Y);
+        DrawGrid(canvas, labelFont, layoutWidth, -devMax * 100, devMax * 100, deviationTop, plotBottom, "F1", Y);
 
         DrawSeries(static b => b.Deviation * 100, -devMax * 100, devMax * 100, deviationTop, plotBottom, Series);
 
         // Sector axis, shared by both panels
         ink.Color = MutedInk;
 
-        foreach(double tick in NiceTicks(firstLba, lastLba, 8))
+        foreach(double tick in NiceTicks(firstLba, lastLba, Math.Max(2, (int)(layoutWidth / 200))))
         {
             canvas.DrawText(tick.ToString("N0", CultureInfo.InvariantCulture),
                             X(tick),
@@ -514,9 +532,28 @@ public static class DpmGraph
         data.SaveTo(stream);
     }
 
+    /// <summary>Checks a size in pixels of the graph</summary>
+    static int CheckSize(int size)
+    {
+        if(size is < MIN_SIZE or > MAX_SIZE) throw new ArgumentOutOfRangeException(nameof(size));
+
+        return size;
+    }
+
+    /// <summary>Scales the canvas so everything is laid out in a height of <see cref="HEIGHT" /></summary>
+    /// <returns>Width to lay out in</returns>
+    static float Layout(SKCanvas canvas, int width, int height)
+    {
+        float scale = height / (float)HEIGHT;
+
+        canvas.Scale(scale);
+
+        return width / scale;
+    }
+
     /// <summary>Draws hairline gridlines and value labels for a panel</summary>
-    static void DrawGrid(SKCanvas canvas, SKFont font, double low, double high, float top, float bottom, string format,
-                         Func<double, double, double, float, float, float> y)
+    static void DrawGrid(SKCanvas canvas, SKFont font, float layoutWidth, double low, double high, float top,
+                         float    bottom, string format, Func<double, double, double, float, float, float> y)
     {
         using var grid = new SKPaint();
         grid.Color       = Gridline;
@@ -530,7 +567,7 @@ public static class DpmGraph
         {
             float position = y(tick, low, high, top, bottom);
 
-            canvas.DrawLine(MARGIN_LEFT, position, WIDTH - MARGIN_RIGHT, position, grid);
+            canvas.DrawLine(MARGIN_LEFT, position, layoutWidth - MARGIN_RIGHT, position, grid);
 
             canvas.DrawText(tick.ToString(format, CultureInfo.InvariantCulture),
                             MARGIN_LEFT - 10,
