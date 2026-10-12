@@ -1671,11 +1671,15 @@ public sealed partial class Chd
 
                 break;
             }
-            case TrackType.CdMode2Form1 when track.RawBytesPerSector == 2324:
+            case TrackType.CdMode2Form2 when track.RawBytesPerSector == 2324:
             {
                 var fullSector = new byte[2352];
 
                 Array.Copy(buffer, 0, fullSector, 24, 2324);
+
+                // Subheader is not stored, so at least mark the sector as form 2
+                fullSector[0x012] = 0x20;
+                fullSector[0x016] = 0x20;
                 _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form2, (long)sectorAddress);
                 _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode2Form2);
 
