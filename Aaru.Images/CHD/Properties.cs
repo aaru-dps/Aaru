@@ -74,8 +74,17 @@ public sealed partial class Chd
         {
             if(_isHdd) return null;
 
-            // TODO: Implement
-            return null;
+            return _tracks.Values.GroupBy(static t => t.Session)
+                          .OrderBy(static g => g.Key)
+                          .Select(static g => new Session
+                           {
+                               Sequence    = g.Key,
+                               StartTrack  = g.Min(static t => t.Sequence),
+                               EndTrack    = g.Max(static t => t.Sequence),
+                               StartSector = g.Min(static t => t.StartSector),
+                               EndSector   = g.Max(static t => t.EndSector)
+                           })
+                          .ToList();
         }
     }
 
