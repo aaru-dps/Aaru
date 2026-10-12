@@ -723,31 +723,57 @@ public sealed partial class Chd
     {
         var bitstream = new BitStreamReader(src, srcLen);
 
-        // Import Huffman tree with RLE (256 symbols, maxbits=16)
-        var numbits = 5; // maxbits >= 16
+        // Import Huffman tree whose code lengths are themselves Huffman coded (256 symbols, maxbits=16)
+        var smallLengths = new int[24];
+        smallLengths[0] = bitstream.Read(3);
+        int start = bitstream.Read(3) + 1;
+        var count = 0;
+
+        for(var index = 1; index < 24; index++)
+        {
+            if(index < start || count == 7)
+                smallLengths[index] = 0;
+            else
+            {
+                count               = bitstream.Read(3);
+                smallLengths[index] = count == 7 ? 0 : count;
+            }
+        }
+
+        int[] smallLookup = BuildHuffmanLookup(smallLengths, 24, 6);
+
+        if(smallLookup == null)
+        {
+            AaruLogging.Error(Localization.Invalid_hunk_found);
+
+            return ErrorNumber.InvalidArgument;
+        }
+
+        // Maximum length of an RLE count, 256 - 9 needs 8 bits
+        const int RLE_FULL_BITS = 8;
 
         var codeLengths = new int[256];
+        var last        = 0;
         var curNode     = 0;
 
         while(curNode < 256)
         {
-            int nodeBits = bitstream.Read(numbits);
+            int smallVal = smallLookup[bitstream.Peek(6)];
+            bitstream.Remove(smallVal & 0x1F);
+            int value = smallVal >> 5;
 
-            if(nodeBits != 1)
-                codeLengths[curNode++] = nodeBits;
-            else
+            if(value != 0)
             {
-                nodeBits = bitstream.Read(numbits);
+                codeLengths[curNode++] = last = value - 1;
 
-                if(nodeBits == 1)
-                    codeLengths[curNode++] = 1;
-                else
-                {
-                    int repCount = bitstream.Read(numbits) + 3;
-
-                    for(var r = 0; r < repCount && curNode < 256; r++) codeLengths[curNode++] = nodeBits;
-                }
+                continue;
             }
+
+            int repCount = bitstream.Read(3) + 2;
+
+            if(repCount == 7 + 2) repCount += bitstream.Read(RLE_FULL_BITS);
+
+            for(; repCount != 0 && curNode < 256; repCount--) codeLengths[curNode++] = last;
         }
 
         // Build canonical Huffman lookup table
