@@ -6088,4 +6088,7 @@ Probadores:
     <data name="Title_DPM_differences" xml:space="preserve">
         <value>Diferencias</value>
     </data>
+    <data name="ButtonLabel_Save_DPM_graph_as_PNG" xml:space="preserve">
+        <value>Guardar gráfico completo como PNG…</value>
+    </data>
 </root>

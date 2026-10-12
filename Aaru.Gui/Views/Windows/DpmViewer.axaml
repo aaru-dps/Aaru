@@ -113,6 +113,20 @@
                                VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
+            <DropDownButton Margin="8,2,2,2">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="4">
+                    <ic:FluentIcon Icon="Save" />
+                    <TextBlock Text="{x:Static localization:UI.ButtonLabel_Save}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+                <DropDownButton.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                        <MenuItem Header="{x:Static localization:UI.ButtonLabel_Save_DPM_graph_as_PNG}"
+                                  Command="{Binding SaveGraphCommand, Mode=OneWay}" />
+                    </MenuFlyout>
+                </DropDownButton.Flyout>
+            </DropDownButton>
         </WrapPanel>
         <controls:DpmPlot Grid.Row="1"
                           Grid.Column="0"

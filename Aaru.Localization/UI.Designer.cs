@@ -12185,5 +12185,11 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string ButtonLabel_Save_DPM_graph_as_PNG {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_DPM_graph_as_PNG", resourceCulture);
+            }
+        }
+        
     }
 }

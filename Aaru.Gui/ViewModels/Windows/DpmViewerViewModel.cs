@@ -42,6 +42,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
+using Aaru.Core.Graphics;
 using Aaru.Core.Image;
 using Aaru.Gui.Controls;
 using Aaru.Gui.Models;
@@ -114,6 +115,7 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
         Differences            = [];
         CompareCommand         = new AsyncRelayCommand(CompareAsync);
         ClearComparisonCommand = new RelayCommand(ClearComparison);
+        SaveGraphCommand       = new AsyncRelayCommand(SaveGraphAsync);
 
         Summary = new ObservableCollection<DpmSummaryModel>(DpmInfoViewModel.BuildSummary(analysis));
 
@@ -163,11 +165,61 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
     public ObservableCollection<DpmBandModel>        Differences            { get; }
     public ICommand                                  CompareCommand         { get; }
     public ICommand                                  ClearComparisonCommand { get; }
+    public ICommand                                  SaveGraphCommand       { get; }
     public bool                                      IsComparing            => Comparison.HasValue;
 
     partial void OnSelectedDifferenceChanged(DpmBandModel value)
     {
         if(value != null) ShowRegion(value.FirstLba, value.LastLba);
+    }
+
+    /// <summary>Asks for a file to save to</summary>
+    /// <returns>The path, or <c>null</c> if cancelled</returns>
+    async Task<string> AskSavePathAsync(string title, string extension, string typeName)
+    {
+        IStorageFile result = await _window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title             = title,
+            DefaultExtension  = extension,
+            SuggestedFileName = Path.GetFileNameWithoutExtension(ImageName) + ".dpm." + extension,
+            FileTypeChoices =
+            [
+                new FilePickerFileType(typeName)
+                {
+                    Patterns = ["*." + extension]
+                }
+            ]
+        });
+
+        return result?.Path.LocalPath;
+    }
+
+    /// <summary>Shows an error</summary>
+    Task ShowErrorAsync(string message)
+    {
+        return MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, message, ButtonEnum.Ok, Icon.Error)
+                                .ShowWindowDialogAsync(_window);
+    }
+
+    /// <summary>Saves the whole DPM, or the comparison, as drawn by the command line</summary>
+    async Task SaveGraphAsync()
+    {
+        string path = await AskSavePathAsync(UI.ButtonLabel_Save_DPM_graph_as_PNG, "png", "PNG");
+
+        if(path is null) return;
+
+        try
+        {
+            if(Comparison is {} comparison)
+                await Task.Run(() => DpmGraph.WriteComparison(comparison, path, ImageName, ComparisonName));
+            else
+                await Task.Run(() => DpmGraph.Write(Dpm, path, ImageName));
+        }
+        catch(Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+            await ShowErrorAsync(UI.Error_writing_DPM_graph);
+        }
     }
 
     /// <summary>Asks for another image and compares its DPM with this one</summary>
@@ -188,8 +240,7 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
 
         if(error != null)
         {
-            await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, error, ButtonEnum.Ok, Icon.Error)
-                                   .ShowWindowDialogAsync(_window);
+            await ShowErrorAsync(error);
 
             return;
         }
