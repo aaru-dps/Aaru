@@ -12227,5 +12227,35 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Title_DPM_PNG_size {
+            get {
+                return ResourceManager.GetString("Title_DPM_PNG_size", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_width_pixels {
+            get {
+                return ResourceManager.GetString("Title_DPM_width_pixels", resourceCulture);
+            }
+        }
+        
+        public static string Title_DPM_height_pixels {
+            get {
+                return ResourceManager.GetString("Title_DPM_height_pixels", resourceCulture);
+            }
+        }
+        
+        public static string DPM_PNG_size_hint {
+            get {
+                return ResourceManager.GetString("DPM_PNG_size_hint", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_DPM_size_as_shown {
+            get {
+                return ResourceManager.GetString("ButtonLabel_DPM_size_as_shown", resourceCulture);
+            }
+        }
+        
     }
 }

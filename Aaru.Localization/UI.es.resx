@@ -6109,4 +6109,19 @@ Probadores:
     <data name="DPM_graph_size_must_be_between_0_and_1" xml:space="preserve">
         <value>El ancho y el alto del gráfico deben estar entre {0} y {1} píxeles.</value>
     </data>
+    <data name="Title_DPM_PNG_size" xml:space="preserve">
+        <value>Tamaño del PNG</value>
+    </data>
+    <data name="Title_DPM_width_pixels" xml:space="preserve">
+        <value>Ancho, píxeles</value>
+    </data>
+    <data name="Title_DPM_height_pixels" xml:space="preserve">
+        <value>Alto, píxeles</value>
+    </data>
+    <data name="DPM_PNG_size_hint" xml:space="preserve">
+        <value>El texto y las líneas se escalan con el alto. Una imagen más ancha da más espacio a los sectores.</value>
+    </data>
+    <data name="ButtonLabel_DPM_size_as_shown" xml:space="preserve">
+        <value>Como se muestra</value>
+    </data>
 </root>

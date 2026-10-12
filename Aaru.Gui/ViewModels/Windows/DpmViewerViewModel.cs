@@ -48,9 +48,13 @@ using Aaru.Core.Image;
 using Aaru.Gui.Controls;
 using Aaru.Gui.Models;
 using Aaru.Gui.ViewModels.Tabs;
+using Aaru.Gui.ViewModels.Dialogs;
+using Aaru.Gui.Views.Dialogs;
 using Aaru.Gui.Views.Windows;
 using Aaru.Localization;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -208,9 +212,25 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
                                 .ShowWindowDialogAsync(_window);
     }
 
+    /// <summary>Asks for the size of a PNG</summary>
+    /// <param name="initial">Size shown first</param>
+    /// <param name="shown">Size of the graph as shown, offered as a preset if not null</param>
+    /// <returns>The size, or <c>null</c> if cancelled</returns>
+    Task<PixelSize?> AskSizeAsync(PixelSize initial, PixelSize? shown)
+    {
+        var dialog = new DpmExportSize();
+        dialog.DataContext = new DpmExportSizeViewModel(dialog, initial, shown);
+
+        return dialog.ShowDialog<PixelSize?>(_window);
+    }
+
     /// <summary>Saves the whole DPM, or the comparison, as drawn by the command line</summary>
     async Task SaveGraphAsync()
     {
+        PixelSize? size = await AskSizeAsync(new PixelSize(DpmGraph.DEFAULT_WIDTH, DpmGraph.DEFAULT_HEIGHT), null);
+
+        if(size is not {} pixels) return;
+
         string path = await AskSavePathAsync(UI.ButtonLabel_Save_DPM_graph_as_PNG, "png", "PNG");
 
         if(path is null) return;
@@ -218,9 +238,16 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
         try
         {
             if(Comparison is {} comparison)
-                await Task.Run(() => DpmGraph.WriteComparison(comparison, path, ImageName, ComparisonName));
+            {
+                await Task.Run(() => DpmGraph.WriteComparison(comparison,
+                                                              path,
+                                                              ImageName,
+                                                              ComparisonName,
+                                                              pixels.Width,
+                                                              pixels.Height));
+            }
             else
-                await Task.Run(() => DpmGraph.Write(Dpm, path, ImageName));
+                await Task.Run(() => DpmGraph.Write(Dpm, path, ImageName, pixels.Width, pixels.Height));
         }
         catch(Exception ex)
         {
@@ -229,31 +256,67 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
         }
     }
 
-    /// <summary>Saves the graph as shown, with its current zoom</summary>
+    /// <summary>Saves the graph as shown, with its current zoom, at the size asked</summary>
+    /// <remarks>
+    ///     A copy of the graph is laid out at the height shown, so text and lines keep their proportions, and at the
+    ///     width that gives the aspect ratio asked, then scaled to the pixels asked.
+    /// </remarks>
     async Task SaveViewAsync()
     {
+        DpmPlot plot    = _window.Plot;
+        double  scaling = _window.RenderScaling;
+
+        int shownWidth  = Math.Clamp((int)(plot.Bounds.Width  * scaling), DpmGraph.MIN_SIZE, DpmGraph.MAX_SIZE);
+        int shownHeight = Math.Clamp((int)(plot.Bounds.Height * scaling), DpmGraph.MIN_SIZE, DpmGraph.MAX_SIZE);
+        var shown       = new PixelSize(shownWidth, shownHeight);
+
+        PixelSize? size = await AskSizeAsync(shown, shown);
+
+        if(size is not {} pixels) return;
+
         string path = await AskSavePathAsync(UI.ButtonLabel_Save_DPM_view_as_PNG, "png", "PNG");
 
         if(path is null) return;
 
         try
         {
-            DpmPlot plot    = _window.Plot;
-            double  scaling = _window.RenderScaling;
-
-            var size = new PixelSize(Math.Max(1, (int)(plot.Bounds.Width  * scaling)),
-                                     Math.Max(1, (int)(plot.Bounds.Height * scaling)));
-
-            using var bitmap = new RenderTargetBitmap(size, new Vector(96 * scaling, 96 * scaling));
-
-            bitmap.Render(plot);
-            bitmap.Save(path, new PngBitmapEncoderOptions());
+            RenderView(plot, pixels, path);
         }
         catch(Exception ex)
         {
             SentrySdk.CaptureException(ex);
             await ShowErrorAsync(UI.Error_writing_DPM_graph);
         }
+    }
+
+    /// <summary>Renders a copy of a plot, showing the same, to a PNG of the size asked</summary>
+    static void RenderView(DpmPlot plot, PixelSize pixels, string path)
+    {
+        double layoutHeight = Math.Max(1, plot.Bounds.Height);
+        double scale        = pixels.Height / layoutHeight;
+
+        var copy = new DpmPlot();
+        copy.CopyViewFrom(plot);
+
+        var root = new LayoutTransformControl
+        {
+            LayoutTransform = new ScaleTransform(scale, scale),
+            Child = new ThemeVariantScope
+            {
+                RequestedThemeVariant = plot.ActualThemeVariant,
+                Child                 = copy
+            }
+        };
+
+        var size = new Size(pixels.Width, pixels.Height);
+
+        root.Measure(size);
+        root.Arrange(new Rect(size));
+
+        using var bitmap = new RenderTargetBitmap(pixels);
+
+        bitmap.Render(root);
+        bitmap.Save(path, new PngBitmapEncoderOptions());
     }
 
     /// <summary>Exports the bins and calibrations as CSV, one table after the other</summary>

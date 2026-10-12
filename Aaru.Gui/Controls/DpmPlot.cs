@@ -425,6 +425,33 @@ public sealed class DpmPlot : Control
                };
     }
 
+    /// <summary>Shows the same as another plot: data, unit, panels and ranges</summary>
+    /// <param name="source">Plot to copy</param>
+    public void CopyViewFrom(DpmPlot source)
+    {
+        Analysis       = source.Analysis;
+        Comparison     = source.Comparison;
+        ComparisonName = source.ComparisonName;
+        DensityUnit    = source.DensityUnit;
+        ShowDensity    = source.ShowDensity;
+        ShowDeviation  = source.ShowDeviation;
+        ShowRpm        = source.ShowRpm;
+        ShowStatus     = source.ShowStatus;
+
+        _viewFirst = source._viewFirst;
+        _viewLast  = source._viewLast;
+
+        for(int i = 0; i < _panels.Count; i++)
+        {
+            _panels[i].Visible = source._panels[i].Visible;
+            _panels[i].AutoY   = source._panels[i].AutoY;
+            _panels[i].Low     = source._panels[i].Low;
+            _panels[i].High    = source._panels[i].High;
+        }
+
+        InvalidateVisual();
+    }
+
     /// <summary>Fits the vertical range of every panel to the bins in view</summary>
     public void FitValues()
     {

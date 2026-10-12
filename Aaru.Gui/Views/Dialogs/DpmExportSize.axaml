@@ -1,0 +1,115 @@
+<!--
+// /***************************************************************************
+// Aaru Data Preservation Suite
+// ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
+//
+// Filename       : DpmExportSize.axaml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : GUI dialogs.
+//
+// ‐‐[ Description ] ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
+//
+//     Asks for the size of a Data Position Measurement graph to export.
+//
+// ‐‐[ License ] ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General public License for more details.
+//
+//     You should have received a copy of the GNU General public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
+// Copyright © 2011-2026 Natalia Portillo
+// ****************************************************************************/
+-->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs"
+        xmlns:localization="clr-namespace:Aaru.Localization;assembly=Aaru.Localization"
+        mc:Ignorable="d"
+        SizeToContent="WidthAndHeight"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        x:Class="Aaru.Gui.Views.Dialogs.DpmExportSize"
+        x:DataType="dialogs:DpmExportSizeViewModel"
+        Title="{x:Static localization:UI.Title_DPM_PNG_size}">
+    <Design.DataContext>
+        <dialogs:DpmExportSizeViewModel />
+    </Design.DataContext>
+    <StackPanel Margin="16"
+                Spacing="12"
+                Width="360">
+        <Grid ColumnDefinitions="Auto,*"
+              RowDefinitions="Auto,Auto"
+              ColumnSpacing="8"
+              RowSpacing="8">
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       Text="{x:Static localization:UI.Title_DPM_width_pixels}"
+                       VerticalAlignment="Center" />
+            <NumericUpDown Grid.Row="0"
+                           Grid.Column="1"
+                           Value="{Binding Width, Mode=TwoWay}"
+                           Minimum="{Binding Minimum, Mode=OneWay}"
+                           Maximum="{Binding Maximum, Mode=OneWay}"
+                           Increment="100"
+                           FormatString="0" />
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       Text="{x:Static localization:UI.Title_DPM_height_pixels}"
+                       VerticalAlignment="Center" />
+            <NumericUpDown Grid.Row="1"
+                           Grid.Column="1"
+                           Value="{Binding Height, Mode=TwoWay}"
+                           Minimum="{Binding Minimum, Mode=OneWay}"
+                           Maximum="{Binding Maximum, Mode=OneWay}"
+                           Increment="100"
+                           FormatString="0" />
+        </Grid>
+        <WrapPanel>
+            <Button Margin="2"
+                    IsVisible="{Binding HasShown, Mode=OneWay}"
+                    Command="{Binding ShownCommand, Mode=OneWay}"
+                    Content="{x:Static localization:UI.ButtonLabel_DPM_size_as_shown}" />
+            <Button Margin="2"
+                    Command="{Binding PresetCommand, Mode=OneWay}"
+                    CommandParameter="1600x900"
+                    Content="1600 × 900" />
+            <Button Margin="2"
+                    Command="{Binding PresetCommand, Mode=OneWay}"
+                    CommandParameter="1920x1080"
+                    Content="1920 × 1080" />
+            <Button Margin="2"
+                    Command="{Binding PresetCommand, Mode=OneWay}"
+                    CommandParameter="3840x2160"
+                    Content="3840 × 2160" />
+            <Button Margin="2"
+                    Command="{Binding PresetCommand, Mode=OneWay}"
+                    CommandParameter="7680x2160"
+                    Content="7680 × 2160" />
+        </WrapPanel>
+        <TextBlock Text="{x:Static localization:UI.DPM_PNG_size_hint}"
+                   TextWrapping="Wrap"
+                   Opacity="0.7" />
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8">
+            <Button Command="{Binding CancelCommand, Mode=OneWay}"
+                    Content="{x:Static localization:UI.ButtonLabel_Cancel}" />
+            <Button Command="{Binding SaveCommand, Mode=OneWay}"
+                    IsDefault="True"
+                    Content="{x:Static localization:UI.ButtonLabel_Save}" />
+        </StackPanel>
+    </StackPanel>
+</Window>

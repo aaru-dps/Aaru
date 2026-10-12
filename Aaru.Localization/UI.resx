@@ -6196,4 +6196,19 @@ Do you want to continue?</value>
     <data name="DPM_graph_size_must_be_between_0_and_1" xml:space="preserve">
         <value>The graph width and height must be between {0} and {1} pixels.</value>
     </data>
+    <data name="Title_DPM_PNG_size" xml:space="preserve">
+        <value>PNG size</value>
+    </data>
+    <data name="Title_DPM_width_pixels" xml:space="preserve">
+        <value>Width, pixels</value>
+    </data>
+    <data name="Title_DPM_height_pixels" xml:space="preserve">
+        <value>Height, pixels</value>
+    </data>
+    <data name="DPM_PNG_size_hint" xml:space="preserve">
+        <value>Text and lines scale with the height. A wider image gives more room to the sectors.</value>
+    </data>
+    <data name="ButtonLabel_DPM_size_as_shown" xml:space="preserve">
+        <value>As shown</value>
+    </data>
 </root>
