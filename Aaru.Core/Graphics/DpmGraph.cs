@@ -48,15 +48,15 @@ namespace Aaru.Core.Graphics;
 public static class DpmGraph
 {
     /// <summary>Default width of the graph, in pixels</summary>
-    public const int DEFAULT_WIDTH = 1600;
+    public const int DEFAULT_WIDTH = 1920;
     /// <summary>Default height of the graph, in pixels</summary>
-    public const int DEFAULT_HEIGHT = 900;
+    public const int DEFAULT_HEIGHT = 1080;
     /// <summary>Smallest width or height of the graph, in pixels</summary>
     public const int MIN_SIZE = 320;
     /// <summary>Largest width or height of the graph, in pixels</summary>
     public const int MAX_SIZE = 16384;
     /// <summary>Height everything is laid out in, scaled to the height of the graph</summary>
-    const int   HEIGHT        = DEFAULT_HEIGHT;
+    const int   HEIGHT        = 900;
     const float MARGIN_LEFT   = 110;
     const float MARGIN_RIGHT  = 40;
     const float TITLE_HEIGHT  = 90;
