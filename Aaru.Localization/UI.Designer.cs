@@ -12209,5 +12209,23 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string DPM_graph_width_help {
+            get {
+                return ResourceManager.GetString("DPM_graph_width_help", resourceCulture);
+            }
+        }
+        
+        public static string DPM_graph_height_help {
+            get {
+                return ResourceManager.GetString("DPM_graph_height_help", resourceCulture);
+            }
+        }
+        
+        public static string DPM_graph_size_must_be_between_0_and_1 {
+            get {
+                return ResourceManager.GetString("DPM_graph_size_must_be_between_0_and_1", resourceCulture);
+            }
+        }
+        
     }
 }

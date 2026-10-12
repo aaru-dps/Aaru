@@ -30,6 +30,7 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using Aaru.CommonTypes;
@@ -58,6 +59,18 @@ sealed class DpmGraphCommand : Command<DpmGraphCommand.Settings>
         AaruLogging.Debug(MODULE_NAME, "--debug={0}",   settings.Debug);
         AaruLogging.Debug(MODULE_NAME, "--input={0}",   Markup.Escape(settings.ImagePath ?? ""));
         AaruLogging.Debug(MODULE_NAME, "--verbose={0}", settings.Verbose);
+        AaruLogging.Debug(MODULE_NAME, "--width={0}",   settings.Width);
+        AaruLogging.Debug(MODULE_NAME, "--height={0}",  settings.Height);
+
+        if(settings.Width  is < Core.Graphics.DpmGraph.MIN_SIZE or > Core.Graphics.DpmGraph.MAX_SIZE ||
+           settings.Height is < Core.Graphics.DpmGraph.MIN_SIZE or > Core.Graphics.DpmGraph.MAX_SIZE)
+        {
+            AaruLogging.Error(UI.DPM_graph_size_must_be_between_0_and_1,
+                              Core.Graphics.DpmGraph.MIN_SIZE,
+                              Core.Graphics.DpmGraph.MAX_SIZE);
+
+            return (int)ErrorNumber.InvalidArgument;
+        }
 
         IFilter inputFilter = null;
 
@@ -116,7 +129,7 @@ sealed class DpmGraphCommand : Command<DpmGraphCommand.Settings>
         string prefix = Path.Combine(Path.GetDirectoryName(settings.ImagePath) ?? "",
                                      Path.GetFileNameWithoutExtension(settings.ImagePath));
 
-        if(!DpmSidecar.Write(dpm, prefix))
+        if(!DpmSidecar.Write(dpm, prefix, settings.Width, settings.Height))
         {
             AaruLogging.Error(UI.Error_writing_DPM_graph);
 
@@ -135,6 +148,14 @@ sealed class DpmGraphCommand : Command<DpmGraphCommand.Settings>
         [LocalizedDescription(nameof(UI.Media_image_path))]
         [CommandArgument(0, "<image-path>")]
         public string ImagePath { get; init; }
+        [LocalizedDescription(nameof(UI.DPM_graph_width_help))]
+        [DefaultValue(Core.Graphics.DpmGraph.DEFAULT_WIDTH)]
+        [CommandOption("--width")]
+        public int Width { get; init; } = Core.Graphics.DpmGraph.DEFAULT_WIDTH;
+        [LocalizedDescription(nameof(UI.DPM_graph_height_help))]
+        [DefaultValue(Core.Graphics.DpmGraph.DEFAULT_HEIGHT)]
+        [CommandOption("--height")]
+        public int Height { get; init; } = Core.Graphics.DpmGraph.DEFAULT_HEIGHT;
     }
 
 #endregion

@@ -6187,4 +6187,13 @@ Do you want to continue?</value>
     <data name="Error_writing_DPM_CSV" xml:space="preserve">
         <value>Error writing the Data Position Measurement as CSV.</value>
     </data>
+    <data name="DPM_graph_width_help" xml:space="preserve">
+        <value>Width of the Data Position Measurement graph, in pixels.</value>
+    </data>
+    <data name="DPM_graph_height_help" xml:space="preserve">
+        <value>Height of the Data Position Measurement graph, in pixels. Text and lines scale with it.</value>
+    </data>
+    <data name="DPM_graph_size_must_be_between_0_and_1" xml:space="preserve">
+        <value>The graph width and height must be between {0} and {1} pixels.</value>
+    </data>
 </root>

@@ -46,12 +46,15 @@ public static class DpmSidecar
     /// <summary>Writes the DPM graph as <c>prefix.dpm.png</c></summary>
     /// <param name="dpm">DPM</param>
     /// <param name="prefix">Path prefix of the image</param>
+    /// <param name="width">Width of the graph in pixels</param>
+    /// <param name="height">Height of the graph in pixels</param>
     /// <returns><c>true</c> if the graph was written, <c>false</c> otherwise</returns>
-    public static bool Write(DataPositionMeasurement dpm, string prefix)
+    public static bool Write(DataPositionMeasurement dpm, string prefix, int width = DpmGraph.DEFAULT_WIDTH,
+                             int                     height = DpmGraph.DEFAULT_HEIGHT)
     {
         try
         {
-            DpmGraph.Write(dpm, prefix + ".dpm.png", Path.GetFileName(prefix));
+            DpmGraph.Write(dpm, prefix + ".dpm.png", Path.GetFileName(prefix), width, height);
 
             return true;
         }

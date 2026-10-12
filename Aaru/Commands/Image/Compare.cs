@@ -65,12 +65,22 @@ sealed class CompareCommand : Command<CompareCommand.Settings>
 
         Statistics.AddCommand("compare");
 
-        AaruLogging.Debug(MODULE_NAME, "--debug={0}",        settings.Debug);
-        AaruLogging.Debug(MODULE_NAME, "--input1={0}",       Markup.Escape(settings.ImagePath1 ?? ""));
-        AaruLogging.Debug(MODULE_NAME, "--input2={0}",       Markup.Escape(settings.ImagePath2 ?? ""));
-        AaruLogging.Debug(MODULE_NAME, "--long-sectors={0}", settings.LongSectors);
-        AaruLogging.Debug(MODULE_NAME, "--verbose={0}",      settings.Verbose);
-        AaruLogging.Debug(MODULE_NAME, "--dpm-graph={0}",    Markup.Escape(settings.DpmGraph ?? ""));
+        AaruLogging.Debug(MODULE_NAME, "--debug={0}",            settings.Debug);
+        AaruLogging.Debug(MODULE_NAME, "--input1={0}",           Markup.Escape(settings.ImagePath1 ?? ""));
+        AaruLogging.Debug(MODULE_NAME, "--input2={0}",           Markup.Escape(settings.ImagePath2 ?? ""));
+        AaruLogging.Debug(MODULE_NAME, "--long-sectors={0}",     settings.LongSectors);
+        AaruLogging.Debug(MODULE_NAME, "--verbose={0}",          settings.Verbose);
+        AaruLogging.Debug(MODULE_NAME, "--dpm-graph={0}",        Markup.Escape(settings.DpmGraph ?? ""));
+        AaruLogging.Debug(MODULE_NAME, "--dpm-graph-width={0}",  settings.DpmGraphWidth);
+        AaruLogging.Debug(MODULE_NAME, "--dpm-graph-height={0}", settings.DpmGraphHeight);
+
+        if(settings.DpmGraphWidth  is < DpmGraph.MIN_SIZE or > DpmGraph.MAX_SIZE ||
+           settings.DpmGraphHeight is < DpmGraph.MIN_SIZE or > DpmGraph.MAX_SIZE)
+        {
+            AaruLogging.Error(UI.DPM_graph_size_must_be_between_0_and_1, DpmGraph.MIN_SIZE, DpmGraph.MAX_SIZE);
+
+            return (int)ErrorNumber.InvalidArgument;
+        }
 
         IFilter inputFilter1 = null;
         IFilter inputFilter2 = null;
@@ -694,7 +704,9 @@ sealed class CompareCommand : Command<CompareCommand.Settings>
             DpmGraph.WriteComparison(result,
                                      settings.DpmGraph,
                                      Path.GetFileName(settings.ImagePath1),
-                                     Path.GetFileName(settings.ImagePath2));
+                                     Path.GetFileName(settings.ImagePath2),
+                                     settings.DpmGraphWidth,
+                                     settings.DpmGraphHeight);
 
             AaruLogging.WriteLine(UI.Written_DPM_comparison_graph_to_0, Markup.Escape(settings.DpmGraph));
         }
@@ -722,6 +734,14 @@ sealed class CompareCommand : Command<CompareCommand.Settings>
         [DefaultValue(null)]
         [CommandOption("--dpm-graph")]
         public string DpmGraph { get; init; }
+        [LocalizedDescription(nameof(UI.DPM_graph_width_help))]
+        [DefaultValue(Core.Graphics.DpmGraph.DEFAULT_WIDTH)]
+        [CommandOption("--dpm-graph-width")]
+        public int DpmGraphWidth { get; init; } = Core.Graphics.DpmGraph.DEFAULT_WIDTH;
+        [LocalizedDescription(nameof(UI.DPM_graph_height_help))]
+        [DefaultValue(Core.Graphics.DpmGraph.DEFAULT_HEIGHT)]
+        [CommandOption("--dpm-graph-height")]
+        public int DpmGraphHeight { get; init; } = Core.Graphics.DpmGraph.DEFAULT_HEIGHT;
     }
 
 #endregion

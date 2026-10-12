@@ -6100,4 +6100,13 @@ Probadores:
     <data name="Error_writing_DPM_CSV" xml:space="preserve">
         <value>Error escribiendo la Medición de Posición de Datos como CSV.</value>
     </data>
+    <data name="DPM_graph_width_help" xml:space="preserve">
+        <value>Ancho del gráfico de la Medición de Posición de Datos, en píxeles.</value>
+    </data>
+    <data name="DPM_graph_height_help" xml:space="preserve">
+        <value>Alto del gráfico de la Medición de Posición de Datos, en píxeles. El texto y las líneas se escalan con él.</value>
+    </data>
+    <data name="DPM_graph_size_must_be_between_0_and_1" xml:space="preserve">
+        <value>El ancho y el alto del gráfico deben estar entre {0} y {1} píxeles.</value>
+    </data>
 </root>
