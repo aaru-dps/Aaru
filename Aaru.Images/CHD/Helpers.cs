@@ -402,11 +402,14 @@ public sealed partial class Chd
                     return ErrorNumber.NotImplemented;
                 }
 
+                // First byte tells the endianness of the samples, FLAC frames follow without a stream header
+                if(src[0] != 'L' && src[0] != 'B') return ErrorNumber.InOutError;
+
                 bool swapEndian = src[0] == 'B';
                 var  flacData   = new byte[srcLen - 1];
                 Array.Copy(src, 1, flacData, 0, srcLen - 1);
 
-                int decoded = FLAC.DecodeBuffer(flacData, dest);
+                int decoded = FLAC.DecodeHeaderlessFrames(flacData, FlacBlockSize((uint)destLen), dest, out _);
 
                 if(decoded != destLen)
                 {
@@ -550,70 +553,40 @@ public sealed partial class Chd
 
         int frames = destLen / CD_FRAME_SIZE;
 
-        bool swapEndian = src[0] == 'B';
-
-        // Decode FLAC audio data (sector data)
-        var flacSrc = new byte[srcLen - 1];
-        Array.Copy(src, 1, flacSrc, 0, srcLen - 1);
+        // Sector data is stored as FLAC frames without stream header nor endianness marker
+        var flacSrc = new byte[srcLen];
+        Array.Copy(src, 0, flacSrc, 0, srcLen);
 
         var sectorBuf = new byte[frames * CD_MAX_SECTOR_DATA];
-        int decoded   = FLAC.DecodeBuffer(flacSrc, sectorBuf);
 
-        if(decoded != frames * CD_MAX_SECTOR_DATA)
+        int decoded = FLAC.DecodeHeaderlessFrames(flacSrc,
+                                                  CdFlacBlockSize((uint)sectorBuf.Length),
+                                                  sectorBuf,
+                                                  out int consumed);
+
+        if(decoded != sectorBuf.Length)
         {
             AaruLogging.Error(string.Format(Localization.Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
                                             decoded,
-                                            frames * CD_MAX_SECTOR_DATA));
+                                            sectorBuf.Length));
 
             return ErrorNumber.InOutError;
         }
 
-        if(swapEndian)
+        // Audio in CD hunks is stored big-endian
+        if(BitConverter.IsLittleEndian)
         {
             for(var i = 0; i < sectorBuf.Length; i += 2)
                 (sectorBuf[i], sectorBuf[i + 1]) = (sectorBuf[i + 1], sectorBuf[i]);
         }
 
-        // The FLAC stream length is unknown without consumed byte tracking,
-        // so decompress subcode by trying from the end.
-        // The subcode compressed data is everything after the FLAC stream.
-        // We try to find it by scanning backwards for valid zlib data.
-        var subBuf     = new byte[frames * CD_MAX_SUBCODE_DATA];
-        var subDecoded = false;
+        // Subcode data is deflated right after the FLAC frames
+        var subBuf = new byte[frames * CD_MAX_SUBCODE_DATA];
 
-        // Try binary search approach: FLAC must produce exactly frames*2352 bytes
-        // The compressed FLAC stream is between src[1] and some offset before srcLen
-        // Subcode zlib data follows immediately after FLAC data
-        for(int flacEnd = srcLen - 1; flacEnd >= 2; flacEnd--)
-        {
-            try
-            {
-                int subLen = srcLen - 1 - flacEnd;
-                var subSrc = new byte[subLen];
-                Array.Copy(src, 1 + flacEnd, subSrc, 0, subLen);
+        ErrorNumber err =
+            DecompressRawCodec(CompressionV5.Zlib, src, consumed, srcLen - consumed, subBuf, subBuf.Length);
 
-                var zStream = new DeflateStream(new MemoryStream(subSrc), CompressionMode.Decompress);
-                int read    = zStream.EnsureRead(subBuf, 0, subBuf.Length);
-                zStream.Close();
-
-                if(read == subBuf.Length)
-                {
-                    subDecoded = true;
-
-                    break;
-                }
-            }
-            catch(InvalidDataException)
-            {
-                // Invalid zlib data at this offset, try next
-            }
-            catch(InvalidOperationException)
-            {
-                // Invalid zlib data at this offset, try next
-            }
-        }
-
-        if(!subDecoded) Array.Clear(subBuf, 0, subBuf.Length);
+        if(err != ErrorNumber.NoError) return err;
 
         // Reassemble interleaved frames
         for(var i = 0; i < frames; i++)
@@ -628,6 +601,26 @@ public sealed partial class Chd
         }
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>FLAC block size used by MAME for a hunk of the given size, clamped to 2048 samples</summary>
+    static uint FlacBlockSize(uint bytes)
+    {
+        uint blockSize = bytes / 4;
+
+        while(blockSize > 2048) blockSize /= 2;
+
+        return blockSize;
+    }
+
+    /// <summary>FLAC block size used by MAME for CD sector data of the given size, clamped to a sector</summary>
+    static uint CdFlacBlockSize(uint bytes)
+    {
+        uint blockSize = bytes / 4;
+
+        while(blockSize > CD_MAX_SECTOR_DATA) blockSize /= 2;
+
+        return blockSize;
     }
 
     ErrorNumber DecompressRawCodec(CompressionV5 codec, byte[] src, int srcOffset, int srcLen, byte[] dest, int destLen)

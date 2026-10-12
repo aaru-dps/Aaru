@@ -42,6 +42,11 @@ public partial class FLAC
     private static partial int AARU_flac_decode_redbook_buffer(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
                                                                ref nuint dstSize);
 
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial int AARU_flac_decode_redbook_frames(byte[]    srcBuffer, nuint srcSize, byte[] dstBuffer,
+                                                               ref nuint dstSize, uint blockSize,
+                                                               out nuint srcConsumed);
+
     [LibraryImport("libAaru.Compression.Native", SetLastError = true, StringMarshalling = StringMarshalling.Utf8)]
     private static partial int AARU_flac_encode_redbook_buffer(byte[] srcBuffer, nuint srcSize, byte[] dstBuffer,
                                                                ref nuint dstSize, uint blocksize, int doMidSideStereo,
@@ -65,6 +70,36 @@ public partial class FLAC
             return AARU_flac_decode_redbook_buffer(source, (nuint)source.Length, destination, ref dstSize) == 0
                        ? (int)dstSize
                        : -1;
+        }
+
+        throw new NotSupportedException();
+    }
+
+    /// <summary>
+    ///     Decodes FLAC frames stored without the stream marker nor STREAMINFO (as done by MAME CHD), assuming 44100Hz,
+    ///     2 channels, 16-bit samples. Decoding stops when <paramref name="destination" /> is full.
+    /// </summary>
+    /// <param name="source">Buffer containing the FLAC frames, optionally followed by unrelated data</param>
+    /// <param name="blockSize">Block size the frames were encoded with</param>
+    /// <param name="destination">Buffer where to write the decoded samples, in host endianness</param>
+    /// <param name="consumed">Number of bytes of <paramref name="source" /> used by the decoded frames</param>
+    /// <returns>The number of decoded bytes, or -1 on error</returns>
+    public static int DecodeHeaderlessFrames(byte[] source, uint blockSize, byte[] destination, out int consumed)
+    {
+        if(Native.IsSupported)
+        {
+            nuint dstSize = (nuint)destination.Length;
+
+            int err = AARU_flac_decode_redbook_frames(source,
+                                                      (nuint)source.Length,
+                                                      destination,
+                                                      ref dstSize,
+                                                      blockSize,
+                                                      out nuint srcConsumed);
+
+            consumed = err == 0 ? (int)srcConsumed : 0;
+
+            return err == 0 ? (int)dstSize : -1;
         }
 
         throw new NotSupportedException();
