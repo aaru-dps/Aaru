@@ -778,16 +778,21 @@ public sealed class DpmPlot : Control
     /// <returns>First bin and the one after the last</returns>
     (int first, int end) VisibleBins(DpmAnalysisResult analysis)
     {
-        DpmBin[] bins = analysis.Bins;
+        return VisibleRange(analysis.Bins.Length, i => analysis.Bins[i].FirstLba, i => analysis.Bins[i].EndLba);
+    }
 
+    /// <summary>Gets the range of a list of bins, ordered by sector, that overlap the visible sectors</summary>
+    /// <returns>First bin and the one after the last</returns>
+    (int first, int end) VisibleRange(int count, Func<int, ulong> firstLba, Func<int, ulong> endLba)
+    {
         // First bin that ends after the start of the view
-        int low = 0, high = bins.Length;
+        int low = 0, high = count;
 
         while(low < high)
         {
             int middle = low + (high - low) / 2;
 
-            if(bins[middle].EndLba <= _viewFirst)
+            if(endLba(middle) <= _viewFirst)
                 low = middle + 1;
             else
                 high = middle;
@@ -796,19 +801,31 @@ public sealed class DpmPlot : Control
         int first = low;
 
         // First bin that starts at or after the end of the view
-        high = bins.Length;
+        high = count;
 
         while(low < high)
         {
             int middle = low + (high - low) / 2;
 
-            if(bins[middle].FirstLba < _viewLast)
+            if(firstLba(middle) < _viewLast)
                 low = middle + 1;
             else
                 high = middle;
         }
 
         return (first, low);
+    }
+
+    /// <summary>Middle sector of a bin</summary>
+    static double Middle(DpmBin bin)
+    {
+        return (bin.FirstLba + bin.EndLba) / 2.0;
+    }
+
+    /// <summary>Density in degrees per sector converted to the unit shown</summary>
+    double Density(double degreesPerSector)
+    {
+        return DensityUnit == DpmDensityUnit.SectorsPerTurn ? 360.0 / degreesPerSector : degreesPerSector;
     }
 
     /// <summary>Value a panel plots for a bin, NaN if it has none</summary>
@@ -899,11 +916,12 @@ public sealed class DpmPlot : Control
             {
                 case DpmPlotPanel.Density:
                     DrawSeries(context,
-                               analysis,
                                bounds,
                                first,
                                end,
-                               bin => DensityUnit == DpmDensityUnit.SectorsPerTurn ? 360.0 / bin.Fit : bin.Fit,
+                               i => Middle(analysis.Bins[i]),
+                               i => analysis.Bins[i].Layer,
+                               i => Density(analysis.Bins[i].Fit),
                                panel.Low,
                                panel.High,
                                palette.FitPen);
@@ -920,11 +938,12 @@ public sealed class DpmPlot : Control
             }
 
             DrawSeries(context,
-                       analysis,
                        bounds,
                        first,
                        end,
-                       bin => Value(panel.Kind, bin),
+                       i => Middle(analysis.Bins[i]),
+                       i => analysis.Bins[i].Layer,
+                       i => Value(panel.Kind, analysis.Bins[i]),
                        panel.Low,
                        panel.High,
                        palette.SeriesPen);
@@ -1211,8 +1230,18 @@ public sealed class DpmPlot : Control
     ///     The line breaks at layer changes and at bins without value. With more bins than pixels every pixel column is
     ///     drawn from its lowest to its highest value.
     /// </remarks>
-    void DrawSeries(DrawingContext     context, DpmAnalysisResult analysis, Rect bounds, int first, int end,
-                    Func<DpmBin, double> value, double low, double high, IPen pen)
+    /// <param name="context">Drawing context</param>
+    /// <param name="bounds">Panel</param>
+    /// <param name="first">First bin in view</param>
+    /// <param name="end">Bin after the last one in view</param>
+    /// <param name="middle">Middle sector of a bin</param>
+    /// <param name="segment">Layer or segment of a bin, the line breaks when it changes</param>
+    /// <param name="value">Value of a bin, NaN if none</param>
+    /// <param name="low">Lowest value in view</param>
+    /// <param name="high">Highest value in view</param>
+    /// <param name="pen">Pen</param>
+    void DrawSeries(DrawingContext   context, Rect bounds, int first, int end, Func<int, double> middle,
+                    Func<int, int>   segment, Func<int, double> value, double low, double high, IPen pen)
     {
         if(end <= first) return;
 
@@ -1276,8 +1305,7 @@ public sealed class DpmPlot : Control
 
             for(int i = first; i < end; i++)
             {
-                DpmBin bin = analysis.Bins[i];
-                double v   = value(bin);
+                double v = value(i);
 
                 if(double.IsNaN(v) || double.IsInfinity(v))
                 {
@@ -1286,13 +1314,13 @@ public sealed class DpmPlot : Control
                     continue;
                 }
 
-                if(bin.Layer != layer)
+                if(segment(i) != layer)
                 {
                     Break();
-                    layer = bin.Layer;
+                    layer = segment(i);
                 }
 
-                double x = SectorToX((bin.FirstLba + bin.EndLba) / 2.0, bounds);
+                double x = SectorToX(middle(i), bounds);
 
                 if(!dense)
                 {
