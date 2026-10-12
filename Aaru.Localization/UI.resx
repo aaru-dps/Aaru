@@ -6178,4 +6178,7 @@ Do you want to continue?</value>
     <data name="ButtonLabel_Save_DPM_graph_as_PNG" xml:space="preserve">
         <value>Save whole graph as PNG…</value>
     </data>
+    <data name="ButtonLabel_Save_DPM_view_as_PNG" xml:space="preserve">
+        <value>Save view as PNG…</value>
+    </data>
 </root>

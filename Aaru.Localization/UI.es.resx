@@ -6091,4 +6091,7 @@ Probadores:
     <data name="ButtonLabel_Save_DPM_graph_as_PNG" xml:space="preserve">
         <value>Guardar gráfico completo como PNG…</value>
     </data>
+    <data name="ButtonLabel_Save_DPM_view_as_PNG" xml:space="preserve">
+        <value>Guardar vista como PNG…</value>
+    </data>
 </root>

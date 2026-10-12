@@ -49,6 +49,8 @@ using Aaru.Gui.Models;
 using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.Views.Windows;
 using Aaru.Localization;
+using Avalonia;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -116,6 +118,7 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
         CompareCommand         = new AsyncRelayCommand(CompareAsync);
         ClearComparisonCommand = new RelayCommand(ClearComparison);
         SaveGraphCommand       = new AsyncRelayCommand(SaveGraphAsync);
+        SaveViewCommand        = new AsyncRelayCommand(SaveViewAsync);
 
         Summary = new ObservableCollection<DpmSummaryModel>(DpmInfoViewModel.BuildSummary(analysis));
 
@@ -166,6 +169,7 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
     public ICommand                                  CompareCommand         { get; }
     public ICommand                                  ClearComparisonCommand { get; }
     public ICommand                                  SaveGraphCommand       { get; }
+    public ICommand                                  SaveViewCommand        { get; }
     public bool                                      IsComparing            => Comparison.HasValue;
 
     partial void OnSelectedDifferenceChanged(DpmBandModel value)
@@ -214,6 +218,33 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
                 await Task.Run(() => DpmGraph.WriteComparison(comparison, path, ImageName, ComparisonName));
             else
                 await Task.Run(() => DpmGraph.Write(Dpm, path, ImageName));
+        }
+        catch(Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+            await ShowErrorAsync(UI.Error_writing_DPM_graph);
+        }
+    }
+
+    /// <summary>Saves the graph as shown, with its current zoom</summary>
+    async Task SaveViewAsync()
+    {
+        string path = await AskSavePathAsync(UI.ButtonLabel_Save_DPM_view_as_PNG, "png", "PNG");
+
+        if(path is null) return;
+
+        try
+        {
+            DpmPlot plot    = _window.Plot;
+            double  scaling = _window.RenderScaling;
+
+            var size = new PixelSize(Math.Max(1, (int)(plot.Bounds.Width  * scaling)),
+                                     Math.Max(1, (int)(plot.Bounds.Height * scaling)));
+
+            using var bitmap = new RenderTargetBitmap(size, new Vector(96 * scaling, 96 * scaling));
+
+            bitmap.Render(plot);
+            bitmap.Save(path, new PngBitmapEncoderOptions());
         }
         catch(Exception ex)
         {

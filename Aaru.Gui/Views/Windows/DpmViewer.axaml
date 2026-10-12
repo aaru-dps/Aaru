@@ -124,6 +124,8 @@
                     <MenuFlyout Placement="BottomEdgeAlignedLeft">
                         <MenuItem Header="{x:Static localization:UI.ButtonLabel_Save_DPM_graph_as_PNG}"
                                   Command="{Binding SaveGraphCommand, Mode=OneWay}" />
+                        <MenuItem Header="{x:Static localization:UI.ButtonLabel_Save_DPM_view_as_PNG}"
+                                  Command="{Binding SaveViewCommand, Mode=OneWay}" />
                     </MenuFlyout>
                 </DropDownButton.Flyout>
             </DropDownButton>
