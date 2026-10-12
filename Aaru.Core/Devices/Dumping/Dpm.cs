@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Diagnostics;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Devices.Dpm;
@@ -42,9 +43,9 @@ namespace Aaru.Core.Devices.Dumping;
 partial class Dump
 {
     /// <summary>DPM measurement in progress, so it can be aborted</summary>
-    DpmMeasurement _dpmMeasurement;
+    DpmMeasurement     _dpmMeasurement;
     /// <summary>Whether the DPM phase ran, even if it failed</summary>
-    bool _dpmRan;
+    bool               _dpmRan;
     /// <summary>Time spent in the DPM phase</summary>
     readonly Stopwatch _dpmStopwatch = new();
 
@@ -64,6 +65,16 @@ partial class Dump
         if(_dev is Aaru.Devices.Remote.Device)
         {
             UpdateStatus?.Invoke(Localization.Core.DPM_not_measured_on_remote_devices);
+
+            return;
+        }
+
+        // A resumed image keeps the DPM measured by the previous run, measuring it again only takes time
+        if(_doResume                                                                   &&
+           output.ReadDpm(out DataPositionMeasurement existing) == ErrorNumber.NoError &&
+           Aaru.CommonTypes.Structs.Dpm.Validate(existing))
+        {
+            UpdateStatus?.Invoke(Localization.Core.DPM_already_in_resumed_image_not_measuring_again);
 
             return;
         }
@@ -93,14 +104,16 @@ partial class Dump
 
             if(!output.SetDpm(dpm.Value))
             {
-                ErrorMessage?.Invoke(string.Format(Localization.Core.Error_0_writing_DPM_to_image, output.ErrorMessage));
+                ErrorMessage?.Invoke(string.Format(Localization.Core.Error_0_writing_DPM_to_image,
+                                                   output.ErrorMessage));
 
                 return;
             }
 
             DpmSidecar.Write(dpm.Value, _outputPrefix);
 
-            UpdateStatus?.Invoke(string.Format(Localization.Core.Measured_DPM_with_0_entries, dpm.Value.Entries.Length));
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Measured_DPM_with_0_entries,
+                                               dpm.Value.Entries.Length));
         }
         finally
         {

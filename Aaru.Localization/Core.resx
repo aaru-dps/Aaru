@@ -3821,4 +3821,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="DPM_calibration_failed_retrying_at_0x" xml:space="preserve">
         <value>[olive]Disc rotation calibration failed at this speed, retrying at [teal]{0}x[/].[/]</value>
     </data>
+    <data name="DPM_already_in_resumed_image_not_measuring_again" xml:space="preserve">
+        <value>[olive]The resumed image already has a Data Position Measurement, not measuring it again.[/]</value>
+    </data>
 </root>

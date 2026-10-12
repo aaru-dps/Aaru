@@ -3668,4 +3668,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="DPM_calibration_failed_retrying_at_0x" xml:space="preserve">
         <value>[olive]La calibración de la rotación del disco falló a esta velocidad, reintentando a [teal]{0}x[/].[/]</value>
     </data>
+    <data name="DPM_already_in_resumed_image_not_measuring_again" xml:space="preserve">
+        <value>[olive]La imagen reanudada ya tiene una Medición de Posición de Datos, no se vuelve a medir.[/]</value>
+    </data>
 </root>

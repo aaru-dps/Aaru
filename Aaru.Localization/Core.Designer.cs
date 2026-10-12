@@ -7498,5 +7498,11 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string DPM_already_in_resumed_image_not_measuring_again {
+            get {
+                return ResourceManager.GetString("DPM_already_in_resumed_image_not_measuring_again", resourceCulture);
+            }
+        }
+        
     }
 }
