@@ -446,7 +446,8 @@ public sealed partial class Chd
             _isCdrom   = false;
             _isHdd     = false;
             _isGdrom   = false;
-            _swapAudio     = false;
+            // CD audio is stored big-endian, except in legacy GD-ROM images
+            _swapAudio     = true;
             _tracks        = new Dictionary<uint, Track>();
             _trackMappings = new Dictionary<uint, TrackMapping>();
 
@@ -950,7 +951,7 @@ public sealed partial class Chd
 
                     // "CHGT"
                     case GDROM_OLD_METADATA:
-                        _swapAudio = true;
+                        _swapAudio = false;
                         goto case GDROM_METADATA;
 
                     // "CHGD"
