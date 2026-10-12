@@ -656,6 +656,10 @@ partial class Dump
                         _mediaGraph?.PaintSectorGood(badSector);
                         sectorsNotEvenPartial.Remove(badSector);
                         recovered = true;
+
+                        UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_sector_0_in_pass_1,
+                                                           badSector,
+                                                           pass));
                     }
 
                     if(!recovered)
