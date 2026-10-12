@@ -532,10 +532,10 @@ public sealed partial class Chd
             // Copy sync header
             Array.Copy(_cdSyncHeader, 0, dest, i * CD_FRAME_SIZE, 12);
 
-            // Reconstruct ECC for this sector
+            // Regenerate only the P/Q ECC, EDC was stored as-is
             var sectorData = new byte[CD_MAX_SECTOR_DATA];
             Array.Copy(dest, i * CD_FRAME_SIZE, sectorData, 0, CD_MAX_SECTOR_DATA);
-            _sectorBuilder?.ReconstructEcc(ref sectorData, TrackType.CdMode1);
+            _sectorBuilder?.GenerateEcc(ref sectorData);
             Array.Copy(sectorData, 0, dest, i * CD_FRAME_SIZE, CD_MAX_SECTOR_DATA);
         }
 

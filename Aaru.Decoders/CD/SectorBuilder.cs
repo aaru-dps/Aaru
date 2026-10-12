@@ -197,6 +197,19 @@ public class SectorBuilder
         //
     }
 
+    /// <summary>
+    ///     Regenerates only the P and Q ECC of a full 2352-byte sector, leaving EDC and all other bytes untouched. For
+    ///     mode 2 sectors the address is treated as zeroes, as the standard requires.
+    /// </summary>
+    /// <param name="sector">Full 2352-byte sector</param>
+    public void GenerateEcc(ref byte[] sector)
+    {
+        if(sector[0x00F] == 0x02)
+            EccWriteSector(new byte[4], sector, ref sector, 0, 0x10, 0x81C);
+        else
+            EccWriteSector(sector, sector, ref sector, 0xC, 0x10, 0x81C);
+    }
+
     void EccWriteSector(byte[] address, byte[] data, ref byte[] ecc, int addressOffset, int dataOffset, int eccOffset)
     {
         WriteEcc(address, data, 86, 24, 2,  86, ref ecc, addressOffset, dataOffset, eccOffset);        // P
