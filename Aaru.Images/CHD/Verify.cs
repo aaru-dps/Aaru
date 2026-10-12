@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Images;
 
@@ -44,38 +45,25 @@ public sealed partial class Chd
     /// <inheritdoc />
     public bool? VerifyMediaImage()
     {
-        byte[] calculated;
+        if(_expectedChecksum is null) return null;
 
-        if(_mapVersion >= 3)
+        // Checksums only cover the logical size, not the padding of the last hunk
+        IChecksum ctx       = _mapVersion >= 3 ? new Sha1Context() : new Md5Context();
+        ulong     remaining = _imageInfo.ImageSize;
+
+        for(uint i = 0; i < _totalHunks && remaining > 0; i++)
         {
-            var sha1Ctx = new Sha1Context();
+            ErrorNumber errno = GetHunk(i, out byte[] buffer);
 
-            for(uint i = 0; i < _totalHunks; i++)
-            {
-                ErrorNumber errno = GetHunk(i, out byte[] buffer);
+            if(errno != ErrorNumber.NoError) return null;
 
-                if(errno != ErrorNumber.NoError) return null;
+            var length = (int)Math.Min((ulong)buffer.Length, remaining);
 
-                sha1Ctx.Update(buffer);
-            }
-
-            calculated = sha1Ctx.Final();
+            ctx.Update(length == buffer.Length ? buffer : buffer[..length]);
+            remaining -= (ulong)length;
         }
-        else
-        {
-            var md5Ctx = new Md5Context();
 
-            for(uint i = 0; i < _totalHunks; i++)
-            {
-                ErrorNumber errno = GetHunk(i, out byte[] buffer);
-
-                if(errno != ErrorNumber.NoError) return null;
-
-                md5Ctx.Update(buffer);
-            }
-
-            calculated = md5Ctx.Final();
-        }
+        byte[] calculated = ctx.Final();
 
         return _expectedChecksum.SequenceEqual(calculated);
     }

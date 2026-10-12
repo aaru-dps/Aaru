@@ -142,6 +142,7 @@ public sealed partial class Chd
                 _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
                 _imageInfo.SectorSize        = 512;
                 _imageInfo.Version           = "1";
+                _expectedChecksum            = hdrV1.md5;
                 _imageInfo.ImageSize         = _imageInfo.SectorSize * hdrV1.hunksize * hdrV1.totalhunks;
 
                 _totalHunks     = hdrV1.totalhunks;
@@ -220,6 +221,7 @@ public sealed partial class Chd
                 _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
                 _imageInfo.SectorSize        = hdrV2.seclen;
                 _imageInfo.Version           = "2";
+                _expectedChecksum            = hdrV2.md5;
                 _imageInfo.ImageSize         = _imageInfo.SectorSize * hdrV2.hunksize * hdrV2.totalhunks;
 
                 _totalHunks     = hdrV2.totalhunks;
@@ -282,6 +284,7 @@ public sealed partial class Chd
 
                 _imageInfo.ImageSize = hdrV3.logicalbytes;
                 _imageInfo.Version   = "3";
+                _expectedChecksum    = hdrV3.sha1;
 
                 _totalHunks     = hdrV3.totalhunks;
                 _bytesPerHunk   = hdrV3.hunkbytes;
@@ -332,6 +335,7 @@ public sealed partial class Chd
 
                 _imageInfo.ImageSize = hdrV4.logicalbytes;
                 _imageInfo.Version   = "4";
+                _expectedChecksum    = hdrV4.rawsha1;
 
                 _totalHunks     = hdrV4.totalhunks;
                 _bytesPerHunk   = hdrV4.hunkbytes;
@@ -431,6 +435,7 @@ public sealed partial class Chd
 
                 _imageInfo.ImageSize = hdrV5.logicalbytes;
                 _imageInfo.Version   = "5";
+                _expectedChecksum    = hdrV5.rawsha1;
 
                 break;
             }
