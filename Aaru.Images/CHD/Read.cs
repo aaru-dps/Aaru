@@ -1217,64 +1217,52 @@ public sealed partial class Chd
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                 }
 
-                switch(aaruTrack.Type)
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+
+                List<SectorTagType> trackTags = [];
+
+                if(aaruTrack.Type != TrackType.Audio)
                 {
-                    case TrackType.CdMode1:
-                    case TrackType.CdMode2Form1:
-                        if(aaruTrack.RawBytesPerSector == 2352)
-                        {
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                    switch(aaruTrack.RawBytesPerSector)
+                    {
+                        case 2352 when aaruTrack.Type == TrackType.CdMode1:
+                            trackTags.AddRange([
+                                                   SectorTagType.CdSectorSync, SectorTagType.CdSectorHeader,
+                                                   SectorTagType.CdSectorEdc, SectorTagType.CdSectorEcc,
+                                                   SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ
+                                               ]);
 
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            break;
+                        case 2352:
+                            trackTags.AddRange([
+                                                   SectorTagType.CdSectorSync, SectorTagType.CdSectorHeader,
+                                                   SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorEdc
+                                               ]);
 
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(aaruTrack.Type != TrackType.CdMode2Form2)
+                            {
+                                trackTags.AddRange([
+                                                       SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP,
+                                                       SectorTagType.CdSectorEccQ
+                                                   ]);
+                            }
 
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                            break;
+                        case 2336:
+                            trackTags.AddRange([
+                                                   SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorEdc,
+                                                   SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP,
+                                                   SectorTagType.CdSectorEccQ
+                                               ]);
 
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
-
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
-
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
-                        }
-
-                        break;
-                    case TrackType.CdMode2Form2:
-                        if(aaruTrack.RawBytesPerSector == 2352)
-                        {
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
-
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
-                        }
-
-                        break;
-                    case TrackType.CdMode2Formless:
-                        if(aaruTrack.RawBytesPerSector == 2352)
-                        {
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                        }
-
-                        break;
+                            break;
+                    }
                 }
+
+                foreach(SectorTagType trackTag in trackTags.Where(trackTag => !_imageInfo.ReadableSectorTags
+                                                                                         .Contains(trackTag)))
+                    _imageInfo.ReadableSectorTags.Add(trackTag);
 
                 if(aaruTrack.BytesPerSector > _imageInfo.SectorSize)
                     _imageInfo.SectorSize = (uint)aaruTrack.BytesPerSector;
@@ -1451,268 +1439,116 @@ public sealed partial class Chd
 
         if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        Track track = GetTrack(sectorAddress);
-
-        uint sectorSize;
-
-        if(!_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+        // CHD does not store track flags, so they are inferred from the type of the track whose number is given
+        if(tag == SectorTagType.CdTrackFlags)
         {
-            sectorSize = (uint)track.RawBytesPerSector + (track.SubchannelType != TrackSubchannelType.None ? 96u : 0u);
+            if(!_tracks.TryGetValue((uint)sectorAddress, out Track flagsTrack)) return ErrorNumber.SectorNotFound;
 
-            ulong hunkNo = sectorAddress                   / _sectorsPerHunk;
-            ulong secOff = sectorAddress % _sectorsPerHunk * sectorSize;
-
-            ErrorNumber errno = GetHunk(hunkNo, out byte[] hunk);
-
-            if(errno != ErrorNumber.NoError) return errno;
-
-            sector = new byte[sectorSize];
-            Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
-
-            if(_sectorCache.Count >= _maxSectorCache) _sectorCache.Clear();
-
-            _sectorCache.Add(sectorAddress, sector);
-        }
-
-        if(_isHdd)
-        {
-            buffer = sector;
+            buffer = [(byte)(flagsTrack.Type == TrackType.Audio ? 0 : CdFlags.DataTrack)];
 
             return ErrorNumber.NoError;
         }
 
-        uint sectorOffset;
+        Track track = GetTrack(sectorAddress);
+
+        if(tag == SectorTagType.CdSectorSubchannel && track.SubchannelType == TrackSubchannelType.None)
+            return ErrorNumber.NoData;
+
+        ErrorNumber errno = GetCdSector(sectorAddress, track, out byte[] sector, out _);
+
+        if(errno != ErrorNumber.NoError) return errno;
 
         if(tag == SectorTagType.CdSectorSubchannel)
         {
-            switch(track.SubchannelType)
-            {
-                case TrackSubchannelType.None:
-                    return ErrorNumber.NoData;
-                case TrackSubchannelType.RawInterleaved:
-                    sectorOffset = (uint)track.RawBytesPerSector;
-                    sectorSize   = 96;
+            buffer = new byte[96];
+            Array.Copy(sector, track.RawBytesPerSector, buffer, 0, 96);
 
-                    break;
-                default:
-                    return ErrorNumber.NotSupported;
-            }
+            if(track.SubchannelType == TrackSubchannelType.PackedInterleaved) buffer = Subchannel.Interleave(buffer);
+
+            return ErrorNumber.NoError;
         }
-        else
+
+        // Only data tracks stored with their sync and header, or with their subheader, carry any of these
+        if(track.Type == TrackType.Audio) return ErrorNumber.NoData;
+
+        int start;
+
+        switch(track.RawBytesPerSector)
         {
-            switch(track.Type)
-            {
-                case TrackType.CdMode1:
-                case TrackType.CdMode2Form1:
-                {
-                    if(track.RawBytesPerSector == 2352)
-                    {
-                        switch(tag)
-                        {
-                            case SectorTagType.CdSectorSync:
-                            {
-                                sectorOffset = 0;
-                                sectorSize   = 12;
+            case 2352:
+                start = 0;
 
-                                break;
-                            }
+                break;
+            case 2336:
+                start = -16;
 
-                            case SectorTagType.CdSectorHeader:
-                            {
-                                sectorOffset = 12;
-                                sectorSize   = 4;
-
-                                break;
-                            }
-
-                            case SectorTagType.CdSectorSubHeader:
-                                return ErrorNumber.NotSupported;
-                            case SectorTagType.CdSectorEcc:
-                            {
-                                sectorOffset = 2076;
-                                sectorSize   = 276;
-
-                                break;
-                            }
-
-                            case SectorTagType.CdSectorEccP:
-                            {
-                                sectorOffset = 2076;
-                                sectorSize   = 172;
-
-                                break;
-                            }
-
-                            case SectorTagType.CdSectorEccQ:
-                            {
-                                sectorOffset = 2248;
-                                sectorSize   = 104;
-
-                                break;
-                            }
-
-                            case SectorTagType.CdSectorEdc:
-                            {
-                                sectorOffset = 2064;
-                                sectorSize   = 4;
-
-                                break;
-                            }
-
-                            default:
-                                return ErrorNumber.NotSupported;
-                        }
-                    }
-                    else
-                        return ErrorNumber.NoData;
-
-                    break;
-                }
-
-                case TrackType.CdMode2Form2:
-                {
-                    if(track.RawBytesPerSector == 2352)
-                    {
-                        switch(tag)
-                        {
-                            case SectorTagType.CdSectorSync:
-                            {
-                                sectorOffset = 0;
-                                sectorSize   = 12;
-
-                                break;
-                            }
-
-                            case SectorTagType.CdSectorHeader:
-                            {
-                                sectorOffset = 12;
-                                sectorSize   = 4;
-
-                                break;
-                            }
-
-                            case SectorTagType.CdSectorSubHeader:
-                            {
-                                sectorOffset = 16;
-                                sectorSize   = 8;
-
-                                break;
-                            }
-
-                            case SectorTagType.CdSectorEdc:
-                            {
-                                sectorOffset = 2348;
-                                sectorSize   = 4;
-
-                                break;
-                            }
-
-                            default:
-                                return ErrorNumber.NotSupported;
-                        }
-                    }
-                    else
-                    {
-                        switch(tag)
-                        {
-                            case SectorTagType.CdSectorSync:
-                            case SectorTagType.CdSectorHeader:
-                            case SectorTagType.CdSectorEcc:
-                            case SectorTagType.CdSectorEccP:
-                            case SectorTagType.CdSectorEccQ:
-                                return ErrorNumber.NotSupported;
-                            case SectorTagType.CdSectorSubHeader:
-                            {
-                                sectorOffset = 0;
-                                sectorSize   = 8;
-
-                                break;
-                            }
-
-                            case SectorTagType.CdSectorEdc:
-                            {
-                                sectorOffset = 2332;
-                                sectorSize   = 4;
-
-                                break;
-                            }
-
-                            default:
-                                return ErrorNumber.NotSupported;
-                        }
-                    }
-
-                    break;
-                }
-
-                case TrackType.CdMode2Formless:
-                {
-                    if(track.RawBytesPerSector == 2352)
-                    {
-                        switch(tag)
-                        {
-                            case SectorTagType.CdSectorSync:
-                            case SectorTagType.CdSectorHeader:
-                            case SectorTagType.CdSectorEcc:
-                            case SectorTagType.CdSectorEccP:
-                            case SectorTagType.CdSectorEccQ:
-                                return ErrorNumber.NotSupported;
-                            case SectorTagType.CdSectorSubHeader:
-                            {
-                                sectorOffset = 0;
-                                sectorSize   = 8;
-
-                                break;
-                            }
-
-                            case SectorTagType.CdSectorEdc:
-                            {
-                                sectorOffset = 2332;
-                                sectorSize   = 4;
-
-                                break;
-                            }
-
-                            default:
-                                return ErrorNumber.NotSupported;
-                        }
-                    }
-                    else
-                        return ErrorNumber.NoData;
-
-                    break;
-                }
-
-                case TrackType.Audio:
-                    return ErrorNumber.NoData;
-                default:
-                    return ErrorNumber.NotImplemented;
-            }
+                break;
+            default:
+                return ErrorNumber.NoData;
         }
 
-        buffer = new byte[sectorSize];
+        bool isMode2 = track.Type != TrackType.CdMode1;
 
-        if(track.Type == TrackType.Audio && _swapAudio)
+        bool isForm2 = track.Type switch
+                       {
+                           TrackType.CdMode2Form2    => true,
+                           TrackType.CdMode2Formless => (sector[18 + start] & 0x20) == 0x20,
+                           _                         => false
+                       };
+
+        int offset;
+        int length;
+
+        switch(tag)
         {
-            for(var i = 0; i < 2352; i += 2)
-            {
-                buffer[i + 1] = sector[i];
-                buffer[i]     = sector[i + 1];
-            }
-        }
-        else
-            Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
+            case SectorTagType.CdSectorSync when start == 0:
+                offset = 0;
+                length = 12;
 
-        if(track.Type == TrackType.Audio && _swapAudio)
-        {
-            for(var i = 0; i < 2352; i += 2)
-            {
-                buffer[i + 1] = sector[i];
-                buffer[i]     = sector[i + 1];
-            }
+                break;
+            case SectorTagType.CdSectorHeader when start == 0:
+                offset = 12;
+                length = 4;
+
+                break;
+            case SectorTagType.CdSectorSubHeader when isMode2:
+                offset = 16;
+                length = 8;
+
+                break;
+            case SectorTagType.CdSectorEdc:
+                offset = !isMode2 ? 2064 : isForm2 ? 2348 : 2072;
+                length = 4;
+
+                break;
+            case SectorTagType.CdSectorEcc when !isForm2:
+                offset = 2076;
+                length = 276;
+
+                break;
+            case SectorTagType.CdSectorEccP when !isForm2:
+                offset = 2076;
+                length = 172;
+
+                break;
+            case SectorTagType.CdSectorEccQ when !isForm2:
+                offset = 2248;
+                length = 104;
+
+                break;
+            case SectorTagType.CdSectorSync:
+            case SectorTagType.CdSectorHeader:
+            case SectorTagType.CdSectorSubHeader:
+            case SectorTagType.CdSectorEcc:
+            case SectorTagType.CdSectorEccP:
+            case SectorTagType.CdSectorEccQ:
+                return ErrorNumber.NoData;
+            default:
+                return ErrorNumber.NotSupported;
         }
-        else
-            Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
+
+        buffer = new byte[length];
+        Array.Copy(sector, offset + start, buffer, 0, length);
 
         return ErrorNumber.NoError;
     }
@@ -1946,8 +1782,10 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        return _isHdd
-                   ? ErrorNumber.NotSupported
+        if(_isHdd) return ErrorNumber.NotSupported;
+
+        return tag == SectorTagType.CdTrackFlags
+                   ? ReadSectorTag(track, false, tag, out buffer)
                    : ReadSectorTag(GetAbsoluteSector(sectorAddress, track), false, tag, out buffer);
     }
 
