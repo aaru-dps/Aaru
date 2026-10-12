@@ -6067,4 +6067,25 @@ Probadores:
     <data name="DPM_select_row_to_zoom" xml:space="preserve">
         <value>Seleccione una fila para mostrarla en el gráfico.</value>
     </data>
+    <data name="Title_DPM_difference_from_0" xml:space="preserve">
+        <value>Diferencia con {0}, %</value>
+    </data>
+    <data name="DPM_hover_second_0_1" xml:space="preserve">
+        <value>{0}: {1}</value>
+    </data>
+    <data name="DPM_hover_difference_0" xml:space="preserve">
+        <value>{0:+0.00%;-0.00%;0.00%} respecto a la otra imagen</value>
+    </data>
+    <data name="ButtonLabel_Compare_with_image" xml:space="preserve">
+        <value>Comparar con imagen…</value>
+    </data>
+    <data name="ButtonLabel_Clear_comparison" xml:space="preserve">
+        <value>Quitar comparación</value>
+    </data>
+    <data name="DPM_compared_with_0" xml:space="preserve">
+        <value>Comparado con {0}</value>
+    </data>
+    <data name="Title_DPM_differences" xml:space="preserve">
+        <value>Diferencias</value>
+    </data>
 </root>

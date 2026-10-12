@@ -31,21 +31,44 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Core;
 using Aaru.Core.Image;
 using Aaru.Gui.Controls;
 using Aaru.Gui.Models;
 using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.Views.Windows;
 using Aaru.Localization;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
+using Sentry;
 
 namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed partial class DpmViewerViewModel : ViewModelBase
 {
+    readonly DpmViewer _window;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsComparing))]
+    DpmComparisonResult? _comparison;
+    [ObservableProperty]
+    string _comparisonName;
+    [ObservableProperty]
+    string _comparisonVerdict;
+    [ObservableProperty]
+    DpmBandModel _selectedDifference;
     [ObservableProperty]
     string _hoverText;
     [ObservableProperty]
@@ -70,10 +93,12 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
 
     public DpmViewerViewModel()
     {
-        Summary      = [];
-        Layers       = [];
-        Calibrations = [];
-        Bands        = [];
+        Summary           = [];
+        Layers            = [];
+        Calibrations      = [];
+        Bands             = [];
+        ComparisonSummary = [];
+        Differences       = [];
     }
 
     public DpmViewerViewModel(DpmViewer window, DataPositionMeasurement dpm, DpmAnalysisResult analysis,
@@ -83,6 +108,12 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
         Analysis  = analysis;
         ImageName = imageName;
         Title     = string.Format(UI.Title_DPM_of_0, imageName);
+        _window   = window;
+
+        ComparisonSummary      = [];
+        Differences            = [];
+        CompareCommand         = new AsyncRelayCommand(CompareAsync);
+        ClearComparisonCommand = new RelayCommand(ClearComparison);
 
         Summary = new ObservableCollection<DpmSummaryModel>(DpmInfoViewModel.BuildSummary(analysis));
 
@@ -124,10 +155,177 @@ public sealed partial class DpmViewerViewModel : ViewModelBase
     /// <summary>Raised to show a range of sectors in the graph</summary>
     public event EventHandler<(double first, double last)> ZoomRequested;
 
-    public ObservableCollection<DpmSummaryModel>     Summary      { get; }
-    public ObservableCollection<DpmLayerModel>       Layers       { get; }
-    public ObservableCollection<DpmCalibrationModel> Calibrations { get; }
-    public ObservableCollection<DpmBandModel>        Bands        { get; }
+    public ObservableCollection<DpmSummaryModel>     Summary                { get; }
+    public ObservableCollection<DpmLayerModel>       Layers                 { get; }
+    public ObservableCollection<DpmCalibrationModel> Calibrations           { get; }
+    public ObservableCollection<DpmBandModel>        Bands                  { get; }
+    public ObservableCollection<DpmSummaryModel>     ComparisonSummary      { get; }
+    public ObservableCollection<DpmBandModel>        Differences            { get; }
+    public ICommand                                  CompareCommand         { get; }
+    public ICommand                                  ClearComparisonCommand { get; }
+    public bool                                      IsComparing            => Comparison.HasValue;
+
+    partial void OnSelectedDifferenceChanged(DpmBandModel value)
+    {
+        if(value != null) ShowRegion(value.FirstLba, value.LastLba);
+    }
+
+    /// <summary>Asks for another image and compares its DPM with this one</summary>
+    async Task CompareAsync()
+    {
+        IReadOnlyList<IStorageFile> result = await _window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title          = UI.Dialog_Choose_file_to_open,
+            AllowMultiple  = false,
+            FileTypeFilter = [FilePickerFileTypes.All]
+        });
+
+        if(result.Count != 1) return;
+
+        string path = result[0].Path.LocalPath;
+
+        (string error, DataPositionMeasurement? other) = await Task.Run(() => ReadOtherDpm(path));
+
+        if(error != null)
+        {
+            await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, error, ButtonEnum.Ok, Icon.Error)
+                                   .ShowWindowDialogAsync(_window);
+
+            return;
+        }
+
+        DpmComparisonResult comparison = DpmComparison.Compare(Dpm, other.Value);
+
+        ComparisonName = Path.GetFileName(path);
+        Comparison     = comparison;
+
+        FillComparison(comparison);
+    }
+
+    /// <summary>Opens an image and reads its DPM</summary>
+    /// <returns>An error message, or the DPM</returns>
+    static (string error, DataPositionMeasurement? dpm) ReadOtherDpm(string path)
+    {
+        try
+        {
+            IFilter filter = PluginRegister.Singleton.GetFilter(path);
+
+            if(filter == null) return (UI.Cannot_open_specified_file, null);
+
+            if(ImageFormat.Detect(filter) is not IMediaImage image) return (UI.Image_format_not_identified, null);
+
+            ErrorNumber opened = image.Open(filter);
+
+            if(opened != ErrorNumber.NoError) return (string.Format(UI.Error_0_opening_image_format, opened), null);
+
+            if(image is not IOpticalMediaImage optical ||
+               optical.ReadDpm(out DataPositionMeasurement dpm) != ErrorNumber.NoError)
+                return (UI.Image_has_no_DPM, null);
+
+            return (null, dpm);
+        }
+        catch(Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+
+            return (ex.Message, null);
+        }
+    }
+
+    void ClearComparison()
+    {
+        Comparison         = null;
+        ComparisonName     = null;
+        ComparisonVerdict  = null;
+        SelectedDifference = null;
+        ComparisonSummary.Clear();
+        Differences.Clear();
+    }
+
+    /// <summary>Fills the comparison pane, as the comparison of images does in the command line</summary>
+    void FillComparison(DpmComparisonResult comparison)
+    {
+        ComparisonSummary.Clear();
+        Differences.Clear();
+
+        void Add(string label, string value)
+        {
+            ComparisonSummary.Add(new DpmSummaryModel
+            {
+                Label = label,
+                Value = value
+            });
+        }
+
+        void Note(string text)
+        {
+            ComparisonSummary.Add(new DpmSummaryModel
+            {
+                Value = text
+            });
+        }
+
+        Note(string.Format(UI.DPM_compared_with_0, ComparisonName));
+
+        if(comparison.TimingUnitDiffers) Note(UI.DPM_timing_units_differ);
+
+        if(comparison.TrackPathDiffers) Note(UI.DPM_track_paths_differ);
+
+        if(comparison.LayersDiffer) Note(UI.DPM_layer_boundaries_differ);
+
+        if(comparison.SpeedDiffers) Note(UI.DPM_speeds_differ);
+
+        if(comparison.SpacingDiffers)
+            Note(string.Format(UI.DPM_spacings_differ_compared_every_0_sectors, comparison.Spacing));
+
+        ComparisonVerdict = comparison.Verdict switch
+                            {
+                                DpmComparisonVerdict.Match => UI.DPM_match_WithMarkup,
+                                DpmComparisonVerdict.Differ => string.Format(UI.DPM_differ_in_0_regions_WithMarkup,
+                                                                             comparison.Differences.Length),
+                                _ => UI.DPM_not_comparable_WithMarkup
+                            };
+
+        if(comparison.Verdict == DpmComparisonVerdict.NotComparable) return;
+
+        Add(UI.Title_DPM_compared_range,
+            string.Format(UI.DPM_sectors_0_to_1_every_2, comparison.FirstLba, comparison.LastLba, comparison.Spacing));
+
+        Add(UI.Title_DPM_bins, string.Format(UI.DPM_0_bins_1_not_measured, comparison.Bins, comparison.ExcludedBins));
+
+        string[] scales = new string[comparison.Scales.Length];
+
+        for(int i = 0; i < scales.Length; i++)
+        {
+            scales[i] = string.Format(UI.DPM_scale_0_1_ppm, comparison.Scales[i], (comparison.Scales[i] - 1.0) * 1e6);
+
+            if(scales.Length > 1) scales[i] = string.Format(UI.DPM_layer_0_1, i, scales[i]);
+        }
+
+        Add(UI.Title_DPM_calibration_scale, string.Join(", ", scales));
+        Add(UI.Title_DPM_noise,             string.Format(UI.DPM_noise_0_1, comparison.Noise1, comparison.Noise2));
+        Add(UI.Title_DPM_threshold,         comparison.Threshold.ToString("P2"));
+
+        Add(UI.Title_DPM_deviation,
+            string.Format(UI.DPM_deviation_0_1_2,
+                          comparison.MedianDeviation,
+                          comparison.Percentile95Deviation,
+                          comparison.MaximumDeviation));
+
+        Add(UI.Title_DPM_isolated_outliers, comparison.IsolatedOutliers.ToString());
+
+        foreach(DpmDifference difference in comparison.Differences)
+        {
+            Differences.Add(new DpmBandModel
+            {
+                FirstLba         = difference.FirstLba,
+                LastLba          = difference.LastLba,
+                Layer            = Aaru.CommonTypes.Structs.Dpm.LayerOf(Dpm, difference.FirstLba),
+                MeanDeviation    = difference.MeanDeviation.ToString("+0.00%;-0.00%"),
+                MaximumDeviation = difference.MaximumDeviation.ToString("+0.00%;-0.00%")
+            });
+        }
+    }
 
     partial void OnSelectedLayerChanged(DpmLayerModel value)
     {

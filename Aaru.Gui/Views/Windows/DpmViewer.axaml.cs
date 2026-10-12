@@ -78,7 +78,12 @@ public sealed partial class DpmViewer : Window
         vm.ViewText = string.Format(UI.DPM_view_0_to_1, (ulong)Plot.ViewFirst, (ulong)Plot.ViewLast);
 
         vm.HoverText = Plot.HoveredBin >= 0
-                           ? string.Join(" · ", DpmPlot.Describe(analysis, Plot.HoveredBin, Plot.HoveredSector))
+                           ? string.Join(" · ",
+                                         DpmPlot.Describe(analysis,
+                                                          Plot.HoveredBin,
+                                                          Plot.HoveredSector,
+                                                          vm.Comparison ?? default,
+                                                          vm.ComparisonName))
                            : "";
     }
 }

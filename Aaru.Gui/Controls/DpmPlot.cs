@@ -55,6 +55,8 @@ public enum DpmPlotPanel
     Density,
     /// <summary>Deviation of every bin from the spiral fitted to its layer</summary>
     Deviation,
+    /// <summary>Difference of every bin from another DPM</summary>
+    Comparison,
     /// <summary>Rotation speed at every calibration</summary>
     Rpm,
     /// <summary>Status of every bin, as a strip of colours</summary>
@@ -101,6 +103,12 @@ public sealed class DpmPlot : Control
     public static readonly StyledProperty<bool> ShowStatusProperty =
         AvaloniaProperty.Register<DpmPlot, bool>(nameof(ShowStatus), true);
 
+    public static readonly StyledProperty<DpmComparisonResult?> ComparisonProperty =
+        AvaloniaProperty.Register<DpmPlot, DpmComparisonResult?>(nameof(Comparison));
+
+    public static readonly StyledProperty<string> ComparisonNameProperty =
+        AvaloniaProperty.Register<DpmPlot, string>(nameof(ComparisonName));
+
     public static readonly StyledProperty<DpmAnalysisResult?> AnalysisProperty =
         AvaloniaProperty.Register<DpmPlot, DpmAnalysisResult?>(nameof(Analysis));
 
@@ -141,7 +149,7 @@ public sealed class DpmPlot : Control
 
     static DpmPlot()
     {
-        AffectsRender<DpmPlot>(AnalysisProperty, DensityUnitProperty);
+        AffectsRender<DpmPlot>(AnalysisProperty, DensityUnitProperty, ComparisonProperty, ComparisonNameProperty);
         FocusableProperty.OverrideDefaultValue<DpmPlot>(true);
     }
 
@@ -155,6 +163,7 @@ public sealed class DpmPlot : Control
         [
             new PanelState(DpmPlotPanel.Density,   3),
             new PanelState(DpmPlotPanel.Deviation, 2),
+            new PanelState(DpmPlotPanel.Comparison, 2),
             new PanelState(DpmPlotPanel.Rpm,       1.2),
             new PanelState(DpmPlotPanel.Status,  0, STRIP_HEIGHT)
         ];
@@ -164,6 +173,20 @@ public sealed class DpmPlot : Control
     {
         get => GetValue(AnalysisProperty);
         set => SetValue(AnalysisProperty, value);
+    }
+
+    /// <summary>Comparison with another DPM, drawn over this one</summary>
+    public DpmComparisonResult? Comparison
+    {
+        get => GetValue(ComparisonProperty);
+        set => SetValue(ComparisonProperty, value);
+    }
+
+    /// <summary>Name of the image compared with</summary>
+    public string ComparisonName
+    {
+        get => GetValue(ComparisonNameProperty);
+        set => SetValue(ComparisonNameProperty, value);
     }
 
     /// <summary>Unit of the density</summary>
@@ -220,7 +243,10 @@ public sealed class DpmPlot : Control
     /// <param name="analysis">Analysis of the DPM</param>
     /// <param name="index">Bin</param>
     /// <param name="sector">Sector inside the bin</param>
-    public static List<string> Describe(DpmAnalysisResult analysis, int index, double sector)
+    /// <param name="comparison">Comparison with another DPM, if any</param>
+    /// <param name="comparisonName">Name of the image compared with</param>
+    public static List<string> Describe(DpmAnalysisResult analysis, int index, double sector,
+                                        DpmComparisonResult comparison = default, string comparisonName = null)
     {
         DpmBin bin = analysis.Bins[index];
 
@@ -238,6 +264,26 @@ public sealed class DpmPlot : Control
 
         if(NearestCalibration(analysis, sector) is {} calibration)
             lines.Add(string.Format(UI.DPM_hover_rpm_0_1, calibration.Rpm, calibration.Lba));
+
+        if(comparison.Grid is not { Length: > 0 }) return lines;
+
+        DpmComparisonResult compared = comparison;
+
+        int gridBin = Array.FindIndex(compared.Grid, b => b.FirstLba <= sector && b.EndLba > sector);
+
+        if(gridBin < 0) return lines;
+
+        double second = SecondDensity(compared, compared.Grid[gridBin]);
+
+        if(!double.IsNaN(second))
+        {
+            lines.Add(string.Format(UI.DPM_hover_second_0_1,
+                                    comparisonName,
+                                    string.Format(UI.DPM_hover_density_0, second)));
+        }
+
+        if(compared.Grid[gridBin].Valid)
+            lines.Add(string.Format(UI.DPM_hover_difference_0, compared.Grid[gridBin].Deviation));
 
         return lines;
     }
@@ -329,6 +375,8 @@ public sealed class DpmPlot : Control
 
         if(change.Property == AnalysisProperty)
             ResetView();
+        else if(change.Property == ComparisonProperty)
+            FitValues();
         else if(change.Property == DensityUnitProperty)
         {
             if(_panels.Find(static p => p.Kind == DpmPlotPanel.Density) is {} density) density.AutoY = true;
@@ -368,7 +416,13 @@ public sealed class DpmPlot : Control
     /// <summary>Whether a panel is drawn, it must be visible and have data</summary>
     bool Shown(PanelState panel)
     {
-        return panel.Visible && (panel.Kind != DpmPlotPanel.Rpm || Analysis?.Calibrations.Length > 0);
+        return panel.Visible &&
+               panel.Kind switch
+               {
+                   DpmPlotPanel.Rpm        => Analysis?.Calibrations.Length > 0,
+                   DpmPlotPanel.Comparison => Comparison?.Grid.Length > 0,
+                   _                       => true
+               };
     }
 
     /// <summary>Fits the vertical range of every panel to the bins in view</summary>
@@ -717,7 +771,11 @@ public sealed class DpmPlot : Control
             context.DrawEllipse(palette.Surface, palette.SeriesPen, new Point(x, y), 4, 4);
         }
 
-        List<FormattedText> lines = Describe(analysis, _hoverBin, XToSector(hover.X))
+        List<FormattedText> lines = Describe(analysis,
+                                             _hoverBin,
+                                             XToSector(hover.X),
+                                             Comparison ?? default,
+                                             ComparisonName)
                                    .Select(line => Text(line, palette.PrimaryInk))
                                    .ToList();
 
@@ -851,6 +909,7 @@ public sealed class DpmPlot : Control
                                                : UI.Title_DPM_degrees_per_sector,
                    DpmPlotPanel.Deviation => UI.Title_DPM_deviation_from_spiral,
                    DpmPlotPanel.Rpm       => UI.Title_DPM_rotation_speed,
+                   DpmPlotPanel.Comparison => string.Format(UI.Title_DPM_difference_from_0, ComparisonName),
                    _                      => ""
                };
     }
@@ -902,11 +961,14 @@ public sealed class DpmPlot : Control
         {
             if(panel.Kind == DpmPlotPanel.Rpm)
                 AutoRangeRpm(panel, analysis);
+            else if(panel.Kind == DpmPlotPanel.Comparison)
+                AutoRangeComparison(panel);
             else
                 AutoRange(panel, analysis, first, end);
         }
 
-        using(context.PushClip(bounds)) DrawUnmeasured(context, palette, analysis, bounds, first, end);
+        if(panel.Kind != DpmPlotPanel.Comparison)
+            using(context.PushClip(bounds)) DrawUnmeasured(context, palette, analysis, bounds, first, end);
 
         DrawValueAxis(context, palette, panel);
 
@@ -935,24 +997,145 @@ public sealed class DpmPlot : Control
                     DrawCalibrations(context, palette, analysis, panel);
 
                     break;
+                case DpmPlotPanel.Comparison:
+                    DrawComparison(context, palette, panel);
+
+                    break;
             }
 
-            DrawSeries(context,
-                       bounds,
-                       first,
-                       end,
-                       i => Middle(analysis.Bins[i]),
-                       i => analysis.Bins[i].Layer,
-                       i => Value(panel.Kind, analysis.Bins[i]),
-                       panel.Low,
-                       panel.High,
-                       palette.SeriesPen);
+            if(panel.Kind == DpmPlotPanel.Density) DrawSecondDensity(context, palette, panel);
+
+            if(panel.Kind != DpmPlotPanel.Comparison)
+            {
+                DrawSeries(context,
+                           bounds,
+                           first,
+                           end,
+                           i => Middle(analysis.Bins[i]),
+                           i => analysis.Bins[i].Layer,
+                           i => Value(panel.Kind, analysis.Bins[i]),
+                           panel.Low,
+                           panel.High,
+                           palette.SeriesPen);
+            }
         }
 
         context.DrawRectangle(null, palette.FramePen, bounds);
 
         FormattedText title = Text(PanelTitle(panel.Kind), palette.SecondaryInk);
         context.DrawText(title, new Point(bounds.Left + 6, bounds.Top + 4));
+    }
+
+    /// <summary>Visible range of the comparison grid</summary>
+    (int first, int end) VisibleGrid(DpmComparisonResult comparison)
+    {
+        return VisibleRange(comparison.Grid.Length, i => comparison.Grid[i].FirstLba, i => comparison.Grid[i].EndLba);
+    }
+
+    /// <summary>Density of the other DPM in a bin of the comparison grid, without its calibration error</summary>
+    static double SecondDensity(DpmComparisonResult comparison, DpmComparisonBin bin)
+    {
+        double scale = bin.Segment < comparison.Scales.Length ? comparison.Scales[bin.Segment] : double.NaN;
+
+        return bin.Density2 > 0 && scale > 0 ? bin.Density2 / scale : double.NaN;
+    }
+
+    /// <summary>Difference, in percent, of the other DPM in a bin of the comparison grid, NaN if not compared</summary>
+    static double Difference(DpmComparisonBin bin)
+    {
+        return bin.Valid ? bin.Deviation * 100 : double.NaN;
+    }
+
+    /// <summary>Fits the vertical range of the comparison panel to the bins in view and the threshold</summary>
+    void AutoRangeComparison(PanelState panel)
+    {
+        if(Comparison is not {} comparison) return;
+
+        (int first, int end) = VisibleGrid(comparison);
+
+        double limit = comparison.Threshold * 100;
+
+        for(int i = first; i < end; i++)
+        {
+            double value = Difference(comparison.Grid[i]);
+
+            if(!double.IsNaN(value)) limit = Math.Max(limit, Math.Abs(value));
+        }
+
+        limit = Math.Max(limit * 1.1, 0.01);
+
+        panel.Low  = -limit;
+        panel.High = limit;
+    }
+
+    /// <summary>Draws the density of the other DPM over this one</summary>
+    void DrawSecondDensity(DrawingContext context, Palette palette, PanelState panel)
+    {
+        if(Comparison is not {} comparison) return;
+
+        (int first, int end) = VisibleGrid(comparison);
+
+        DrawSeries(context,
+                   panel.Bounds,
+                   first,
+                   end,
+                   i => (comparison.Grid[i].FirstLba + comparison.Grid[i].EndLba) / 2.0,
+                   i => comparison.Grid[i].Segment,
+                   i => Density(SecondDensity(comparison, comparison.Grid[i])),
+                   panel.Low,
+                   panel.High,
+                   palette.SecondSeriesPen);
+
+        // Key of the second series, under the title
+        FormattedText name = Text(ComparisonName ?? "", palette.SecondaryInk);
+        var           top  = new Point(panel.Bounds.Left + 6, panel.Bounds.Top + 8 + name.Height);
+
+        context.DrawLine(palette.SecondSeriesPen,
+                         top + new Point(0,  name.Height / 2),
+                         top + new Point(16, name.Height / 2));
+        context.DrawText(name, top + new Point(22, 0));
+    }
+
+    /// <summary>Draws the difference of the other DPM, the threshold and the regions that differ</summary>
+    void DrawComparison(DrawingContext context, Palette palette, PanelState panel)
+    {
+        if(Comparison is not {} comparison) return;
+
+        Rect bounds = panel.Bounds;
+
+        foreach(DpmDifference difference in comparison.Differences)
+        {
+            if(difference.LastLba + 1 < _viewFirst || difference.FirstLba > _viewLast) continue;
+
+            double left  = SectorToX(difference.FirstLba,    bounds);
+            double right = SectorToX(difference.LastLba + 1, bounds);
+
+            context.FillRectangle(palette.Difference,
+                                  new Rect(left, bounds.Top, Math.Max(right - left, 2), bounds.Height));
+        }
+
+        double zero = ValueToY(0, panel.Low, panel.High, bounds);
+        context.DrawLine(palette.ZeroPen, new Point(bounds.Left, zero), new Point(bounds.Right, zero));
+
+        foreach(double threshold in new[] { comparison.Threshold * 100, -comparison.Threshold * 100 })
+        {
+            double y = ValueToY(threshold, panel.Low, panel.High, bounds);
+
+            context.DrawLine(palette.ThresholdPen, new Point(bounds.Left, y), new Point(bounds.Right, y));
+        }
+
+        (int first, int end) = VisibleGrid(comparison);
+
+        DrawSeries(context,
+                   bounds,
+                   first,
+                   end,
+                   i => (comparison.Grid[i].FirstLba + comparison.Grid[i].EndLba) / 2.0,
+                   i => comparison.Grid[i].Segment,
+                   i => Difference(comparison.Grid[i]),
+                   panel.Low,
+                   panel.High,
+                   palette.SecondSeriesPen);
     }
 
     /// <summary>Fits the vertical range of the rotation speed to the calibrations in view, or all of them</summary>
@@ -1435,6 +1618,8 @@ public sealed class DpmPlot : Control
             ZeroPen      = new ImmutablePen(MutedInk);
             ThresholdPen   = new ImmutablePen(SecondSeries, 1, new ImmutableDashStyle([4, 4], 0));
             CalibrationPen = new ImmutablePen(new ImmutableSolidColorBrush(Color.Parse(series), 0.5));
+            SecondSeriesPen = new ImmutablePen(SecondSeries, 1.5, null, PenLineCap.Round, PenLineJoin.Round);
+            Difference      = new ImmutableSolidColorBrush(Color.Parse(critical), 0.2);
             SurfacePen     = new ImmutablePen(Surface, 2);
         }
 
@@ -1460,6 +1645,8 @@ public sealed class DpmPlot : Control
         public IPen                     ZeroPen      { get; }
         public IPen                     ThresholdPen   { get; }
         public IPen                     CalibrationPen { get; }
+        public IPen                     SecondSeriesPen { get; }
+        public ImmutableSolidColorBrush Difference      { get; }
         public IPen                     SurfacePen     { get; }
     }
 }

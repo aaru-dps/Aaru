@@ -6154,4 +6154,25 @@ Do you want to continue?</value>
     <data name="DPM_select_row_to_zoom" xml:space="preserve">
         <value>Select a row to show it in the graph.</value>
     </data>
+    <data name="Title_DPM_difference_from_0" xml:space="preserve">
+        <value>Difference from {0}, %</value>
+    </data>
+    <data name="DPM_hover_second_0_1" xml:space="preserve">
+        <value>{0}: {1}</value>
+    </data>
+    <data name="DPM_hover_difference_0" xml:space="preserve">
+        <value>{0:+0.00%;-0.00%;0.00%} from the other image</value>
+    </data>
+    <data name="ButtonLabel_Compare_with_image" xml:space="preserve">
+        <value>Compare with image…</value>
+    </data>
+    <data name="ButtonLabel_Clear_comparison" xml:space="preserve">
+        <value>Clear comparison</value>
+    </data>
+    <data name="DPM_compared_with_0" xml:space="preserve">
+        <value>Compared with {0}</value>
+    </data>
+    <data name="Title_DPM_differences" xml:space="preserve">
+        <value>Differences</value>
+    </data>
 </root>
