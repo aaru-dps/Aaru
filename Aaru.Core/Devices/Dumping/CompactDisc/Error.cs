@@ -1087,6 +1087,8 @@ partial class Dump
                 break;
             }
 
+            if(_skipSafedisc && badSector is >= 800 and <= 10000) continue;
+
             UpdateProgress?.Invoke(forward
                                        ? string.Format(Localization.Core.Retrying_sector_0_subchannel_pass_1_forward,
                                                        badSector,
