@@ -31,7 +31,8 @@ public sealed partial class AaruFormat
                                                            OpticalImageCapabilities.CanStoreIndexes         |
                                                            OpticalImageCapabilities.CanStoreHiddenTracks    |
                                                            OpticalImageCapabilities.CanStoreNegativeSectors |
-                                                           OpticalImageCapabilities.CanStoreOverflowSectors;
+                                                           OpticalImageCapabilities.CanStoreOverflowSectors |
+                                                           OpticalImageCapabilities.CanStoreDpm;
 
     /// <inheritdoc />
 

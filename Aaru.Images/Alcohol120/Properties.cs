@@ -46,18 +46,19 @@ public sealed partial class Alcohol120
 #region IWritableOpticalImage Members
 
     /// <inheritdoc />
-    public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
-                                                           OpticalImageCapabilities.CanStoreDataTracks   |
-                                                           OpticalImageCapabilities.CanStoreSubchannelRw |
+    public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks    |
+                                                           OpticalImageCapabilities.CanStoreDataTracks     |
+                                                           OpticalImageCapabilities.CanStoreSubchannelRw   |
 
                                                            // TODO: Disabled until 6.0
                                                            //OpticalImageCapabilities.CanStoreSessions     |
-                                                           OpticalImageCapabilities.CanStoreIsrc       |
-                                                           OpticalImageCapabilities.CanStoreCdText     |
-                                                           OpticalImageCapabilities.CanStoreMcn        |
-                                                           OpticalImageCapabilities.CanStoreRawData    |
-                                                           OpticalImageCapabilities.CanStoreCookedData |
-                                                           OpticalImageCapabilities.CanStoreMultipleTracks;
+                                                           OpticalImageCapabilities.CanStoreIsrc           |
+                                                           OpticalImageCapabilities.CanStoreCdText         |
+                                                           OpticalImageCapabilities.CanStoreMcn            |
+                                                           OpticalImageCapabilities.CanStoreRawData        |
+                                                           OpticalImageCapabilities.CanStoreCookedData     |
+                                                           OpticalImageCapabilities.CanStoreMultipleTracks |
+                                                           OpticalImageCapabilities.CanStoreDpm;
 
     /// <inheritdoc />
 

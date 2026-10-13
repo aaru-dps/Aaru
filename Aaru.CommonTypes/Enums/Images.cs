@@ -549,7 +549,9 @@ public enum OpticalImageCapabilities : ulong
     /// <summary>Can store negative sectors (sectors before LBA 0)?</summary>
     CanStoreNegativeSectors = 0x20000,
     /// <summary>Can store overflow sectors (sectors after media reported size)?</summary>
-    CanStoreOverflowSectors = 0x40000
+    CanStoreOverflowSectors = 0x40000,
+    /// <summary>Can store the Data Position Measurement?</summary>
+    CanStoreDpm = 0x80000
 }
 
 /// <summary>Enumeration of linear memory device types</summary>
