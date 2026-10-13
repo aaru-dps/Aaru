@@ -284,6 +284,8 @@ public sealed partial class DpmMeasurement
     {
         elapsed = 0;
 
+        EvictIfReadAhead(s);
+
         if(!ReadBlock(s, out _, out _)) return 0;
 
         return ReadBlock(s + d, out elapsed, out long sincePrevious) ? sincePrevious : 0;
@@ -397,6 +399,24 @@ public sealed partial class DpmMeasurement
 
         // The head moved
         _at = uint.MaxValue;
+    }
+
+    /// <summary>
+    ///     Before reading <paramref name="lba" /> to put the head there, makes sure it isn't in what the drive read
+    ///     ahead of the last read, where it can't bypass the cache: it would come back from it without the head moving.
+    ///     Reads one sector just before that window, as drives keep only the last one, which is far cheaper than
+    ///     flushing the whole cache.
+    /// </summary>
+    void EvictIfReadAhead(uint lba)
+    {
+        uint ahead = ReadAheadFor(lba);
+
+        if(ahead is 0 or uint.MaxValue || lba < _lastGood || lba - _lastGood > ahead) return;
+
+        // Before the window when there is room, else past it: either way its own read-ahead can't reach lba
+        uint evict = lba > ahead + 1 ? lba - ahead - 1 : lba + 2 * ahead;
+
+        if(evict <= _lastLba) ReadBlock(evict, out _, out _);
     }
 
     /// <summary>Whether, right after reading <paramref name="s" />, the read of s + d comes from the medium</summary>

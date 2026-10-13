@@ -200,6 +200,11 @@ public sealed partial class DpmMeasurement
     int ChainReadTwice(uint lba, bool wantFirst, out double eFirst)
     {
         eFirst = 0;
+
+        // An anchor read must move the head, which a sector the drive read ahead won't. A timed read can't be helped
+        // this way, the extra read would be what it is timed from.
+        if(!wantFirst) EvictIfReadAhead(Block(lba));
+
         double e = TimedReadMs(Block(lba));
 
         // First good read after unreadable sectors: the drive has slowed, and timing at that speed with the old T could
@@ -220,11 +225,9 @@ public sealed partial class DpmMeasurement
         // rotation period. The read itself is the head reference for the next chained read.
         if(!_drive.BypassesCache(Block(lba)))
         {
-            if(e is -2.0)
-            {
-                _cacheHits++;
-                DefeatCache(lba);
-            }
+            // Flushing the whole cache would mean reading tens of megabytes of audio for every hit; the next anchor read
+            // evicts what the drive read ahead instead
+            if(e is -2.0) _cacheHits++;
 
             if(e < 0)
             {

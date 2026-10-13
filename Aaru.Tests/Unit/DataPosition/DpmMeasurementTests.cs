@@ -397,6 +397,48 @@ public class DpmMeasurementTests
         ShouldMatch(dpm.Value, drive, 0.005, 0.03);
     }
 
+    /// <summary>
+    ///     Re-measuring failed or outlying audio bins re-anchors on each one, often on the sector the previous one just
+    ///     read and the drive still has in its cache: that must not cost a whole cache flush, tens of megabytes of audio,
+    ///     every time.
+    /// </summary>
+    [Test]
+    public void AudioRemeasureIsQuick()
+    {
+        var medium = new DpmMedium
+        {
+            Kind      = DpmMediumKind.Cd,
+            LastLba   = 257327,
+            LayerEnds = []
+        };
+
+        double[] spiral = BuildSpiral(257328, 50, 1.2 / 75, 1.6e-6, [], [(2000, 6000), (11000, 13000)]);
+
+        // Noisy enough to leave bins to re-measure
+        var drive = new SimulatedDrive(medium, spiral, 50, 1, [], 3)
+        {
+            MissProbability = 0.05,
+            JunkProbability = 0.05,
+            AudioFrom       = 8000,
+            ReadAhead       = 32
+        };
+
+        var  measurement = new DpmMeasurement(drive);
+        bool remeasured  = false;
+        measurement.UpdateStatus += text => remeasured |= text.Contains("again");
+        measurement.Prepare(0).Should().BeTrue();
+
+        DataPositionMeasurement? dpm = measurement.Measure(0, 30000, 0);
+
+        dpm.Should().NotBeNull();
+        remeasured.Should().BeTrue();
+
+        // It took about three minutes when every re-anchor flushed the cache
+        (drive.Now / 1e9).Should().BeLessThan(60);
+
+        ShouldMatch(dpm.Value, drive, 0.005, 0.03);
+    }
+
     [Test]
     public void CompactDiscWithUnreadableRing()
     {
