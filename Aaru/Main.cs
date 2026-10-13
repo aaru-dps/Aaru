@@ -110,11 +110,16 @@ class MainClass
                 Log.Information("{Message:l}", formatted);
             };
 
-            AaruLogging.ErrorEvent   += Log.Error;
-            AaruLogging.VerboseEvent += Log.Verbose;
+            // The console sink parses each piece of text around a template hole as markup on its own, so a tag
+            // spanning a hole, as in "[aqua]{0}[/]", is malformed there. Format first and pass a template without holes
+            AaruLogging.ErrorEvent += static (format, objects) =>
+                Log.Error(SafeTemplate(SafeFormat(format, objects)));
+
+            AaruLogging.VerboseEvent += static (format, objects) =>
+                Log.Verbose(SafeTemplate(SafeFormat(format, objects)));
 
             AaruLogging.DebugEvent += static (module, format, objects) =>
-                Log.Debug($"[blue]({module})[/] {SafeFormat(format, objects)}");
+                Log.Debug(SafeTemplate($"[blue]({module})[/] {SafeFormat(format, objects)}"));
 
             AaruLogging.WriteExceptionEvent += static (ex, message, objects) =>
             {
@@ -560,6 +565,28 @@ class MainClass
         {
             return format;
         }
+    }
+
+    /// <summary>
+    ///     Turns an already formatted string into a Serilog message template with no holes, escaping its markup when it
+    ///     is not valid, as the console sink would otherwise drop the line, and escaping its braces.
+    /// </summary>
+    /// <param name="text">Formatted string</param>
+    /// <returns>Message template that renders as <paramref name="text" /></returns>
+    static string SafeTemplate(string text)
+    {
+        if(string.IsNullOrEmpty(text)) return text;
+
+        try
+        {
+            _ = new Markup(text);
+        }
+        catch(InvalidOperationException)
+        {
+            text = Markup.Escape(text);
+        }
+
+        return text.Replace("{", "{{").Replace("}", "}}");
     }
 
     /// <summary>
