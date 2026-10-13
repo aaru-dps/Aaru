@@ -631,6 +631,8 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
         if(_resume == null || _resume.NextBlock <= _resume.LastBlock || _resume.BadBlocks.Count != 0 && !_resume.Tape)
             return;
 
+        if(MeasureDpm && Dump.DumpLacksDpm(SelectedPlugin?.Plugin, Destination)) return;
+
         await MessageBoxManager
              .GetMessageBoxStandard(UI.Title_Warning,
                                     UI.Media_already_dumped_correctly_please_choose_another_destination,

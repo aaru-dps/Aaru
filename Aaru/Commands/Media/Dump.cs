@@ -366,20 +366,6 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
                 }
             }
 
-            if(resumeClass                 != null                                               &&
-               resumeClass.NextBlock       > resumeClass.LastBlock                               &&
-               resumeClass.BadBlocks.Count == 0                                                  &&
-               !resumeClass.Tape                                                                 &&
-               (resumeClass.BadSubchannels is null   || resumeClass.BadSubchannels.Count   == 0) &&
-               (resumeClass.MissingTitleKeys is null || resumeClass.MissingTitleKeys.Count == 0))
-            {
-                AaruLogging.WriteLine(UI.Media_already_dumped_correctly_not_continuing);
-
-                if(isResponse) continue;
-
-                return (int)ErrorNumber.AlreadyDumped;
-            }
-
             Metadata sidecar = null;
 
             if(settings.AaruMetadata != null)
@@ -487,6 +473,21 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
             }
 
             IBaseWritableImage outputFormat = candidates[0];
+
+            if(resumeClass                 != null                                               &&
+               resumeClass.NextBlock       > resumeClass.LastBlock                               &&
+               resumeClass.BadBlocks.Count == 0                                                  &&
+               !resumeClass.Tape                                                                 &&
+               (resumeClass.BadSubchannels is null   || resumeClass.BadSubchannels.Count   == 0) &&
+               (resumeClass.MissingTitleKeys is null || resumeClass.MissingTitleKeys.Count == 0) &&
+               !(settings.Dpm && Dump.DumpLacksDpm(outputFormat, outputPrefix + extension)))
+            {
+                AaruLogging.WriteLine(UI.Media_already_dumped_correctly_not_continuing);
+
+                if(isResponse) continue;
+
+                return (int)ErrorNumber.AlreadyDumped;
+            }
 
             if(settings.ErrorRecovery > 0)
             {

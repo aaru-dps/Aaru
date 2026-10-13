@@ -30,7 +30,10 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Diagnostics;
+using System.IO;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -48,6 +51,51 @@ partial class Dump
     bool               _dpmRan;
     /// <summary>Time spent in the DPM phase</summary>
     readonly Stopwatch _dpmStopwatch = new();
+
+    /// <summary>
+    ///     Checks if a dump that is otherwise complete still lacks its Data Position Measurement. It does when the output
+    ///     format can store DPM and the image does not exist or has no valid DPM.
+    /// </summary>
+    /// <param name="outputFormat">Output image format</param>
+    /// <param name="imagePath">Path to the output image</param>
+    /// <returns><c>true</c> if the dump lacks DPM, <c>false</c> otherwise</returns>
+    public static bool DumpLacksDpm(IBaseWritableImage outputFormat, string imagePath)
+    {
+        if(outputFormat is not IWritableOpticalImage writableOptical ||
+           !writableOptical.OpticalCapabilities.HasFlag(OpticalImageCapabilities.CanStoreDpm))
+            return false;
+
+        if(!File.Exists(imagePath)) return true;
+
+        IFilter    filter = null;
+        IBaseImage image  = null;
+
+        try
+        {
+            filter = PluginRegister.Singleton.GetFilter(imagePath);
+
+            if(filter is null) return true;
+
+            image = ImageFormat.Detect(filter);
+
+            if(image is not IOpticalMediaImage opticalImage || opticalImage.Open(filter) != ErrorNumber.NoError)
+                return true;
+
+            return opticalImage.ReadDpm(out DataPositionMeasurement dpm) != ErrorNumber.NoError ||
+                   !Aaru.CommonTypes.Structs.Dpm.Validate(dpm);
+        }
+        catch(Exception ex)
+        {
+            AaruLogging.Exception(ex, Localization.Core.Error_0, ex.Message);
+
+            return true;
+        }
+        finally
+        {
+            (image as IDisposable)?.Dispose();
+            filter?.Close();
+        }
+    }
 
     /// <summary>
     ///     Measures the Data Position Measurement of the disc and stores it in the image. It runs after every read, trim
