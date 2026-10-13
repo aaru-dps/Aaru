@@ -48,6 +48,10 @@ public sealed partial class DpmMeasurement
     const ushort CACHE_DEFEAT_CHUNK = 64;
     /// <summary>Forces a large radial seek, not just a different buffer segment nearby</summary>
     const uint CACHE_DEFEAT_OFFSET = 200000;
+    /// <summary>Sectors added to the measured read-ahead, in case the drive reads a little further elsewhere</summary>
+    const uint READ_AHEAD_MARGIN = 4;
+    /// <summary>Largest read-ahead looked for; past it reads that can't bypass the cache are not timed</summary>
+    const uint READ_AHEAD_MAX = 4096;
 
     /// <summary>Unreadable timing units. A failed read is remembered and never retried.</summary>
     readonly HashSet<uint> _bad = [];
@@ -63,6 +67,13 @@ public sealed partial class DpmMeasurement
     int _errorsRestored;
     /// <summary>Last sector read successfully</summary>
     uint _lastGood;
+    /// <summary>
+    ///     Distance after a read past which a read that can't bypass the cache comes from the medium, see
+    ///     <see cref="ReadAheadFor" />
+    /// </summary>
+    uint _readAhead;
+    /// <summary>Whether <see cref="_readAhead" /> was measured</summary>
+    bool _readAheadKnown;
 
     /// <summary>Whether the timing unit of a sector is known to be unreadable</summary>
     bool IsBad(uint lba) => _bad.Contains(lba / _unit);
@@ -161,35 +172,46 @@ public sealed partial class DpmMeasurement
     ///     <see cref="SETTLE_MAX_SEC" /> elapses.
     /// </summary>
     /// <remarks>
-    ///     Re-reading the same sector is not something a look-ahead cache serves, so no cache defeat is needed, and it
-    ///     would only add seek noise.
+    ///     Re-reading the same sector is not something a look-ahead cache serves when the read bypasses the cache, so no
+    ///     cache defeat is needed, and it would only add seek noise. Where it can't, the drive serves the re-read from its
+    ///     cache, so the sector alternates with one past what the drive read ahead, and each delay is compared with the
+    ///     one two reads before.
     /// </remarks>
     void SpinUpSettle(uint lba)
     {
-        long previous    = 0;
-        int  stableCount = 0;
-        long deadline    = _drive.Now + (long)(SETTLE_MAX_SEC * 1e9);
+        long[] previous    = [0, 0];
+        int    stableCount = 0;
+        long   deadline    = _drive.Now + (long)(SETTLE_MAX_SEC * 1e9);
+        int    read        = 0;
 
         AaruLogging.Debug(MODULE_NAME, "Waiting for spindle to spin up and stabilize...");
 
         // An unreadable sector here would be retried by the drive for many seconds on every pass, move along
         while(!_drive.TimedRead(lba, out _, out _) && _drive.Now < deadline) lba += 16;
 
+        uint ahead = ReadAheadFor(lba);
+        uint other = ahead is > 0 and < uint.MaxValue && (ulong)lba + ahead <= _lastLba ? lba + ahead : lba;
+
         while(_drive.Now < deadline)
         {
-            // Since the previous read finished, a whole number of turns whatever the host took in between
-            if(!_drive.TimedRead(lba, out _, out long delta))
+            int parity = other == lba ? 0 : read & 1;
+            read++;
+
+            // Since the previous read finished, a whole number of turns whatever the host took in between, or the same
+            // fraction of one as two reads before when alternating
+            if(!_drive.TimedRead(parity == 0 ? lba : other, out _, out long delta))
             {
                 lba         += 16;
-                previous    =  0;
+                other       =  other == lba - 16 ? lba : other + 16;
+                previous    =  [0, 0];
                 stableCount =  0;
 
                 continue;
             }
 
-            if(previous != 0)
+            if(previous[parity] != 0)
             {
-                double change = Math.Abs((double)delta - previous) / previous;
+                double change = Math.Abs((double)delta - previous[parity]) / previous[parity];
 
                 if(change < SETTLE_TOLERANCE)
                 {
@@ -201,7 +223,7 @@ public sealed partial class DpmMeasurement
                     stableCount = 0;
             }
 
-            previous = delta;
+            previous[parity] = delta;
         }
 
         AaruLogging.Debug(MODULE_NAME, "Spindle settled.");
@@ -268,8 +290,16 @@ public sealed partial class DpmMeasurement
     }
 
     /// <summary>Median of the paired samples, detecting and retrying cache hits</summary>
+    /// <param name="s">First sector</param>
+    /// <param name="d">Distance to the timed sector</param>
+    /// <param name="ahead">
+    ///     Sectors added to <paramref name="d" /> so the timed read is past what the drive read ahead, see
+    ///     <see cref="SweepReadAhead" />. Being the same for a whole sweep, it shifts the sawtooth without changing its
+    ///     slope or period.
+    /// </param>
+    /// <param name="cacheHits">Cache hit counter</param>
     /// <returns>Milliseconds, or -1 if no sample could be taken</returns>
-    double PairElapsedMs(uint s, uint d, ref int cacheHits)
+    double PairElapsedMs(uint s, uint d, uint ahead, ref int cacheHits)
     {
         var values   = new double[PAIR_REPS_MAX];
         int n        = 0;
@@ -278,7 +308,7 @@ public sealed partial class DpmMeasurement
         while(n < _reps && attempts < _reps * 3)
         {
             attempts++;
-            long turned = PairSample(s, d, out long elapsed);
+            long turned = PairSample(s, ahead + d, out long elapsed);
 
             if(turned == 0) continue;
 
@@ -308,6 +338,71 @@ public sealed partial class DpmMeasurement
 
         return elapsed < PAIR_CACHE_HIT_NS ? -2.0 : sincePrevious / 1e6;
     }
+
+    /// <summary>
+    ///     Sectors to add to the distance of a timed read of <paramref name="lba" /> so it comes from the medium: 0 when
+    ///     the read bypasses the cache, otherwise how far the drive reads ahead, measured the first time it is needed.
+    /// </summary>
+    /// <remarks>
+    ///     Audio can only be read with READ CD, which has no Force Unit Access, and the drive serves the sectors it read
+    ///     ahead from its cache: a timed read of one of them took no time at all, every sample was taken as a cache hit
+    ///     and flushed for, and audio could not be measured. Re-reading a sector is served from the cache too.
+    /// </remarks>
+    /// <returns>Sectors, or <see cref="uint.MaxValue" /> if the drive reads ahead too far to time these reads</returns>
+    uint ReadAheadFor(uint lba)
+    {
+        if(_drive.BypassesCache(lba)) return 0;
+
+        if(!_readAheadKnown) MeasureReadAhead(lba);
+
+        return _readAhead;
+    }
+
+    /// <summary>Read-ahead for a sweep of <paramref name="span" /> sectors from <paramref name="baseLba" /></summary>
+    uint SweepReadAhead(uint baseLba, uint span) =>
+        Math.Max(ReadAheadFor(baseLba), ReadAheadFor(span > 0 ? baseLba + span - 1 : baseLba));
+
+    /// <summary>
+    ///     Finds the shortest distance after a read at which a read of <paramref name="lba" />'s kind comes from the
+    ///     medium twice in a row, and keeps it with a margin.
+    /// </summary>
+    void MeasureReadAhead(uint lba)
+    {
+        _readAheadKnown = true;
+        _readAhead      = uint.MaxValue;
+
+        for(uint d = 1, step = 1; d <= READ_AHEAD_MAX && !_aborted; d += step)
+        {
+            // Finely at first, where drives' read-ahead usually ends, then coarser
+            if(d >= 64) step = d / 8;
+
+            if((ulong)lba + d > _lastLba) break;
+
+            if(!ReadsFromMedium(lba, d) || !ReadsFromMedium(lba, d)) continue;
+
+            _readAhead = d + READ_AHEAD_MARGIN;
+
+            AaruLogging.Debug(MODULE_NAME,
+                              "Reads that can't bypass the drive cache come from the medium {0} sectors after the last read, timing them {1} sectors after",
+                              d,
+                              _readAhead);
+
+            break;
+        }
+
+        if(_readAhead == uint.MaxValue)
+            AaruLogging.Debug(MODULE_NAME,
+                              "The drive reads ahead more than {0} sectors where reads can't bypass its cache, they can't be timed",
+                              READ_AHEAD_MAX);
+
+        // The head moved
+        _at = uint.MaxValue;
+    }
+
+    /// <summary>Whether, right after reading <paramref name="s" />, the read of s + d comes from the medium</summary>
+    bool ReadsFromMedium(uint s, uint d) => _drive.TimedRead(s, out _, out _) &&
+                                            _drive.TimedRead(s + d, out long elapsed, out _) &&
+                                            elapsed >= PAIR_CACHE_HIT_NS;
 
     /// <summary>Median of the first <paramref name="n" /> values, sorting them in place</summary>
     internal static double Median(double[] values, int n)

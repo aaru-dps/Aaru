@@ -95,6 +95,14 @@ public interface IDpmDrive
     /// <param name="blocks">Number of sectors</param>
     void ReadUntimed(uint lba, ushort blocks);
 
+    /// <summary>
+    ///     Whether a timed read of a sector always comes from the medium. Data sectors are read with Force Unit Access;
+    ///     audio sectors can only be read with READ CD, which has no such bit, so the drive serves the ones it read ahead
+    ///     from its cache.
+    /// </summary>
+    /// <param name="lba">Sector address</param>
+    bool BypassesCache(uint lba);
+
     /// <summary>Sets the drive read speed</summary>
     /// <param name="kbps">Speed in kB/s, 0xFFFF is the drive maximum</param>
     /// <returns><c>true</c> if the drive accepted it</returns>
@@ -205,6 +213,9 @@ public sealed class DeviceDpmDrive : IDpmDrive
         _dev.SendScsiCommand(_cdb, ref _decoyBuffer, TIMEOUT, ScsiDirection.In, out _, out _);
         _previousEnd = Stopwatch.GetTimestamp();
     }
+
+    /// <inheritdoc />
+    public bool BypassesCache(uint lba) => !IsAudio(lba);
 
     /// <inheritdoc />
     public bool SetSpeed(ushort kbps)

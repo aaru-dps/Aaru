@@ -98,9 +98,17 @@ public sealed partial class DpmMeasurement
         int  cacheHits = 0;
         int  d         = 0, drops = 0, moves = 0;
 
+        // Reads that can't bypass the drive cache are timed past what it read ahead: start that much earlier, so the
+        // timed reads still start at the point
+        uint ahead = SweepReadAhead(baseLba, CAL_MAX_D * u);
+
+        if(ahead == uint.MaxValue) return false;
+
+        if(ahead > 0) baseLba = PlaceSweep(lba > ahead ? lba - ahead : 0, CAL_MAX_D * u + ahead, false);
+
         while(d < CAL_MAX_D)
         {
-            e[d] = PairElapsedMs(baseLba, (uint)d * u, ref cacheHits);
+            e[d] = PairElapsedMs(baseLba, (uint)d * u, ahead, ref cacheHits);
 
             if(e[d] < 0)
             {
@@ -112,7 +120,7 @@ public sealed partial class DpmMeasurement
                 uint at = IsBad(baseLba) ? baseLba : baseLba + (uint)d * u;
                 LayerBounds(baseLba, out uint lo, out uint hi);
                 uint past = at - at % u + 16 * u;
-                uint span = CAL_MAX_D * u;
+                uint span = CAL_MAX_D * u + ahead;
 
                 if(++moves > 6)
                 {
@@ -486,9 +494,22 @@ public sealed partial class DpmMeasurement
         double previous = -1;
         int    n        = 0;
 
+        // Reads that can't bypass the drive cache are timed past what it read ahead: start that much earlier, so the
+        // timed reads are still centred on the point
+        uint ahead = SweepReadAhead(baseLba, (uint)nSteps * u);
+        tLocal = 0;
+
+        if(ahead == uint.MaxValue) return -1.0;
+
+        if(ahead > 0)
+        {
+            uint half = (uint)nSteps * u / 2;
+            baseLba = PlaceSweep(lba > ahead + half ? lba - ahead - half : 0, (uint)nSteps * u + ahead, false);
+        }
+
         for(int d = 0; d <= nSteps; d++)
         {
-            double e = PairElapsedMs(baseLba, (uint)d * u, ref cacheHits);
+            double e = PairElapsedMs(baseLba, (uint)d * u, ahead, ref cacheHits);
 
             if(e < 0)
             {

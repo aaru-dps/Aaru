@@ -45,6 +45,8 @@ sealed class SimulatedDrive : IDpmDrive
     readonly int           _resolution;
     readonly HashSet<uint> _unreadable;
     readonly uint          _unit;
+    /// <summary>First and one past the last sector the drive holds in its cache, read ahead after the last read</summary>
+    uint _cacheFirst, _cacheEnd;
     uint                   _currentLba;
     double                 _phase;
     double                 _previousEnd = -1;
@@ -91,6 +93,12 @@ sealed class SimulatedDrive : IDpmDrive
     public int FailedReads { get; private set; }
     /// <summary>Sectors whose first read fails, as a drive having a bad moment</summary>
     public HashSet<uint> FailOnce { get; init; } = [];
+    /// <summary>First audio sector: from here on reads can't bypass the cache, as READ CD has no Force Unit Access</summary>
+    public uint AudioFrom { get; init; } = uint.MaxValue;
+    /// <summary>Sectors the drive reads ahead into its cache after every read from the medium</summary>
+    public uint ReadAhead { get; init; }
+    /// <summary>Reads served from the cache</summary>
+    public int CacheHits { get; private set; }
 
     /// <inheritdoc />
     public long Now => (long)(_time * 1e9);
@@ -122,6 +130,9 @@ sealed class SimulatedDrive : IDpmDrive
     {
         if(HostDelay > 0) Advance(_random.NextDouble() * HostDelay);
     }
+
+    /// <inheritdoc />
+    public bool BypassesCache(uint lba) => lba < AudioFrom;
 
     /// <inheritdoc />
     public bool SetSpeed(ushort kbps)
@@ -177,6 +188,15 @@ sealed class SimulatedDrive : IDpmDrive
 
     bool Read(uint lba, uint blocks)
     {
+        // A sector the drive read ahead comes back at once, unless the read forces the medium
+        if(!BypassesCache(lba) && lba >= _cacheFirst && lba + blocks <= _cacheEnd)
+        {
+            CacheHits++;
+            Advance(0.0003);
+
+            return true;
+        }
+
         _currentLba = lba;
 
         uint first = lba   - lba % _unit;
@@ -209,6 +229,9 @@ sealed class SimulatedDrive : IDpmDrive
         if(_random.NextDouble() < junk) Advance(_random.NextDouble() * PeriodNow());
 
         Advance((SectorAngle(last) - SectorAngle(first)) * PeriodNow());
+
+        _cacheFirst = first;
+        _cacheEnd   = last + ReadAhead;
 
         return true;
     }
@@ -327,6 +350,49 @@ public class DpmMeasurementTests
         dpm.Value.Speed.Should().Be(0xFFFF);
         dpm.Value.Entries[^1].Lba.Should().Be(15000);
         dpm.Value.Calibrations.Should().NotBeEmpty();
+
+        ShouldMatch(dpm.Value, drive, 0.005, 0.03);
+    }
+
+    /// <summary>
+    ///     Audio sectors are read with READ CD, which has no Force Unit Access, and the drive serves the sectors it read
+    ///     ahead from its cache: a data track followed by audio must be measured across both, at the same accuracy, and
+    ///     without the timed audio reads coming from the cache. A read-ahead longer than the entry spacing leaves the
+    ///     chained reads no room, so those bins are measured with sweeps.
+    /// </summary>
+    [TestCase(32u)]
+    [TestCase(120u)]
+    public void CompactDiscWithAudioTracks(uint readAhead)
+    {
+        var medium = new DpmMedium
+        {
+            Kind      = DpmMediumKind.Cd,
+            LastLba   = 257327,
+            LayerEnds = []
+        };
+
+        double[] spiral = BuildSpiral(257328, 50, 1.2 / 75, 1.6e-6, [], [(2000, 6000), (11000, 13000)]);
+
+        var drive = new SimulatedDrive(medium, spiral, 50, 1, [], 1)
+        {
+            MissProbability = 0.01,
+            JunkProbability = 0.01,
+            AudioFrom       = 8000,
+            ReadAhead       = readAhead
+        };
+
+        var measurement = new DpmMeasurement(drive);
+        measurement.Prepare(0).Should().BeTrue();
+
+        DataPositionMeasurement? dpm = measurement.Measure(0, 15000, 0);
+
+        dpm.Should().NotBeNull();
+        Aaru.CommonTypes.Structs.Dpm.Validate(dpm.Value).Should().BeTrue();
+        dpm.Value.Entries[^1].Lba.Should().Be(15000);
+
+        // Every bin is measured, audio as well as data
+        dpm.Value.Entries.Skip(1).Should().OnlyContain(static e => e.Status == DpmEntryStatus.Measured ||
+                                                                   e.Status == DpmEntryStatus.Remeasured);
 
         ShouldMatch(dpm.Value, drive, 0.005, 0.03);
     }

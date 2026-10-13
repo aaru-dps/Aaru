@@ -216,6 +216,29 @@ public sealed partial class DpmMeasurement
             e = TimedReadMs(Block(lba));
         }
 
+        // A re-read of a sector that can't bypass the drive cache comes from it, taking no time, so it can't sample the
+        // rotation period. The read itself is the head reference for the next chained read.
+        if(!_drive.BypassesCache(Block(lba)))
+        {
+            if(e is -2.0)
+            {
+                _cacheHits++;
+                DefeatCache(lba);
+            }
+
+            if(e < 0)
+            {
+                _at = uint.MaxValue;
+
+                return -1;
+            }
+
+            _at    = Block(lba);
+            eFirst = e;
+
+            return 0;
+        }
+
         double e0 = e >= 0 ? TimedReadMs(Block(lba)) : e;
 
         if(e is -2.0 || e0 is -2.0)
@@ -346,6 +369,19 @@ public sealed partial class DpmMeasurement
     /// <returns>Degrees per sector, <see cref="BIN_UNREADABLE" />, or <see cref="BIN_FAILED" /> if all fail</returns>
     double MeasureBinOnce(uint lo, uint hi, double apsPrediction)
     {
+        // Where reads can't bypass the drive cache, a chained read closer than what the drive read ahead would come from
+        // it: such bins can only be measured with a local sweep, which times its reads past the read-ahead.
+        uint ahead = Math.Max(ReadAheadFor(Block(lo)), ReadAheadFor(Block(hi)));
+
+        if(ahead == uint.MaxValue)
+        {
+            AaruLogging.Debug(MODULE_NAME, "  bin {0}-{1}: reads here can't be timed past the drive cache", lo, hi);
+
+            return BIN_FAILED;
+        }
+
+        if(ahead > 0 && ahead >= Block(hi) - Block(lo)) return MeasureBinBySweep(lo, hi);
+
         int r = ChainMeasure(lo, hi, apsPrediction, out double dTheta, out uint span);
 
         if(r == 0) return 360.0 * dTheta / span;
@@ -368,9 +404,16 @@ public sealed partial class DpmMeasurement
             if(r == -2) return BIN_UNREADABLE;
         }
 
-        span = Block(hi) - Block(lo);
-
         AaruLogging.Debug(MODULE_NAME, "  bin {0}-{1}: falling back to a local sweep", lo, hi);
+
+        return MeasureBinBySweep(lo, hi);
+    }
+
+    /// <summary>Mean degrees per sector over the bin [lo, hi) from a local sawtooth sweep at its middle</summary>
+    /// <returns>Degrees per sector, or <see cref="BIN_FAILED" /></returns>
+    double MeasureBinBySweep(uint lo, uint hi)
+    {
+        uint span = Block(hi) - Block(lo);
 
         double s = MeasurePoint(Block(lo) + span / 2, ref _t, ref _cacheHits, out _);
         _at           = uint.MaxValue;
