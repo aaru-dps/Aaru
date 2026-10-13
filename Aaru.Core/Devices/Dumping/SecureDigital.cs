@@ -755,8 +755,10 @@ public partial class Dump
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
             InitProgress?.Invoke();
 
-            foreach(ulong badSector in tmpArray)
+            for(var i = 0; i < tmpArray.Length; i++)
             {
+                ulong badSector = tmpArray[i];
+
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -765,7 +767,9 @@ public partial class Dump
                     break;
                 }
 
-                PulseProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector));
+                UpdateProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector),
+                                       i,
+                                       tmpArray.Length);
 
                 error = _dev.ReadSingleBlock(out cmdBuf,
                                              out response,

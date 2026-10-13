@@ -1172,8 +1172,10 @@ partial class Dump
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
             InitProgress?.Invoke();
 
-            foreach(ulong badSector in tmpArray)
+            for(var i = 0; i < tmpArray.Length; i++)
             {
+                ulong badSector = tmpArray[i];
+
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -1186,7 +1188,9 @@ partial class Dump
                 // before unlocking and reading them here would return data from the wrong LBA
                 if(badSector >= blocks) continue;
 
-                PulseProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector));
+                UpdateProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector),
+                                       i,
+                                       tmpArray.Length);
 
                 sense = _dev.Read12(out readBuffer,
                                     out senseBuf,

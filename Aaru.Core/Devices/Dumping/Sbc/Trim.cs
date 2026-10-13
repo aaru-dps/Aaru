@@ -61,8 +61,10 @@ partial class Dump
             return;
         }
 
-        foreach(ulong badSector in tmpArray)
+        for(var i = 0; i < tmpArray.Length; i++)
         {
+            ulong badSector = tmpArray[i];
+
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -71,7 +73,9 @@ partial class Dump
                 break;
             }
 
-            PulseProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector));
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector),
+                                   i,
+                                   tmpArray.Length);
 
             sense = scsiReader.ReadBlock(out buffer, badSector, out double _, out recoveredError, out blankCheck);
 

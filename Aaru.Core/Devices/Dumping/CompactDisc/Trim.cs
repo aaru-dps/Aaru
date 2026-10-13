@@ -124,7 +124,9 @@ partial class Dump
 
             if(_skipSafedisc && badSector is >= 800 and <= 10000) continue;
 
-            PulseProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector));
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector),
+                                   b,
+                                   tmpArray.Length);
 
             Track track = tracks.OrderBy(static t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
