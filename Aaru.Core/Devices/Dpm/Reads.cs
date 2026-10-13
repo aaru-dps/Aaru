@@ -228,11 +228,26 @@ public sealed partial class DpmMeasurement
     ///     Fills the drive cache from two distinct regions far from <paramref name="avoidLba" />, in case the drive keeps
     ///     more than one cached window.
     /// </summary>
+    /// <remarks>
+    ///     Both regions must be on the medium: past its end the reads fail at once and fill nothing, so on a medium
+    ///     shorter than the offset every flush did nothing and every timed read kept coming from the cache.
+    /// </remarks>
     void DefeatCache(uint avoidLba)
     {
-        uint decoy = avoidLba > CACHE_DEFEAT_OFFSET
-                         ? avoidLba - CACHE_DEFEAT_OFFSET
-                         : avoidLba + CACHE_DEFEAT_OFFSET;
+        const uint span = CACHE_DEFEAT_SECTORS * 4;
+
+        uint decoy;
+
+        if(avoidLba > CACHE_DEFEAT_OFFSET)
+            decoy = avoidLba - CACHE_DEFEAT_OFFSET;
+        else if((ulong)avoidLba + CACHE_DEFEAT_OFFSET + span <= _lastLba)
+            decoy = avoidLba + CACHE_DEFEAT_OFFSET;
+        else
+        {
+            // Short medium: start or end, whichever is farther from the sector to avoid
+            uint top = _lastLba > span ? _lastLba - span : 0;
+            decoy = avoidLba >= top / 2 ? 0 : top;
+        }
 
         DefeatCacheRegion(decoy);
         DefeatCacheRegion(decoy + CACHE_DEFEAT_SECTORS * 3);
