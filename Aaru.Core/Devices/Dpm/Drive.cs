@@ -36,6 +36,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
 using Aaru.Core.Graphics;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
@@ -124,6 +126,8 @@ public sealed class DeviceDpmDrive : IDpmDrive
 
     readonly byte[] _cdb = new byte[12];
     readonly Device _dev;
+    /// <summary>Audio tracks given by the caller, which take precedence over the table of contents</summary>
+    readonly (uint first, uint last)[] _knownAudio;
     /// <summary>First and last sector of every audio track, timed with READ CD as READ(12) can't read them</summary>
     (uint first, uint last)[] _audio = [];
     byte[] _audioBuffer = new byte[2352];
@@ -136,6 +140,17 @@ public sealed class DeviceDpmDrive : IDpmDrive
     /// <summary>Creates DPM drive operations on a device</summary>
     /// <param name="dev">Device</param>
     public DeviceDpmDrive(Device dev) => _dev = dev;
+
+    /// <summary>Creates DPM drive operations on a device whose tracks are already known</summary>
+    /// <param name="dev">Device</param>
+    /// <param name="tracks">
+    ///     Tracks of the medium, as dumped. They start at index 0, so they include the pregaps, which the table of
+    ///     contents can't give as it points to index 1, and an audio track's pregap is already audio.
+    /// </param>
+    public DeviceDpmDrive(Device dev, IEnumerable<Track> tracks) : this(dev) =>
+        _knownAudio = tracks?.Where(static t => t.Type == TrackType.Audio)
+                             .Select(static t => ((uint)t.StartSector, (uint)t.EndSector))
+                             .ToArray();
 
     /// <inheritdoc />
     public long Now => (long)(Stopwatch.GetTimestamp() * (1e9 / Stopwatch.Frequency));
@@ -373,9 +388,19 @@ public sealed class DeviceDpmDrive : IDpmDrive
         return true;
     }
 
-    /// <summary>Finds the audio tracks of a CD from its table of contents</summary>
+    /// <summary>
+    ///     Finds the audio tracks of a CD, from the tracks given when the drive was created or else from its table of
+    ///     contents
+    /// </summary>
     void DetectAudioTracks()
     {
+        if(_knownAudio is not null)
+        {
+            _audio = _knownAudio;
+
+            return;
+        }
+
         _audio = [];
 
         if(_dev.ReadToc(out byte[] buffer, out _, false, 0, TIMEOUT, out _) || buffer is null) return;

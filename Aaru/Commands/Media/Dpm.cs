@@ -185,7 +185,8 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
         DeviceLog.StartLog(dev, false);
         Statistics.AddDevice(dev);
 
-        var measurement = new DpmMeasurement(new DeviceDpmDrive(dev));
+        // The image's tracks start at index 0, so audio pregaps are known to be audio
+        var measurement = new DpmMeasurement(new DeviceDpmDrive(dev, aif.Tracks));
         measurement.ErrorMessage += static text => AaruLogging.Error(text);
 
         if(!measurement.Prepare(settings.Spacing))

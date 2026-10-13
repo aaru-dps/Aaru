@@ -132,7 +132,8 @@ partial class Dump
         _dpmRan = true;
         _dpmStopwatch.Start();
 
-        _dpmMeasurement = new DpmMeasurement(new DeviceDpmDrive(_dev));
+        // The dumped tracks start at index 0, so audio pregaps are known to be audio
+        _dpmMeasurement = new DpmMeasurement(new DeviceDpmDrive(_dev, output.Tracks));
 
         _dpmMeasurement.UpdateStatus   += text => UpdateStatus?.Invoke(text);
         _dpmMeasurement.ErrorMessage   += text => ErrorMessage?.Invoke(text);
