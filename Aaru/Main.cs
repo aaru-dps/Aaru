@@ -79,6 +79,8 @@ class MainClass
 
         _assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 
+        args = BaseSettings.RelocateGlobalOptions(args);
+
         if(args.Length == 1 && args[0].Equals("gui", StringComparison.InvariantCultureIgnoreCase))
             return Gui.Main.Start(args);
 
@@ -305,6 +307,9 @@ class MainClass
             app.Configure(static config =>
             {
                 config.PropagateExceptions();
+
+                // Reject unknown or misplaced options instead of silently ignoring them
+                config.UseStrictParsing();
 
                 config.UseAssemblyInformationalVersion();
 
