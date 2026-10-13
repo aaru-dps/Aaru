@@ -505,6 +505,16 @@ class MainClass
 
             return ret;
         }
+        catch(CommandAppException ex)
+        {
+            // A mistake in the command line, not a crash, so show it plainly and do not report it
+            if(ex.Pretty is not null)
+                AnsiConsole.Write(ex.Pretty);
+            else
+                AnsiConsole.WriteLine(ex.Message);
+
+            return (int)ErrorNumber.InvalidArgument;
+        }
         catch(Exception ex)
         {
             SentrySdk.CaptureException(ex);
