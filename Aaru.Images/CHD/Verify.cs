@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -45,7 +46,8 @@ public sealed partial class Chd
     /// <inheritdoc />
     public bool? VerifyMediaImage()
     {
-        if(_expectedChecksum is null) return null;
+        // Images can be written without a checksum, leaving it zeroed
+        if(_expectedChecksum is null || _expectedChecksum.All(static b => b == 0)) return null;
 
         // Checksums only cover the logical size, not the padding of the last hunk
         IChecksum ctx       = _mapVersion >= 3 ? new Sha1Context() : new Md5Context();
