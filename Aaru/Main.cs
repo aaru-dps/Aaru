@@ -93,7 +93,8 @@ class MainClass
 
                 if(formatted is null) return;
 
-                Log.Information(SafeRemoveMarkup(formatted));
+                // Pass the text as a property so Serilog never parses it as a template, the file sink removes the markup
+                Log.Information("{Message:l}", formatted);
             };
 
             AaruLogging.WriteEvent += static (format, objects) =>
@@ -104,7 +105,7 @@ class MainClass
 
                 SafeMarkup(formatted);
 
-                Log.Information(SafeRemoveMarkup(formatted));
+                Log.Information("{Message:l}", formatted);
             };
 
             AaruLogging.ErrorEvent   += Log.Error;
@@ -506,6 +507,11 @@ class MainClass
 
             return (int)ErrorNumber.UnexpectedException;
         }
+        finally
+        {
+            // Make sure everything written to the console during the command has reached the log file
+            await Log.CloseAndFlushAsync();
+        }
     }
 
     internal static void PrintCopyright()
@@ -558,21 +564,6 @@ class MainClass
         catch(InvalidOperationException)
         {
             AnsiConsole.Write(text);
-        }
-    }
-
-    /// <summary>Removes the markup from a string, returning it unchanged if the markup is not valid</summary>
-    /// <param name="text">String to remove the markup from</param>
-    /// <returns>String without markup</returns>
-    static string SafeRemoveMarkup(string text)
-    {
-        try
-        {
-            return Markup.Remove(text);
-        }
-        catch(InvalidOperationException)
-        {
-            return text;
         }
     }
 }

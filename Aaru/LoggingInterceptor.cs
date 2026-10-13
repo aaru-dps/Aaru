@@ -6,6 +6,7 @@ using Aaru.CommonTypes.Interop;
 using Aaru.Localization;
 using Serilog;
 using Serilog.Core;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.Spectre;
 using Spectre.Console;
@@ -71,6 +72,9 @@ public class LoggingInterceptor : ICommandInterceptor
 
         if(global.LogFile == null) return;
 
+        // Serilog swallows failures in sinks and enrichers, report them so a line missing from the log is noticed
+        SelfLog.Enable(Console.Error);
+
         Log.Information(Core.Start_logging_at_0, DateTime.Now);
 
         PlatformID platId  = DetectOS.GetRealPlatformID();
@@ -120,8 +124,18 @@ public class LoggingInterceptor : ICommandInterceptor
             // Render the full message (with all tokens applied)
             string rendered = logEvent.RenderMessage();
 
-            // Remove HTML tags
-            string cleaned = Markup.Remove(rendered);
+            // Remove the Spectre markup, keeping the text verbatim if it is not valid markup. Throwing here would make
+            // Serilog drop the event from the log file while it is still shown on the console.
+            string cleaned;
+
+            try
+            {
+                cleaned = Markup.Remove(rendered);
+            }
+            catch(InvalidOperationException)
+            {
+                cleaned = rendered;
+            }
 
             // Attach a new property CleanMessage
             LogEventProperty prop = propertyFactory.CreateProperty("CleanMessage", cleaned);
