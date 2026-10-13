@@ -35,7 +35,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:localization="clr-namespace:Aaru.Localization;assembly=Aaru.Localization"
              xmlns:helpers="clr-namespace:Aaru.Gui.Helpers"
-             x:Class="Aaru.Gui.App">
+             x:Class="Aaru.Gui.App"
+             RequestedThemeVariant="Dark">
     <Application.Resources>
         <helpers:ThemeToSvgPathConverter x:Key="ThemeToSvgPathConverter" />
     </Application.Resources>
