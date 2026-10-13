@@ -239,7 +239,8 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        var firstTry = true;
+        long retryMaximum = (long)_resume.BadBlocks.Count * _retryPasses;
+        var  firstTry     = true;
     repeatRetry:
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
@@ -257,8 +258,10 @@ partial class Dump
             firstTry = false;
         }
 
-        foreach(ulong badSector in tmpArray)
+        for(var i = 0; i < tmpArray.Length; i++)
         {
+            ulong badSector = tmpArray[i];
+
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -267,27 +270,38 @@ partial class Dump
                 break;
             }
 
+            long retryCurrent = RetryProgressCurrent(retryMaximum,
+                                                     _retryPasses,
+                                                     pass,
+                                                     i,
+                                                     tmpArray.Length,
+                                                     _resume.BadBlocks.Count);
+
             if(forward)
             {
-                PulseProgress?.Invoke(runningPersistent
-                                          ? string.Format(Localization.Core
-                                                                      .Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                          badSector,
-                                                          pass)
-                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
-                                                          badSector,
-                                                          pass));
+                UpdateProgress?.Invoke(runningPersistent
+                                           ? string.Format(Localization.Core
+                                                                       .Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                           badSector,
+                                                           pass)
+                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
+                                                           badSector,
+                                                           pass),
+                                       retryCurrent,
+                                       retryMaximum);
             }
             else
             {
-                PulseProgress?.Invoke(runningPersistent
-                                          ? string.Format(Localization.Core
-                                                                      .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                          badSector,
-                                                          pass)
-                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
-                                                          badSector,
-                                                          pass));
+                UpdateProgress?.Invoke(runningPersistent
+                                           ? string.Format(Localization.Core
+                                                                       .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                           badSector,
+                                                           pass)
+                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
+                                                           badSector,
+                                                           pass),
+                                       retryCurrent,
+                                       retryMaximum);
             }
 
             if(scsiReader.HldtstReadRaw)
@@ -474,11 +488,15 @@ partial class Dump
 
         InitProgress?.Invoke();
 
+        long retryMaximum = (long)MissingTitleKeyCount() * _retryPasses;
+
     repeatRetry:
         ulong[] tmpArray = MissingTitleKeysSnapshot(forward);
 
-        foreach(ulong missingKey in tmpArray)
+        for(var i = 0; i < tmpArray.Length; i++)
         {
+            ulong missingKey = tmpArray[i];
+
             if(_aborted)
             {
                 UpdateStatus?.Invoke(Localization.Core.Aborted);
@@ -486,13 +504,20 @@ partial class Dump
                 break;
             }
 
-            PulseProgress?.Invoke(forward
-                                      ? string.Format(Localization.Core.Retrying_title_key_0_pass_1_forward,
-                                                      missingKey,
-                                                      pass)
-                                      : string.Format(Localization.Core.Retrying_title_key_0_pass_1_reverse,
-                                                      missingKey,
-                                                      pass));
+            UpdateProgress?.Invoke(forward
+                                       ? string.Format(Localization.Core.Retrying_title_key_0_pass_1_forward,
+                                                       missingKey,
+                                                       pass)
+                                       : string.Format(Localization.Core.Retrying_title_key_0_pass_1_reverse,
+                                                       missingKey,
+                                                       pass),
+                                   RetryProgressCurrent(retryMaximum,
+                                                        _retryPasses,
+                                                        pass,
+                                                        i,
+                                                        tmpArray.Length,
+                                                        MissingTitleKeyCount()),
+                                   retryMaximum);
 
             sense = dvdDecrypt.ReadTitleKey(out buffer,
                                             out _,

@@ -483,11 +483,16 @@ public partial class Dump
                         var forward = true;
 
                         InitProgress?.Invoke();
+
+                        long retryMaximum = (long)_resume.BadBlocks.Count * _retryPasses;
+
                     repeatRetryLba:
                         ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
-                        foreach(ulong badSector in tmpArray)
+                        for(var i = 0; i < tmpArray.Length; i++)
                         {
+                            ulong badSector = tmpArray[i];
+
                             if(_aborted)
                             {
                                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -496,29 +501,40 @@ public partial class Dump
                                 break;
                             }
 
+                            long retryCurrent = RetryProgressCurrent(retryMaximum,
+                                                                     _retryPasses,
+                                                                     pass,
+                                                                     i,
+                                                                     tmpArray.Length,
+                                                                     _resume.BadBlocks.Count);
+
                             if(forward)
                             {
-                                PulseProgress?.Invoke(_persistent
-                                                          ? string.Format(Localization.Core
-                                                                             .Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                                          badSector,
-                                                                          pass)
-                                                          : string.Format(Localization.Core
-                                                                             .Retrying_sector_0_pass_1_forward,
-                                                                          badSector,
-                                                                          pass));
+                                UpdateProgress?.Invoke(_persistent
+                                                           ? string.Format(Localization.Core
+                                                                              .Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                                           badSector,
+                                                                           pass)
+                                                           : string.Format(Localization.Core
+                                                                              .Retrying_sector_0_pass_1_forward,
+                                                                           badSector,
+                                                                           pass),
+                                                       retryCurrent,
+                                                       retryMaximum);
                             }
                             else
                             {
-                                PulseProgress?.Invoke(_persistent
-                                                          ? string.Format(Localization.Core
-                                                                             .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                                          badSector,
-                                                                          pass)
-                                                          : string.Format(Localization.Core
-                                                                             .Retrying_sector_0_pass_1_reverse,
-                                                                          badSector,
-                                                                          pass));
+                                UpdateProgress?.Invoke(_persistent
+                                                           ? string.Format(Localization.Core
+                                                                              .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                                           badSector,
+                                                                           pass)
+                                                           : string.Format(Localization.Core
+                                                                              .Retrying_sector_0_pass_1_reverse,
+                                                                           badSector,
+                                                                           pass),
+                                                       retryCurrent,
+                                                       retryMaximum);
                             }
 
                             bool error = ataReader.ReadBlock(out cmdBuf,

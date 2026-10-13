@@ -213,7 +213,8 @@ partial class Dump
         }
 
         InitProgress?.Invoke();
-        var firstTry = true;
+        long retryMaximum = (long)_resume.BadBlocks.Count * _retryPasses;
+        var  firstTry     = true;
 
     cdRepeatRetry:
         ulong[]     tmpArray              = _resume.BadBlocks.ToArray();
@@ -262,27 +263,38 @@ partial class Dump
 
             if(_skipSafedisc && badSector is >= 800 and <= 10000) continue;
 
+            long retryCurrent = RetryProgressCurrent(retryMaximum,
+                                                     _retryPasses,
+                                                     pass,
+                                                     i,
+                                                     tmpArray.Length,
+                                                     _resume.BadBlocks.Count);
+
             if(forward)
             {
-                PulseProgress?.Invoke(runningPersistent
-                                          ? string.Format(Localization.Core
-                                                                      .Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                          badSector,
-                                                          pass)
-                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
-                                                          badSector,
-                                                          pass));
+                UpdateProgress?.Invoke(runningPersistent
+                                           ? string.Format(Localization.Core
+                                                                       .Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                           badSector,
+                                                           pass)
+                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
+                                                           badSector,
+                                                           pass),
+                                       retryCurrent,
+                                       retryMaximum);
             }
             else
             {
-                PulseProgress?.Invoke(runningPersistent
-                                          ? string.Format(Localization.Core
-                                                                      .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                          badSector,
-                                                          pass)
-                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
-                                                          badSector,
-                                                          pass));
+                UpdateProgress?.Invoke(runningPersistent
+                                           ? string.Format(Localization.Core
+                                                                       .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                           badSector,
+                                                           pass)
+                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
+                                                           badSector,
+                                                           pass),
+                                       retryCurrent,
+                                       retryMaximum);
             }
 
             Track track = tracks.OrderBy(static t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
@@ -1049,6 +1061,8 @@ partial class Dump
 
         InitProgress?.Invoke();
 
+        long retryMaximum = (long)subchannelExtents.Count * _retryPasses;
+
     cdRepeatRetry:
 
         _resume.BadSubchannels = [];
@@ -1059,8 +1073,9 @@ partial class Dump
 
         int[] tmpArray = _resume.BadSubchannels.ToArray();
 
-        foreach(int bs in tmpArray)
+        for(var i = 0; i < tmpArray.Length; i++)
         {
+            int bs        = tmpArray[i];
             var badSector = (uint)bs;
 
             Track track = tracks.OrderBy(static t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
@@ -1072,13 +1087,20 @@ partial class Dump
                 break;
             }
 
-            PulseProgress?.Invoke(forward
-                                      ? string.Format(Localization.Core.Retrying_sector_0_subchannel_pass_1_forward,
-                                                      badSector,
-                                                      pass)
-                                      : string.Format(Localization.Core.Retrying_sector_0_subchannel_pass_1_reverse,
-                                                      badSector,
-                                                      pass));
+            UpdateProgress?.Invoke(forward
+                                       ? string.Format(Localization.Core.Retrying_sector_0_subchannel_pass_1_forward,
+                                                       badSector,
+                                                       pass)
+                                       : string.Format(Localization.Core.Retrying_sector_0_subchannel_pass_1_reverse,
+                                                       badSector,
+                                                       pass),
+                                   RetryProgressCurrent(retryMaximum,
+                                                        _retryPasses,
+                                                        pass,
+                                                        i,
+                                                        tmpArray.Length,
+                                                        subchannelExtents.Count),
+                                   retryMaximum);
 
             uint startSector = badSector >= 2 ? badSector - 2 : 0;
 

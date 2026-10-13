@@ -1028,10 +1028,16 @@ partial class Dump
 
             InitProgress?.Invoke();
 
+            long videoRetryMaximum = (long)videoBadBlocks.Count * _retryPasses;
+
         repeatVideoRetry:
 
-            foreach(ulong badSector in videoBadBlocks.ToArray())
+            ulong[] videoTmpArray = videoBadBlocks.ToArray();
+
+            for(var i = 0; i < videoTmpArray.Length; i++)
             {
+                ulong badSector = videoTmpArray[i];
+
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -1040,13 +1046,20 @@ partial class Dump
                     break;
                 }
 
-                PulseProgress?.Invoke(videoForward
-                                          ? string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
-                                                          badSector,
-                                                          videoPass)
-                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
-                                                          badSector,
-                                                          videoPass));
+                UpdateProgress?.Invoke(videoForward
+                                           ? string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
+                                                           badSector,
+                                                           videoPass)
+                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
+                                                           badSector,
+                                                           videoPass),
+                                       RetryProgressCurrent(videoRetryMaximum,
+                                                            _retryPasses,
+                                                            videoPass,
+                                                            i,
+                                                            videoTmpArray.Length,
+                                                            videoBadBlocks.Count),
+                                       videoRetryMaximum);
 
                 sense = _dev.Read12(out readBuffer,
                                     out senseBuf,
@@ -1350,11 +1363,16 @@ partial class Dump
             }
 
             InitProgress?.Invoke();
+
+            long retryMaximum = (long)_resume.BadBlocks.Count * _retryPasses;
+
         repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
-            foreach(ulong badSector in tmpArray)
+            for(var i = 0; i < tmpArray.Length; i++)
             {
+                ulong badSector = tmpArray[i];
+
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -1367,27 +1385,38 @@ partial class Dump
                 // before unlocking and reading them here would return data from the wrong LBA
                 if(badSector >= blocks) continue;
 
+                long retryCurrent = RetryProgressCurrent(retryMaximum,
+                                                         _retryPasses,
+                                                         pass,
+                                                         i,
+                                                         tmpArray.Length,
+                                                         _resume.BadBlocks.Count);
+
                 if(forward)
                 {
-                    PulseProgress?.Invoke(runningPersistent
-                                              ? string.Format(Localization.Core
-                                                                          .Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                              badSector,
-                                                              pass)
-                                              : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
-                                                              badSector,
-                                                              pass));
+                    UpdateProgress?.Invoke(runningPersistent
+                                               ? string.Format(Localization.Core
+                                                                           .Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                               badSector,
+                                                               pass)
+                                               : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
+                                                               badSector,
+                                                               pass),
+                                           retryCurrent,
+                                           retryMaximum);
                 }
                 else
                 {
-                    PulseProgress?.Invoke(runningPersistent
-                                              ? string.Format(Localization.Core
-                                                                          .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                              badSector,
-                                                              pass)
-                                              : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
-                                                              badSector,
-                                                              pass));
+                    UpdateProgress?.Invoke(runningPersistent
+                                               ? string.Format(Localization.Core
+                                                                           .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                               badSector,
+                                                               pass)
+                                               : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
+                                                               badSector,
+                                                               pass),
+                                           retryCurrent,
+                                           retryMaximum);
                 }
 
                 sense = _dev.Read12(out readBuffer,

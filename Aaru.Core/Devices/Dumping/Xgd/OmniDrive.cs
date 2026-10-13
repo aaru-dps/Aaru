@@ -623,11 +623,16 @@ partial class Dump
             _resume.BadBlocks = tmpList;
 
             InitProgress?.Invoke();
+
+            long retryMaximum = (long)_resume.BadBlocks.Count * _retryPasses;
+
         repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
-            foreach(ulong badSector in tmpArray)
+            for(var i = 0; i < tmpArray.Length; i++)
             {
+                ulong badSector = tmpArray[i];
+
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -636,17 +641,28 @@ partial class Dump
                     break;
                 }
 
+                long retryCurrent = RetryProgressCurrent(retryMaximum,
+                                                         _retryPasses,
+                                                         pass,
+                                                         i,
+                                                         tmpArray.Length,
+                                                         _resume.BadBlocks.Count);
+
                 if(forward)
                 {
-                    PulseProgress?.Invoke(string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
-                                                        badSector,
-                                                        pass));
+                    UpdateProgress?.Invoke(string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
+                                                         badSector,
+                                                         pass),
+                                           retryCurrent,
+                                           retryMaximum);
                 }
                 else
                 {
-                    PulseProgress?.Invoke(string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
-                                                        badSector,
-                                                        pass));
+                    UpdateProgress?.Invoke(string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
+                                                         badSector,
+                                                         pass),
+                                           retryCurrent,
+                                           retryMaximum);
                 }
 
                 sense = _dev.OmniDriveReadRawDvd(out readBuffer,

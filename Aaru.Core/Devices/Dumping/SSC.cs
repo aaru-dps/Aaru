@@ -1183,11 +1183,16 @@ partial class Dump
             }
 
             InitProgress?.Invoke();
+
+            long retryMaximum = (long)_resume.BadBlocks.Count * _retryPasses;
+
         repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
-            foreach(ulong badBlock in tmpArray)
+            for(var i = 0; i < tmpArray.Length; i++)
             {
+                ulong badBlock = tmpArray[i];
+
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -1196,27 +1201,38 @@ partial class Dump
                     break;
                 }
 
+                long retryCurrent = RetryProgressCurrent(retryMaximum,
+                                                         _retryPasses,
+                                                         pass,
+                                                         i,
+                                                         tmpArray.Length,
+                                                         _resume.BadBlocks.Count);
+
                 if(forward)
                 {
-                    PulseProgress?.Invoke(runningPersistent
-                                              ? string.Format(Localization.Core
-                                                                          .Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                              badBlock,
-                                                              pass)
-                                              : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
-                                                              badBlock,
-                                                              pass));
+                    UpdateProgress?.Invoke(runningPersistent
+                                               ? string.Format(Localization.Core
+                                                                           .Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                               badBlock,
+                                                               pass)
+                                               : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
+                                                               badBlock,
+                                                               pass),
+                                           retryCurrent,
+                                           retryMaximum);
                 }
                 else
                 {
-                    PulseProgress?.Invoke(runningPersistent
-                                              ? string.Format(Localization.Core
-                                                                          .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                              badBlock,
-                                                              pass)
-                                              : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
-                                                              badBlock,
-                                                              pass));
+                    UpdateProgress?.Invoke(runningPersistent
+                                               ? string.Format(Localization.Core
+                                                                           .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                               badBlock,
+                                                               pass)
+                                               : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
+                                                               badBlock,
+                                                               pass),
+                                           retryCurrent,
+                                           retryMaximum);
                 }
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Positioning_tape_to_block_0, badBlock));

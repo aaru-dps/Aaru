@@ -581,10 +581,11 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
 
                             dumper.UpdateProgress += (text, current, maximum) =>
                             {
-                                _progressTask1             ??= ctx.AddTask("Progress");
-                                _progressTask1.Description =   text;
-                                _progressTask1.Value       =   current;
-                                _progressTask1.MaxValue    =   maximum;
+                                _progressTask1                 ??= ctx.AddTask("Progress");
+                                _progressTask1.Description     =   text;
+                                _progressTask1.IsIndeterminate =   false;
+                                _progressTask1.Value           =   current;
+                                _progressTask1.MaxValue        =   maximum;
                             };
 
                             dumper.PulseProgress += text =>
