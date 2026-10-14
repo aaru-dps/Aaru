@@ -110,7 +110,8 @@ public sealed partial class Vdi
                           Localization.Reading_Image_Block_Map_took_0_ms,
                           blockMapStopwatch.Elapsed.TotalMilliseconds);
 
-        _sectorCache = new Dictionary<ulong, byte[]>();
+        _blockCache    = new Dictionary<uint, byte[]>();
+        _maxBlockCache = (int)Math.Max(1, MAX_CACHE_SIZE / Math.Max(1, _vHdr.blockSize));
 
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
@@ -182,40 +183,11 @@ public sealed partial class Vdi
         buffer       = null;
         sectorStatus = SectorStatus.NotDumped;
 
-        if(negative) return ErrorNumber.NotSupported;
+        ErrorNumber errno = ReadSectors(sectorAddress, negative, 1, out buffer, out SectorStatus[] sectorStatuses);
 
-        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
+        if(errno != ErrorNumber.NoError) return errno;
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
-
-        sectorStatus = SectorStatus.Dumped;
-
-        ulong index  = sectorAddress * _vHdr.sectorSize / _vHdr.blockSize;
-        ulong secOff = sectorAddress * _vHdr.sectorSize % _vHdr.blockSize;
-
-        if(index >= (ulong)_ibm.LongLength) return ErrorNumber.OutOfRange;
-
-        uint ibmOff = _ibm[(int)index];
-
-        // VDI_EMPTY (unallocated) or VDI_IMAGE_BLOCK_ZERO (allocated, reads as zeros)
-        if(ibmOff >= 0xFFFFFFFE)
-        {
-            buffer = new byte[_vHdr.sectorSize];
-
-            return ErrorNumber.NoError;
-        }
-
-        ulong imageOff = _vHdr.offsetData + (ulong)ibmOff * _vHdr.blockSize;
-
-        var cluster = new byte[_vHdr.blockSize];
-        _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
-        _imageStream.EnsureRead(cluster, 0, (int)_vHdr.blockSize);
-        buffer = new byte[_vHdr.sectorSize];
-        Array.Copy(cluster, (int)secOff, buffer, 0, _vHdr.sectorSize);
-
-        if(_sectorCache.Count > MAX_CACHED_SECTORS) _sectorCache.Clear();
-
-        _sectorCache.Add(sectorAddress, buffer);
+        sectorStatus = sectorStatuses[0];
 
         return ErrorNumber.NoError;
     }
@@ -233,23 +205,63 @@ public sealed partial class Vdi
 
         if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
-        var ms = new MemoryStream();
+        buffer       = new byte[(ulong)length * _vHdr.sectorSize];
         sectorStatus = new SectorStatus[length];
 
-        for(uint i = 0; i < length; i++)
+        ulong byteAddress = sectorAddress * _vHdr.sectorSize;
+        ulong copied      = 0;
+
+        while(copied < (ulong)buffer.LongLength)
         {
-            ErrorNumber errno = ReadSector(sectorAddress + i, false, out byte[] sector, out SectorStatus status);
+            ulong index    = byteAddress / _vHdr.blockSize;
+            ulong blockOff = byteAddress % _vHdr.blockSize;
+            ulong toCopy   = Math.Min((ulong)buffer.LongLength - copied, _vHdr.blockSize - blockOff);
+
+            if(index >= (ulong)_ibm.LongLength) return ErrorNumber.OutOfRange;
+
+            ErrorNumber errno = ReadBlock((uint)index, out byte[] block);
 
             if(errno != ErrorNumber.NoError) return errno;
 
-            ms.Write(sector, 0, sector.Length);
-            sectorStatus[i] = status;
+            // Unallocated blocks read as zeros, which the new buffer already is
+            if(block != null) Array.Copy(block, (long)blockOff, buffer, (long)copied, (long)toCopy);
+
+            copied      += toCopy;
+            byteAddress += toCopy;
         }
 
-        buffer = ms.ToArray();
+        for(uint i = 0; i < length; i++) sectorStatus[i] = SectorStatus.Dumped;
 
         return ErrorNumber.NoError;
     }
 
 #endregion
+
+    /// <summary>Reads a whole image block, from the cache when possible.</summary>
+    /// <param name="index">Index of the block in the image block map.</param>
+    /// <param name="block">Block contents, or <c>null</c> if the block is unallocated or reads as zeros.</param>
+    /// <returns>Error number indicating success or failure.</returns>
+    ErrorNumber ReadBlock(uint index, out byte[] block)
+    {
+        block = null;
+
+        uint ibmOff = _ibm[index];
+
+        // VDI_EMPTY (unallocated) or VDI_IMAGE_BLOCK_ZERO (allocated, reads as zeros)
+        if(ibmOff >= 0xFFFFFFFE) return ErrorNumber.NoError;
+
+        if(_blockCache.TryGetValue(index, out block)) return ErrorNumber.NoError;
+
+        ulong imageOff = _vHdr.offsetData + (ulong)ibmOff * _vHdr.blockSize;
+
+        block = new byte[_vHdr.blockSize];
+        _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
+        _imageStream.EnsureRead(block, 0, (int)_vHdr.blockSize);
+
+        if(_blockCache.Count >= _maxBlockCache) _blockCache.Clear();
+
+        _blockCache.Add(index, block);
+
+        return ErrorNumber.NoError;
+    }
 }

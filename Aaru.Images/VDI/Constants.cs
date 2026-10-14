@@ -47,6 +47,5 @@ public sealed partial class Vdi
     const string DIC_AARU        = "<<< Aaru VirtualBox Disk Image >>>\n";
 
     const uint MAX_CACHE_SIZE     = 16777216;
-    const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
     const uint DEFAULT_BLOCK_SIZE = 1048576;
 }

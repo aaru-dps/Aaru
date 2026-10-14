@@ -43,14 +43,15 @@ namespace Aaru.Images;
 /// <summary>Implements reading and writing VirtualBox disk images</summary>
 public sealed partial class Vdi : IWritableImage
 {
-    const string              MODULE_NAME = "VirtualBox plugin";
-    ulong                     _currentWritingPosition;
-    uint[]                    _ibm;
-    ImageInfo                 _imageInfo;
-    Stream                    _imageStream;
-    Dictionary<ulong, byte[]> _sectorCache;
-    Header                    _vHdr;
-    FileStream                _writingStream;
+    const string             MODULE_NAME = "VirtualBox plugin";
+    Dictionary<uint, byte[]> _blockCache;
+    ulong                    _currentWritingPosition;
+    uint[]                   _ibm;
+    ImageInfo                _imageInfo;
+    Stream                   _imageStream;
+    int                      _maxBlockCache;
+    Header                   _vHdr;
+    FileStream               _writingStream;
 
     public Vdi() => _imageInfo = new ImageInfo
     {
