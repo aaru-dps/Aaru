@@ -66,22 +66,8 @@ public sealed partial class DpmMeasurement
     /// </summary>
     /// <remarks>
     ///     Every step of the sweep is s + m*T for an integer m: m = 0 for a step that stays on the slope, m = -1 for a
-    ///     genuine wrap, and a +1/-1 pair for a sample that missed its window and waited an extra rotation.
-    ///     <list type="bullet">
-    ///         <item>
-    ///             Slope and wrap steps are told apart by sign, which holds for any s in (0, T). On DVD, where more than
-    ///             half the steps wrap, the slope can't be taken as the majority step.
-    ///         </item>
-    ///         <item>
-    ///             s and T start as the two clusters' medians and are refined by a least-squares fit of step = s + m*T
-    ///             over every step that is a clean integer multiple; anything else is rejected as noise.
-    ///         </item>
-    ///         <item>
-    ///             Genuine wraps are the steps where the running rotation count reaches a new low, so a missed-window
-    ///             +1/-1 pair cancels out, and their spacing is units per rotation found by counting alone. It must match
-    ///             T/s, or the sweep is rejected.
-    ///         </item>
-    ///     </list>
+    ///     genuine wrap, and a +1/-1 pair for a sample that missed its window and waited an extra rotation. See
+    ///     <see cref="FitSweep" /> for how s and T are found.
     /// </remarks>
     bool CalibrateOnce(uint lba, out double tMs, out double aps)
     {
@@ -90,8 +76,6 @@ public sealed partial class DpmMeasurement
 
         var  e         = new double[CAL_MAX_D];
         var  diffs     = new double[CAL_MAX_D];
-        var  positive  = new double[CAL_MAX_D];
-        var  negative  = new double[CAL_MAX_D];
         var  wrapPos   = new int[CAL_MAX_D];
         uint u         = _unit;
         uint baseLba   = PlaceSweep(lba, CAL_MAX_D * u, false);
@@ -158,111 +142,21 @@ public sealed partial class DpmMeasurement
         }
 
         int nd = d - 1;
-        int np = 0, nn = 0;
 
-        for(int i = 0; i < nd; i++)
+        if(!FitSweep(diffs, nd, out double s, out double t, out int inconsistent))
         {
-            if(diffs[i] > 0)
-                positive[np++] = diffs[i];
-            else
-                negative[nn++] = diffs[i];
-        }
-
-        if(np < 2 || nn < CAL_MIN_WRAPS)
-        {
-            AaruLogging.Debug(MODULE_NAME,
-                              "  sweep rejected: {0} slope and {1} wrap steps within {2} steps",
-                              np,
-                              nn,
-                              nd);
+            LogSweep(baseLba, e, diffs, nd, s, t);
 
             return false;
         }
 
-        double s = Median(positive, np);
-        double t = s - Median(negative, nn);
-
-        int nc = 0;
-
-        for(int iter = 0; iter < 3; iter++)
-        {
-            double n  = 0, sm = 0, smm = 0, sd = 0, smd = 0;
-            long   mLo = 0, mHi = 0;
-            nc = 0;
-
-            for(int i = 0; i < nd; i++)
-            {
-                long m = (long)Math.Round((diffs[i] - s) / t, MidpointRounding.AwayFromZero);
-
-                if(Math.Abs(diffs[i] - s - m * t) >= CAL_MULT_TOL * t) continue;
-
-                n   += 1;
-                sm  += m;
-                smm += (double)m * m;
-                sd  += diffs[i];
-                smd += m * diffs[i];
-
-                if(m < mLo) mLo = m;
-                if(m > mHi) mHi = m;
-
-                nc++;
-            }
-
-            double det = n * smm - sm * sm;
-
-            if(mLo == mHi || det <= 0)
-            {
-                AaruLogging.Debug(MODULE_NAME,
-                                  "  sweep rejected: steps don't separate into slope and whole rotations");
-
-                return false;
-            }
-
-            s = (sd * smm - sm * smd) / det;
-            t = (n  * smd - sm * sd)  / det;
-
-            if(!(s <= 0) && !(t <= s)) continue;
-
-            AaruLogging.Debug(MODULE_NAME, "  sweep rejected: implausible fit (slope {0:F4} ms, T {1:F4} ms)", s, t);
-
-            return false;
-        }
-
-        int inconsistent = nd - nc;
-
-        if(inconsistent * 8 > nd)
-        {
-            AaruLogging.Debug(MODULE_NAME,
-                              "  sweep rejected: {0} of {1} steps are noise, not slope plus whole rotations",
-                              inconsistent,
-                              nd);
-
-            LogSweep(baseLba, e, diffs, nd, s, t, wrapPos, 0);
-
-            return false;
-        }
-
-        // Genuine wrap positions: new lows of the running rotation count
-        int kCum = 0, kMin = 0, nWrap = 0;
-
-        for(int i = 0; i < nd; i++)
-        {
-            long m = (long)Math.Round((diffs[i] - s) / t, MidpointRounding.AwayFromZero);
-
-            if(m == 0 || Math.Abs(diffs[i] - s - m * t) >= CAL_MULT_TOL * t) continue;
-
-            kCum += (int)m;
-
-            if(kCum >= kMin) continue;
-
-            kMin              = kCum;
-            wrapPos[nWrap++] = i + 1;
-        }
+        // Genuine wrap positions, new lows of the running rotation count, to tell how many sectors a turn has by counting
+        int nWrap = GenuineWraps(diffs, nd, s, t, wrapPos);
 
         if(nWrap < CAL_MIN_WRAPS)
         {
             AaruLogging.Debug(MODULE_NAME, "  sweep rejected: only {0} genuine wraps", nWrap);
-            LogSweep(baseLba, e, diffs, nd, s, t, wrapPos, nWrap);
+            LogSweep(baseLba, e, diffs, nd, s, t);
 
             return false;
         }
@@ -278,7 +172,7 @@ public sealed partial class DpmMeasurement
                               uprTime  * u,
                               uprCount * u);
 
-            LogSweep(baseLba, e, diffs, nd, s, t, wrapPos, nWrap);
+            LogSweep(baseLba, e, diffs, nd, s, t);
 
             return false;
         }
@@ -301,22 +195,208 @@ public sealed partial class DpmMeasurement
         return true;
     }
 
+    /// <summary>
+    ///     Finds the slope s, in ms per step, and the rotation period T that explain the steps of a calibration sweep as
+    ///     s + m*T for an integer m.
+    /// </summary>
+    /// <remarks>
+    ///     <list type="bullet">
+    ///         <item>
+    ///             s starts as the median of the rising steps. Slope and wrap steps are told apart by sign, which holds
+    ///             for any s in (0, T). On DVD, where more than half the steps wrap, the slope can't be taken as the
+    ///             majority step.
+    ///         </item>
+    ///         <item>
+    ///             T is tried from every step that isn't on the slope, and from a half and a third of it, as a step can
+    ///             fall or rise by more than one turn. Where the drive often answers a turn or more late, the median of
+    ///             the falling steps is two turns or more, and a fit started from it takes every genuine wrap for noise.
+    ///         </item>
+    ///         <item>
+    ///             Each try is refined by a least-squares fit of step = s + m*T over every step that is a clean integer
+    ///             multiple, anything else being noise, and the one explaining the most steps is kept.
+    ///         </item>
+    ///     </list>
+    /// </remarks>
+    /// <param name="diffs">Steps between consecutive samples</param>
+    /// <param name="nd">Number of steps</param>
+    /// <param name="s">Fitted slope, ms per step</param>
+    /// <param name="t">Fitted rotation period, ms</param>
+    /// <param name="inconsistent">Steps that are not the slope plus whole rotations</param>
+    /// <returns><c>true</c> if the steps fit a sawtooth well enough to calibrate from</returns>
+    internal static bool FitSweep(double[] diffs, int nd, out double s, out double t, out int inconsistent)
+    {
+        s            = 0;
+        t            = 0;
+        inconsistent = nd;
+
+        var rising = new double[nd];
+        int nr     = 0;
+
+        for(int i = 0; i < nd; i++)
+            if(diffs[i] > 0)
+                rising[nr++] = diffs[i];
+
+        if(nr < 2 || nd - nr < CAL_MIN_WRAPS)
+        {
+            AaruLogging.Debug(MODULE_NAME,
+                              "  sweep rejected: {0} slope and {1} wrap steps within {2} steps",
+                              nr,
+                              nd - nr,
+                              nd);
+
+            return false;
+        }
+
+        double s0      = Median(rising, nr);
+        int    bestFit = -1;
+        bool   anyFit  = false;
+
+        for(int i = 0; i < nd; i++)
+        {
+            double turns = diffs[i] < 0 ? s0 - diffs[i] : diffs[i] - s0;
+
+            for(int k = 1; k <= 3; k++)
+            {
+                double tTry = turns / k;
+                double sTry = s0;
+
+                if(tTry <= s0 || !RefineSweepFit(diffs, nd, ref sTry, ref tTry, out int consistent)) continue;
+
+                anyFit = true;
+
+                if(consistent <= bestFit) continue;
+
+                bestFit = consistent;
+                s       = sTry;
+                t       = tTry;
+            }
+        }
+
+        if(!anyFit)
+        {
+            AaruLogging.Debug(MODULE_NAME, "  sweep rejected: steps don't separate into slope and whole rotations");
+
+            return false;
+        }
+
+        inconsistent = nd - bestFit;
+
+        if(inconsistent * 8 <= nd) return true;
+
+        AaruLogging.Debug(MODULE_NAME,
+                          "  sweep rejected: {0} of {1} steps are noise, not slope plus whole rotations",
+                          inconsistent,
+                          nd);
+
+        return false;
+    }
+
+    /// <summary>
+    ///     Refines <paramref name="s" /> and <paramref name="t" /> by least squares over the steps that are a clean
+    ///     integer multiple of the rotation away from the slope, three times.
+    /// </summary>
+    /// <param name="diffs">Steps between consecutive samples</param>
+    /// <param name="nd">Number of steps</param>
+    /// <param name="s">Slope to start from, refined on return</param>
+    /// <param name="t">Rotation period to start from, refined on return</param>
+    /// <param name="consistent">Steps that are the refined slope plus whole refined rotations</param>
+    /// <returns><c>false</c> if the steps don't separate into slope and whole rotations, or the fit is implausible</returns>
+    static bool RefineSweepFit(double[] diffs, int nd, ref double s, ref double t, out int consistent)
+    {
+        consistent = 0;
+
+        for(int iter = 0; iter < 3; iter++)
+        {
+            double n   = 0, sm  = 0, smm = 0, sd = 0, smd = 0;
+            long   mLo = 0, mHi = 0;
+
+            for(int i = 0; i < nd; i++)
+            {
+                long m = (long)Math.Round((diffs[i] - s) / t, MidpointRounding.AwayFromZero);
+
+                if(Math.Abs(diffs[i] - s - m * t) >= CAL_MULT_TOL * t) continue;
+
+                n   += 1;
+                sm  += m;
+                smm += (double)m * m;
+                sd  += diffs[i];
+                smd += m * diffs[i];
+
+                if(m < mLo) mLo = m;
+                if(m > mHi) mHi = m;
+            }
+
+            double det = n * smm - sm * sm;
+
+            if(mLo == mHi || det <= 0) return false;
+
+            s = (sd * smm - sm * smd) / det;
+            t = (n  * smd - sm * sd)  / det;
+
+            if(s <= 0 || t <= s) return false;
+        }
+
+        for(int i = 0; i < nd; i++)
+        {
+            long m = (long)Math.Round((diffs[i] - s) / t, MidpointRounding.AwayFromZero);
+
+            if(Math.Abs(diffs[i] - s - m * t) < CAL_MULT_TOL * t) consistent++;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Genuine wraps of a fitted sweep: the steps where the running rotation count reaches a new low, so a
+    ///     missed-window +1/-1 pair cancels out.
+    /// </summary>
+    /// <param name="diffs">Steps between consecutive samples</param>
+    /// <param name="nd">Number of steps</param>
+    /// <param name="s">Fitted slope, ms per step</param>
+    /// <param name="t">Fitted rotation period, ms</param>
+    /// <param name="wrapPos">Receives the sample index after every genuine wrap</param>
+    /// <returns>Number of genuine wraps</returns>
+    static int GenuineWraps(double[] diffs, int nd, double s, double t, int[] wrapPos)
+    {
+        int kCum = 0, kMin = 0, nWrap = 0;
+
+        for(int i = 0; i < nd; i++)
+        {
+            long m = (long)Math.Round((diffs[i] - s) / t, MidpointRounding.AwayFromZero);
+
+            if(m == 0 || Math.Abs(diffs[i] - s - m * t) >= CAL_MULT_TOL * t) continue;
+
+            kCum += (int)m;
+
+            if(kCum >= kMin) continue;
+
+            kMin             = kCum;
+            wrapPos[nWrap++] = i + 1;
+        }
+
+        return nWrap;
+    }
+
     /// <summary>Logs a rejected calibration sweep, so drives that behave unexpectedly can be studied</summary>
     /// <param name="baseLba">First sector of the sweep</param>
     /// <param name="e">Milliseconds of every paired sample</param>
     /// <param name="diffs">Steps between consecutive samples</param>
     /// <param name="nd">Number of steps</param>
-    /// <param name="s">Fitted slope, ms per step</param>
-    /// <param name="t">Fitted rotation period, ms</param>
-    /// <param name="wrapPos">Steps where a genuine wrap was found</param>
-    /// <param name="nWrap">Number of genuine wraps</param>
-    static void LogSweep(uint  baseLba, double[] e, double[] diffs, int nd, double s, double t, int[] wrapPos,
-                         int   nWrap)
+    /// <param name="s">Fitted slope, ms per step, or 0 if there is no fit</param>
+    /// <param name="t">Fitted rotation period, ms, or 0 if there is no fit</param>
+    static void LogSweep(uint baseLba, double[] e, double[] diffs, int nd, double s, double t)
     {
         var samples = new string[nd + 1];
-        var steps   = new string[nd];
 
         for(int i = 0; i <= nd; i++) samples[i] = e[i].ToString("F3", CultureInfo.InvariantCulture);
+
+        AaruLogging.Debug(MODULE_NAME, "    sweep at {0}: slope {1:F4} ms, T {2:F4} ms", baseLba, s, t);
+        AaruLogging.Debug(MODULE_NAME, "    samples (ms): {0}",                          string.Join(' ', samples));
+
+        if(t <= 0) return;
+
+        var steps   = new string[nd];
+        var wrapPos = new int[nd];
 
         for(int i = 0; i < nd; i++)
         {
@@ -326,18 +406,10 @@ public sealed partial class DpmMeasurement
             steps[i] = string.Format(CultureInfo.InvariantCulture, "{0:+0;-0}{1}", m, noise ? "?" : "");
         }
 
-        AaruLogging.Debug(MODULE_NAME,
-                          "    sweep at {0}: slope {1:F4} ms, T {2:F4} ms",
-                          baseLba,
-                          s,
-                          t);
+        int nWrap = GenuineWraps(diffs, nd, s, t, wrapPos);
 
-        AaruLogging.Debug(MODULE_NAME, "    samples (ms): {0}", string.Join(' ', samples));
         AaruLogging.Debug(MODULE_NAME, "    rotations per step (? = noise): {0}", string.Join(' ', steps));
-
-        AaruLogging.Debug(MODULE_NAME,
-                          "    genuine wraps at steps: {0}",
-                          string.Join(' ', wrapPos.Take(nWrap)));
+        AaruLogging.Debug(MODULE_NAME, "    genuine wraps at steps: {0}", string.Join(' ', wrapPos.Take(nWrap)));
     }
 
     /// <summary>
@@ -389,7 +461,7 @@ public sealed partial class DpmMeasurement
 
         AaruLogging.Debug(MODULE_NAME,
                           "  no more calibrations in sectors {0}-{1} of this layer",
-                          lba / _recalEvery * _recalEvery,
+                          lba                     / _recalEvery * _recalEvery,
                           (lba / _recalEvery + 1) * _recalEvery - 1);
 
         return false;
@@ -449,7 +521,7 @@ public sealed partial class DpmMeasurement
                 _calibrations.Add(new DpmCalibration
                 {
                     Lba            = lba,
-                    RotationPeriod = (ulong)Math.Round(tMs * 1e6),
+                    RotationPeriod = (ulong)Math.Round(tMs         * 1e6),
                     SectorsPerTurn = (ulong)Math.Round(360.0 / aps * 1000.0)
                 });
 
@@ -483,14 +555,14 @@ public sealed partial class DpmMeasurement
     /// <returns>Slope, or -1 if it could not be measured</returns>
     double SlopeAtPoint(uint lba, double tMs, out double tLocal, ref int cacheHits)
     {
-        var  steps    = new double[64];
-        var  sorted   = new double[64];
-        var  positive = new double[64];
-        var  negative = new double[64];
-        int  np       = 0, nn = 0;
-        uint u        = _unit;
-        int  nSteps   = _pointSteps;
-        uint baseLba  = PlaceSweep(lba, (uint)nSteps * u, true);
+        var    steps    = new double[64];
+        var    sorted   = new double[64];
+        var    positive = new double[64];
+        var    negative = new double[64];
+        int    np       = 0, nn = 0;
+        uint   u        = _unit;
+        int    nSteps   = _pointSteps;
+        uint   baseLba  = PlaceSweep(lba, (uint)nSteps * u, true);
         double previous = -1;
         int    n        = 0;
 
