@@ -675,6 +675,8 @@ public sealed partial class NTFS
         mynode.ResidentData             = null;
         mynode.CachedCluster            = null;
         mynode.CachedClusterOffset      = -1;
+        mynode.LastRunIndex             = 0;
+        mynode.LastRunStartVcn          = 0;
         mynode.CachedCompressionUnit    = null;
         mynode.CachedCompressionUnitVcn = -1;
         mynode.WofDataRuns              = null;
@@ -893,7 +895,10 @@ public sealed partial class NTFS
         }
     }
 
-    /// <summary>Reads uncompressed non-resident file data from data runs with single-cluster caching.</summary>
+    /// <summary>
+    ///     Reads uncompressed non-resident file data from data runs, reading whole clusters contiguous on disk at
+    ///     once and caching single clusters for partial reads.
+    /// </summary>
     /// <param name="mynode">The file node containing data runs and read state.</param>
     /// <param name="length">Number of bytes to read.</param>
     /// <param name="buffer">Destination buffer.</param>
@@ -902,76 +907,94 @@ public sealed partial class NTFS
     ErrorNumber ReadUncompressedFile(NtfsFileNode mynode, long length, byte[] buffer, out long read)
     {
         read = 0;
-        long bytesRead = 0;
+        long bytesRead          = 0;
+        long bytesPerCluster    = _bytesPerCluster;
+        long maxClustersPerRead = Math.Max(1, MAX_CONTIGUOUS_READ / bytesPerCluster);
 
         while(bytesRead < length)
         {
             long fileOffset      = mynode.Offset;
-            long clusterIndex    = fileOffset / _bytesPerCluster;
-            long offsetInCluster = fileOffset % _bytesPerCluster;
-
-            // Translate logical cluster to physical cluster via data runs
-            long physicalCluster = -1;
-            long runStartVcn     = 0;
-
-            foreach((long clusterOffset, long clusterLength) in mynode.DataRuns)
-            {
-                if(clusterIndex >= runStartVcn && clusterIndex < runStartVcn + clusterLength)
-                {
-                    // Sparse run (offset 0 with no offset bytes stored as 0)
-                    if(clusterOffset == 0 && clusterLength > 0)
-                    {
-                        physicalCluster = 0; // Will be treated as sparse below
-
-                        break;
-                    }
-
-                    physicalCluster = clusterOffset + (clusterIndex - runStartVcn);
-
-                    break;
-                }
-
-                runStartVcn += clusterLength;
-            }
+            long clusterIndex    = fileOffset / bytesPerCluster;
+            long offsetInCluster = fileOffset % bytesPerCluster;
 
             // Beyond the end of data runs
-            if(physicalCluster < 0) break;
+            if(!FindDataRun(mynode, clusterIndex, out long runOffset, out long runStartVcn, out long runLength)) break;
 
-            long bytesToCopy = Math.Min(length - bytesRead, _bytesPerCluster - offsetInCluster);
+            long clustersLeftInRun = runStartVcn + runLength - clusterIndex;
+            long remaining         = length - bytesRead;
+            long bytesToCopy;
 
-            if(physicalCluster == 0)
+            if(runOffset == 0)
             {
-                // Sparse cluster — fill with zeros
+                // Sparse run (offset 0 with no offset bytes stored as 0) — fill with zeros
+                bytesToCopy = Math.Min(remaining, clustersLeftInRun * bytesPerCluster - offsetInCluster);
                 Array.Clear(buffer, (int)bytesRead, (int)bytesToCopy);
+                bytesRead     += bytesToCopy;
+                mynode.Offset += bytesToCopy;
+
+                continue;
             }
-            else if(mynode.CachedClusterOffset == physicalCluster && mynode.CachedCluster != null)
+
+            long physicalCluster = runOffset + (clusterIndex - runStartVcn);
+
+            long wholeClusters = offsetInCluster == 0
+                                     ? Math.Min(Math.Min(clustersLeftInRun, remaining / bytesPerCluster),
+                                                maxClustersPerRead)
+                                     : 0;
+
+            if(wholeClusters > 1)
             {
-                // Cache hit — copy from cached cluster
-                Array.Copy(mynode.CachedCluster, offsetInCluster, buffer, bytesRead, bytesToCopy);
-            }
-            else
-            {
-                // Read cluster from disk
+                // Read all whole clusters contiguous on disk at once
                 ulong sectorStart = (ulong)physicalCluster * _sectorsPerCluster;
 
                 ErrorNumber errno = _image.ReadSectors(_partition.Start + sectorStart,
                                                        false,
-                                                       _sectorsPerCluster,
-                                                       out byte[] clusterData,
+                                                       (uint)(wholeClusters * _sectorsPerCluster),
+                                                       out byte[] clustersData,
                                                        out _);
 
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruLogging.Debug(MODULE_NAME, "Error reading cluster {0}: {1}", physicalCluster, errno);
+                    AaruLogging.Debug(MODULE_NAME,
+                                      "Error reading {0} clusters at {1}: {2}",
+                                      wholeClusters,
+                                      physicalCluster,
+                                      errno);
 
                     break;
                 }
 
-                // Cache this cluster
-                mynode.CachedCluster       = clusterData;
-                mynode.CachedClusterOffset = physicalCluster;
+                bytesToCopy = wholeClusters * bytesPerCluster;
+                Array.Copy(clustersData, 0, buffer, bytesRead, bytesToCopy);
+            }
+            else
+            {
+                bytesToCopy = Math.Min(remaining, bytesPerCluster - offsetInCluster);
 
-                Array.Copy(clusterData, offsetInCluster, buffer, bytesRead, bytesToCopy);
+                if(mynode.CachedClusterOffset != physicalCluster || mynode.CachedCluster == null)
+                {
+                    // Read cluster from disk
+                    ulong sectorStart = (ulong)physicalCluster * _sectorsPerCluster;
+
+                    ErrorNumber errno = _image.ReadSectors(_partition.Start + sectorStart,
+                                                           false,
+                                                           _sectorsPerCluster,
+                                                           out byte[] clusterData,
+                                                           out _);
+
+                    if(errno != ErrorNumber.NoError)
+                    {
+                        AaruLogging.Debug(MODULE_NAME, "Error reading cluster {0}: {1}", physicalCluster, errno);
+
+                        break;
+                    }
+
+                    // Cache this cluster
+                    mynode.CachedCluster       = clusterData;
+                    mynode.CachedClusterOffset = physicalCluster;
+                }
+
+                Array.Copy(mynode.CachedCluster, offsetInCluster, buffer, bytesRead, bytesToCopy);
             }
 
             bytesRead     += bytesToCopy;
@@ -981,6 +1004,53 @@ public sealed partial class NTFS
         read = bytesRead;
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>
+    ///     Finds the data run containing a VCN, starting from the last run used so sequential reads do not rescan the
+    ///     run list from the beginning.
+    /// </summary>
+    /// <param name="mynode">The file node containing data runs and the last run used.</param>
+    /// <param name="vcn">Virtual cluster number to find.</param>
+    /// <param name="runOffset">Absolute cluster offset of the run, 0 if sparse.</param>
+    /// <param name="runStartVcn">First VCN of the run.</param>
+    /// <param name="runLength">Length of the run in clusters.</param>
+    /// <returns><c>true</c> if a run contains the VCN, <c>false</c> if it is beyond the end of the data runs.</returns>
+    static bool FindDataRun(NtfsFileNode mynode, long vcn, out long runOffset, out long runStartVcn,
+                            out long     runLength)
+    {
+        runOffset   = 0;
+        runStartVcn = 0;
+        runLength   = 0;
+
+        int  index    = 0;
+        long startVcn = 0;
+
+        if(vcn >= mynode.LastRunStartVcn && mynode.LastRunIndex < mynode.DataRuns.Count)
+        {
+            index    = mynode.LastRunIndex;
+            startVcn = mynode.LastRunStartVcn;
+        }
+
+        for(; index < mynode.DataRuns.Count; index++)
+        {
+            (long clusterOffset, long clusterLength) = mynode.DataRuns[index];
+
+            if(vcn < startVcn + clusterLength)
+            {
+                mynode.LastRunIndex    = index;
+                mynode.LastRunStartVcn = startVcn;
+                runOffset              = clusterOffset;
+                runStartVcn            = startVcn;
+                runLength              = clusterLength;
+
+                return true;
+            }
+
+            startVcn += clusterLength;
+        }
+
+        return false;
     }
 
     /// <summary>

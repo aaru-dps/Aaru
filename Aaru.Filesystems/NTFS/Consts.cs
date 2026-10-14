@@ -65,4 +65,7 @@ public sealed partial class NTFS
 
     // WofCompressedData named stream
     const string WOF_COMPRESSED_DATA_STREAM = "WofCompressedData";
+
+    /// <summary>Maximum number of bytes of contiguous clusters read from the image at once</summary>
+    const long MAX_CONTIGUOUS_READ = 1048576;
 }

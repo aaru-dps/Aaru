@@ -89,6 +89,12 @@ public sealed partial class NTFS
         /// <summary>Whether the file data is resident (stored in the MFT record).</summary>
         internal bool IsResident;
 
+        /// <summary>Index in <see cref="DataRuns" /> of the last run a read was served from.</summary>
+        internal int LastRunIndex;
+
+        /// <summary>First VCN of the run at <see cref="LastRunIndex" />.</summary>
+        internal long LastRunStartVcn;
+
         /// <summary>Whether the file is WOF (Windows Overlay Filter) externally compressed.</summary>
         internal bool IsWofCompressed;
 
