@@ -743,7 +743,7 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
                            Sidecar,
                            (uint)Skipped,
                            CreateSidecar && !ExistingMetadata,
-                           !Trim,
+                           Trim,
                            Track1Pregap,
                            true,
                            false,
