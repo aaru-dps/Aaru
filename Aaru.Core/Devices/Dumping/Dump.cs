@@ -124,7 +124,7 @@ public partial class Dump
     readonly        ushort                     _retryPasses;
     readonly        bool                       _retrySubchannel;
     readonly        Stopwatch                  _sidecarStopwatch;
-    readonly        bool                       _skipSafedisc;
+    readonly        List<(ulong Start, ulong End)> _noRetrySectors;
     readonly        bool                       _c2Repair;
     readonly        bool                       _dpm;
     readonly        Stopwatch                  _speedStopwatch;
@@ -210,6 +210,12 @@ public partial class Dump
     /// <param name="cureParanoia">Try to fix sectors integrity</param>
     /// <param name="bypassWiiDecryption">When dumping Wii (WOD), skip partition AES decryption and store encrypted data</param>
     /// <param name="startReverse">Start error retrying in reverse</param>
+    /// <param name="errorRecovery">Error recovery level</param>
+    /// <param name="hyperSpeed">Use hyper speed</param>
+    /// <param name="ludicrousSpeed">Use ludicrous speed</param>
+    /// <param name="leadout">Dump the lead-out</param>
+    /// <param name="skipSafedisc">Do not trim nor retry sectors 800 to 10000, typically used by SafeDisc</param>
+    /// <param name="noRetrySectors">Sector ranges, both ends included, that must not be trimmed nor retried</param>
     /// <param name="c2Repair">Repair audio sectors the drive concealed using C2 pointers</param>
     /// <param name="dpm">Measure Data Position Measurement of optical discs after dumping them</param>
     public Dump(bool doResume, Device dev, string devicePath, IBaseWritableImage outputPlugin, ushort retryPasses,
@@ -221,7 +227,8 @@ public partial class Dump
                 bool generateSubchannels, uint maximumReadable, bool useBufferedReads, bool storeEncrypted,
                 bool titleKeys, uint ignoreCdrRunOuts, bool createGraph, uint dimensions, bool paranoia,
                 bool cureParanoia, bool bypassWiiDecryption, bool startReverse, int errorRecovery, bool hyperSpeed,
-                bool ludicrousSpeed, bool leadout, bool skipSafedisc, bool c2Repair = true, bool dpm = true)
+                bool ludicrousSpeed, bool leadout, bool skipSafedisc, List<(ulong Start, ulong End)> noRetrySectors,
+                bool c2Repair = true, bool dpm = true)
     {
         _doResume              = doResume;
         _dev                   = dev;
@@ -273,7 +280,7 @@ public partial class Dump
         _hyperSpeed            = hyperSpeed;
         _ludicrousSpeed        = ludicrousSpeed;
         _leadout               = leadout;
-        _skipSafedisc          = skipSafedisc;
+        _noRetrySectors        = noRetrySectors ?? [];
         _c2Repair              = c2Repair;
         _dpm                   = dpm;
         _dumpStopwatch         = new Stopwatch();
@@ -283,6 +290,8 @@ public partial class Dump
         _writeStopwatch        = new Stopwatch();
         _imageCloseStopwatch   = new Stopwatch();
         _totalStopwatch        = new Stopwatch();
+
+        if(skipSafedisc) _noRetrySectors.Add((800, 10000));
     }
 
     /// <summary>Computes the KiB/s cap from the user mandated speed and the media speed multiplier</summary>
@@ -325,6 +334,12 @@ public partial class Dump
             UpdateStatus?.Invoke(string.Format(Localization.Core.Device_in_database_since_0, _dbDev.LastSynchronized));
 
             if(_dbDev.OptimalMultipleSectorsRead > 0) _maximumReadable = (uint)_dbDev.OptimalMultipleSectorsRead;
+        }
+
+        if(_noRetrySectors.Count > 0)
+        {
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Not_trimming_or_retrying_sectors_0,
+                                               FormatSectorRanges(_noRetrySectors)));
         }
 
         switch(_dev.IsUsb)

@@ -12257,5 +12257,23 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Help_No_retry_sectors {
+            get {
+                return ResourceManager.GetString("Help_No_retry_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Sectors_not_to_trim_or_retry {
+            get {
+                return ResourceManager.GetString("Sectors_not_to_trim_or_retry", resourceCulture);
+            }
+        }
+        
+        public static string Invalid_sector_range_list_0 {
+            get {
+                return ResourceManager.GetString("Invalid_sector_range_list_0", resourceCulture);
+            }
+        }
+        
     }
 }

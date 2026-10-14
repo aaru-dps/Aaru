@@ -122,7 +122,7 @@ partial class Dump
                 break;
             }
 
-            if(_skipSafedisc && badSector is >= 800 and <= 10000) continue;
+            if(NoRetry(badSector)) continue;
 
             UpdateProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector),
                                    b,

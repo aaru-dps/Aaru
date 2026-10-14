@@ -151,6 +151,8 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
     [ObservableProperty]
     bool _trim;
     [ObservableProperty]
+    string _noRetrySectors;
+    [ObservableProperty]
     bool _useSidecar;
     [ObservableProperty]
     bool _createSidecar;
@@ -689,6 +691,13 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
             }
         }
 
+        if(!Dump.TryParseSectorRanges(NoRetrySectors, out List<(ulong Start, ulong End)> noRetrySectors))
+        {
+            StoppingErrorMessage(string.Format(UI.Invalid_sector_range_list_0, NoRetrySectors));
+
+            return;
+        }
+
         Dictionary<string, string> parsedOptions = [];
 
         /* TODO: Options
@@ -773,6 +782,7 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
                            false,
                            false,
                            false,
+                           noRetrySectors,
                            true,
                            MeasureDpm);
 

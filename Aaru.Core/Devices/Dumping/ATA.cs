@@ -450,6 +450,8 @@ public partial class Dump
                                 break;
                             }
 
+                            if(NoRetry(badSector)) continue;
+
                             UpdateProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector),
                                                    i,
                                                    tmpArray.Length);
@@ -504,6 +506,8 @@ public partial class Dump
 
                                 break;
                             }
+
+                            if(NoRetry(badSector)) continue;
 
                             long retryCurrent = RetryProgressCurrent(retryMaximum,
                                                                      _retryPasses,

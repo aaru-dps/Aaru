@@ -1184,6 +1184,8 @@ partial class Dump
                     break;
                 }
 
+                if(NoRetry(badSector)) continue;
+
                 // Video partition sectors are only readable while the drive is locked; they were already retried
                 // before unlocking and reading them here would return data from the wrong LBA
                 if(badSector >= blocks) continue;
@@ -1384,6 +1386,8 @@ partial class Dump
 
                     break;
                 }
+
+                if(NoRetry(badSector)) continue;
 
                 // Video partition sectors are only readable while the drive is locked; they were already retried
                 // before unlocking and reading them here would return data from the wrong LBA

@@ -6211,4 +6211,13 @@ Do you want to continue?</value>
     <data name="ButtonLabel_DPM_size_as_shown" xml:space="preserve">
         <value>As shown</value>
     </data>
+    <data name="Help_No_retry_sectors" xml:space="preserve">
+        <value>Sectors that will not be trimmed nor retried if they could not be read, as a comma separated list of sectors or ranges of sectors, e.g. 800-10000,15000</value>
+    </data>
+    <data name="Sectors_not_to_trim_or_retry" xml:space="preserve">
+        <value>Sectors not to trim nor retry</value>
+    </data>
+    <data name="Invalid_sector_range_list_0" xml:space="preserve">
+        <value>Invalid list of sectors not to trim nor retry: {0}</value>
+    </data>
 </root>

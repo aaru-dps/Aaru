@@ -261,7 +261,7 @@ partial class Dump
                 break;
             }
 
-            if(_skipSafedisc && badSector is >= 800 and <= 10000) continue;
+            if(NoRetry(badSector)) continue;
 
             long retryCurrent = RetryProgressCurrent(retryMaximum,
                                                      _retryPasses,
@@ -1087,7 +1087,7 @@ partial class Dump
                 break;
             }
 
-            if(_skipSafedisc && badSector is >= 800 and <= 10000) continue;
+            if(NoRetry(badSector)) continue;
 
             UpdateProgress?.Invoke(forward
                                        ? string.Format(Localization.Core.Retrying_sector_0_subchannel_pass_1_forward,

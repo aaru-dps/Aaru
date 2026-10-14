@@ -6124,4 +6124,13 @@ Probadores:
     <data name="ButtonLabel_DPM_size_as_shown" xml:space="preserve">
         <value>Como se muestra</value>
     </data>
+    <data name="Help_No_retry_sectors" xml:space="preserve">
+        <value>Sectores que no se recortarán ni reintentarán si no se pudieron leer, como una lista separada por comas de sectores o rangos de sectores, p. ej. 800-10000,15000</value>
+    </data>
+    <data name="Sectors_not_to_trim_or_retry" xml:space="preserve">
+        <value>Sectores a no recortar ni reintentar</value>
+    </data>
+    <data name="Invalid_sector_range_list_0" xml:space="preserve">
+        <value>Lista de sectores a no recortar ni reintentar no válida: {0}</value>
+    </data>
 </root>

@@ -7504,5 +7504,11 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Not_trimming_or_retrying_sectors_0 {
+            get {
+                return ResourceManager.GetString("Not_trimming_or_retrying_sectors_0", resourceCulture);
+            }
+        }
+        
     }
 }

@@ -169,6 +169,16 @@
                         <CheckBox IsChecked="{Binding Trim, Mode=TwoWay}">
                             <TextBlock Text="{x:Static localization:UI.Trim_errors_from_skipped_sectors}" />
                         </CheckBox>
+                        <Grid ColumnDefinitions="Auto, *"
+                              ColumnSpacing="8">
+                            <TextBlock Grid.Column="0"
+                                       Text="{x:Static localization:UI.Sectors_not_to_trim_or_retry}"
+                                       VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1"
+                                     HorizontalAlignment="Stretch"
+                                     Watermark="800-10000, 15000"
+                                     Text="{Binding NoRetrySectors, Mode=TwoWay}" />
+                        </Grid>
                         <CheckBox IsChecked="{Binding Paranoia, Mode=TwoWay}">
                             <TextBlock Text="{x:Static localization:UI.Paranoia_help}" />
                         </CheckBox>

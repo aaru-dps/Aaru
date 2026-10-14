@@ -1201,6 +1201,8 @@ partial class Dump
                     break;
                 }
 
+                if(NoRetry(badBlock)) continue;
+
                 long retryCurrent = RetryProgressCurrent(retryMaximum,
                                                          _retryPasses,
                                                          pass,

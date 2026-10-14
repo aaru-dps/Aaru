@@ -3671,4 +3671,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="DPM_already_in_resumed_image_not_measuring_again" xml:space="preserve">
         <value>[olive]La imagen reanudada ya tiene una Medición de Posición de Datos, no se vuelve a medir.[/]</value>
     </data>
+    <data name="Not_trimming_or_retrying_sectors_0" xml:space="preserve">
+        <value>[slateblue1]No se recortarán ni reintentarán los sectores [teal]{0}[/].[/]</value>
+    </data>
 </root>

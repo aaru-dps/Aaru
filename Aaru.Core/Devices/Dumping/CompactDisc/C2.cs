@@ -270,13 +270,17 @@ partial class Dump
         if(!_c2Repair || !_c2Supported || !readcd && !_omnidrive || _c2SuspectAudio is not { Count: > 0 } || _aborted)
             return;
 
-        ulong[] suspects    = _c2SuspectAudio.OrderBy(static s => s).ToArray();
-        int     maxAttempts = Math.Max((int)_retryPasses, 8);
-        var     converged   = 0;
-        var     improved    = 0;
-        var     failed      = 0;
-        long    totalSteps  = (long)suspects.Length * maxAttempts;
-        long    steps       = 0;
+        // Sectors the user asked not to retry stay concealed, as when not repairing C2
+        ulong[] suspects = _c2SuspectAudio.Where(s => !NoRetry(s)).OrderBy(static s => s).ToArray();
+
+        if(suspects.Length == 0) return;
+
+        int  maxAttempts = Math.Max((int)_retryPasses, 8);
+        var  converged   = 0;
+        var  improved    = 0;
+        var  failed      = 0;
+        long totalSteps  = (long)suspects.Length * maxAttempts;
+        long steps       = 0;
 
         InitProgress?.Invoke();
 

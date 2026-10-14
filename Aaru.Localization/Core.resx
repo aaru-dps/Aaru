@@ -3824,4 +3824,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="DPM_already_in_resumed_image_not_measuring_again" xml:space="preserve">
         <value>[olive]The resumed image already has a Data Position Measurement, not measuring it again.[/]</value>
     </data>
+    <data name="Not_trimming_or_retrying_sectors_0" xml:space="preserve">
+        <value>[slateblue1]Not trimming nor retrying sectors [teal]{0}[/].[/]</value>
+    </data>
 </root>

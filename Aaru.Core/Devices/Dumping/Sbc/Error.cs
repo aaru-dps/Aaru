@@ -270,6 +270,8 @@ partial class Dump
                 break;
             }
 
+            if(NoRetry(badSector)) continue;
+
             long retryCurrent = RetryProgressCurrent(retryMaximum,
                                                      _retryPasses,
                                                      pass,

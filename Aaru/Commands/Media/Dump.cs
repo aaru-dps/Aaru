@@ -135,6 +135,15 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
         AaruLogging.Debug(MODULE_NAME, "--lead-out={0}",                settings.LeadOut);
         AaruLogging.Debug(MODULE_NAME, "--skip-safedisc={0}",           settings.SkipSafeDisc);
 
+        AaruLogging.Debug(MODULE_NAME, "--no-retry-sectors={0}", Markup.Escape(settings.NoRetrySectors ?? ""));
+
+        if(!Dump.TryParseSectorRanges(settings.NoRetrySectors, out List<(ulong Start, ulong End)> noRetrySectors))
+        {
+            AaruLogging.Error(UI.Invalid_sector_range_list_0, Markup.Escape(settings.NoRetrySectors));
+
+            return (int)ErrorNumber.InvalidArgument;
+        }
+
         Dictionary<string, string> parsedOptions = Options.Parse(settings.Options);
         AaruLogging.Debug(MODULE_NAME, UI.Parsed_options);
 
@@ -562,6 +571,7 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
                                   settings.LudicrousSpeed,
                                   settings.LeadOut,
                                   settings.SkipSafeDisc,
+                                  noRetrySectors,
                                   settings.C2Repair,
                                   settings.Dpm);
 
@@ -868,6 +878,9 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
         [DefaultValue(false)]
         [CommandOption("--skip-safedisc")]
         public bool SkipSafeDisc { get; set; }
+        [LocalizedDescription(nameof(UI.Help_No_retry_sectors))]
+        [CommandOption("--no-retry-sectors")]
+        public string NoRetrySectors { get; init; }
     }
 
 #endregion
