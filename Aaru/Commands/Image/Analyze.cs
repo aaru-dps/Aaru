@@ -737,7 +737,9 @@ sealed class AnalyzeCommand : Command<AnalyzeCommand.Settings>
         {
             var extents = string.Join(", ",
                                       file.AffectedSectors.OrderBy(static extent => extent.Start)
-                                          .Select(static extent => $"{extent.Start}-{extent.End}"));
+                                          .Select(static extent => extent.Start == extent.End
+                                                                       ? extent.Start.ToString()
+                                                                       : $"{extent.Start}-{extent.End}"));
 
             AffectedSectorKind? fileKind = GetFileAffectedSectorKind(file, affectedExtents);
 
