@@ -45,13 +45,13 @@ public sealed partial class DpmMeasurement
     const int CAL_WANT_WRAPS = 5;
     /// <summary>...but not before this many steps</summary>
     const int CAL_MIN_D = 24;
-    /// <summary>At least 2 wrap intervals for the spacing check</summary>
+    /// <summary>Falling steps a sweep must have</summary>
     const int CAL_MIN_WRAPS = 3;
+    /// <summary>Steps an odd number of turns away, and a number of turns not a multiple of 3 away, a fit must have</summary>
+    const int CAL_MIN_ODD_TURNS = 2;
     const int CAL_ATTEMPTS = 12;
     /// <summary>Two sweeps must agree within 1.5%</summary>
     const double CAL_AGREE = 0.015;
-    /// <summary>Timed vs counted sectors per rotation</summary>
-    const double CAL_SPACING_TOL = 0.04;
     /// <summary>|step - s - m*T| must be within 6% of T</summary>
     const double CAL_MULT_TOL = 0.06;
     /// <summary>Inlier band around the median step</summary>
@@ -150,32 +150,11 @@ public sealed partial class DpmMeasurement
             return false;
         }
 
-        // Genuine wrap positions, new lows of the running rotation count, to tell how many sectors a turn has by counting
+        // Genuine wrap positions, new lows of the running rotation count, to log how many sectors a turn has by counting
         int nWrap = GenuineWraps(diffs, nd, s, t, wrapPos);
 
-        if(nWrap < CAL_MIN_WRAPS)
-        {
-            AaruLogging.Debug(MODULE_NAME, "  sweep rejected: only {0} genuine wraps", nWrap);
-            LogSweep(baseLba, e, diffs, nd, s, t);
-
-            return false;
-        }
-
-        // Integer wrap positions put the counted spacing within 1/(n-1) units of the true one
-        double uprCount = (double)(wrapPos[nWrap - 1] - wrapPos[0]) / (nWrap - 1);
+        double uprCount = nWrap > 1 ? (double)(wrapPos[nWrap - 1] - wrapPos[0]) / (nWrap - 1) : 0;
         double uprTime  = t / s;
-
-        if(Math.Abs(uprCount - uprTime) > 1.0 / (nWrap - 1) + CAL_SPACING_TOL * uprTime)
-        {
-            AaruLogging.Debug(MODULE_NAME,
-                              "  sweep rejected: timing says {0:F2} sectors/rotation but wraps are {1:F2} sectors apart",
-                              uprTime  * u,
-                              uprCount * u);
-
-            LogSweep(baseLba, e, diffs, nd, s, t);
-
-            return false;
-        }
 
         tMs = t;
         aps = 360.0 * s / (t * u);
@@ -215,6 +194,13 @@ public sealed partial class DpmMeasurement
     ///             Each try is refined by a least-squares fit of step = s + m*T over every step that is a clean integer
     ///             multiple, anything else being noise, and the one explaining the most steps is kept.
     ///         </item>
+    ///         <item>
+    ///             A half or a third of the true period explains every step too, but finds every step that isn't on the
+    ///             slope an even number, or a multiple of 3, of its turns away. So a fit must find steps on the slope and
+    ///             <see cref="CAL_MIN_ODD_TURNS" /> steps an odd number of turns away and as many a number of turns not a
+    ///             multiple of 3 away. Counting how far apart the wraps are doesn't rule it out, as where the drive often
+    ///             answers a turn late its samples drift from one turn to the next and the wraps are uneven.
+    ///         </item>
     ///     </list>
     /// </remarks>
     /// <param name="diffs">Steps between consecutive samples</param>
@@ -247,9 +233,10 @@ public sealed partial class DpmMeasurement
             return false;
         }
 
-        double s0      = Median(rising, nr);
-        int    bestFit = -1;
-        bool   anyFit  = false;
+        double s0        = Median(rising, nr);
+        int    bestFit   = -1;
+        bool   anyFit    = false;
+        bool   anyOdd    = false;
 
         for(int i = 0; i < nd; i++)
         {
@@ -260,9 +247,22 @@ public sealed partial class DpmMeasurement
                 double tTry = turns / k;
                 double sTry = s0;
 
-                if(tTry <= s0 || !RefineSweepFit(diffs, nd, ref sTry, ref tTry, out int consistent)) continue;
+                if(tTry <= s0 ||
+                   !RefineSweepFit(diffs,
+                                   nd,
+                                   ref sTry,
+                                   ref tTry,
+                                   out int consistent,
+                                   out int slopes,
+                                   out int oddTurns,
+                                   out int notThirdTurns))
+                    continue;
 
                 anyFit = true;
+
+                if(slopes < 2 || oddTurns < CAL_MIN_ODD_TURNS || notThirdTurns < CAL_MIN_ODD_TURNS) continue;
+
+                anyOdd = true;
 
                 if(consistent <= bestFit) continue;
 
@@ -275,6 +275,14 @@ public sealed partial class DpmMeasurement
         if(!anyFit)
         {
             AaruLogging.Debug(MODULE_NAME, "  sweep rejected: steps don't separate into slope and whole rotations");
+
+            return false;
+        }
+
+        if(!anyOdd)
+        {
+            AaruLogging.Debug(MODULE_NAME,
+                              "  sweep rejected: every fit finds the steps an even number, or a multiple of 3, of turns apart");
 
             return false;
         }
@@ -300,10 +308,19 @@ public sealed partial class DpmMeasurement
     /// <param name="s">Slope to start from, refined on return</param>
     /// <param name="t">Rotation period to start from, refined on return</param>
     /// <param name="consistent">Steps that are the refined slope plus whole refined rotations</param>
+    /// <param name="slopes">Steps that are the refined slope</param>
+    /// <param name="oddTurns">Steps that are the refined slope an odd number of refined rotations away</param>
+    /// <param name="notThirdTurns">
+    ///     Steps that are the refined slope a number of refined rotations not a multiple of 3 away
+    /// </param>
     /// <returns><c>false</c> if the steps don't separate into slope and whole rotations, or the fit is implausible</returns>
-    static bool RefineSweepFit(double[] diffs, int nd, ref double s, ref double t, out int consistent)
+    static bool RefineSweepFit(double[] diffs, int nd, ref double s, ref double t, out int consistent, out int slopes,
+                               out int  oddTurns, out int notThirdTurns)
     {
-        consistent = 0;
+        consistent    = 0;
+        slopes        = 0;
+        oddTurns      = 0;
+        notThirdTurns = 0;
 
         for(int iter = 0; iter < 3; iter++)
         {
@@ -340,7 +357,19 @@ public sealed partial class DpmMeasurement
         {
             long m = (long)Math.Round((diffs[i] - s) / t, MidpointRounding.AwayFromZero);
 
-            if(Math.Abs(diffs[i] - s - m * t) < CAL_MULT_TOL * t) consistent++;
+            if(Math.Abs(diffs[i] - s - m * t) >= CAL_MULT_TOL * t) continue;
+
+            consistent++;
+
+            if(m == 0)
+            {
+                slopes++;
+
+                continue;
+            }
+
+            if(m % 2 != 0) oddTurns++;
+            if(m % 3 != 0) notThirdTurns++;
         }
 
         return true;

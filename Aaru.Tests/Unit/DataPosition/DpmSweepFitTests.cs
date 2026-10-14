@@ -65,6 +65,39 @@ public class DpmSweepFitTests
         s.Should().BeApproximately(1.878, 0.005);
     }
 
+    // Same drive at 8x: the fit is right, but the samples drift from one turn to the next, so the wraps where the
+    // running rotation count reaches a new low are 6 sectors apart instead of 8.81
+    [Test]
+    public void DriftingTurnsFit()
+    {
+        double[] steps = Steps("42.809 44.349 74.501 61.892 49.257 36.652 38.242 39.873 41.515 43.106 44.690 46.323 " +
+                               "47.985 49.580 36.937 38.569 40.157 27.535 29.148 30.770 32.392 34.033 35.661 37.247");
+
+        DpmMeasurement.FitSweep(steps, steps.Length, out double s, out double t, out _).Should().BeTrue();
+
+        // As the sweep at 8x that calibrated: slope 1.6179 ms, T 14.253 ms
+        t.Should().BeApproximately(14.253, 0.05);
+        s.Should().BeApproximately(1.618, 0.005);
+    }
+
+    // A clean sawtooth is explained by a half or a third of its period too, with wraps two or three of those turns down
+    [TestCase(1.13, 10.0)]
+    [TestCase(3.7,  5.3)]
+    public void SubmultiplesOfThePeriodAreNotTaken(double slope, double period)
+    {
+        double[] e = Enumerable.Range(0, 40).Select(d => 20 + d * slope % period).ToArray();
+
+        // One sample a turn late
+        e[9] += period;
+
+        double[] steps = e.Skip(1).Select((v, i) => v - e[i]).ToArray();
+
+        DpmMeasurement.FitSweep(steps, steps.Length, out double s, out double t, out _).Should().BeTrue();
+
+        t.Should().BeApproximately(period, 1e-6);
+        s.Should().BeApproximately(slope, 1e-6);
+    }
+
     // Same drive at its maximum speed, with retries of hundreds of ms to seconds: nothing to calibrate from
     [Test]
     public void RetriesAreRejected()
