@@ -213,14 +213,15 @@ partial class Dump
         }
 
         InitProgress?.Invoke();
-        long retryMaximum = (long)_resume.BadBlocks.Count * _retryPasses;
+        long retryMaximum = _resume.BadBlocks.LongCount(b => !NoRetry(b)) * _retryPasses;
         var  firstTry     = true;
 
     cdRepeatRetry:
-        ulong[]     tmpArray              = _resume.BadBlocks.ToArray();
+        ulong[]     tmpArray              = _resume.BadBlocks.Where(b => !NoRetry(b)).ToArray();
+        int         noRetryBad            = _resume.BadBlocks.Count - tmpArray.Length;
         List<ulong> sectorsNotEvenPartial = [];
 
-        if(firstTry)
+        if(firstTry && tmpArray.Length > 0)
         {
             if(_startReverse)
             {
@@ -261,14 +262,12 @@ partial class Dump
                 break;
             }
 
-            if(NoRetry(badSector)) continue;
-
             long retryCurrent = RetryProgressCurrent(retryMaximum,
                                                      _retryPasses,
                                                      pass,
                                                      i,
                                                      tmpArray.Length,
-                                                     _resume.BadBlocks.Count);
+                                                     _resume.BadBlocks.Count - noRetryBad);
 
             if(forward)
             {
@@ -837,7 +836,7 @@ partial class Dump
             }
         }
 
-        if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > 0)
+        if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > noRetryBad)
         {
             pass++;
             forward = !forward;
@@ -1061,7 +1060,7 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        long retryMaximum = (long)subchannelExtents.Count * _retryPasses;
+        long retryMaximum = subchannelExtents.LongCount(s => !NoRetry((uint)s)) * _retryPasses;
 
     cdRepeatRetry:
 
@@ -1071,7 +1070,8 @@ partial class Dump
 
         if(!forward) _resume.BadSubchannels.Reverse();
 
-        int[] tmpArray = _resume.BadSubchannels.ToArray();
+        int[] tmpArray   = _resume.BadSubchannels.Where(s => !NoRetry((uint)s)).ToArray();
+        int   noRetryBad = _resume.BadSubchannels.Count - tmpArray.Length;
 
         for(var i = 0; i < tmpArray.Length; i++)
         {
@@ -1087,8 +1087,6 @@ partial class Dump
                 break;
             }
 
-            if(NoRetry(badSector)) continue;
-
             UpdateProgress?.Invoke(forward
                                        ? string.Format(Localization.Core.Retrying_sector_0_subchannel_pass_1_forward,
                                                        badSector,
@@ -1101,7 +1099,7 @@ partial class Dump
                                                         pass,
                                                         i,
                                                         tmpArray.Length,
-                                                        subchannelExtents.Count),
+                                                        subchannelExtents.Count - noRetryBad),
                                    retryMaximum);
 
             uint startSector = badSector >= 2 ? badSector - 2 : 0;
@@ -1175,7 +1173,7 @@ partial class Dump
                                                pass));
         }
 
-        if(pass < _retryPasses && !_aborted && subchannelExtents.Count > 0)
+        if(pass < _retryPasses && !_aborted && subchannelExtents.Count > noRetryBad)
         {
             pass++;
             forward = !forward;

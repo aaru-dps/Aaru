@@ -1184,10 +1184,11 @@ partial class Dump
 
             InitProgress?.Invoke();
 
-            long retryMaximum = (long)_resume.BadBlocks.Count * _retryPasses;
+            long retryMaximum = _resume.BadBlocks.LongCount(b => !NoRetry(b)) * _retryPasses;
 
         repeatRetry:
-            ulong[] tmpArray = _resume.BadBlocks.ToArray();
+            ulong[] tmpArray   = _resume.BadBlocks.Where(b => !NoRetry(b)).ToArray();
+            int     noRetryBad = _resume.BadBlocks.Count - tmpArray.Length;
 
             for(var i = 0; i < tmpArray.Length; i++)
             {
@@ -1201,14 +1202,12 @@ partial class Dump
                     break;
                 }
 
-                if(NoRetry(badBlock)) continue;
-
                 long retryCurrent = RetryProgressCurrent(retryMaximum,
                                                          _retryPasses,
                                                          pass,
                                                          i,
                                                          tmpArray.Length,
-                                                         _resume.BadBlocks.Count);
+                                                         _resume.BadBlocks.Count - noRetryBad);
 
                 if(forward)
                 {
@@ -1330,7 +1329,7 @@ partial class Dump
                 else if(runningPersistent) outputTape.WriteSector(cmdBuf, badBlock, false, SectorStatus.Errored);
             }
 
-            if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > 0)
+            if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > noRetryBad)
             {
                 pass++;
                 forward = !forward;

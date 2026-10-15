@@ -1169,7 +1169,7 @@ partial class Dump
             _trimStopwatch.Restart();
             UpdateStatus?.Invoke(Localization.Core.Trimming_skipped_sectors);
 
-            ulong[] tmpArray = _resume.BadBlocks.ToArray();
+            ulong[] tmpArray = _resume.BadBlocks.Where(b => !NoRetry(b)).ToArray();
             InitProgress?.Invoke();
 
             for(var i = 0; i < tmpArray.Length; i++)
@@ -1183,8 +1183,6 @@ partial class Dump
 
                     break;
                 }
-
-                if(NoRetry(badSector)) continue;
 
                 // Video partition sectors are only readable while the drive is locked; they were already retried
                 // before unlocking and reading them here would return data from the wrong LBA
@@ -1370,10 +1368,13 @@ partial class Dump
 
             InitProgress?.Invoke();
 
-            long retryMaximum = (long)_resume.BadBlocks.Count * _retryPasses;
+            // Video partition sectors are only readable while the drive is locked; they were already retried
+            // before unlocking and reading them here would return data from the wrong LBA
+            long retryMaximum = _resume.BadBlocks.LongCount(b => !NoRetry(b) && b < blocks) * _retryPasses;
 
         repeatRetry:
-            ulong[] tmpArray = _resume.BadBlocks.ToArray();
+            ulong[] tmpArray   = _resume.BadBlocks.Where(b => !NoRetry(b) && b < blocks).ToArray();
+            int     noRetryBad = _resume.BadBlocks.Count - tmpArray.Length;
 
             for(var i = 0; i < tmpArray.Length; i++)
             {
@@ -1387,18 +1388,12 @@ partial class Dump
                     break;
                 }
 
-                if(NoRetry(badSector)) continue;
-
-                // Video partition sectors are only readable while the drive is locked; they were already retried
-                // before unlocking and reading them here would return data from the wrong LBA
-                if(badSector >= blocks) continue;
-
                 long retryCurrent = RetryProgressCurrent(retryMaximum,
                                                          _retryPasses,
                                                          pass,
                                                          i,
                                                          tmpArray.Length,
-                                                         _resume.BadBlocks.Count);
+                                                         _resume.BadBlocks.Count - noRetryBad);
 
                 if(forward)
                 {
@@ -1461,7 +1456,7 @@ partial class Dump
                 else if(runningPersistent) outputFormat.WriteSector(readBuffer, badSector, false, SectorStatus.Errored);
             }
 
-            if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > 0)
+            if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > noRetryBad)
             {
                 pass++;
                 forward = !forward;

@@ -39,14 +39,15 @@ partial class Dump
     /// <summary>
     ///     Computes the current progress of the retry passes. The maximum is the worst case, every block that was bad
     ///     when retrying started being retried in every pass. Every block still bad can be retried once in each of the
-    ///     passes left, so recovering a block advances the progress by the passes it will not need.
+    ///     passes left, so recovering a block advances the progress by the passes it will not need. Blocks that are not
+    ///     retried must be left out of every count, or the progress jumps by their share as the pass goes over them.
     /// </summary>
-    /// <param name="maximum">Blocks bad when retrying started multiplied by number of passes</param>
+    /// <param name="maximum">Blocks to retry when retrying started multiplied by number of passes</param>
     /// <param name="passes">Number of retry passes</param>
     /// <param name="pass">Current pass, starting at 1</param>
     /// <param name="index">Index of the block being retried in the current pass, starting at 0</param>
     /// <param name="passLength">Number of blocks to retry in the current pass</param>
-    /// <param name="stillBad">Number of blocks still bad</param>
+    /// <param name="stillBad">Number of blocks to retry still bad</param>
     /// <returns>Current progress, between 0 and <paramref name="maximum" /></returns>
     static long RetryProgressCurrent(long maximum, ushort passes, int pass, int index, int passLength, int stillBad)
     {

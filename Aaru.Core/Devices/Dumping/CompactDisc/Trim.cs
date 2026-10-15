@@ -108,7 +108,7 @@ partial class Dump
         _trimStopwatch.Restart();
 
     trimStart:
-        ulong[] tmpArray = _resume.BadBlocks.ToArray();
+        ulong[] tmpArray = _resume.BadBlocks.Where(b => !NoRetry(b)).ToArray();
 
         for(var b = 0; b < tmpArray.Length; b++)
         {
@@ -121,8 +121,6 @@ partial class Dump
 
                 break;
             }
-
-            if(NoRetry(badSector)) continue;
 
             UpdateProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector),
                                    b,

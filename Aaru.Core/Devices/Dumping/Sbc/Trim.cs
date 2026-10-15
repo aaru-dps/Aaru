@@ -47,7 +47,7 @@ partial class Dump
     void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardware currentTry, ExtentsULong blankExtents,
                      byte[] discKey)
     {
-        ulong[] tmpArray = _resume.BadBlocks.ToArray();
+        ulong[] tmpArray = _resume.BadBlocks.Where(b => !NoRetry(b)).ToArray();
         bool    sense;
         bool    recoveredError;
         bool    blankCheck;
@@ -72,8 +72,6 @@ partial class Dump
 
                 break;
             }
-
-            if(NoRetry(badSector)) continue;
 
             UpdateProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector),
                                    i,

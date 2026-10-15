@@ -752,7 +752,7 @@ public partial class Dump
             _trimStopwatch.Restart();
             UpdateStatus?.Invoke(Localization.Core.Trimming_skipped_sectors);
 
-            ulong[] tmpArray = _resume.BadBlocks.ToArray();
+            ulong[] tmpArray = _resume.BadBlocks.Where(b => !NoRetry(b)).ToArray();
             InitProgress?.Invoke();
 
             for(var i = 0; i < tmpArray.Length; i++)
@@ -766,8 +766,6 @@ public partial class Dump
 
                     break;
                 }
-
-                if(NoRetry(badSector)) continue;
 
                 UpdateProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector),
                                        i,
@@ -814,10 +812,11 @@ public partial class Dump
 
             InitProgress?.Invoke();
 
-            long retryMaximum = (long)_resume.BadBlocks.Count * _retryPasses;
+            long retryMaximum = _resume.BadBlocks.LongCount(b => !NoRetry(b)) * _retryPasses;
 
         repeatRetryLba:
-            ulong[] tmpArray = _resume.BadBlocks.ToArray();
+            ulong[] tmpArray   = _resume.BadBlocks.Where(b => !NoRetry(b)).ToArray();
+            int     noRetryBad = _resume.BadBlocks.Count - tmpArray.Length;
 
             for(var i = 0; i < tmpArray.Length; i++)
             {
@@ -831,14 +830,12 @@ public partial class Dump
                     break;
                 }
 
-                if(NoRetry(badSector)) continue;
-
                 long retryCurrent = RetryProgressCurrent(retryMaximum,
                                                          _retryPasses,
                                                          pass,
                                                          i,
                                                          tmpArray.Length,
-                                                         _resume.BadBlocks.Count);
+                                                         _resume.BadBlocks.Count - noRetryBad);
 
                 UpdateProgress?.Invoke(forward
                                            ? string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
@@ -877,7 +874,7 @@ public partial class Dump
                                                    pass));
             }
 
-            if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > 0)
+            if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > noRetryBad)
             {
                 pass++;
                 forward = !forward;
