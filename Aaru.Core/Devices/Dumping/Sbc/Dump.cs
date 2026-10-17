@@ -99,8 +99,17 @@ partial class Dump
                           };
         }
 
+        // OmniDrive + NGCW (GameCube/Wii) requires raw reads; enable automatically
+        bool dumpRaw = _dumpRaw || _omnidrive && dskType is MediaType.GOD or MediaType.WOD;
+
+        if(dumpRaw && !_dumpRaw)
+        {
+            UpdateStatus?.Invoke(Localization.Core
+                                             .OmniDrive_detected_with_Nintendo_disc_enabling_raw_dumping);
+        }
+
         AaruLogging.WriteLine(Localization.Core.Initializing_reader);
-        var   scsiReader = new Reader(_dev, _dev.Timeout, null, _errorLog, _dumpRaw, _omnidrive);
+        var   scsiReader = new Reader(_dev, _dev.Timeout, null, _errorLog, dumpRaw, _omnidrive);
         ulong blocks     = scsiReader.GetDeviceBlocks();
         uint  blockSize  = scsiReader.LogicalBlockSize;
 
@@ -295,7 +304,7 @@ partial class Dump
 
         uint longBlockSize = scsiReader.LongBlockSize;
 
-        if(_dumpRaw)
+        if(dumpRaw)
         {
             if(blockSize == longBlockSize)
             {

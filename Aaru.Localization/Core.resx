@@ -1416,6 +1416,9 @@
     <data name="Nintendo_OmniDrive_dump_requires_Aaru_format" xml:space="preserve">
         <value>[red]Dumping Nintendo GameCube or Wii discs with OmniDrive requires Aaru output format.[/]</value>
     </data>
+    <data name="OmniDrive_detected_with_Nintendo_disc_enabling_raw_dumping" xml:space="preserve">
+        <value>[slateblue1]OmniDrive detected with Nintendo GameCube/Wii disc; enabling raw dumping automatically.[/]</value>
+    </data>
     <data name="Ngcw_dump_parsing_partition_table" xml:space="preserve">
         <value>[slateblue1]Parsing Wii partition table...[/]</value>
     </data>
