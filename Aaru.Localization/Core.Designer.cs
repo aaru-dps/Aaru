@@ -2800,6 +2800,12 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string OmniDrive_detected_with_Nintendo_disc_enabling_raw_dumping {
+            get {
+                return ResourceManager.GetString("OmniDrive_detected_with_Nintendo_disc_enabling_raw_dumping", resourceCulture);
+            }
+        }
+        
         public static string Ngcw_dump_parsing_partition_table {
             get {
                 return ResourceManager.GetString("Ngcw_dump_parsing_partition_table", resourceCulture);
