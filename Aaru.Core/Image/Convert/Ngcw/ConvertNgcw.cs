@@ -753,10 +753,10 @@ public partial class Convert
         {
             string title = Encoding.ASCII.GetString(header, 0x20, titleLen);
 
-            _outputImage.SetImageInfo(new CommonTypes.Structs.ImageInfo
-            {
-                MediaTitle = title
-            });
+            // SetImageInfo() replaces all the metadata, so keep what is already set (creator, comments...)
+            CommonTypes.Structs.ImageInfo info = _outputImage.Info;
+            info.MediaTitle = title;
+            _outputImage.SetImageInfo(info);
 
             UpdateStatus?.Invoke(string.Format(UI.Ngcw_title_0, title));
         }
@@ -770,10 +770,9 @@ public partial class Convert
         {
             string gameId = Encoding.ASCII.GetString(header, 0, codeLen);
 
-            _outputImage.SetImageInfo(new CommonTypes.Structs.ImageInfo
-            {
-                MediaPartNumber = gameId
-            });
+            CommonTypes.Structs.ImageInfo info = _outputImage.Info;
+            info.MediaPartNumber = gameId;
+            _outputImage.SetImageInfo(info);
 
             UpdateStatus?.Invoke(string.Format(UI.Ngcw_game_id_0, gameId));
         }
@@ -783,11 +782,10 @@ public partial class Convert
 
         if(discNumber > 0)
         {
-            _outputImage.SetImageInfo(new CommonTypes.Structs.ImageInfo
-            {
-                MediaSequence     = discNumber + 1,
-                LastMediaSequence = discNumber + 1
-            });
+            CommonTypes.Structs.ImageInfo info = _outputImage.Info;
+            info.MediaSequence     = discNumber + 1;
+            info.LastMediaSequence = discNumber + 1;
+            _outputImage.SetImageInfo(info);
 
             UpdateStatus?.Invoke(string.Format(UI.Ngcw_disc_number_0, discNumber + 1));
         }
