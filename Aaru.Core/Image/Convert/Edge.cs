@@ -356,7 +356,7 @@ public partial class Convert
 
             InitProgress?.Invoke();
 
-            for(uint i = 1; i < _overflowSectors; i++)
+            for(uint i = 0; i < _overflowSectors; i++)
             {
                 if(_aborted) break;
 
