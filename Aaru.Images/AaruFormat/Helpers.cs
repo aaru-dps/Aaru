@@ -30,7 +30,7 @@ public sealed partial class AaruFormat
                    Status.BufferTooSmall         => ErrorNumber.InvalidArgument,
                    Status.MediaTagNotPresent     => ErrorNumber.NoData,
                    Status.IncorrectMediaType     => ErrorNumber.InvalidArgument,
-                   Status.TrackNotFound          => ErrorNumber.NoData,
+                   Status.TrackNotFound          => ErrorNumber.SectorNotFound,
                    Status.ReachedUnreachableCode => ErrorNumber.InvalidArgument,
                    Status.InvalidTrackFormat     => ErrorNumber.InvalidArgument,
                    Status.SectorTagNotPresent    => ErrorNumber.NoData,

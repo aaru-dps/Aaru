@@ -236,6 +236,10 @@ public sealed partial class AaruFormat
 
         Status res = aaruf_read_sector_tag(_context, sectorAddress, negative, buffer, ref length, tag);
 
+        // A track without that tag does not have it, it is not an error
+        if(res == Status.TrackNotFound && tag is SectorTagType.CdTrackFlags or SectorTagType.CdTrackIsrc)
+            return ErrorNumber.NoData;
+
         if(res != Status.BufferTooSmall && res != Status.IncorrectDataSize) return StatusToErrorNumber(res);
 
         buffer = new byte[length];
