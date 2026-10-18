@@ -246,10 +246,10 @@ public partial class Convert
         {
             string productCode = Encoding.ASCII.GetString(header, 0, codeLen);
 
-            _outputImage.SetImageInfo(new CommonTypes.Structs.ImageInfo
-            {
-                MediaPartNumber = productCode
-            });
+            // SetImageInfo() replaces all the metadata, so keep what is already set (creator, comments...)
+            CommonTypes.Structs.ImageInfo info = _outputImage.Info;
+            info.MediaPartNumber = productCode;
+            _outputImage.SetImageInfo(info);
 
             UpdateStatus?.Invoke(string.Format(UI.WiiU_product_code_0, productCode));
         }
@@ -259,11 +259,10 @@ public partial class Convert
         {
             int discNum = header[0x15] - '0' + 1;
 
-            _outputImage.SetImageInfo(new CommonTypes.Structs.ImageInfo
-            {
-                MediaSequence     = discNum,
-                LastMediaSequence = discNum
-            });
+            CommonTypes.Structs.ImageInfo info = _outputImage.Info;
+            info.MediaSequence     = discNum;
+            info.LastMediaSequence = discNum;
+            _outputImage.SetImageInfo(info);
 
             UpdateStatus?.Invoke(string.Format(UI.WiiU_disc_number_0, discNum));
         }
