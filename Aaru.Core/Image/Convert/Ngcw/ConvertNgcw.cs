@@ -121,9 +121,17 @@ public partial class Convert
 
         if(_mediaType == MediaType.GOD)
         {
-            ErrorNumber errno = useLong ?
-                ConvertGameCubeSectorsLong(discSize, totalLogicalSectors, jc, ref dataSectors, ref junkSectors) :
-                ConvertGameCubeSectors(discSize, totalLogicalSectors, jc, ref dataSectors, ref junkSectors);
+            ErrorNumber errno = useLong
+                                    ? ConvertGameCubeSectorsLong(discSize,
+                                                                 totalLogicalSectors,
+                                                                 jc,
+                                                                 ref dataSectors,
+                                                                 ref junkSectors)
+                                    : ConvertGameCubeSectors(discSize,
+                                                             totalLogicalSectors,
+                                                             jc,
+                                                             ref dataSectors,
+                                                             ref junkSectors);
 
             if(errno != ErrorNumber.NoError)
             {
@@ -134,9 +142,17 @@ public partial class Convert
         }
         else
         {
-            ErrorNumber errno = useLong ?
-                ConvertWiiSectorsLong(discSize, totalLogicalSectors, jc, ref dataSectors, ref junkSectors) :
-                ConvertWiiSectors(discSize, totalLogicalSectors, jc, ref dataSectors, ref junkSectors);
+            ErrorNumber errno = useLong
+                                    ? ConvertWiiSectorsLong(discSize,
+                                                            totalLogicalSectors,
+                                                            jc,
+                                                            ref dataSectors,
+                                                            ref junkSectors)
+                                    : ConvertWiiSectors(discSize,
+                                                        totalLogicalSectors,
+                                                        jc,
+                                                        ref dataSectors,
+                                                        ref junkSectors);
 
             if(errno != ErrorNumber.NoError)
             {
@@ -294,7 +310,7 @@ public partial class Convert
     ///     keep full long buffers for output (one ReadSectorLong per logical sector).
     /// </summary>
     void ReadWiiEncryptedGroupFromLongSectors(ulong firstLogicalSector, byte[] encGrp, byte[][] longSectorBuffers,
-                                              int longSectorSize)
+                                              int   longSectorSize)
     {
         const int sectorSize      = Crypto.SECTOR_SIZE;
         const int sectorsPerBlock = Crypto.LOGICAL_PER_GROUP;
@@ -315,7 +331,7 @@ public partial class Convert
             if(errno != ErrorNumber.NoError || sd == null)
             {
                 Array.Clear(encGrp, s * sectorSize, sectorSize);
-                Array.Clear(stored, 0, longSectorSize);
+                Array.Clear(stored, 0,              longSectorSize);
 
                 continue;
             }
@@ -323,8 +339,7 @@ public partial class Convert
             int copyLong = sd.Length < longSectorSize ? sd.Length : longSectorSize;
             Array.Copy(sd, 0, stored, 0, copyLong);
 
-            if(copyLong < longSectorSize)
-                Array.Clear(stored, copyLong, longSectorSize - copyLong);
+            if(copyLong < longSectorSize) Array.Clear(stored, copyLong, longSectorSize - copyLong);
 
             if(sd.Length >= Sector.NintendoMainDataOffset + sectorSize)
                 Array.Copy(sd, Sector.NintendoMainDataOffset, encGrp, s * sectorSize, sectorSize);
@@ -337,8 +352,8 @@ public partial class Convert
     ///     Classify FST regions, run LFG junk detection on decrypted user data, and build the 32 KiB
     ///     plaintext group (hash + user, junk zeroed).
     /// </summary>
-    byte[] ProcessWiiDecryptedGroup(int inPart, ulong groupDiscOff, byte[] hashBlock, byte[] groupData,
-                                    JunkCollector jc, ref ulong dataSectors, ref ulong junkSectors)
+    byte[] ProcessWiiDecryptedGroup(int           inPart, ulong     groupDiscOff, byte[]    hashBlock, byte[] groupData,
+                                    JunkCollector jc,     ref ulong dataSectors,  ref ulong junkSectors)
     {
         const int groupSize     = Crypto.GROUP_SIZE;
         const int hashSize      = Crypto.GROUP_HASH_SIZE;
@@ -346,7 +361,7 @@ public partial class Convert
         const int sectorSize    = Crypto.SECTOR_SIZE;
 
         ulong groupNum      = (groupDiscOff - _ngcwPartitions[inPart].DataOffset) / groupSize;
-        ulong logicalOffset = groupNum * groupDataSize;
+        ulong logicalOffset = groupNum                                            * groupDataSize;
 
         bool[] sectorIsData = new bool[16];
         int    udCount      = 0;
@@ -361,9 +376,7 @@ public partial class Convert
                 sectorIsData[udCount] = true;
             else if(_ngcwPartDataMaps[inPart] != null)
             {
-                sectorIsData[udCount] = DataMap.IsDataRegion(_ngcwPartDataMaps[inPart],
-                                                             logicalOffset + off,
-                                                             chunk);
+                sectorIsData[udCount] = DataMap.IsDataRegion(_ngcwPartDataMaps[inPart], logicalOffset + off, chunk);
             }
             else
                 sectorIsData[udCount] = true;
@@ -417,7 +430,7 @@ public partial class Convert
         {
             ulong off    = (ulong)s * sectorSize;
             int   chunk  = groupDataSize - (int)off;
-            int   outOff = hashSize + (int)off;
+            int   outOff = hashSize      + (int)off;
 
             if(chunk > sectorSize) chunk = sectorSize;
 
@@ -525,7 +538,12 @@ public partial class Convert
                 Crypto.DecryptGroup(_ngcwPartitions[inPart].TitleKey, encGrp, hashBlock, groupData);
 
                 byte[] decryptedGroup =
-                    ProcessWiiDecryptedGroup(inPart, groupDiscOff, hashBlock, groupData, jc, ref dataSectors,
+                    ProcessWiiDecryptedGroup(inPart,
+                                             groupDiscOff,
+                                             hashBlock,
+                                             groupData,
+                                             jc,
+                                             ref dataSectors,
                                              ref junkSectors);
 
                 // Write all 16 sectors as SectorStatusUnencrypted
@@ -818,8 +836,8 @@ public partial class Convert
     }
 
     /// GameCube sector conversion pipeline for long sectors.
-    ErrorNumber ConvertGameCubeSectorsLong(ulong discSize, ulong totalLogicalSectors, JunkCollector jc,
-                                             ref ulong dataSectors, ref ulong junkSectors)
+    ErrorNumber ConvertGameCubeSectorsLong(ulong     discSize,    ulong     totalLogicalSectors, JunkCollector jc,
+                                           ref ulong dataSectors, ref ulong junkSectors)
     {
         const int blockSize       = Crypto.GROUP_SIZE; // 0x8000 logical (16 × 2048 user bytes)
         const int sectorsPerBlock = Crypto.LOGICAL_PER_GROUP;
@@ -828,7 +846,8 @@ public partial class Convert
         // Junk / FST offsets are in logical (user) byte space. User 2048-byte slices match ReadSector (Nintendo main_data at Sector.NintendoMainDataOffset).
         ErrorNumber probeErr = _inputImage.ReadSectorLong(0, false, out byte[] longProbe, out _);
 
-        if(probeErr != ErrorNumber.NoError || longProbe == null ||
+        if(probeErr         != ErrorNumber.NoError ||
+           longProbe        == null                ||
            longProbe.Length < Sector.NintendoMainDataOffset + userSize)
             return ErrorNumber.InOutError;
 
@@ -944,8 +963,8 @@ public partial class Convert
     }
 
     /// <summary>Wii sector conversion pipeline for long sectors (main_data + framing).</summary>
-    ErrorNumber ConvertWiiSectorsLong(ulong discSize, ulong totalLogicalSectors, JunkCollector jc,
-                                       ref ulong dataSectors, ref ulong junkSectors)
+    ErrorNumber ConvertWiiSectorsLong(ulong     discSize,    ulong     totalLogicalSectors, JunkCollector jc,
+                                      ref ulong dataSectors, ref ulong junkSectors)
     {
         const int groupSize       = Crypto.GROUP_SIZE;
         const int hashSize        = Crypto.GROUP_HASH_SIZE;
@@ -955,7 +974,8 @@ public partial class Convert
 
         ErrorNumber probeErr = _inputImage.ReadSectorLong(0, false, out byte[] longProbe, out _);
 
-        if(probeErr != ErrorNumber.NoError || longProbe == null ||
+        if(probeErr         != ErrorNumber.NoError ||
+           longProbe        == null                ||
            longProbe.Length < Sector.NintendoMainDataOffset + sectorSize)
             return ErrorNumber.InOutError;
 
@@ -994,39 +1014,28 @@ public partial class Convert
                 Crypto.DecryptGroup(_ngcwPartitions[inPart].TitleKey, encGrp, hashBlock, groupData);
 
                 byte[] decryptedGroup =
-                    ProcessWiiDecryptedGroup(inPart, groupDiscOff, hashBlock, groupData, jc, ref dataSectors,
+                    ProcessWiiDecryptedGroup(inPart,
+                                             groupDiscOff,
+                                             hashBlock,
+                                             groupData,
+                                             jc,
+                                             ref dataSectors,
                                              ref junkSectors);
 
+                // The plaintext group (hash block + user data) spans the 16 sectors' main data as is
                 for(int s = 0; s < sectorsPerBlock; s++)
                 {
-                    int dataOff = s * sectorSize;
-                    int outOff  = hashSize + dataOff;
-
-                    if(dataOff >= groupDataSize)
-                    {
-                        Array.Clear(longSectorBufs[s], Sector.NintendoMainDataOffset, sectorSize);
-
-                        continue;
-                    }
-
-                    int copyLen = groupDataSize - dataOff;
-
-                    if(copyLen > sectorSize)
-                        copyLen = sectorSize;
-
-                    Array.Copy(decryptedGroup, outOff, longSectorBufs[s], Sector.NintendoMainDataOffset, copyLen);
-
-                    if(copyLen < sectorSize)
-                        Array.Clear(longSectorBufs[s], Sector.NintendoMainDataOffset + copyLen, sectorSize - copyLen);
+                    Array.Copy(decryptedGroup,
+                               s * sectorSize,
+                               longSectorBufs[s],
+                               Sector.NintendoMainDataOffset,
+                               sectorSize);
                 }
 
                 for(int s = 0; s < sectorsPerBlock; s++)
                 {
                     ulong sector = groupDiscOff / sectorSize + (ulong)s;
-                    bool ok = _outputImage.WriteSectorLong(longSectorBufs[s],
-                                                           sector,
-                                                           false,
-                                                           SectorStatus.Unencrypted);
+                    bool  ok = _outputImage.WriteSectorLong(longSectorBufs[s], sector, false, SectorStatus.Unencrypted);
 
                     if(!ok)
                     {
@@ -1071,7 +1080,7 @@ public partial class Convert
                     if(errno != ErrorNumber.NoError || sd == null)
                     {
                         Array.Clear(blockBuf, s * sectorSize, sectorSize);
-                        Array.Clear(stored, 0, longSectorSize);
+                        Array.Clear(stored,   0,              longSectorSize);
 
                         continue;
                     }
@@ -1079,8 +1088,7 @@ public partial class Convert
                     int copyLong = sd.Length < longSectorSize ? sd.Length : longSectorSize;
                     Array.Copy(sd, 0, stored, 0, copyLong);
 
-                    if(copyLong < longSectorSize)
-                        Array.Clear(stored, copyLong, longSectorSize - copyLong);
+                    if(copyLong < longSectorSize) Array.Clear(stored, copyLong, longSectorSize - copyLong);
 
                     if(sd.Length >= Sector.NintendoMainDataOffset + sectorSize)
                         Array.Copy(sd, Sector.NintendoMainDataOffset, blockBuf, s * sectorSize, sectorSize);
@@ -1133,5 +1141,4 @@ public partial class Convert
 
         return ErrorNumber.NoError;
     }
-
 }
