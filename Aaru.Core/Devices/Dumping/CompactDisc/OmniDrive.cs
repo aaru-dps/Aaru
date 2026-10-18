@@ -287,18 +287,25 @@ partial class Dump
                                   failedCrossingLeadOut);
                 }
 
+                // blocksToRead is not clamped to lastSector, the sectors read past the end of the disc are not stored
+                // unless the Lead-Out is being dumped
+                uint blocksToStore = blocksToRead;
+
+                if(!_leadout && (long)(i + blocksToRead) > lastSector + 1)
+                    blocksToStore = (uint)(lastSector + 1 - (long)i);
+
                 mhddLog.Write(i, _speedStopwatch.Elapsed.TotalMilliseconds, blocksToRead);
                 ibgLog.Write(i, currentSpeed * 1024);
-                extents.Add(i, blocksToRead, true);
+                extents.Add(i, blocksToStore, true);
                 _writeStopwatch.Restart();
 
-                var         data         = new byte[sectorSize * blocksToRead];
-                var         sub          = new byte[subSize    * blocksToRead];
-                var         sectorStatus = new SectorStatus[blocksToRead];
+                var         data         = new byte[sectorSize * blocksToStore];
+                var         sub          = new byte[subSize    * blocksToStore];
+                var         sectorStatus = new SectorStatus[blocksToStore];
                 var         sector       = new byte[sectorSize];
                 List<ulong> paintBad     = [];
 
-                for(var b = 0; b < blocksToRead; b++)
+                for(var b = 0; b < blocksToStore; b++)
                 {
                     // A read can overrun into a Lead-Out - either past the last user area sector (e.g. near
                     // the end of the disc, where blocksToRead is not clamped to lastSector) or into an
@@ -364,26 +371,26 @@ partial class Dump
                 }
 
                 if(supportsLongSectors)
-                    outputFormat.WriteSectorsLong(data, i, false, blocksToRead, sectorStatus);
+                    outputFormat.WriteSectorsLong(data, i, false, blocksToStore, sectorStatus);
                 else
                 {
                     var cooked = new MemoryStream();
 
-                    for(var b = 0; b < blocksToRead; b++)
+                    for(var b = 0; b < blocksToStore; b++)
                     {
                         Array.Copy(cmdBuf, (int)(0 + b * blockSize), sector, 0, sectorSize);
                         byte[] cookedSector = Sector.GetUserData(sector);
                         cooked.Write(cookedSector, 0, cookedSector.Length);
                     }
 
-                    outputFormat.WriteSectors(cooked.ToArray(), i, false, blocksToRead, sectorStatus);
+                    outputFormat.WriteSectors(cooked.ToArray(), i, false, blocksToStore, sectorStatus);
                 }
 
                 bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                                                                desiredSubchannel,
                                                                                sub,
                                                                                i,
-                                                                               blocksToRead,
+                                                                               blocksToStore,
                                                                                subLog,
                                                                                isrcs,
                                                                                (byte)track.Sequence,
@@ -439,7 +446,7 @@ partial class Dump
                     continue;
                 }
 
-                _mediaGraph?.PaintSectorsGood(i, blocksToRead);
+                _mediaGraph?.PaintSectorsGood(i, blocksToStore);
                 foreach(ulong b in paintBad) _mediaGraph?.PaintSectorsBad(b, 1);
 
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
