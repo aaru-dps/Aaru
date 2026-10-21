@@ -11,7 +11,7 @@ Rules-Requires-Root: no
 Package: aaru
 Architecture: amd64 arm64 armhf
 Depends: ${shlibs:Depends}, ${misc:Depends},
-         libicu74 | libicu72 | libicu71 | libicu70 | libicu69 | libicu68 | libicu67,
+         libicu78 | libicu74 | libicu72 | libicu71 | libicu70 | libicu69 | libicu68 | libicu67,
          libkrb5-3,
          libunwind8,
          libssl3 | libssl1.1,
