@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
@@ -59,6 +60,22 @@ public sealed partial class AaruFormat
         uint length = 0;
 
         Status res = aaruf_read_media_tag(_context, buffer, tag, ref length);
+
+        // Special case for UMDs that need to read the PFI using an external application
+        if(res                  == Status.MediaTagNotPresent &&
+           _imageInfo.MediaType == MediaType.UMD             &&
+           tag                  == MediaTagType.DVD_PFI      &&
+           _umdPfiPath          != null)
+        {
+            using var pfiStream = new FileStream(_umdPfiPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            buffer = new byte[2048];
+            pfiStream.ReadExactly(buffer, 0, 2048);
+
+            pfiStream.Close();
+
+            return ErrorNumber.NoError;
+        }
 
         if(res != Status.BufferTooSmall) return StatusToErrorNumber(res);
 

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
@@ -81,6 +82,20 @@ public sealed partial class AaruFormat
         for(nuint i = 0; i < sizet_length; i++)
             if(mediaTagsBuffer[i] != 0)
                 _imageInfo.ReadableMediaTags.Add((MediaTagType)i);
+
+        // Special case for UMDs that need to read the PFI using an external application
+        if(!_imageInfo.ReadableMediaTags.Contains(MediaTagType.DVD_PFI) && _imageInfo.MediaType == MediaType.UMD)
+        {
+            // Take the basename without extension
+            var basename = imageFilter.BasePath[..imageFilter.BasePath.LastIndexOf('.')];
+
+            if(System.IO.File.Exists(basename + ".pfi.bin") &&
+               (new System.IO.FileInfo(basename + ".pfi.bin").Length == 2048))
+            {
+                _imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_PFI);
+                _umdPfiPath = basename + ".pfi.bin";
+            }
+        }
 
         ret = aaruf_get_media_sequence(_context, out int sequence, out int lastSequence);
 

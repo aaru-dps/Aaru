@@ -6,11 +6,16 @@ namespace Aaru.Images;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IWritableOpticalImage" />
 /// <summary>Implements reading and writing AaruFormat media images</summary>
-public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage, IWritableFluxImage, IDisposable
+public sealed partial class AaruFormat : IWritableOpticalImage,
+                                         IVerifiableImage,
+                                         IWritableTapeImage,
+                                         IWritableFluxImage,
+                                         IDisposable
 {
     const string MODULE_NAME = "Aaru Format plugin";
     IntPtr       _context;
     ImageInfo    _imageInfo;
+    string       _umdPfiPath;
 
     public AaruFormat() => _imageInfo = new ImageInfo
     {
@@ -35,5 +40,4 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
 }
