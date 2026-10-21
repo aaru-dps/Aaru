@@ -22,11 +22,22 @@ URL:            https://www.aaru.app
 Source0:        %{name}-%{version}.tar.gz
 
 # Runtime dependencies for self-contained .NET app
+Requires:       ca-certificates
+Requires:       glibc
 Requires:       libicu
+%if 0%{?suse_version}
+Requires:       krb5
+Requires:       libgcc_s1
+Requires:       libopenssl3
+Requires:       libstdc++6
+Requires:       timezone
+%else
 Requires:       krb5-libs
-Requires:       libunwind
+Requires:       libgcc
+Requires:       libstdc++
 Requires:       openssl-libs
-Requires:       zlib
+Requires:       tzdata
+%endif
 
 # Desktop integration
 Requires:       shared-mime-info
@@ -46,8 +57,8 @@ Aaru (named after the Egyptian paradise where the righteous dwell eternally)
 is the ultimate Data Preservation Suite — your all-in-one solution for digital
 media preservation and archival.
 
-This package is built for Red Hat Enterprise Linux 9+, Fedora 38+, openSUSE
-Leap 15.5+, and compatible distributions.
+This package is built for Red Hat Enterprise Linux 9+, Fedora 42+, openSUSE
+Leap 15.6+, and compatible distributions.
 
 Aaru is designed to assist you through the entire workflow of digital media
 preservation — from the initial creation of disk images (commonly called
