@@ -11,11 +11,14 @@ Rules-Requires-Root: no
 Package: aaru
 Architecture: amd64 arm64 armhf
 Depends: ${shlibs:Depends}, ${misc:Depends},
-         libicu78 | libicu74 | libicu72 | libicu71 | libicu70 | libicu69 | libicu68 | libicu67,
-         libkrb5-3,
-         libunwind8,
-         libssl3 | libssl1.1,
-         zlib1g
+         ca-certificates,
+         libc6,
+         libgcc-s1,
+         libgssapi-krb5-2,
+         libicu78 | libicu76 | libicu74 | libicu72,
+         libssl3t64 | libssl3,
+         libstdc++6,
+         tzdata
 Description: Disc image management and creation tool for Debian 12+ and Ubuntu 24.04+
  Aaru (named after the Egyptian paradise where the righteous dwell eternally)
  is the ultimate Data Preservation Suite — your all-in-one solution for digital
