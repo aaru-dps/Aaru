@@ -17,7 +17,7 @@ options=('!strip' 'staticlibs')
 sha256sums=('SKIP')
 provides=('aaru')
 conflicts=('aaru')
-depends=('icu' 'krb5' 'libcurl.so' 'libunwind' 'openssl' 'zlib')
+depends=('ca-certificates' 'gcc-libs' 'glibc' 'icu' 'krb5' 'openssl' 'tzdata')
 
 if [ $arch == 'aarch64' ]; then
     dotnet_rid=linux-arm64
