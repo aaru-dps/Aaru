@@ -5698,6 +5698,12 @@ Do you want to continue?</value>
     <data name="Using_resume_file_0" xml:space="preserve">
         <value>[bold]Using resume file:[/] [green]{0}[/]</value>
     </data>
+    <data name="Written_resume_file_0" xml:space="preserve">
+        <value>[slateblue1]Written resume file to [green]{0}[/].[/]</value>
+    </data>
+    <data name="Error_0_writing_resume_file_1" xml:space="preserve">
+        <value>[red]Error [orange3]{0}[/] writing resume file [green]{1}[/].[/]</value>
+    </data>
     <data name="Affected_sector_extents" xml:space="preserve">
         <value>Affected sector extents</value>
     </data>

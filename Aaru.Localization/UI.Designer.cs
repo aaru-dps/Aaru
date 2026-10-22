@@ -11232,6 +11232,18 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Written_resume_file_0 {
+            get {
+                return ResourceManager.GetString("Written_resume_file_0", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_writing_resume_file_1 {
+            get {
+                return ResourceManager.GetString("Error_0_writing_resume_file_1", resourceCulture);
+            }
+        }
+        
         public static string Affected_sector_extents {
             get {
                 return ResourceManager.GetString("Affected_sector_extents", resourceCulture);

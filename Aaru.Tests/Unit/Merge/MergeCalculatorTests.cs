@@ -29,6 +29,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.AaruMetadata;
+using Aaru.CommonTypes.Metadata;
 using Aaru.Core.Image;
 using FluentAssertions;
 using NUnit.Framework;
@@ -122,5 +123,32 @@ public class MergeCalculatorTests
                                                            []);
 
         result.Should().BeEquivalentTo(new ulong[] { 10 });
+    }
+
+    /// <summary>
+    ///     A sector repaired from the secondary takes the secondary's state, every other sector keeps the primary's, so
+    ///     the merged resume only lists what is still bad in the output.
+    /// </summary>
+    [Test]
+    public void MergedResumeKeepsOnlyRemainingBadBlocks()
+    {
+        var primary = new Resume
+        {
+            BadBlocks = [10, 20, 30],
+            NextBlock = 1000
+        };
+
+        var secondary = new Resume
+        {
+            BadBlocks = [20, 30, 40],
+            NextBlock = 500
+        };
+
+        Resume result = Merger.CalculateMergedResume(primary, secondary, 1000, false, [10, 40], Tries((0, 999)));
+
+        // 10 was repaired, 20 and 30 were never taken from the secondary, 40 was taken but is bad there too.
+        result.BadBlocks.Should().Equal(20UL, 30UL, 40UL);
+        result.NextBlock.Should().Be(1000);
+        result.Tries.Should().ContainSingle();
     }
 }

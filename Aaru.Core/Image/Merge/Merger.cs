@@ -540,6 +540,15 @@ public sealed partial class Merger
             return ErrorNumber.WriteError;
         }
 
+        // Leave a resume sidecar describing the merged image, so it can be merged, analyzed or converted again
+        // without losing which sectors are still bad.
+        WriteMergedResume(CalculateMergedResume(primaryResume,
+                                                secondaryResume,
+                                                primaryImage.Info.Sectors,
+                                                primaryTape?.IsTape == true,
+                                                sectorsToCopyFromSecondImage,
+                                                dumpHardware));
+
         UpdateStatus?.Invoke(UI.Merge_completed_successfully);
 
         return ErrorNumber.NoError;
