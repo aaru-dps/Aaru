@@ -397,13 +397,13 @@ public sealed partial class Merger
 
             errno = CopySectorsSecondary(useLong,
                                          primaryTape?.IsTape == true,
-                                         primaryImage,
+                                         secondaryImage,
                                          outputFormat,
                                          sectorsToCopyFromSecondImage);
 
             if(errno != ErrorNumber.NoError) return errno;
 
-            errno = CopySectorsTagSecondary(useLong, primaryImage, outputFormat, sectorsToCopyFromSecondImage);
+            errno = CopySectorsTagSecondary(useLong, secondaryImage, outputFormat, sectorsToCopyFromSecondImage);
 
             if(errno != ErrorNumber.NoError) return errno;
 
