@@ -5617,6 +5617,9 @@ Probadores:
     <data name="Error_0_writing_resume_file_1" xml:space="preserve">
         <value>[red]Error [orange3]{0}[/] al escribir el archivo de reanudación [green]{1}[/].[/]</value>
     </data>
+    <data name="Resume_file_0_already_exists_not_continuing" xml:space="preserve">
+        <value>[red]El archivo de reanudación [green]{0}[/] ya existe, no se continuará.[/]</value>
+    </data>
     <data name="Affected_sector_extents" xml:space="preserve">
         <value>Extensiones de sectores afectados</value>
     </data>

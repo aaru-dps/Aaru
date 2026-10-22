@@ -11244,6 +11244,12 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Resume_file_0_already_exists_not_continuing {
+            get {
+                return ResourceManager.GetString("Resume_file_0_already_exists_not_continuing", resourceCulture);
+            }
+        }
+        
         public static string Affected_sector_extents {
             get {
                 return ResourceManager.GetString("Affected_sector_extents", resourceCulture);

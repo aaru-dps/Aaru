@@ -126,6 +126,16 @@ public sealed partial class Merger
             return ErrorNumber.FileExists;
         }
 
+        // The sidecar is named after the output without its extension, so it can be the resume file of another image
+        // in the same folder, the primary's among them. Never replace it.
+        if(File.Exists(MergedResumePath))
+        {
+            StoppingErrorMessage?.Invoke(string.Format(UI.Resume_file_0_already_exists_not_continuing,
+                                                       MergedResumePath));
+
+            return ErrorNumber.FileExists;
+        }
+
         (ErrorNumber errno, IMediaImage primaryImage) = GetInputImage(primaryImagePath);
 
         if(primaryImage is null) return errno;

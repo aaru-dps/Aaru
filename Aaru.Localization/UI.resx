@@ -5704,6 +5704,9 @@ Do you want to continue?</value>
     <data name="Error_0_writing_resume_file_1" xml:space="preserve">
         <value>[red]Error [orange3]{0}[/] writing resume file [green]{1}[/].[/]</value>
     </data>
+    <data name="Resume_file_0_already_exists_not_continuing" xml:space="preserve">
+        <value>[red]Resume file [green]{0}[/] already exists, not continuing.[/]</value>
+    </data>
     <data name="Affected_sector_extents" xml:space="preserve">
         <value>Affected sector extents</value>
     </data>

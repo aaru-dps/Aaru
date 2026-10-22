@@ -80,14 +80,22 @@ public sealed partial class Merger
         return merged.ToList();
     }
 
+    /// <summary>
+    ///     Path of the resume sidecar for the merged image: the output path with its extension replaced, the same
+    ///     naming the dump command uses.
+    /// </summary>
+    string MergedResumePath =>
+        Path.Combine(Path.GetDirectoryName(outputImagePath) ?? "",
+                     Path.GetFileNameWithoutExtension(outputImagePath) + ".resume.json");
+
     /// <summary>Writes the resume information of the merged image next to it.</summary>
     void WriteMergedResume(Resume resume)
     {
-        string resumePath = outputImagePath + ".resume.json";
+        string resumePath = MergedResumePath;
 
         try
         {
-            using var fs = new FileStream(resumePath, FileMode.Create, FileAccess.Write);
+            using var fs = new FileStream(resumePath, FileMode.CreateNew, FileAccess.Write);
 
             JsonSerializer.Serialize(fs,
                                      new ResumeJson
