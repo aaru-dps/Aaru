@@ -241,6 +241,7 @@ public sealed partial class Merger
                 else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
                 {
                     ErrorMessage?.Invoke(string.Format(UI.Skipping_sector_0_not_found, sectorAddress));
+                    _skippedSecondarySectors.Add(sectorAddress);
                     doneSectors++;
 
                     continue;
@@ -263,6 +264,7 @@ public sealed partial class Merger
                 else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
                 {
                     ErrorMessage?.Invoke(string.Format(UI.Skipping_sector_0_not_found, sectorAddress));
+                    _skippedSecondarySectors.Add(sectorAddress);
                     doneSectors++;
 
                     continue;

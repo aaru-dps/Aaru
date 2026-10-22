@@ -61,6 +61,10 @@ public sealed partial class Merger
     volatile bool           _aborted;
     readonly PluginRegister _plugins = PluginRegister.Singleton;
     byte[][]?               _aacsDecryptedCpsUnitKeys;
+    /// <summary>
+    ///     Sectors chosen from the secondary image that could not be read from it, so the output kept the primary's.
+    /// </summary>
+    readonly HashSet<ulong> _skippedSecondarySectors = [];
 
     static bool IsSkippableNotFound(ErrorNumber errno) => errno is ErrorNumber.SectorNotFound or ErrorNumber.NoData;
 
@@ -541,12 +545,15 @@ public sealed partial class Merger
         }
 
         // Leave a resume sidecar describing the merged image, so it can be merged, analyzed or converted again
-        // without losing which sectors are still bad.
+        // without losing which sectors are still bad. A sector that could not be read from the secondary kept the
+        // primary's contents, so it keeps the primary's state too.
         WriteMergedResume(CalculateMergedResume(primaryResume,
                                                 secondaryResume,
                                                 primaryImage.Info.Sectors,
                                                 primaryTape?.IsTape == true,
-                                                sectorsToCopyFromSecondImage,
+                                                sectorsToCopyFromSecondImage
+                                                   .Where(s => !_skippedSecondarySectors.Contains(s))
+                                                   .ToList(),
                                                 dumpHardware));
 
         UpdateStatus?.Invoke(UI.Merge_completed_successfully);
