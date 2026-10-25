@@ -63,7 +63,7 @@ sealed class ListOptionsCommand : Command<ListOptionsCommand.Settings>
         AaruLogging.WriteLine(UI.Read_Write_media_images_options);
         AaruLogging.Information(UI.Read_Write_media_images_options);
 
-        foreach(IWritableImage plugin in plugins.WritableImages.Values)
+        foreach(IBaseWritableImage plugin in plugins.WritableImages.Values)
         {
             if(plugin is null) continue;
 
