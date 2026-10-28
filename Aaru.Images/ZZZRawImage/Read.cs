@@ -127,6 +127,8 @@ public sealed partial class ZZZRawImage
                 break;
 
             case ".iso" when imageFilter.DataForkLength % 2048 == 0:
+            case ".dvd" when imageFilter.DataForkLength % 2048 == 0:
+            case ".bd" when imageFilter.DataForkLength % 2048 == 0:
                 _imageInfo.SectorSize = 2048;
 
                 break;

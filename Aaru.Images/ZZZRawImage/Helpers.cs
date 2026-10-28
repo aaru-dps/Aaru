@@ -46,6 +46,9 @@ public sealed partial class ZZZRawImage
 
         if(_imageInfo.SectorSize == 2048)
         {
+            if(_extension == ".dvd") return MediaType.DVDROM;
+            if(_extension == ".bd") return MediaType.DVDROM;
+
             return _imageInfo.Sectors switch
                    {
                        58620544    => MediaType.REV120,
