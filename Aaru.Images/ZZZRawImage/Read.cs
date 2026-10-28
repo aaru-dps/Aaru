@@ -1348,7 +1348,7 @@ public sealed partial class ZZZRawImage
             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
         }
-        else
+        else if(_compactDisc)
         {
             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
