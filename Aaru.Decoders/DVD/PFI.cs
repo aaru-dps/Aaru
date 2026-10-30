@@ -893,7 +893,7 @@ public static class PFI
                 sb.AppendFormat(Localization.Data_area_starts_at_PSN_0, decoded.DataAreaStartPSN).AppendLine();
                 sb.AppendFormat(Localization.Data_area_ends_at_PSN_0,   decoded.DataAreaEndPSN).AppendLine();
 
-                if(decoded is { Layers: 1, TrackPath: false })
+                if(decoded is { Layers: 1, TrackPath: true })
                     sb.AppendFormat(Localization.Layer_zero_ends_at_PSN_0, decoded.Layer0EndPSN).AppendLine();
             }
             else
