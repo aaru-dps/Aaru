@@ -256,7 +256,9 @@ sealed class IbgLog
                       $"{_ibgIntSpeed / _ibgSnaps / _ibgDivider:0.00},{_ibgIntSector},{_ibgSampleRate:0},0")
               .AppendLine();
 
-        if(_ibgIntSpeed / _ibgSnaps / _ibgDivider > _ibgMaxSpeed) _ibgMaxSpeed = _ibgIntSpeed / _ibgDivider;
+        double rowSpeed = _ibgIntSpeed / _ibgSnaps / _ibgDivider;
+
+        if(rowSpeed > _ibgMaxSpeed) _ibgMaxSpeed = rowSpeed;
 
         _ibgStopwatch.Restart();
         _ibgIntSpeed   = 0;
