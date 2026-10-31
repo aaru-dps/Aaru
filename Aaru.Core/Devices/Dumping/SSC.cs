@@ -939,7 +939,7 @@ partial class Dump
 
             PulseProgress?.Invoke(string.Format(Localization.Core.Reading_block_0_1,
                                                 currentBlock,
-                                                ByteSize.FromBytes(currentSpeed).Per(_oneSecond).Humanize()));
+                                                ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()));
 
             _speedStopwatch.Restart();
 
