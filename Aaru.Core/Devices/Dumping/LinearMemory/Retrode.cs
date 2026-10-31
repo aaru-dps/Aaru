@@ -373,6 +373,7 @@ public partial class Dump
             }
         }
 
+        _dumpStopwatch.Stop();
         EndProgress?.Invoke();
 
         UpdateStatus?.Invoke(string.Format(_aborted ? Localization.Core.Dump_aborted_after_0 : Localization.Core.Dump_finished_in_0,
