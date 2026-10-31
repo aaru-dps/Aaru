@@ -732,7 +732,7 @@ public partial class Dump
                                                    .Per(totalDuration.Milliseconds())
                                                    .Humanize()));
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1))
                                                    .Per(imageWriteDuration.Seconds())
                                                    .Humanize()));
