@@ -52,6 +52,7 @@ sealed class SpeedMeter
     readonly Stopwatch  _stopwatch    = Stopwatch.StartNew();
     int                 _closedBuckets;
     int                 _currentBucket;
+    bool                _started;
 
     /// <summary>Adds transferred bytes, using the time elapsed since this meter was created</summary>
     /// <param name="bytes">Bytes transferred since the previous call</param>
@@ -66,6 +67,15 @@ sealed class SpeedMeter
     /// <returns><c>true</c> if <paramref name="speed" /> was updated</returns>
     internal bool Update(ulong bytes, TimeSpan now, ref double speed)
     {
+        // The first read waits for the drive to spin up and seek, that would hold the speed down for a whole window
+        if(!_started)
+        {
+            _started         = true;
+            _bucketStarts[0] = now;
+
+            return false;
+        }
+
         _bucketBytes[_currentBucket] += bytes;
 
         if(now - _bucketStarts[_currentBucket] < _bucketLength) return false;

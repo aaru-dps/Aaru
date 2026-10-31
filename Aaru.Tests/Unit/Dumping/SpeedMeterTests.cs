@@ -62,6 +62,7 @@ public class SpeedMeterTests
         SpeedMeter meter = new();
         double     speed = 123;
 
+        meter.Update(READ_BYTES, TimeSpan.Zero, ref speed).Should().BeFalse();
         meter.Update(READ_BYTES, TimeSpan.FromMilliseconds(50), ref speed).Should().BeFalse();
         speed.Should().Be(123);
     }
@@ -72,8 +73,26 @@ public class SpeedMeterTests
         SpeedMeter meter = new();
         double     speed = 0;
 
+        meter.Update(READ_BYTES, TimeSpan.Zero, ref speed);
         meter.Update(1048576, TimeSpan.FromMilliseconds(100), ref speed).Should().BeTrue();
         speed.Should().BeApproximately(10, 0.001);
+    }
+
+    [Test]
+    public void SpinUpBeforeFirstReadDoesNotLowerSpeed()
+    {
+        SpeedMeter meter = new();
+        double     speed = 0;
+
+        // The first read returns after 15 seconds of spinning up, followed by reads at 48x
+        TimeSpan spunUp = TimeSpan.FromSeconds(15);
+        meter.Update(READ_BYTES, spunUp, ref speed).Should().BeFalse();
+
+        double expected = 3600d * BLOCK_SIZE / 1048576;
+
+        for(int r = 1; r <= 12; r++) meter.Update(READ_BYTES, spunUp + TimeSpan.FromSeconds(r * 32d / 3600), ref speed);
+
+        speed.Should().BeApproximately(expected, 0.5);
     }
 
     [Test]
@@ -160,6 +179,7 @@ public class SpeedMeterTests
         SpeedMeter meter = new();
         double     speed = 5;
 
+        meter.Update(0, TimeSpan.Zero, ref speed);
         meter.Update(0, TimeSpan.FromMilliseconds(200), ref speed).Should().BeTrue();
         speed.Should().Be(0);
     }
