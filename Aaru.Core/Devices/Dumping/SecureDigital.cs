@@ -597,8 +597,7 @@ public partial class Dump
         _speedStopwatch.Reset();
         double imageWriteDuration = 0;
         var    newTrim            = false;
-        ulong  sectorSpeedStart   = 0;
-        double elapsed            = 0;
+        var    speedMeter         = new SpeedMeter();
 
         InitProgress?.Invoke();
 
@@ -655,7 +654,6 @@ public partial class Dump
             }
 
             _speedStopwatch.Stop();
-            elapsed += _speedStopwatch.Elapsed.TotalMilliseconds;
 
             if(!error)
             {
@@ -703,15 +701,11 @@ public partial class Dump
             }
 
             _writeStopwatch.Stop();
-            sectorSpeedStart  += blocksToRead;
-            _resume.NextBlock =  i + blocksToRead;
+            _resume.NextBlock = i + blocksToRead;
 
-            if(elapsed < 100) continue;
+            if(!speedMeter.Update(blocksToRead * blockSize, ref currentSpeed)) continue;
 
-            currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed / 1000);
-            ibgLog.Write(i, currentSpeed                                     * 1024);
-            sectorSpeedStart = 0;
-            elapsed          = 0;
+            ibgLog.Write(i, currentSpeed * 1024);
             _speedStopwatch.Reset();
         }
 
@@ -721,7 +715,6 @@ public partial class Dump
         _dumpStopwatch.Stop();
         EndProgress?.Invoke();
         mhddLog.Close();
-        currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed / 1000);
 
         ibgLog.Close(_dev,
                      blocks,

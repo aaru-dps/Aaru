@@ -263,9 +263,8 @@ partial class Dump
         var newTrim = false;
 
         _speedStopwatch.Reset();
-        ulong sectorSpeedStart = 0;
         InitProgress?.Invoke();
-        double elapsed = 0;
+        SpeedMeter speedMeter = new();
 
         // XGD1 uses 16 protection extents (indices 0-15).
         // XGD2 and XGD3 only have actual protection zones at indices 0 and 3;
@@ -371,7 +370,6 @@ partial class Dump
                                                  out _);
 
                 _speedStopwatch.Stop();
-                elapsed       += _speedStopwatch.Elapsed.TotalMilliseconds;
                 totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
 
                 if(!sense && !_dev.Error)
@@ -452,17 +450,15 @@ partial class Dump
                 }
 
                 _writeStopwatch.Stop();
-                currentSector     =  i + blocksToRead;
-                _resume.NextBlock =  currentSector;
-                sectorSpeedStart  += blocksToRead;
-                blocksToRead      =  saveBlocksToRead;
+                currentSector     = i + blocksToRead;
+                _resume.NextBlock = currentSector;
 
-                if(elapsed < 100) continue;
+                bool speedUpdated = speedMeter.Update(blocksToRead * 2064, ref currentSpeed);
+                blocksToRead = saveBlocksToRead;
 
-                currentSpeed = sectorSpeedStart * 2064 / (1048576 * elapsed / 1000);
-                ibgLog.Write(i, currentSpeed                                * 1024);
-                sectorSpeedStart = 0;
-                elapsed          = 0;
+                if(!speedUpdated) continue;
+
+                ibgLog.Write(i, currentSpeed * 1024);
                 _speedStopwatch.Reset();
             }
 

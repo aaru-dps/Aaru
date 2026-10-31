@@ -51,7 +51,7 @@ partial class Dump
         uint       blocksToRead = maxBlocksToRead;
         bool       sense;
         byte[]     buffer;
-        ulong      sectorSpeedStart = 0;
+        SpeedMeter speedMeter       = new();
         var        canMediumScan    = true;
         var        outputFormat     = _outputPlugin as IWritableImage;
 
@@ -276,16 +276,9 @@ partial class Dump
                 }
 
                 _writeStopwatch.Stop();
-                sectorSpeedStart  += blocksToRead;
-                _resume.NextBlock =  i + blocksToRead;
+                _resume.NextBlock = i + blocksToRead;
 
-                double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
-
-                if(elapsed <= 0) continue;
-
-                currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
-                sectorSpeedStart = 0;
-                _speedStopwatch.Restart();
+                speedMeter.Update(blocksToRead * blockSize, ref currentSpeed);
             }
         }
 

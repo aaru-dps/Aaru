@@ -71,7 +71,6 @@ partial class Dump
                         ref double   imageWriteDuration, ref bool newTrim, byte[] discKey, uint nominalNegativeSectors,
                         uint         overflowSectors)
     {
-        ulong  sectorSpeedStart = 0;
         bool   sense;
         byte[] buffer;
         uint   blocksToRead = maxBlocksToRead;
@@ -86,7 +85,7 @@ partial class Dump
 
         InitProgress?.Invoke();
         _speedStopwatch.Reset();
-        double elapsed = 0;
+        SpeedMeter speedMeter = new();
 
         if(scsiReader.HldtstReadRaw && _resume.NextBlock > 0)
 
@@ -133,7 +132,6 @@ partial class Dump
                                               out _,
                                               true);
 
-                elapsed       += _speedStopwatch.Elapsed.TotalMilliseconds;
                 totalDuration += cmdDuration;
                 _speedStopwatch.Stop();
 
@@ -181,15 +179,11 @@ partial class Dump
                 }
 
                 if(sectorAddress <= 1) break;
-                sectorAddress    -= toRead;
-                sectorSpeedStart += toRead;
+                sectorAddress -= toRead;
 
-                if(elapsed < 100) continue;
+                if(!speedMeter.Update(toRead * blockSize, ref currentSpeed)) continue;
 
-                currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed  / 1000);
                 ibgLog.Write((ulong)-(long)(sectorAddress + toRead), currentSpeed * 1024);
-                sectorSpeedStart = 0;
-                elapsed          = 0;
                 _speedStopwatch.Reset();
             }
 
@@ -222,7 +216,6 @@ partial class Dump
 
             _speedStopwatch.Restart();
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
-            elapsed       += _speedStopwatch.Elapsed.TotalMilliseconds;
             totalDuration += cmdDuration;
             _speedStopwatch.Stop();
 
@@ -345,15 +338,11 @@ partial class Dump
             }
 
             _writeStopwatch.Stop();
-            sectorSpeedStart  += blocksToRead;
-            _resume.NextBlock =  i + blocksToRead;
+            _resume.NextBlock = i + blocksToRead;
 
-            if(elapsed < 100) continue;
+            if(!speedMeter.Update(blocksToRead * blockSize, ref currentSpeed)) continue;
 
-            currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed / 1000);
-            ibgLog.Write(i, currentSpeed                                     * 1024);
-            sectorSpeedStart = 0;
-            elapsed          = 0;
+            ibgLog.Write(i, currentSpeed * 1024);
             _speedStopwatch.Reset();
         }
 
@@ -389,7 +378,6 @@ partial class Dump
 
                 _speedStopwatch.Restart();
                 sense         =  scsiReader.ReadBlocks(out buffer, lba, toRead, out double cmdDuration, out _, out _);
-                elapsed       += _speedStopwatch.Elapsed.TotalMilliseconds;
                 totalDuration += cmdDuration;
                 _speedStopwatch.Stop();
 
@@ -424,14 +412,10 @@ partial class Dump
                 }
 
                 _writeStopwatch.Stop();
-                sectorSpeedStart += toRead;
 
-                if(elapsed < 100) continue;
+                if(!speedMeter.Update(toRead * blockSize, ref currentSpeed)) continue;
 
-                currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed / 1000);
-                ibgLog.Write(lba, currentSpeed                                   * 1024);
-                sectorSpeedStart = 0;
-                elapsed          = 0;
+                ibgLog.Write(lba, currentSpeed * 1024);
                 _speedStopwatch.Reset();
             }
         }

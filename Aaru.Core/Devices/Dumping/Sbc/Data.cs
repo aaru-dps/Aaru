@@ -69,7 +69,6 @@ partial class Dump
                      ref double   totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
                      ref double   imageWriteDuration, ref bool newTrim, ref DVDDecryption dvdDecrypt, byte[] discKey)
     {
-        ulong  sectorSpeedStart = 0;
         bool   sense;
         byte[] buffer;
         uint   blocksToRead = maxBlocksToRead;
@@ -77,7 +76,7 @@ partial class Dump
 
         InitProgress?.Invoke();
         _speedStopwatch.Reset();
-        double elapsed = 0;
+        SpeedMeter speedMeter = new();
 
         for(ulong i = _resume.NextBlock; i < blocks; i += blocksToRead)
         {
@@ -104,7 +103,6 @@ partial class Dump
 
             _speedStopwatch.Restart();
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out _, out _, out _);
-            elapsed       += _speedStopwatch.Elapsed.TotalMilliseconds;
             totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
             _speedStopwatch.Stop();
 
@@ -252,15 +250,11 @@ partial class Dump
             }
 
             _writeStopwatch.Stop();
-            sectorSpeedStart  += blocksToRead;
-            _resume.NextBlock =  i + blocksToRead;
+            _resume.NextBlock = i + blocksToRead;
 
-            if(elapsed < 100) continue;
+            if(!speedMeter.Update(blocksToRead * blockSize, ref currentSpeed)) continue;
 
-            currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed / 1000);
-            ibgLog.Write(i, currentSpeed                                     * 1024);
-            sectorSpeedStart = 0;
-            elapsed          = 0;
+            ibgLog.Write(i, currentSpeed * 1024);
             _speedStopwatch.Reset();
         }
 

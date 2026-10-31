@@ -254,7 +254,7 @@ public partial class Dump
         double imageWriteDuration = 0;
 
         _speedStopwatch.Restart();
-        ulong sectorSpeedStart = 0;
+        SpeedMeter speedMeter = new();
         InitProgress?.Invoke();
 
         for(ulong i = 0; i < romSectors; i += blocksToRead)
@@ -319,15 +319,7 @@ public partial class Dump
 
             _writeStopwatch.Stop();
 
-            sectorSpeedStart += blocksToRead;
-
-            double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
-
-            if(elapsed <= 0 || sectorSpeedStart * 512 < 524288) continue;
-
-            currentSpeed     = sectorSpeedStart * 512 / (1048576 * elapsed);
-            sectorSpeedStart = 0;
-            _speedStopwatch.Reset();
+            speedMeter.Update(blocksToRead * 512, ref currentSpeed);
         }
 
         _speedStopwatch.Stop();

@@ -879,9 +879,8 @@ partial class Dump
 
         if(mode10Data != null) outputTape.WriteMediaTag(mode10Data, MediaTagType.SCSI_MODESENSE_10);
 
-        ulong  currentSpeedSize   = 0;
         double imageWriteDuration = 0;
-        double elapsed            = 0;
+        var    speedMeter         = new SpeedMeter();
         InitProgress?.Invoke();
 
         _speedStopwatch.Reset();
@@ -948,7 +947,6 @@ partial class Dump
 
             _speedStopwatch.Stop();
             totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
-            elapsed       += _speedStopwatch.Elapsed.TotalMilliseconds;
 
             if(sense && !senseBuf.IsEmpty)
             {
@@ -1116,14 +1114,10 @@ partial class Dump
             _writeStopwatch.Stop();
             currentBlock++;
             _resume.NextBlock++;
-            currentSpeedSize += blockSize;
 
-            if(elapsed < 100) continue;
+            if(!speedMeter.Update(blockSize, ref currentSpeed)) continue;
 
-            currentSpeed = currentSpeedSize / (1048576 * elapsed / 1000);
-            ibgLog.Write(currentBlock, currentSpeed              * 1024);
-            currentSpeedSize = 0;
-            elapsed          = 0;
+            ibgLog.Write(currentBlock, currentSpeed * 1024);
             _speedStopwatch.Reset();
         }
 

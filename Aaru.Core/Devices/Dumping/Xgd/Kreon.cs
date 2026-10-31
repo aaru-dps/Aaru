@@ -584,9 +584,8 @@ partial class Dump
 
         UpdateStatus?.Invoke(Localization.Core.Reading_game_partition);
         _speedStopwatch.Reset();
-        ulong sectorSpeedStart = 0;
         InitProgress?.Invoke();
-        double elapsed = 0;
+        SpeedMeter speedMeter = new();
 
         // XGD1 uses 16 protection extents (indices 0-15).
         // XGD2 and XGD3 only have actual protection zones at indices 0 and 3;
@@ -691,7 +690,6 @@ partial class Dump
                                     out _);
 
                 _speedStopwatch.Stop();
-                elapsed       += _speedStopwatch.Elapsed.TotalMilliseconds;
                 totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
 
                 if(!sense && !_dev.Error)
@@ -751,17 +749,15 @@ partial class Dump
                 }
 
                 _writeStopwatch.Stop();
-                currentSector     =  i + blocksToRead;
-                _resume.NextBlock =  currentSector;
-                sectorSpeedStart  += blocksToRead;
-                blocksToRead      =  saveBlocksToRead;
+                currentSector     = i + blocksToRead;
+                _resume.NextBlock = currentSector;
 
-                if(elapsed < 100) continue;
+                bool speedUpdated = speedMeter.Update(blocksToRead * blockSize, ref currentSpeed);
+                blocksToRead = saveBlocksToRead;
 
-                currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed / 1000);
-                ibgLog.Write(i, currentSpeed                                     * 1024);
-                sectorSpeedStart = 0;
-                elapsed          = 0;
+                if(!speedUpdated) continue;
+
+                ibgLog.Write(i, currentSpeed * 1024);
                 _speedStopwatch.Reset();
             }
 
@@ -881,7 +877,7 @@ partial class Dump
         // Video Layer 1
         UpdateStatus?.Invoke(Localization.Core.Reading_Video_Layer_1);
         InitProgress?.Invoke();
-        elapsed = 0;
+        speedMeter = new SpeedMeter();
 
         // Video partition sectors are only addressable while the drive is locked, so their errors are tracked apart
         // from _resume.BadBlocks (which the wxripper-unlocked trim and retry passes handle) and retried before
@@ -929,7 +925,6 @@ partial class Dump
                                 out _);
 
             _speedStopwatch.Stop();
-            elapsed       += _speedStopwatch.Elapsed.TotalMilliseconds;
             totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
 
             if(!sense && !_dev.Error)
@@ -995,14 +990,10 @@ partial class Dump
 
             currentSector     += blocksToRead;
             _resume.NextBlock =  currentSector;
-            sectorSpeedStart  += blocksToRead;
 
-            if(elapsed < 100) continue;
+            if(!speedMeter.Update(blocksToRead * blockSize, ref currentSpeed)) continue;
 
-            currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed / 1000);
-            ibgLog.Write(currentSector, currentSpeed                         * 1024);
-            sectorSpeedStart = 0;
-            elapsed          = 0;
+            ibgLog.Write(currentSector, currentSpeed * 1024);
             _speedStopwatch.Reset();
         }
 
