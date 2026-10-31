@@ -453,7 +453,7 @@ partial class Dump
                 currentSector     = i + blocksToRead;
                 _resume.NextBlock = currentSector;
 
-                bool speedUpdated = speedMeter.Update(blocksToRead * 2064, ref currentSpeed);
+                bool speedUpdated = UpdateSpeed(speedMeter, blocksToRead * 2064, ref currentSpeed);
                 blocksToRead = saveBlocksToRead;
 
                 if(!speedUpdated) continue;
@@ -527,21 +527,15 @@ partial class Dump
                      2064,
                      _dumpStopwatch.Elapsed.TotalSeconds,
                      currentSpeed                * 1024,
-                     2064 * (double)(blocks + 1) / 1024 / _dumpStopwatch.Elapsed.TotalSeconds,
+                     _dumpedBytes / 1024d / _dumpStopwatch.Elapsed.TotalSeconds,
                      _devicePath);
 
         UpdateStatus?.Invoke(string.Format(_aborted ? Localization.Core.Dump_aborted_after_0 : Localization.Core.Dump_finished_in_0,
                                            _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
-                                           ByteSize.FromBytes(2064 * (blocks + 1))
-                                                   .Per(_dumpStopwatch.Elapsed)
-                                                   .Humanize()));
+        ReportAverageSpeed(Localization.Core.Average_dump_speed_0, _dumpStopwatch.Elapsed);
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
-                                           ByteSize.FromBytes(2064 * (blocks + 1))
-                                                   .Per(imageWriteDuration.Seconds())
-                                                   .Humanize()));
+        ReportAverageSpeed(Localization.Core.Average_write_speed_0, imageWriteDuration.Seconds());
 
 #region Trimming
 
@@ -801,10 +795,7 @@ partial class Dump
 
         ReportTotalTime(totalDuration, totalChkDuration, imageWriteDuration);
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
-                                           ByteSize.FromBytes(2064 * (blocks + 1))
-                                                   .Per(_dumpStopwatch.Elapsed)
-                                                   .Humanize()));
+        ReportAverageSpeed(Localization.Core.Average_speed_0, _dumpStopwatch.Elapsed);
 
         if(maxSpeed > 0)
         {

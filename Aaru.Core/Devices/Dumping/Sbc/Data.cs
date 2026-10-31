@@ -252,7 +252,7 @@ partial class Dump
             _writeStopwatch.Stop();
             _resume.NextBlock = i + blocksToRead;
 
-            if(!speedMeter.Update(blocksToRead * blockSize, ref currentSpeed)) continue;
+            if(!UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed)) continue;
 
             ibgLog.Write(i, currentSpeed * 1024);
             _speedStopwatch.Reset();

@@ -139,6 +139,7 @@ public partial class Dump
     volatile        bool                       _aborted;
     AbortReason                                _abortReason;
     int                                        _correctSectors;
+    ulong                                      _dumpedBytes;
     bool                                       _c2Supported;    // Drive returns C2 pointers alongside subchannel
     uint                                       _c2BlockSize;    // Block size when reading data + C2 + subchannel
     int                                        _c2Offset;       // Byte offset of the 294-byte C2 region in a C2 block
@@ -427,6 +428,28 @@ public partial class Dump
         _aborted     = true;
         _sidecarClass?.Abort();
         _dpmMeasurement?.Abort();
+    }
+
+    /// <summary>Updates a speed meter and adds the bytes to the ones read during this run</summary>
+    /// <param name="meter">Speed meter</param>
+    /// <param name="bytes">Bytes read since the previous call</param>
+    /// <param name="speed">Set to the speed in MiB/s when a new value is available, otherwise left unchanged</param>
+    /// <returns><c>true</c> if <paramref name="speed" /> was updated</returns>
+    bool UpdateSpeed(SpeedMeter meter, ulong bytes, ref double speed)
+    {
+        _dumpedBytes += bytes;
+
+        return meter.Update(bytes, ref speed);
+    }
+
+    /// <summary>Reports an average speed of the bytes read during this run, if there were any</summary>
+    /// <param name="format">Localized message, with the speed as its only argument</param>
+    /// <param name="time">Time to average over</param>
+    void ReportAverageSpeed(string format, TimeSpan time)
+    {
+        if(_dumpedBytes == 0 || time <= TimeSpan.Zero) return;
+
+        UpdateStatus?.Invoke(string.Format(format, ByteSize.FromBytes(_dumpedBytes).Per(time).Humanize()));
     }
 
     /// <summary>

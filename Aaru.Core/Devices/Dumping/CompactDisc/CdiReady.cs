@@ -380,7 +380,7 @@ partial class Dump
 
                     _resume.NextBlock = i + r;
 
-                    if(!speedMeter.Update(blockSize, ref currentSpeed)) continue;
+                    if(!UpdateSpeed(speedMeter, blockSize, ref currentSpeed)) continue;
 
                     _speedStopwatch.Reset();
                 }
@@ -557,7 +557,7 @@ partial class Dump
 
             _resume.NextBlock = i + blocksToRead;
 
-            if(!speedMeter.Update(blocksToRead * blockSize, ref currentSpeed)) continue;
+            if(!UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed)) continue;
 
             _speedStopwatch.Reset();
         }

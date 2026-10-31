@@ -278,7 +278,7 @@ partial class Dump
                 _writeStopwatch.Stop();
                 _resume.NextBlock = i + blocksToRead;
 
-                speedMeter.Update(blocksToRead * blockSize, ref currentSpeed);
+                UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed);
             }
         }
 

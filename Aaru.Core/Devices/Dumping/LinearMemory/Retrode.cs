@@ -319,7 +319,7 @@ public partial class Dump
 
             _writeStopwatch.Stop();
 
-            speedMeter.Update(blocksToRead * 512, ref currentSpeed);
+            UpdateSpeed(speedMeter, blocksToRead * 512, ref currentSpeed);
         }
 
         _speedStopwatch.Stop();
@@ -359,6 +359,7 @@ public partial class Dump
                 outputBai.WriteBytes(readBuffer, 0, (int)romRemaining, out _);
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 _writeStopwatch.Stop();
+                _dumpedBytes += romRemaining;
             }
             else
             {
@@ -379,15 +380,9 @@ public partial class Dump
         UpdateStatus?.Invoke(string.Format(_aborted ? Localization.Core.Dump_aborted_after_0 : Localization.Core.Dump_finished_in_0,
                                            _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
-                                           ByteSize.FromBytes(512 * (romSectors + 1))
-                                                   .Per(_dumpStopwatch.Elapsed)
-                                                   .Humanize()));
+        ReportAverageSpeed(Localization.Core.Average_dump_speed_0, _dumpStopwatch.Elapsed);
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
-                                           ByteSize.FromBytes(512 * (romSectors + 1))
-                                                   .Per(imageWriteDuration.Seconds())
-                                                   .Humanize()));
+        ReportAverageSpeed(Localization.Core.Average_write_speed_0, imageWriteDuration.Seconds());
 
         var metadata = new CommonTypes.Structs.ImageInfo
         {
@@ -432,10 +427,7 @@ public partial class Dump
 
         ReportTotalTime(totalDuration, totalChkDuration, imageWriteDuration);
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
-                                           ByteSize.FromBytes(512 * (romSectors + 1))
-                                                   .Per(_dumpStopwatch.Elapsed)
-                                                   .Humanize()));
+        ReportAverageSpeed(Localization.Core.Average_speed_0, _dumpStopwatch.Elapsed);
 
         if(maxSpeed > 0)
         {

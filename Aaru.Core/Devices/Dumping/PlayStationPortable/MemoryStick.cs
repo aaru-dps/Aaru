@@ -294,7 +294,7 @@ public partial class Dump
             _writeStopwatch.Stop();
             _resume.NextBlock = i + blocksToRead;
 
-            if(!speedMeter.Update(blocksToRead * blockSize, ref currentSpeed)) continue;
+            if(!UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed)) continue;
 
             ibgLog.Write(i, currentSpeed * 1024);
             _speedStopwatch.Reset();
@@ -312,21 +312,15 @@ public partial class Dump
                      blockSize,
                      _dumpStopwatch.Elapsed.TotalSeconds,
                      currentSpeed                     * 1024,
-                     blockSize * (double)(blocks + 1) / 1024 / _dumpStopwatch.Elapsed.TotalSeconds,
+                     _dumpedBytes / 1024d / _dumpStopwatch.Elapsed.TotalSeconds,
                      _devicePath);
 
         UpdateStatus?.Invoke(string.Format(_aborted ? Localization.Core.Dump_aborted_after_0 : Localization.Core.Dump_finished_in_0,
                                            _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1))
-                                                   .Per(_dumpStopwatch.Elapsed)
-                                                   .Humanize()));
+        ReportAverageSpeed(Localization.Core.Average_dump_speed_0, _dumpStopwatch.Elapsed);
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1))
-                                                   .Per(imageWriteDuration.Seconds())
-                                                   .Humanize()));
+        ReportAverageSpeed(Localization.Core.Average_write_speed_0, imageWriteDuration.Seconds());
 
 
 #region Trimming
@@ -782,10 +776,7 @@ public partial class Dump
 
         ReportTotalTime(totalDuration, totalChkDuration, imageWriteDuration);
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1))
-                                                   .Per(_dumpStopwatch.Elapsed)
-                                                   .Humanize()));
+        ReportAverageSpeed(Localization.Core.Average_speed_0, _dumpStopwatch.Elapsed);
 
         if(maxSpeed > 0)
         {

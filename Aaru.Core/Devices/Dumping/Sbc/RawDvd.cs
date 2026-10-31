@@ -181,7 +181,7 @@ partial class Dump
                 if(sectorAddress <= 1) break;
                 sectorAddress -= toRead;
 
-                if(!speedMeter.Update(toRead * blockSize, ref currentSpeed)) continue;
+                if(!UpdateSpeed(speedMeter, toRead * blockSize, ref currentSpeed)) continue;
 
                 ibgLog.Write((ulong)-(long)(sectorAddress + toRead), currentSpeed * 1024);
                 _speedStopwatch.Reset();
@@ -340,7 +340,7 @@ partial class Dump
             _writeStopwatch.Stop();
             _resume.NextBlock = i + blocksToRead;
 
-            if(!speedMeter.Update(blocksToRead * blockSize, ref currentSpeed)) continue;
+            if(!UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed)) continue;
 
             ibgLog.Write(i, currentSpeed * 1024);
             _speedStopwatch.Reset();
@@ -413,7 +413,7 @@ partial class Dump
 
                 _writeStopwatch.Stop();
 
-                if(!speedMeter.Update(toRead * blockSize, ref currentSpeed)) continue;
+                if(!UpdateSpeed(speedMeter, toRead * blockSize, ref currentSpeed)) continue;
 
                 ibgLog.Write(lba, currentSpeed * 1024);
                 _speedStopwatch.Reset();
