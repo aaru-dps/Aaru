@@ -856,7 +856,6 @@ sealed partial class Dump
         if(_dumpFirstTrackPregap && (readcd || _omnidrive))
         {
             ReadCdFirstTrackPregap(blockSize,
-                                   ref currentSpeed,
                                    mediaTags,
                                    supportedSubchannel,
                                    ref totalDuration,

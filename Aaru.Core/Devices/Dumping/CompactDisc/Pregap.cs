@@ -57,7 +57,6 @@ partial class Dump
 {
     /// <summary>Reads the first track pregap from a CompactDisc</summary>
     /// <param name="blockSize">Block size in bytes</param>
-    /// <param name="currentSpeed">Current speed</param>
     /// <param name="mediaTags">List of media tags</param>
     /// <param name="supportedSubchannel">Subchannel the drive can read</param>
     /// <param name="totalDuration">Total time spent sending commands to a drive</param>
@@ -67,7 +66,7 @@ partial class Dump
     /// <param name="sectorsForOffset">Number of sectors needed to cover the offset</param>
     /// <param name="desiredSubchannel">Subchannel type the user wants written to the image</param>
     /// <param name="subchannelExtents">Set of sector LBAs that still need subchannel data</param>
-    void ReadCdFirstTrackPregap(uint blockSize, ref double currentSpeed, Dictionary<MediaTagType, byte[]> mediaTags,
+    void ReadCdFirstTrackPregap(uint blockSize, Dictionary<MediaTagType, byte[]> mediaTags,
                                 MmcSubchannel supportedSubchannel, ref double totalDuration,
                                 IWritableOpticalImage outputOptical, SubchannelLog subLog, int offsetBytes,
                                 int sectorsForOffset, MmcSubchannel desiredSubchannel, HashSet<int> subchannelExtents)
@@ -76,6 +75,7 @@ partial class Dump
         byte[] cmdBuf;                          // Data buffer
         double cmdDuration;                     // Command execution time
         var    speedMeter                  = new SpeedMeter(); // Used to calculate correct speed
+        double currentSpeed                = 0;                // Not part of the dump speed
         var    firstTrackPregapSectorsGood = 0;
         var    firstTrackPregapMs          = new MemoryStream();
 
