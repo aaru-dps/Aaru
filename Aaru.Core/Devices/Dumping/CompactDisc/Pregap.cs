@@ -75,7 +75,7 @@ partial class Dump
         bool   sense;                           // Sense indicator
         byte[] cmdBuf;                          // Data buffer
         double cmdDuration;                     // Command execution time
-        ulong  sectorSpeedStart            = 0; // Used to calculate correct speed
+        var    speedMeter                  = new SpeedMeter(); // Used to calculate correct speed
         var    firstTrackPregapSectorsGood = 0;
         var    firstTrackPregapMs          = new MemoryStream();
 
@@ -101,7 +101,6 @@ partial class Dump
 
         UpdateStatus?.Invoke(Localization.Core.Reading_first_track_pregap);
         InitProgress?.Invoke();
-        _speedStopwatch.Restart();
 
         for(int firstTrackPregapBlock = startLba;
             firstTrackPregapBlock <= endLba && _resume.NextBlock == 0;
@@ -175,18 +174,8 @@ partial class Dump
 
             if(firstTrackPregapBlock < -150) continue;
 
-            sectorSpeedStart++;
-
-            double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
-
-            if(elapsed <= 0) continue;
-
-            currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
-            sectorSpeedStart = 0;
-            _speedStopwatch.Restart();
+            speedMeter.Update(blockSize, ref currentSpeed);
         }
-
-        _speedStopwatch.Stop();
 
         uint blocksToRead = 150;
 

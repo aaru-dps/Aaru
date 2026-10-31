@@ -101,12 +101,12 @@ partial class Dump
                     Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,
                     Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
-        ulong              sectorSpeedStart = 0; // Used to calculate correct speed
-        uint               blocksToRead;         // How many sectors to read at once
-        var                sense      = true;    // Sense indicator
-        byte[]             cmdBuf     = null;    // Data buffer
-        ReadOnlySpan<byte> senseBuf   = null;    // Sense buffer
-        const uint         sectorSize = 2352;    // Full sector size
+        uint               blocksToRead;       // How many sectors to read at once
+        var                sense      = true;  // Sense indicator
+        byte[]             cmdBuf     = null;  // Data buffer
+        ReadOnlySpan<byte> senseBuf   = null;  // Sense buffer
+        const uint         sectorSize = 2352;  // Full sector size
+        SpeedMeter         speedMeter = new(); // Used to calculate correct speed
         newTrim = false;
         PlextorSubchannel supportedPlextorSubchannel;
         var               outputFormat = _outputPlugin as IWritableImage;
@@ -121,11 +121,10 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        int    currentReadSpeed      = -1;
-        var    crossingLeadOut       = false;
-        var    failedCrossingLeadOut = false;
-        var    skippingLead          = false;
-        double elapsed               = 0;
+        int currentReadSpeed      = -1;
+        var crossingLeadOut       = false;
+        var failedCrossingLeadOut = false;
+        var skippingLead          = false;
 
         for(ulong i = _resume.NextBlock; (long)i <= lastSector; i += blocksToRead)
         {
@@ -1001,20 +1000,13 @@ partial class Dump
 
                     _writeStopwatch.Stop();
 
-                    sectorSpeedStart++;
-
                     _resume.NextBlock = i + r + 1;
-
-                    elapsed += _speedStopwatch.Elapsed.TotalMilliseconds;
 
                     _speedStopwatch.Reset();
 
-                    if(elapsed < 100) continue;
+                    if(!speedMeter.Update(blockSize, ref currentSpeed)) continue;
 
-                    currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed / 1000);
-                    ibgLog.Write(i + r, currentSpeed                                 * 1024);
-                    sectorSpeedStart = 0;
-                    elapsed          = 0;
+                    ibgLog.Write(i + r, currentSpeed * 1024);
                 }
 
                 continue;
@@ -1318,18 +1310,11 @@ partial class Dump
 
             _writeStopwatch.Stop();
 
-            sectorSpeedStart += blocksToRead;
-
             _resume.NextBlock = i + blocksToRead;
 
-            elapsed += _speedStopwatch.Elapsed.TotalMilliseconds;
+            if(!speedMeter.Update(blocksToRead * blockSize, ref currentSpeed)) continue;
 
-            if(elapsed < 100) continue;
-
-            currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed / 1000);
-            ibgLog.Write(i, currentSpeed                                     * 1024);
-            sectorSpeedStart = 0;
-            elapsed          = 0;
+            ibgLog.Write(i, currentSpeed * 1024);
         }
 
         _speedStopwatch.Stop();

@@ -169,12 +169,12 @@ partial class Dump
                       bool cdiReadyReadAsAudio, int offsetBytes, int sectorsForOffset,
                       Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
-        ulong              sectorSpeedStart = 0; // Used to calculate correct speed
-        bool               sense;                // Sense indicator
-        byte[]             cmdBuf;               // Data buffer
-        ReadOnlySpan<byte> senseBuf;             // Sense buffer
-        double             cmdDuration;          // Command execution time
-        const uint         sectorSize = 2352;    // Full sector size
+        bool               sense;              // Sense indicator
+        byte[]             cmdBuf;             // Data buffer
+        ReadOnlySpan<byte> senseBuf;           // Sense buffer
+        double             cmdDuration;        // Command execution time
+        const uint         sectorSize = 2352;  // Full sector size
+        SpeedMeter         speedMeter = new(); // Used to calculate correct speed
         Track              firstTrack = tracks.FirstOrDefault();
         uint               blocksToRead; // How many sectors to read at once
         var                outputOptical = _outputPlugin as IWritableOpticalImage;
@@ -249,7 +249,6 @@ partial class Dump
 
             totalDuration += cmdDuration;
             _speedStopwatch.Stop();
-            double elapsed;
 
             // Overcome the track mode change drive error
             if(sense)
@@ -378,16 +377,11 @@ partial class Dump
                     }
 
                     _writeStopwatch.Stop();
-                    sectorSpeedStart += r;
 
                     _resume.NextBlock = i + r;
 
-                    elapsed = _speedStopwatch.Elapsed.TotalSeconds;
+                    if(!speedMeter.Update(blockSize, ref currentSpeed)) continue;
 
-                    if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288) continue;
-
-                    currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
-                    sectorSpeedStart = 0;
                     _speedStopwatch.Reset();
                 }
             }
@@ -560,16 +554,11 @@ partial class Dump
             }
 
             _writeStopwatch.Stop();
-            sectorSpeedStart += blocksToRead;
 
             _resume.NextBlock = i + blocksToRead;
 
-            elapsed = _speedStopwatch.Elapsed.TotalSeconds;
+            if(!speedMeter.Update(blocksToRead * blockSize, ref currentSpeed)) continue;
 
-            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288) continue;
-
-            currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
-            sectorSpeedStart = 0;
             _speedStopwatch.Reset();
         }
 

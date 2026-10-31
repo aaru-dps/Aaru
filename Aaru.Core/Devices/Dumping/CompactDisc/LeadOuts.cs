@@ -91,6 +91,7 @@ partial class Dump
         var                sense         = true; // Sense indicator
         ReadOnlySpan<byte> senseBuf      = null;
         var                outputOptical = _outputPlugin as IWritableOpticalImage;
+        SpeedMeter         speedMeter    = new(); // Used to calculate correct speed
 
         UpdateStatus?.Invoke(Localization.Core.Reading_lead_outs);
 
@@ -320,9 +321,7 @@ partial class Dump
                 }
 
                 _writeStopwatch.Stop();
-                double newSpeed = (double)blockSize * _maximumReadable / 1048576 / (cmdDuration / 1000);
-
-                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
+                speedMeter.Update(blockSize, ref currentSpeed);
 
                 _resume.NextBlock = i + 1;
             }
