@@ -527,7 +527,7 @@ partial class Dump
                      2064,
                      _dumpStopwatch.Elapsed.TotalSeconds,
                      currentSpeed                * 1024,
-                     2064 * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
+                     2064 * (double)(blocks + 1) / 1024 / _dumpStopwatch.Elapsed.TotalSeconds,
                      _devicePath);
 
         UpdateStatus?.Invoke(string.Format(_aborted ? Localization.Core.Dump_aborted_after_0 : Localization.Core.Dump_finished_in_0,
@@ -535,7 +535,7 @@ partial class Dump
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
                                            ByteSize.FromBytes(2064 * (blocks + 1))
-                                                   .Per(totalDuration.Milliseconds())
+                                                   .Per(_dumpStopwatch.Elapsed)
                                                    .Humanize()));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
@@ -803,7 +803,7 @@ partial class Dump
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(2064 * (blocks + 1))
-                                                   .Per(totalDuration.Milliseconds())
+                                                   .Per(_dumpStopwatch.Elapsed)
                                                    .Humanize()));
 
         if(maxSpeed > 0)

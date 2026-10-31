@@ -381,7 +381,7 @@ public partial class Dump
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
                                            ByteSize.FromBytes(512 * (romSectors + 1))
-                                                   .Per(totalDuration.Milliseconds())
+                                                   .Per(_dumpStopwatch.Elapsed)
                                                    .Humanize()));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
@@ -434,7 +434,7 @@ public partial class Dump
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(512 * (romSectors + 1))
-                                                   .Per(totalDuration.Milliseconds())
+                                                   .Per(_dumpStopwatch.Elapsed)
                                                    .Humanize()));
 
         if(maxSpeed > 0)
