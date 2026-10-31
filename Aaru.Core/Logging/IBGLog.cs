@@ -241,7 +241,7 @@ sealed class IbgLog
         if(_logFile == null) return;
 
         _ibgIntSpeed   += currentSpeed;
-        _ibgSampleRate += (int)Math.Floor(_ibgStopwatch.Elapsed.TotalMilliseconds);
+        _ibgSampleRate =  (int)Math.Floor(_ibgStopwatch.Elapsed.TotalMilliseconds);
         _ibgSnaps++;
 
         if(_ibgSampleRate < 100) return;
