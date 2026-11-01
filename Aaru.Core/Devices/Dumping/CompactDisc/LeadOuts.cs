@@ -305,6 +305,13 @@ partial class Dump
                 }
                 else
                 {
+                    if(RecoverFromDriveCrash(i))
+                    {
+                        i--;
+
+                        continue;
+                    }
+
                     // It's not going to get more lead-out sectors if it already failed.
                     break;
                 }
