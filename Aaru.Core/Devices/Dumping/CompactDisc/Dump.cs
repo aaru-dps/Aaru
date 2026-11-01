@@ -1141,7 +1141,7 @@ sealed partial class Dump
                            sectorsForOffset);
         }
 
-        mhddLog.Close();
+        mhddLog.Flush();
 
         ibgLog.Close(_dev,
                      blocks,
@@ -1183,7 +1183,8 @@ sealed partial class Dump
                        isrcs,
                        ref mcn,
                        subchannelExtents,
-                       smallestPregapLbaPerTrack);
+                       smallestPregapLbaPerTrack,
+                       mhddLog);
 
         if(dskType is MediaType.CDR or MediaType.CDRW && _resume.BadBlocks.Count > 0 && _ignoreCdrRunOuts > 0)
         {
@@ -1214,7 +1215,10 @@ sealed partial class Dump
                         ref mcn,
                         subchannelExtents,
                         smallestPregapLbaPerTrack,
-                        supportsLongSectors);
+                        supportsLongSectors,
+                        mhddLog);
+
+        mhddLog.Close();
 
         // Re-read the audio sectors the drive concealed until they converge on stable, C2-clean data, rewriting the
         // ones that do. Runs after the normal retries so hard errors are dealt with first.

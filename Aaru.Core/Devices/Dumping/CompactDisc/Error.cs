@@ -75,18 +75,19 @@ partial class Dump
     /// <param name="mcn">Disc media catalogue number</param>
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
+    /// <param name="mhddLog">MHDD log</param>
     void RetryCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardware currentTry, ExtentsULong extents,
                          int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
                          MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
                          MmcSubchannel desiredSubchannel, Track[] tracks, Dictionary<byte, string> isrcs,
                          ref string mcn, HashSet<int> subchannelExtents,
-                         Dictionary<byte, int> smallestPregapLbaPerTrack, bool supportsLongSectors)
+                         Dictionary<byte, int> smallestPregapLbaPerTrack, bool supportsLongSectors, MhddLog mhddLog)
     {
-        var                sense  = true;     // Sense indicator
-        byte[]             cmdBuf = null;     // Data buffer
-        double             cmdDuration;       // Command execution time
-        const uint         sectorSize = 2352; // Full sector size
-        ReadOnlySpan<byte> senseBuf   = null; // Sense buffer
+        var                sense       = true; // Sense indicator
+        byte[]             cmdBuf      = null; // Data buffer
+        double             cmdDuration = 0;    // Command execution time
+        const uint         sectorSize  = 2352; // Full sector size
+        ReadOnlySpan<byte> senseBuf    = null; // Sense buffer
         PlextorSubchannel  supportedPlextorSubchannel;
         var                outputOptical = _outputPlugin as IWritableOpticalImage;
 
@@ -356,8 +357,10 @@ partial class Dump
                                                  badSectorToReRead,
                                                  sectorsToReRead,
                                                  _dev.Timeout,
-                                                 out cmdDuration,
+                                                 out double plainDuration,
                                                  true);
+
+                    cmdDuration += plainDuration;
                 }
             }
             else if(_supportsPlextorD8 && audioExtents.Contains(badSector))
@@ -549,7 +552,12 @@ partial class Dump
             {
                 _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf.ToArray());
 
-                if(!runningPersistent) continue;
+                if(!runningPersistent)
+                {
+                    mhddLog.WriteRetry(badSector, cmdDuration, true);
+
+                    continue;
+                }
 
                 DecodedSense? decSense = Sense.Decode(senseBuf);
 
@@ -641,6 +649,7 @@ partial class Dump
                                                            out double readCdDuration);
 
                             totalDuration += readCdDuration;
+                            cmdDuration   += readCdDuration;
 
                             if(!readCdSense && !_dev.Error && CdChecksums.CheckCdSector(readCdBuf) == true)
                             {
@@ -771,6 +780,7 @@ partial class Dump
                                                out double readCdDuration);
 
                 totalDuration += readCdDuration;
+                cmdDuration   += readCdDuration;
 
                 if(!readCdSense && !_dev.Error && CdChecksums.CheckCdSector(readCdBuf) == true)
                 {
@@ -788,6 +798,8 @@ partial class Dump
             }
             else
                 _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf.ToArray());
+
+            mhddLog.WriteRetry(badSector, cmdDuration, sectorStatus == SectorStatus.Errored);
 
             if(supportedSubchannel != MmcSubchannel.None)
             {
@@ -932,6 +944,7 @@ partial class Dump
                                             out cmdDuration);
 
                         totalDuration += cmdDuration;
+                        mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
                     }
 
                     if(sense || _dev.Error)
