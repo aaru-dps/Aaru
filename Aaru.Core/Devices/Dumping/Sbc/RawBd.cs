@@ -128,8 +128,6 @@ partial class Dump
 
                 if(!sense && !_dev.Error)
                 {
-                    mhddLog.Write((ulong)-(long)sectorAddress, cmdDuration, toRead);
-
                     // ReadBlocks returns sectors in logical order (-N..-1); WriteSectorsLong expects ascending order.
                     byte[] writeBuffer = new byte[buffer.Length];
 
