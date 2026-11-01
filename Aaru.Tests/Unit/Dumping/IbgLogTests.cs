@@ -130,6 +130,36 @@ public class IbgLogTests
     }
 
     [Test]
+    public void SnapshotsThatDidNotFillARowAreKept()
+    {
+        IbgLog log = new(_logPath, 0x0008);
+
+        log.Write(5, 1500);
+        Rows(log).Should().BeEmpty();
+
+        log.WritePendingRow();
+
+        string[] rows = Rows(log);
+
+        rows.Should().ContainSingle();
+        rows[0].Should().StartWith("10.00,5,");
+        Field<double>(log, "_ibgMaxSpeed").Should().Be(10);
+    }
+
+    [Test]
+    public void NoPendingSnapshotsWriteNoRow()
+    {
+        IbgLog log = new(_logPath, 0x0008);
+
+        log.WritePendingRow();
+        log.Write(5, 1500);
+        log.WritePendingRow();
+        log.WritePendingRow();
+
+        Rows(log).Should().ContainSingle();
+    }
+
+    [Test]
     public void MergedAverageIsWeightedByTime()
     {
         (double seconds, double endSpeed, double averageSpeed) = IbgLog.MergeTotals(10, 100, 300, 30, 500, 700, true);

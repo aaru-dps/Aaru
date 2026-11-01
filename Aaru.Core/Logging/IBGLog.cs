@@ -318,6 +318,14 @@ sealed class IbgLog
 
         if(_ibgSampleRate < 100) return;
 
+        WriteRow();
+        _ibgStopwatch.Restart();
+        _ibgIntSector = sector;
+    }
+
+    /// <summary>Writes the row with the snapshots added since the previous one</summary>
+    void WriteRow()
+    {
         if(_ibgIntSpeed > 0 && !_ibgStartSet)
         {
             _ibgStartSpeed = _ibgIntSpeed / _ibgSnaps / _ibgDivider;
@@ -332,11 +340,15 @@ sealed class IbgLog
 
         if(rowSpeed > _ibgMaxSpeed) _ibgMaxSpeed = rowSpeed;
 
-        _ibgStopwatch.Restart();
         _ibgIntSpeed   = 0;
         _ibgSampleRate = 0;
         _ibgSnaps      = 0;
-        _ibgIntSector  = sector;
+    }
+
+    /// <summary>Writes the snapshots that did not fill a whole row yet</summary>
+    internal void WritePendingRow()
+    {
+        if(_ibgSnaps > 0) WriteRow();
     }
 
     /// <summary>Closes the IMGBurn log</summary>
@@ -351,6 +363,8 @@ sealed class IbgLog
                         double averageSpeed, string devicePath)
     {
         if(_logFile == null) return;
+
+        WritePendingRow();
 
         if(_resumedLog)
         {
