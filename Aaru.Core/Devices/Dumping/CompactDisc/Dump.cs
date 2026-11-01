@@ -1108,6 +1108,8 @@ sealed partial class Dump
                        smallestPregapLbaPerTrack);
         }
 
+        _dumpStopwatch.Stop();
+
         if(_omnidrive                                                                                  &&
            outputOptical.OpticalCapabilities.HasFlag(OpticalImageCapabilities.CanStoreOverflowSectors) &&
            _leadout)
@@ -1115,15 +1117,11 @@ sealed partial class Dump
             leadOutExtents.Add((ulong)(lastSector + 1), (ulong)(lastSector + 2749));
 
             DumpCdLeadOuts(blockSize,
-                           ref currentSpeed,
                            currentTry,
                            extents,
-                           ibgLog,
                            ref imageWriteDuration,
                            leadOutExtents,
-                           ref maxSpeed,
                            mhddLog,
-                           ref minSpeed,
                            read6,
                            read10,
                            read12,
@@ -1143,7 +1141,6 @@ sealed partial class Dump
                            sectorsForOffset);
         }
 
-        _dumpStopwatch.Stop();
         mhddLog.Close();
 
         ibgLog.Close(_dev,
