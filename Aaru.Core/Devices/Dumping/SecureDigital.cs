@@ -436,9 +436,10 @@ public partial class Dump
                                   blockSize,
                                   blocksToRead,
                                   _private,
-                                  _dimensions);
+                                  _dimensions,
+                                  ResumingLogs);
 
-        var ibgLog = new IbgLog(_outputPrefix + ".ibg", sdProfile);
+        var ibgLog = new IbgLog(_outputPrefix + ".ibg", sdProfile, ResumingLogs);
 
         ret = outputFormat.Create(_outputPath,
                                   _dev.Type == DeviceType.SecureDigital ? MediaType.SecureDigital : MediaType.MMC,
