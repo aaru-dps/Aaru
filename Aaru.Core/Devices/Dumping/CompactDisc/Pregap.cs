@@ -168,6 +168,13 @@ partial class Dump
             }
             else
             {
+                if(RecoverFromDriveCrash((ulong)firstTrackPregapBlock))
+                {
+                    firstTrackPregapBlock--;
+
+                    continue;
+                }
+
                 if(firstTrackPregapBlock is >= -150 and < 0)
                     (_mediaGraph as Spiral)?.PaintCdLeadInSector(firstTrackPregapBlock, SKColors.Red);
             }
