@@ -136,8 +136,13 @@ sealed class MhddLog
         byte[] records = ReadExistingRecords(outputFile);
         _mhddFs.Write(records, 0, records.Length);
 
-        if(records.Length > 0) _mediaGraph?.TryLoadExisting(Path.GetFileNameWithoutExtension(_logFile) + ".png");
+        if(records.Length > 0) _mediaGraph?.TryLoadExisting(GraphPath(_logFile));
     }
+
+    /// <summary>Gets the path of the block map graph, in the same folder as the log file</summary>
+    /// <param name="logFile">Log file</param>
+    /// <returns>Path of the graph</returns>
+    internal static string GraphPath(string logFile) => Path.ChangeExtension(logFile, ".png");
 
     /// <summary>Reads the records a previous run wrote to the log file</summary>
     /// <param name="path">Log file</param>
@@ -220,7 +225,7 @@ sealed class MhddLog
         _mhddFs.WriteTo(fs);
         fs.Close();
 
-        _mediaGraph?.WriteTo(Path.GetFileNameWithoutExtension(_logFile) + ".png");
+        _mediaGraph?.WriteTo(GraphPath(_logFile));
     }
 
     /// <summary>Closes and writes to file the MHDD log</summary>

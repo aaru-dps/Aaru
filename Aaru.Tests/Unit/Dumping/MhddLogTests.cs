@@ -108,6 +108,14 @@ public class MhddLogTests
         WrittenRecords().Should().Equal(1, 2000, 3, 4000);
     }
 
+    [TestCase("/dumps/disc/My.Disc.mhddlog.bin", "/dumps/disc/My.Disc.mhddlog.png")]
+    [TestCase("disc/image.mhddlog.bin", "disc/image.mhddlog.png")]
+    [TestCase("image.mhddlog.bin", "image.mhddlog.png")]
+    public void GraphGoesNextToTheLog(string logFile, string expected)
+    {
+        MhddLog.GraphPath(logFile).Should().Be(expected);
+    }
+
     [Test]
     public void ReadsTheRecordsAfterTheHeader()
     {
