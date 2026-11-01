@@ -54,6 +54,15 @@ sealed class SpeedMeter
     int                 _currentBucket;
     bool                _started;
 
+    /// <summary>Forgets everything measured so far, and ignores the next read as if it was the first one</summary>
+    internal void Restart()
+    {
+        Array.Clear(_bucketBytes);
+        _closedBuckets = 0;
+        _currentBucket = 0;
+        _started       = false;
+    }
+
     /// <summary>Adds transferred bytes, using the time elapsed since this meter was created</summary>
     /// <param name="bytes">Bytes transferred since the previous call</param>
     /// <param name="speed">Set to the speed in MiB/s when a new value is available, otherwise left unchanged</param>

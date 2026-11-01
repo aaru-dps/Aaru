@@ -198,4 +198,24 @@ public class SpeedMeterTests
 
         speed.Should().BeLessThan(before);
     }
+
+    [Test]
+    public void RestartForgetsTheWindowAndIgnoresTheNextRead()
+    {
+        SpeedMeter meter = new();
+        double     speed = 0;
+
+        for(var ms = 0; ms <= 1000; ms += 100) meter.Update(1048576, TimeSpan.FromMilliseconds(ms), ref speed);
+
+        meter.Restart();
+
+        // A stop of a minute, and a read that spins the drive up with far more bytes than it should count
+        double before = speed;
+
+        meter.Update(1048576000, TimeSpan.FromSeconds(61), ref speed).Should().BeFalse();
+        speed.Should().Be(before);
+
+        meter.Update(1048576, TimeSpan.FromMilliseconds(61100), ref speed).Should().BeTrue();
+        speed.Should().BeApproximately(10, 0.001);
+    }
 }
