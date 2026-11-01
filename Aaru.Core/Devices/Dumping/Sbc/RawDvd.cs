@@ -348,7 +348,12 @@ partial class Dump
         // Phase 3: Leadout (overflow sectors) — OmniDrive only
         if(overflowSectors > 0)
         {
+            _dumpStopwatch.Stop();
             UpdateStatus?.Invoke(Localization.Core.Reading_lead_out_sectors);
+
+            // The lead-out is not part of the media speed, this is only to show it in the progress
+            SpeedMeter leadOutMeter = new();
+            double     leadOutSpeed = 0;
 
             blocksToRead = maxBlocksToRead;
 
@@ -365,13 +370,10 @@ partial class Dump
                 uint toRead                      = (uint)(blocks + overflowSectors - lba);
                 if(toRead > blocksToRead) toRead = blocksToRead;
 
-                if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
-                if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
-
                 UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
                                                      lba,
                                                      blocks + overflowSectors,
-                                                     ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                                     ByteSize.FromMegabytes(leadOutSpeed).Per(_oneSecond).Humanize()),
                                        (long)lba,
                                        (long)(blocks + overflowSectors));
 
@@ -383,7 +385,6 @@ partial class Dump
                 if(!sense && !_dev.Error)
                 {
                     mhddLog.Write(lba, cmdDuration, toRead);
-                    ibgLog.Write(lba, currentSpeed * 1024);
 
                     _writeStopwatch.Restart();
 
@@ -412,10 +413,7 @@ partial class Dump
 
                 _writeStopwatch.Stop();
 
-                if(!UpdateSpeed(speedMeter, toRead * blockSize, ref currentSpeed)) continue;
-
-                ibgLog.Write(lba, currentSpeed * 1024);
-                _speedStopwatch.Reset();
+                leadOutMeter.Update(toRead * blockSize, ref leadOutSpeed);
             }
         }
 
