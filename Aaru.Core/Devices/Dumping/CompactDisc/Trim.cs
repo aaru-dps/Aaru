@@ -399,6 +399,13 @@ partial class Dump
 
             if(sense || _dev.Error)
             {
+                if(RecoverFromDriveCrash(badSector))
+                {
+                    b--;
+
+                    continue;
+                }
+
                 _errorLog?.WriteLine(badSectorToRead, _dev.Error, _dev.LastError, senseBuf.ToArray());
                 mhddLog.WriteRetry(badSector, cmdDuration, true);
 
