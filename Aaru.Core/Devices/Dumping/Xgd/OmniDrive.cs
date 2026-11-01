@@ -521,7 +521,7 @@ partial class Dump
 
         _dumpStopwatch.Stop();
         AaruLogging.WriteLine();
-        mhddLog.Close();
+        mhddLog.Flush();
 
         ibgLog.Close(_dev,
                      blocks,
@@ -572,6 +572,7 @@ partial class Dump
                                                  out double cmdDuration);
 
                 totalDuration += cmdDuration;
+                mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
 
                 if(sense || _dev.Error)
                 {
@@ -670,6 +671,7 @@ partial class Dump
                                                  true);
 
                 totalDuration += cmdDuration;
+                mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
 
                 if(sense || _dev.Error) _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf.ToArray());
 
@@ -706,6 +708,8 @@ partial class Dump
         }
 
 #endregion Error handling
+
+        mhddLog.Close();
 
         // The OmniDrive reads the whole disc with plain reads, and its physical format information has the layer break
         MeasureDpm(outputFormat as IWritableOpticalImage);
