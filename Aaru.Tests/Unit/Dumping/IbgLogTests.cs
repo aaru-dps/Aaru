@@ -26,6 +26,7 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Reflection;
 using System.Threading;
 using Aaru.Core.Logging;
@@ -53,5 +54,32 @@ public class IbgLogTests
             typeof(IbgLog).GetField("_ibgMaxSpeed", BindingFlags.Instance | BindingFlags.NonPublic);
 
         ((double)maxSpeedField!.GetValue(log)!).Should().BeApproximately(10, 0.001);
+    }
+
+    [Test]
+    public void GraphStartsAtTheFirstMeasuredSpeed()
+    {
+        IbgLog log = new("unused.ibg", 0x0008);
+
+        // Everything before the first speed is measured, like a pregap read, must not reach the graph
+        Thread.Sleep(500);
+        log.Write(0, 0);
+        log.Write(1, 0);
+
+        log.Write(5, 1500);
+        Thread.Sleep(120);
+        log.Write(6, 1500);
+
+        FieldInfo rowsField = typeof(IbgLog).GetField("_ibgSb", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        string[] rows = rowsField!.GetValue(log)!.ToString()!.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+        rows.Should().ContainSingle();
+
+        string[] columns = rows[0].Trim().Split(',');
+
+        columns[0].Should().Be("10.00");
+        columns[1].Should().Be("5");
+        int.Parse(columns[2]).Should().BeLessThan(500);
     }
 }

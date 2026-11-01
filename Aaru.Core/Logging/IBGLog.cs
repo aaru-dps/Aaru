@@ -73,8 +73,6 @@ sealed class IbgLog
         _ibgSnaps     = 0;
         _ibgIntSector = 0;
 
-        _ibgStopwatch.Start();
-
         switch(currentProfile)
         {
             case 0x0001:
@@ -239,6 +237,15 @@ sealed class IbgLog
     internal void Write(ulong sector, double currentSpeed)
     {
         if(_logFile == null) return;
+
+        // The graph starts at the first measured speed, what was done before that is not part of it
+        if(!_ibgStopwatch.IsRunning)
+        {
+            if(currentSpeed <= 0) return;
+
+            _ibgIntSector = sector;
+            _ibgStopwatch.Start();
+        }
 
         _ibgIntSpeed   += currentSpeed;
         _ibgSampleRate =  (int)Math.Floor(_ibgStopwatch.Elapsed.TotalMilliseconds);
