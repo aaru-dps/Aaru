@@ -1131,7 +1131,7 @@ partial class Dump
 
         _dumpStopwatch.Stop();
         AaruLogging.WriteLine();
-        mhddLog.Close();
+        mhddLog.Flush();
 
         ibgLog.Close(_dev,
                      blocks,
@@ -1194,6 +1194,7 @@ partial class Dump
                                     out double cmdDuration);
 
                 totalDuration += cmdDuration;
+                mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
 
                 if(sense || _dev.Error)
                 {
@@ -1424,6 +1425,7 @@ partial class Dump
                                     out double cmdDuration);
 
                 totalDuration += cmdDuration;
+                mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
 
                 if(sense || _dev.Error)
                     _errorLog?.WriteLine(currentSector, _dev.Error, _dev.LastError, senseBuf.ToArray());
@@ -1474,6 +1476,8 @@ partial class Dump
         }
 
 #endregion Error handling
+
+        mhddLog.Close();
 
         // Unlocked, the drive reads the disc up to the end of the game data with plain reads, at the same addresses as
         // the image, and gives the physical format information of the game data, which has the real layer break. The
