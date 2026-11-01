@@ -879,6 +879,8 @@ partial class Dump
                                 foreach(Track aTrack in tracks.Where(static aTrack => aTrack.Type == TrackType.Audio))
                                     audioExtents.Add(aTrack.StartSector, aTrack.EndSector);
 
+                                UpdateSpeed(speedMeter, blockSize, ref currentSpeed);
+
                                 continue;
                             }
                         }
@@ -1154,6 +1156,8 @@ partial class Dump
 
                         foreach(Track aTrack in tracks.Where(static aTrack => aTrack.Type == TrackType.Audio))
                             audioExtents.Add(aTrack.StartSector, aTrack.EndSector);
+
+                        UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed);
 
                         continue;
                     }

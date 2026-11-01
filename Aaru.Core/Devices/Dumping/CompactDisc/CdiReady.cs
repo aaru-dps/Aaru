@@ -352,6 +352,8 @@ partial class Dump
                                 outputOptical.SetTracks(tracks.ToList());
                                 i -= _maximumReadable;
 
+                                UpdateSpeed(speedMeter, blockSize, ref currentSpeed);
+
                                 continue;
                             }
                         }
@@ -487,6 +489,8 @@ partial class Dump
                             i = 0;
 
                         if(i > 0) i--;
+
+                        UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed);
 
                         continue;
                     }
