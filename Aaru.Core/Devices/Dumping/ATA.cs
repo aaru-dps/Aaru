@@ -398,7 +398,7 @@ public partial class Dump
 
                     _dumpStopwatch.Stop();
                     EndProgress?.Invoke();
-                    mhddLog.Close();
+                    mhddLog.Flush();
 
                     ibgLog.Close(_dev,
                                  blocks,
@@ -449,6 +449,7 @@ public partial class Dump
                                                              out _);
 
                             totalDuration += duration;
+                            mhddLog.WriteRetry(badSector, duration, error && !recoveredError);
 
                             if(error && !recoveredError) continue;
 
@@ -537,6 +538,7 @@ public partial class Dump
                                                              out _);
 
                             totalDuration += duration;
+                            mhddLog.WriteRetry(badSector, duration, error && !recoveredError);
 
                             if(!error || recoveredError)
                             {
@@ -569,6 +571,8 @@ public partial class Dump
                     }
 
 #endregion Error handling LBA
+
+                    mhddLog.Close();
 
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                 }
