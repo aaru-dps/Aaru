@@ -1144,7 +1144,7 @@ partial class Dump
         }
 
         EndProgress?.Invoke();
-        mhddLog.Close();
+        mhddLog.Flush();
 
         ibgLog.Close(_dev,
                      blocks,
@@ -1310,6 +1310,7 @@ partial class Dump
                                    out duration);
 
                 totalDuration += duration;
+                mhddLog.WriteRetry(badBlock, duration, sense || _dev.Error);
 
                 if(!sense && !_dev.Error)
                 {
@@ -1344,6 +1345,8 @@ partial class Dump
         }
 
 #endregion Error handling
+
+        mhddLog.Close();
 
         _resume.BadBlocks.Sort();
 
