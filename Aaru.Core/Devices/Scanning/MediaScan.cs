@@ -34,6 +34,7 @@ using System;
 using System.Diagnostics;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
+using Aaru.Core.Devices.Dumping;
 using Aaru.Devices;
 using Humanizer;
 
@@ -51,6 +52,7 @@ public sealed partial class MediaScan
     readonly        bool      _seekTest;
     readonly        Stopwatch _speedStopwatch;
     readonly        bool      _useBufferedReads;
+    ulong                     _scannedBytes;
     volatile        bool      _aborted;
 
     /// <param name="mhddLogPath">Path to a MHDD log file</param>
@@ -93,6 +95,21 @@ public sealed partial class MediaScan
         if(_aborted) UpdateStatus?.Invoke(Localization.Core.Operation_aborted_by_user);
 
         return results;
+    }
+
+    /// <summary>Updates the speed, and the bytes this scan has read, after a read</summary>
+    /// <param name="meter">Speed meter</param>
+    /// <param name="bytes">Bytes requested by the read</param>
+    /// <param name="speed">Set to the speed in MiB/s when a new value is available, otherwise left unchanged</param>
+    /// <param name="failed">The read failed, so its time counts but none of its bytes do</param>
+    /// <returns><c>true</c> if <paramref name="speed" /> was updated</returns>
+    bool UpdateSpeed(SpeedMeter meter, ulong bytes, ref double speed, bool failed)
+    {
+        if(failed) bytes = 0;
+
+        _scannedBytes += bytes;
+
+        return meter.Update(bytes, ref speed);
     }
 
     /// <summary>Aborts the running media scan</summary>

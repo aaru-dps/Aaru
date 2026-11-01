@@ -33,6 +33,7 @@
 using System;
 using System.Threading;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Core.Devices.Dumping;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
@@ -367,9 +368,8 @@ public sealed partial class MediaScan
             ibgLog  = new IbgLog(_ibgLogPath, currentProfile);
 
             InitProgress?.Invoke();
+            SpeedMeter speedMeter = new();
             _scanStopwatch.Restart();
-            uint   accumulatedSpeedSectors = 0;
-            double accumulatedSpeedMs      = 0;
 
             for(ulong i = 0; i < results.Blocks; i += blocksToRead)
             {
@@ -413,8 +413,6 @@ public sealed partial class MediaScan
                     sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out double _, out _, out _);
 
                 _speedStopwatch.Stop();
-                accumulatedSpeedMs      += _speedStopwatch.Elapsed.TotalMilliseconds;
-                accumulatedSpeedSectors += blocksToRead;
 
                 results.ProcessingTime += _speedStopwatch.Elapsed.TotalMilliseconds;
 
@@ -507,19 +505,14 @@ public sealed partial class MediaScan
                     }
                 }
 
-                if(accumulatedSpeedMs < 100) continue;
+                if(!UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed, sense || _dev.Error)) continue;
 
-                currentSpeed = accumulatedSpeedSectors * blockSize / (1048576 * (accumulatedSpeedMs / 1000.0));
-                ScanSpeed?.Invoke(i, currentSpeed                             * 1024);
-                accumulatedSpeedMs      = 0;
-                accumulatedSpeedSectors = 0;
+                ScanSpeed?.Invoke(i, currentSpeed * 1024);
             }
 
             _scanStopwatch.Stop();
             EndProgress?.Invoke();
             mhddLog.Close();
-
-            currentSpeed = accumulatedSpeedSectors * blockSize / (1048576 * (accumulatedSpeedMs / 1000.0));
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             if(results.MaxSpeed == double.MinValue) results.MaxSpeed = currentSpeed;
@@ -532,7 +525,7 @@ public sealed partial class MediaScan
                          blockSize,
                          _scanStopwatch.Elapsed.TotalSeconds,
                          currentSpeed                             * 1024,
-                         blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
+                         _scannedBytes / 1024d / _scanStopwatch.Elapsed.TotalSeconds,
                          _devicePath);
         }
         else
@@ -546,8 +539,7 @@ public sealed partial class MediaScan
             ibgLog  = new IbgLog(_ibgLogPath, currentProfile);
 
             InitProgress?.Invoke();
-            uint   accumulatedSpeedSectors = 0;
-            double accumulatedSpeedMs      = 0;
+            SpeedMeter speedMeter = new();
 
             for(ulong i = 0; i < results.Blocks; i += scsiReader.BlocksToRead)
             {
@@ -571,8 +563,6 @@ public sealed partial class MediaScan
                 _speedStopwatch.Restart();
                 sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration, out _, out _);
                 _speedStopwatch.Stop();
-                accumulatedSpeedMs      += _speedStopwatch.Elapsed.TotalMilliseconds;
-                accumulatedSpeedSectors += blocksToRead;
                 results.ProcessingTime  += _speedStopwatch.Elapsed.TotalMilliseconds;
 
                 if(!sense && !_dev.Error)
@@ -622,26 +612,21 @@ public sealed partial class MediaScan
                     ibgLog.Write(i, 0);
                 }
 
-                if(accumulatedSpeedMs < 100) continue;
+                if(!UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed, sense || _dev.Error)) continue;
 
-                currentSpeed = accumulatedSpeedSectors * blockSize / (1048576 * (accumulatedSpeedMs / 1000.0));
-                ScanSpeed?.Invoke(i, currentSpeed                             * 1024);
-                accumulatedSpeedMs      = 0;
-                accumulatedSpeedSectors = 0;
+                ScanSpeed?.Invoke(i, currentSpeed * 1024);
             }
 
             _scanStopwatch.Stop();
             EndProgress?.Invoke();
             mhddLog.Close();
 
-            currentSpeed = accumulatedSpeedSectors * blockSize / (1048576 * (accumulatedSpeedMs / 1000.0));
-
             ibgLog.Close(_dev,
                          results.Blocks,
                          blockSize,
                          _scanStopwatch.Elapsed.TotalSeconds,
                          currentSpeed                             * 1024,
-                         blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
+                         _scannedBytes / 1024d / _scanStopwatch.Elapsed.TotalSeconds,
                          _devicePath);
         }
 
@@ -700,7 +685,7 @@ public sealed partial class MediaScan
 
         results.ProcessingTime /= 1000;
         results.TotalTime      =  _scanStopwatch.Elapsed.TotalSeconds;
-        results.AvgSpeed       =  blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
+        results.AvgSpeed       =  results.TotalTime > 0 ? _scannedBytes / 1048576d / results.TotalTime : 0;
         results.SeekTimes      =  seekTimes;
 
         return results;
