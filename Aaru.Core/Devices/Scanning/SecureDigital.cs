@@ -246,7 +246,7 @@ public sealed partial class MediaScan
             UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
                                                  i,
                                                  results.Blocks,
-                                                 ByteSize.FromBytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                                 ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                                    (long)i,
                                    (long)results.Blocks);
 
