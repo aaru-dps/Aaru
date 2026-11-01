@@ -313,7 +313,11 @@ partial class Dump
                                           supportedSubchannel,
                                           out byte[] aligned,
                                           out bool[] cleanMask))
+                {
+                    RecoverFromDriveCrash(badSector);
+
                     continue;
+                }
 
                 // Baseline: keep a full plausible sector so bytes never seen clean are not left as zeros.
                 merged ??= (byte[])aligned.Clone();
