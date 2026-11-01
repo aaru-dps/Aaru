@@ -25,6 +25,7 @@
 // Copyright © 2020-2026 Rebecca Wallander
 // ****************************************************************************/
 
+using Aaru.Core.Logging;
 using System;
 using System.Linq;
 using Aaru.CommonTypes.AaruMetadata;
@@ -54,8 +55,9 @@ partial class Dump
     /// <param name="totalDuration">Total time spent in commands</param>
     /// <param name="scsiReader">SCSI reader</param>
     /// <param name="blankExtents">Blank extents</param>
+    /// <param name="mhddLog">MHDD log</param>
     void RetrySbcData(Reader       scsiReader, DumpHardware currentTry, ExtentsULong extents, ref double totalDuration,
-                      ExtentsULong blankExtents, byte[] discKey)
+                      ExtentsULong blankExtents, byte[] discKey, MhddLog mhddLog)
     {
         var             pass              = 1;
         var             forward           = true;
@@ -320,6 +322,7 @@ partial class Dump
                                          out blankCheck);
 
             totalDuration += cmdDuration;
+            mhddLog.WriteRetry(badSector, cmdDuration, !blankCheck && (sense || _dev.Error) && !recoveredError);
 
             if(blankCheck)
             {

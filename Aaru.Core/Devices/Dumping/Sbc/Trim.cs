@@ -28,6 +28,7 @@
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
+using Aaru.Core.Logging;
 using System.Linq;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
@@ -44,8 +45,9 @@ partial class Dump
     /// <param name="extents">Correctly dump extents</param>
     /// <param name="currentTry">Resume information</param>
     /// <param name="blankExtents">Blank extents</param>
+    /// <param name="mhddLog">MHDD log</param>
     void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardware currentTry, ExtentsULong blankExtents,
-                     byte[] discKey)
+                     byte[] discKey, MhddLog mhddLog)
     {
         ulong[] tmpArray = _resume.BadBlocks.Where(b => !NoRetry(b)).ToArray();
         bool    sense;
@@ -77,7 +79,13 @@ partial class Dump
                                    i,
                                    tmpArray.Length);
 
-            sense = scsiReader.ReadBlock(out buffer, badSector, out double _, out recoveredError, out blankCheck);
+            sense = scsiReader.ReadBlock(out buffer,
+                                         badSector,
+                                         out double cmdDuration,
+                                         out recoveredError,
+                                         out blankCheck);
+
+            mhddLog.WriteRetry(badSector, cmdDuration, !blankCheck && (sense || _dev.Error) && !recoveredError);
 
             if(blankCheck)
             {

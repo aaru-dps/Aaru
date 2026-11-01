@@ -974,7 +974,7 @@ partial class Dump
         }
 
         _dumpStopwatch.Stop();
-        mhddLog.Close();
+        mhddLog.Flush();
 
         ibgLog.Close(_dev,
                      blocks,
@@ -1003,7 +1003,7 @@ partial class Dump
 
             InitProgress?.Invoke();
 
-            TrimSbcData(scsiReader, extents, currentTry, blankExtents, mediaTag ?? null);
+            TrimSbcData(scsiReader, extents, currentTry, blankExtents, mediaTag ?? null, mhddLog);
 
             EndProgress?.Invoke();
             _trimStopwatch.Stop();
@@ -1019,7 +1019,9 @@ partial class Dump
 #region Error handling
 
         if(_resume.BadBlocks.Count > 0 && !_aborted && _retryPasses > 0)
-            RetrySbcData(scsiReader, currentTry, extents, ref totalDuration, blankExtents, mediaTag ?? null);
+            RetrySbcData(scsiReader, currentTry, extents, ref totalDuration, blankExtents, mediaTag ?? null, mhddLog);
+
+        mhddLog.Close();
 
         SyncMissingTitleKeysToResume();
 
