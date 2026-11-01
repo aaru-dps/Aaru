@@ -320,7 +320,7 @@ public partial class DiscSpeedGraph : UserControl
         _labels.Clear();
 
         // Clear the speed line
-        _speedLine.Points.Clear();
+        _speedLine.Points = new Points();
     }
 
     void DrawGrid()
@@ -440,7 +440,8 @@ public partial class DiscSpeedGraph : UserControl
 
         if(graphWidth <= 0 || graphHeight <= 0) return;
 
-        _speedLine.Points.Clear();
+        // The line only measures and draws itself again when it gets a new list, not when its list changes
+        Points points = new();
 
         double effectiveMaxSpeed = MaxSpeed / _yZoomLevel;
 
@@ -453,8 +454,10 @@ public partial class DiscSpeedGraph : UserControl
             x = Math.Max(MARGIN_LEFT, Math.Min(MARGIN_LEFT + graphWidth,  x));
             y = Math.Max(MARGIN_TOP,  Math.Min(MARGIN_TOP  + graphHeight, y));
 
-            _speedLine.Points.Add(new Point(x, y));
+            points.Add(new Point(x, y));
         }
+
+        _speedLine.Points = points;
     }
 
     void DrawNewSegment()
@@ -469,7 +472,8 @@ public partial class DiscSpeedGraph : UserControl
         double effectiveMaxSpeed = MaxSpeed / _yZoomLevel;
 
         // Only add the new point(s) to the polyline
-        int startIndex = _speedLine.Points.Count;
+        Points points     = new(_speedLine.Points);
+        int    startIndex = points.Count;
 
         for(int i = startIndex; i < _processedData.Count; i++)
         {
@@ -481,7 +485,9 @@ public partial class DiscSpeedGraph : UserControl
             x = Math.Max(MARGIN_LEFT, Math.Min(MARGIN_LEFT + graphWidth,  x));
             y = Math.Max(MARGIN_TOP,  Math.Min(MARGIN_TOP  + graphHeight, y));
 
-            _speedLine.Points.Add(new Point(x, y));
+            points.Add(new Point(x, y));
         }
+
+        _speedLine.Points = points;
     }
 }
