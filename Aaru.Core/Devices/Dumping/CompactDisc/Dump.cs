@@ -828,9 +828,10 @@ sealed partial class Dump
                               blockSize,
                               _maximumReadable,
                               _private,
-                              _dimensions);
+                              _dimensions,
+                              ResumingLogs);
 
-        ibgLog = new IbgLog(_outputPrefix + ".ibg", 0x0008);
+        ibgLog = new IbgLog(_outputPrefix + ".ibg", 0x0008, ResumingLogs);
 
         if(_createGraph)
         {
