@@ -209,9 +209,10 @@ partial class Dump
                                   blockSize,
                                   blocksToRead,
                                   _private,
-                                  _dimensions);
+                                  _dimensions,
+                                  ResumingLogs);
 
-        var ibgLog = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
+        var ibgLog = new IbgLog(_outputPrefix + ".ibg", sbcProfile, ResumingLogs);
         ret = outputFormat.Create(_outputPath, dskType, _formatOptions, blocks, 0, 0, blockSize);
 
         // Cannot create image
