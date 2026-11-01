@@ -552,6 +552,13 @@ partial class Dump
 
             if(sense || _dev.Error)
             {
+                if(RecoverFromDriveCrash(badSector))
+                {
+                    i--;
+
+                    continue;
+                }
+
                 _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf.ToArray());
 
                 if(!runningPersistent)
@@ -946,6 +953,14 @@ partial class Dump
                                             out cmdDuration);
 
                         totalDuration += cmdDuration;
+
+                        if((sense || _dev.Error) && RecoverFromDriveCrash(badSector))
+                        {
+                            i--;
+
+                            continue;
+                        }
+
                         mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
                     }
 
@@ -1156,6 +1171,13 @@ partial class Dump
 
             if(sense || _dev.Error)
             {
+                if(RecoverFromDriveCrash(badSector))
+                {
+                    i--;
+
+                    continue;
+                }
+
                 _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf.ToArray());
 
                 continue;
