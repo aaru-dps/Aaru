@@ -427,7 +427,7 @@ partial class Dump
 
         _dumpStopwatch.Stop();
         EndProgress?.Invoke();
-        mhddLog.Close();
+        mhddLog.Flush();
 
         ibgLog.Close(_dev,
                      blocks,
@@ -470,7 +470,15 @@ partial class Dump
                                        i,
                                        tmpArray.Length);
 
-                sense = _dev.Read6(out readBuffer, out _, (uint)badSector, blockSize, 1, _dev.Timeout, out double _);
+                sense = _dev.Read6(out readBuffer,
+                                   out _,
+                                   (uint)badSector,
+                                   blockSize,
+                                   1,
+                                   _dev.Timeout,
+                                   out double cmdDuration);
+
+                mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
 
                 if(sense || _dev.Error) continue;
 
@@ -655,6 +663,7 @@ partial class Dump
                                    out double cmdDuration);
 
                 totalDuration += cmdDuration;
+                mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
 
                 if(!sense && !_dev.Error)
                 {
@@ -699,6 +708,8 @@ partial class Dump
         }
 
 #endregion Error handling
+
+        mhddLog.Close();
 
         _resume.BadBlocks.Sort();
 
