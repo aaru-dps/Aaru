@@ -950,6 +950,7 @@ partial class Dump
 
             _speedStopwatch.Restart();
 
+            var readFailed = false;
             sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, _dev.Timeout, out _);
 
             _speedStopwatch.Stop();
@@ -1108,6 +1109,7 @@ partial class Dump
                                   : _speedStopwatch.Elapsed.TotalMilliseconds);
 
                 _resume.BadBlocks.Add(currentBlock);
+                readFailed = true;
             }
             else
             {
@@ -1122,7 +1124,7 @@ partial class Dump
             currentBlock++;
             _resume.NextBlock++;
 
-            if(!UpdateSpeed(speedMeter, blockSize, ref currentSpeed)) continue;
+            if(!UpdateSpeed(speedMeter, blockSize, ref currentSpeed, readFailed)) continue;
 
             ibgLog.Write(currentBlock, currentSpeed * 1024);
             _speedStopwatch.Reset();

@@ -433,13 +433,16 @@ public partial class Dump
         _dpmMeasurement?.Abort();
     }
 
-    /// <summary>Updates a speed meter and adds the bytes to the ones read during this run</summary>
+    /// <summary>Updates the speed, and the bytes this run has read, after a read</summary>
     /// <param name="meter">Speed meter</param>
-    /// <param name="bytes">Bytes read since the previous call</param>
+    /// <param name="bytes">Bytes requested by the read</param>
     /// <param name="speed">Set to the speed in MiB/s when a new value is available, otherwise left unchanged</param>
+    /// <param name="failed">The read failed, so its time counts but none of its bytes do</param>
     /// <returns><c>true</c> if <paramref name="speed" /> was updated</returns>
-    bool UpdateSpeed(SpeedMeter meter, ulong bytes, ref double speed)
+    bool UpdateSpeed(SpeedMeter meter, ulong bytes, ref double speed, bool failed = false)
     {
+        if(failed) bytes = 0;
+
         _dumpedBytes += bytes;
 
         return meter.Update(bytes, ref speed);

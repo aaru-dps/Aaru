@@ -454,7 +454,7 @@ partial class Dump
                 currentSector     = i + blocksToRead;
                 _resume.NextBlock = currentSector;
 
-                bool speedUpdated = UpdateSpeed(speedMeter, blocksToRead * 2064, ref currentSpeed);
+                bool speedUpdated = UpdateSpeed(speedMeter, blocksToRead * 2064, ref currentSpeed, sense || _dev.Error);
                 blocksToRead = saveBlocksToRead;
 
                 if(!speedUpdated) continue;

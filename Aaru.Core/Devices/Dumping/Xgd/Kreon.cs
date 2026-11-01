@@ -753,7 +753,11 @@ partial class Dump
                 currentSector     = i + blocksToRead;
                 _resume.NextBlock = currentSector;
 
-                bool speedUpdated = UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed);
+                bool speedUpdated = UpdateSpeed(speedMeter,
+                                                blocksToRead * blockSize,
+                                                ref currentSpeed,
+                                                sense || _dev.Error);
+
                 blocksToRead = saveBlocksToRead;
 
                 if(!speedUpdated) continue;
@@ -992,7 +996,7 @@ partial class Dump
             currentSector     += blocksToRead;
             _resume.NextBlock =  currentSector;
 
-            if(!UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed)) continue;
+            if(!UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed, sense || _dev.Error)) continue;
 
             ibgLog.Write(currentSector, currentSpeed * 1024);
             _speedStopwatch.Reset();

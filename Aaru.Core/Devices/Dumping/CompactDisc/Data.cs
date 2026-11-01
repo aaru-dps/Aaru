@@ -1004,7 +1004,7 @@ partial class Dump
 
                     _speedStopwatch.Reset();
 
-                    if(!UpdateSpeed(speedMeter, blockSize, ref currentSpeed)) continue;
+                    if(!UpdateSpeed(speedMeter, blockSize, ref currentSpeed, sense || _dev.Error)) continue;
 
                     ibgLog.Write(i + r, currentSpeed * 1024);
                 }
@@ -1312,7 +1312,7 @@ partial class Dump
 
             _resume.NextBlock = i + blocksToRead;
 
-            if(!UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed)) continue;
+            if(!UpdateSpeed(speedMeter, blocksToRead * blockSize, ref currentSpeed, sense || _dev.Error)) continue;
 
             ibgLog.Write(i, currentSpeed * 1024);
         }

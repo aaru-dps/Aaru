@@ -319,7 +319,7 @@ public partial class Dump
 
             _writeStopwatch.Stop();
 
-            UpdateSpeed(speedMeter, blocksToRead * 512, ref currentSpeed);
+            UpdateSpeed(speedMeter, blocksToRead * 512, ref currentSpeed, sense || _dev.Error);
         }
 
         _speedStopwatch.Stop();

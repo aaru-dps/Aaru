@@ -183,4 +183,19 @@ public class SpeedMeterTests
         meter.Update(0, TimeSpan.FromMilliseconds(200), ref speed).Should().BeTrue();
         speed.Should().Be(0);
     }
+
+    [Test]
+    public void ReadsThatTransferNothingLowerTheSpeed()
+    {
+        SpeedMeter meter = new();
+        double     speed = 0;
+
+        for(var ms = 0; ms <= 1000; ms += 100) meter.Update(1048576, TimeSpan.FromMilliseconds(ms), ref speed);
+
+        double before = speed;
+
+        for(var ms = 1100; ms <= 2000; ms += 100) meter.Update(0, TimeSpan.FromMilliseconds(ms), ref speed);
+
+        speed.Should().BeLessThan(before);
+    }
 }
