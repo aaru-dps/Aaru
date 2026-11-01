@@ -152,8 +152,7 @@ partial class Dump
                                              badSectorToRead,
                                              sectorsToTrim,
                                              _dev.Timeout,
-                                             out cmdDuration,
-                                             true);
+                                             out cmdDuration);
             }
             else if(_supportsPlextorD8 && audioExtents.Contains(badSector))
             {
