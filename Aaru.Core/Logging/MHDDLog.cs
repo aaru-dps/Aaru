@@ -44,7 +44,8 @@ namespace Aaru.Core.Logging;
 /// <summary>Implements a log in the format used by MHDD</summary>
 sealed class MhddLog
 {
-    const    string       MHDD_VER = "VER:2 ";
+    const    string       MHDD_VER    = "VER:2 ";
+    const    int          RECORD_SIZE = 16;
     readonly string       _logFile;
     readonly IMediaGraph  _mediaGraph;
     readonly MemoryStream _mhddFs;
@@ -57,8 +58,9 @@ sealed class MhddLog
     /// <param name="blocksToRead">How many blocks read at once</param>
     /// <param name="private">Disable saving paths or serial numbers in log</param>
     /// <param name="mediaGraphDimensions">Dimensions in pixel for a square that would contain the block map graph</param>
+    /// <param name="resume">Keep what a previous run wrote to the log file</param>
     internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead, bool @private,
-                     uint   mediaGraphDimensions = 0)
+                     uint   mediaGraphDimensions = 0, bool resume = false)
     {
         if(dev == null || string.IsNullOrEmpty(outputFile)) return;
 
@@ -128,6 +130,33 @@ sealed class MhddLog
         _mhddFs.Write(newLine,                        0, 2);
         _mhddFs.Write(scanBlockSizeBytes,             0, scanBlockSizeBytes.Length);
         _mhddFs.Write(newLine,                        0, 2);
+
+        if(!resume) return;
+
+        byte[] records = ReadExistingRecords(outputFile);
+        _mhddFs.Write(records, 0, records.Length);
+
+        if(records.Length > 0) _mediaGraph?.TryLoadExisting(Path.GetFileNameWithoutExtension(_logFile) + ".png");
+    }
+
+    /// <summary>Reads the records a previous run wrote to the log file</summary>
+    /// <param name="path">Log file</param>
+    /// <returns>The complete records in the file, empty if there is no valid log</returns>
+    internal static byte[] ReadExistingRecords(string path)
+    {
+        if(!File.Exists(path)) return [];
+
+        byte[] log = File.ReadAllBytes(path);
+
+        if(log.Length < 4) return [];
+
+        uint pointer = BitConverter.ToUInt32(log, 0);
+
+        if(pointer < 4 || pointer > log.Length) return [];
+
+        int recordsLength = (log.Length - (int)pointer) / RECORD_SIZE * RECORD_SIZE;
+
+        return log[(int)pointer..((int)pointer + recordsLength)];
     }
 
     /// <summary>Logs a new read</summary>
