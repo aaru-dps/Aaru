@@ -847,8 +847,15 @@ partial class Dump
         if(outputTape is AaruFormat aif && _errorRecovery > 0) aif.SetErasureCodingAuto((byte)_errorRecovery);
 
         _dumpStopwatch.Restart();
-        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, 1, _private);
-        var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008);
+        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin",
+                                  _dev,
+                                  blocks,
+                                  blockSize,
+                                  1,
+                                  _private,
+                                  resume: ResumingLogs);
+
+        var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008, ResumingLogs);
 
         var currentTapeFile = new TapeFile
         {
