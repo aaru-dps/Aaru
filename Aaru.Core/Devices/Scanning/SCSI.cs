@@ -324,8 +324,6 @@ public sealed partial class MediaScan
                 return results;
             }
 
-            _scanStopwatch.Restart();
-
             if(readcd)
             {
                 while(true)
@@ -369,6 +367,7 @@ public sealed partial class MediaScan
             ibgLog  = new IbgLog(_ibgLogPath, currentProfile);
 
             InitProgress?.Invoke();
+            _scanStopwatch.Restart();
             uint   accumulatedSpeedSectors = 0;
             double accumulatedSpeedMs      = 0;
 
