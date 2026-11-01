@@ -55,11 +55,16 @@ sealed class IbgLog
     int                    _ibgSnaps;
     bool                   _ibgStartSet;
     double                 _ibgStartSpeed;
+    double                 _resumedAverageSpeed;
+    double                 _resumedEndSpeed;
+    bool                   _resumedLog;
+    double                 _resumedSeconds;
 
     /// <summary>Initializes the IMGBurn log</summary>
     /// <param name="outputFile">Log file</param>
     /// <param name="currentProfile">Profile as defined by SCSI MultiMedia Commands specification</param>
-    internal IbgLog(string outputFile, ushort currentProfile)
+    /// <param name="resume">Keep what a previous run wrote to the log file</param>
+    internal IbgLog(string outputFile, ushort currentProfile, bool resume = false)
     {
         if(string.IsNullOrEmpty(outputFile)) return;
 
@@ -229,6 +234,66 @@ sealed class IbgLog
 
                 break;
         }
+
+        if(resume) LoadExisting();
+    }
+
+    /// <summary>Loads the rows and totals a previous run wrote to the log file</summary>
+    void LoadExisting()
+    {
+        if(!File.Exists(_logFile)) return;
+
+        string[] lines = File.ReadAllLines(_logFile);
+        int      start = Array.IndexOf(lines, "[START_VERIFY_GRAPH_VALUES]");
+        int      end   = Array.IndexOf(lines, "[END_VERIFY_GRAPH_VALUES]");
+
+        if(start < 0 || end < start) return;
+
+        for(int i = start + 1; i < end; i++) _ibgSb.AppendLine(lines[i]);
+
+        _ibgStartSpeed       = ReadTotal(lines, "VERIFY_SPEED_START");
+        _ibgStartSet         = _ibgStartSpeed > 0;
+        _ibgMaxSpeed         = ReadTotal(lines, "VERIFY_SPEED_MAX");
+        _resumedEndSpeed     = ReadTotal(lines, "VERIFY_SPEED_END");
+        _resumedAverageSpeed = ReadTotal(lines, "VERIFY_SPEED_AVERAGE");
+        _resumedSeconds      = ReadTotal(lines, "VERIFY_TIME_TAKEN");
+        _resumedLog          = true;
+    }
+
+    /// <summary>Reads a total from the configuration section of a log file</summary>
+    /// <param name="lines">Lines of the log file</param>
+    /// <param name="name">Name of the total</param>
+    /// <returns>The total, or 0 if not found</returns>
+    double ReadTotal(string[] lines, string name)
+    {
+        string line = Array.Find(lines, l => l.StartsWith(name + "=", StringComparison.Ordinal));
+
+        return double.TryParse(line?[(name.Length + 1)..], NumberStyles.Float, _ibgCulture, out double total)
+                   ? total
+                   : 0;
+    }
+
+    /// <summary>Merges the totals of a previous run with the ones of this run</summary>
+    /// <param name="previousSeconds">Seconds taken by the previous run</param>
+    /// <param name="previousEndSpeed">Speed at the end of the previous run</param>
+    /// <param name="previousAverageSpeed">Average speed of the previous run</param>
+    /// <param name="seconds">Seconds taken by this run</param>
+    /// <param name="endSpeed">Speed at the end of this run</param>
+    /// <param name="averageSpeed">Average speed of this run</param>
+    /// <param name="measured">Whether this run measured any speed</param>
+    /// <returns>Seconds, end speed and average speed of all the runs</returns>
+    internal static (double Seconds, double EndSpeed, double AverageSpeed)
+        MergeTotals(double previousSeconds, double previousEndSpeed, double previousAverageSpeed, double seconds,
+                    double endSpeed,        double averageSpeed,     bool   measured)
+    {
+        if(!measured) return (previousSeconds, previousEndSpeed, previousAverageSpeed);
+
+        double totalSeconds = previousSeconds + seconds;
+
+        if(totalSeconds <= 0) return (seconds, endSpeed, averageSpeed);
+
+        return (totalSeconds, endSpeed,
+                (previousAverageSpeed * previousSeconds + averageSpeed * seconds) / totalSeconds);
     }
 
     /// <summary>Adds a new speed snapshot to the log</summary>
@@ -286,6 +351,17 @@ sealed class IbgLog
                         double averageSpeed, string devicePath)
     {
         if(_logFile == null) return;
+
+        if(_resumedLog)
+        {
+            (totalSeconds, currentSpeed, averageSpeed) = MergeTotals(_resumedSeconds,
+                                                                     _resumedEndSpeed     * _ibgDivider,
+                                                                     _resumedAverageSpeed * _ibgDivider,
+                                                                     totalSeconds,
+                                                                     currentSpeed,
+                                                                     averageSpeed,
+                                                                     _ibgStopwatch.IsRunning);
+        }
 
         _ibgStopwatch.Stop();
 

@@ -27,6 +27,7 @@
 // ****************************************************************************/
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using Aaru.Core.Logging;
@@ -38,6 +39,116 @@ namespace Aaru.Tests.Unit.Dumping;
 [TestFixture]
 public class IbgLogTests
 {
+    const string EXISTING_LOG = "IBGD\r\n"                        +
+                                "[START_CONFIGURATION]\r\n"       +
+                                "VERIFY_SPEED_START=2.00\r\n"     +
+                                "VERIFY_SPEED_END=4.00\r\n"       +
+                                "VERIFY_SPEED_AVERAGE=3.00\r\n"   +
+                                "VERIFY_SPEED_MAX=40.00\r\n"      +
+                                "VERIFY_TIME_TAKEN=10\r\n"        +
+                                "[END_CONFIGURATION]\r\n"         +
+                                "[START_VERIFY_GRAPH_VALUES]\r\n" +
+                                "2.00,0,100,0\r\n"                +
+                                "4.00,50,100,0\r\n"               +
+                                "[END_VERIFY_GRAPH_VALUES]\r\n";
+
+    string _logPath;
+
+    [SetUp]
+    public void SetUp() => _logPath = Path.GetTempFileName();
+
+    [TearDown]
+    public void TearDown() => File.Delete(_logPath);
+
+    static string[] Rows(IbgLog log) =>
+        typeof(IbgLog).GetField("_ibgSb", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(log)!.ToString()!
+                      .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+
+    static T Field<T>(IbgLog log, string name) =>
+        (T)typeof(IbgLog).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(log)!;
+
+    [Test]
+    public void ResumingKeepsTheRowsAndAddsNewOnes()
+    {
+        File.WriteAllText(_logPath, EXISTING_LOG);
+
+        IbgLog log = new(_logPath, 0x0008, true);
+
+        log.Write(100, 1500);
+        Thread.Sleep(120);
+        log.Write(101, 1500);
+
+        string[] rows = Rows(log);
+
+        rows.Should().HaveCount(3);
+        rows[0].Should().Be("2.00,0,100,0");
+        rows[1].Should().Be("4.00,50,100,0");
+        rows[2].Should().StartWith("10.00,100,");
+    }
+
+    [Test]
+    public void ResumingKeepsTheStartAndMaximumSpeeds()
+    {
+        File.WriteAllText(_logPath, EXISTING_LOG);
+
+        IbgLog log = new(_logPath, 0x0008, true);
+
+        log.Write(100, 1500);
+        Thread.Sleep(120);
+        log.Write(101, 1500);
+
+        Field<double>(log, "_ibgStartSpeed").Should().Be(2);
+        Field<double>(log, "_ibgMaxSpeed").Should().Be(40);
+    }
+
+    [Test]
+    public void NotResumingIgnoresTheExistingLog()
+    {
+        File.WriteAllText(_logPath, EXISTING_LOG);
+
+        Rows(new IbgLog(_logPath, 0x0008)).Should().BeEmpty();
+    }
+
+    [TestCase("not a log")]
+    [TestCase("")]
+    public void ResumingAnInvalidLogStartsFresh(string contents)
+    {
+        File.WriteAllText(_logPath, contents);
+
+        IbgLog log = new(_logPath, 0x0008, true);
+
+        Rows(log).Should().BeEmpty();
+        Field<bool>(log, "_ibgStartSet").Should().BeFalse();
+    }
+
+    [Test]
+    public void ResumingAMissingLogStartsFresh()
+    {
+        File.Delete(_logPath);
+
+        Rows(new IbgLog(_logPath, 0x0008, true)).Should().BeEmpty();
+    }
+
+    [Test]
+    public void MergedAverageIsWeightedByTime()
+    {
+        (double seconds, double endSpeed, double averageSpeed) = IbgLog.MergeTotals(10, 100, 300, 30, 500, 700, true);
+
+        seconds.Should().Be(40);
+        endSpeed.Should().Be(500);
+        averageSpeed.Should().BeApproximately(600, 0.001);
+    }
+
+    [Test]
+    public void RunWithoutMeasuringKeepsThePreviousTotals()
+    {
+        (double seconds, double endSpeed, double averageSpeed) = IbgLog.MergeTotals(10, 100, 300, 9, 0, 0, false);
+
+        seconds.Should().Be(10);
+        endSpeed.Should().Be(100);
+        averageSpeed.Should().Be(300);
+    }
+
     [Test]
     public void MaximumSpeedIsAveragedOverTheSamplesOfARow()
     {
