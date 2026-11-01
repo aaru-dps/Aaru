@@ -382,8 +382,6 @@ partial class Dump
 
                 if(!sense && !_dev.Error)
                 {
-                    mhddLog.Write(lba, cmdDuration, toRead);
-
                     _writeStopwatch.Restart();
 
                     outputFormat.WriteSectorsLong(buffer,
