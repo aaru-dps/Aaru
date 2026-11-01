@@ -936,6 +936,15 @@ partial class Dump
                     }
                     else
                     {
+                        if(RecoverFromDriveCrash(i + r, speedMeter, ibgLog))
+                        {
+                            if(_aborted) break;
+
+                            r--;
+
+                            continue;
+                        }
+
                         _errorLog?.WriteLine(i + r, _dev.Error, _dev.LastError, senseBuf.ToArray());
 
                         // Write empty data
@@ -1227,6 +1236,13 @@ partial class Dump
             }
             else
             {
+                if(RecoverFromDriveCrash(i, speedMeter, ibgLog))
+                {
+                    blocksToRead = 0;
+
+                    continue;
+                }
+
                 if(crossingLeadOut && Sense.Decode(senseBuf)?.ASC == 0x21)
                 {
                     if(failedCrossingLeadOut) break;
