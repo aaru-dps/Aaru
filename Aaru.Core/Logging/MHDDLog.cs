@@ -202,16 +202,33 @@ sealed class MhddLog
         }
     }
 
-    /// <summary>Closes and writes to file the MHDD log</summary>
-    internal void Close()
+    /// <summary>Logs a read of a sector that had previously failed</summary>
+    /// <param name="sector">Starting sector</param>
+    /// <param name="duration">Duration in milliseconds</param>
+    /// <param name="failed">Whether the read failed again</param>
+    internal void WriteRetry(ulong sector, double duration, bool failed)
+    {
+        Write(sector, failed && duration < 500 ? 65535 : duration);
+    }
+
+    /// <summary>Writes to file what has been logged so far, the log can still be written to afterwards</summary>
+    internal void Flush()
     {
         if(_logFile == null) return;
 
         var fs = new FileStream(_logFile, FileMode.Create);
         _mhddFs.WriteTo(fs);
-        _mhddFs.Close();
         fs.Close();
 
         _mediaGraph?.WriteTo(Path.GetFileNameWithoutExtension(_logFile) + ".png");
+    }
+
+    /// <summary>Closes and writes to file the MHDD log</summary>
+    internal void Close()
+    {
+        if(_logFile == null) return;
+
+        Flush();
+        _mhddFs.Close();
     }
 }

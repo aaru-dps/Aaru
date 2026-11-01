@@ -29,6 +29,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Aaru.Core.Logging;
 using FluentAssertions;
 using NUnit.Framework;
@@ -54,6 +56,56 @@ public class MhddLogTests
         for(var i = 0; i < recordsLength; i++) log[headerLength + i] = (byte)(i + 1);
 
         return log;
+    }
+
+    // The constructor needs a device, so only what writing the records uses is set
+    MhddLog LogWithoutHeader()
+    {
+        var log = (MhddLog)RuntimeHelpers.GetUninitializedObject(typeof(MhddLog));
+
+        typeof(MhddLog).GetField("_logFile", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(log, _logPath);
+
+        typeof(MhddLog).GetField("_mhddFs", BindingFlags.Instance | BindingFlags.NonPublic)!
+                       .SetValue(log, new MemoryStream());
+
+        return log;
+    }
+
+    ulong[] WrittenRecords()
+    {
+        byte[] log = File.ReadAllBytes(_logPath);
+
+        return Enumerable.Range(0, log.Length / 8).Select(i => BitConverter.ToUInt64(log, i * 8)).ToArray();
+    }
+
+    [TestCase(10,   false, 10000ul)]
+    [TestCase(10,   true,  65535000ul)]
+    [TestCase(600,  true,  600000ul)]
+    [TestCase(600,  false, 600000ul)]
+    public void RetriesFollowTheConventionForFailedReads(double duration, bool failed, ulong expected)
+    {
+        MhddLog log = LogWithoutHeader();
+
+        log.WriteRetry(7, duration, failed);
+        log.Close();
+
+        WrittenRecords().Should().Equal(7, expected);
+    }
+
+    [Test]
+    public void FlushWritesTheFileAndTheLogKeepsGrowing()
+    {
+        MhddLog log = LogWithoutHeader();
+
+        log.Write(1, 2);
+        log.Flush();
+
+        WrittenRecords().Should().Equal(1, 2000);
+
+        log.WriteRetry(3, 4, false);
+        log.Close();
+
+        WrittenRecords().Should().Equal(1, 2000, 3, 4000);
     }
 
     [Test]
