@@ -90,6 +90,10 @@ partial class Dump
         {
             UpdateStatus?.Invoke(Localization.Core.Reading_lead_in_sectors);
 
+            // The lead-in is not part of the media speed, this is only to show it in the progress
+            SpeedMeter leadInMeter = new();
+            double     leadInSpeed = 0;
+
             for(ulong sectorAddress = nominalNegativeSectors; sectorAddress >= 1;)
             {
                 if(_aborted)
@@ -102,13 +106,10 @@ partial class Dump
 
                 uint toRead = (uint)Math.Min(sectorAddress, blocksToRead);
 
-                if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
-                if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
-
                 UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
                                                      sectorAddress,
                                                      nominalNegativeSectors,
-                                                     ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                                     ByteSize.FromMegabytes(leadInSpeed).Per(_oneSecond).Humanize()),
                                        (long)(nominalNegativeSectors - sectorAddress + toRead),
                                        (long)nominalNegativeSectors);
 
@@ -128,7 +129,6 @@ partial class Dump
                 if(!sense && !_dev.Error)
                 {
                     mhddLog.Write((ulong)-(long)sectorAddress, cmdDuration, toRead);
-                    ibgLog.Write((ulong)-(long)sectorAddress, currentSpeed * 1024);
 
                     // ReadBlocks returns sectors in logical order (-N..-1); WriteSectorsLong expects ascending order.
                     byte[] writeBuffer = new byte[buffer.Length];
@@ -170,16 +170,15 @@ partial class Dump
                 if(sectorAddress <= 1) break;
                 sectorAddress -= toRead;
 
-                if(!UpdateSpeed(speedMeter, toRead * blockSize, ref currentSpeed)) continue;
-
-                ibgLog.Write((ulong)-(long)(sectorAddress + toRead), currentSpeed * 1024);
-                _speedStopwatch.Reset();
+                leadInMeter.Update(toRead * blockSize, ref leadInSpeed);
             }
 
             UpdateStatus?.Invoke(Localization.Core.Reading_data_sectors);
         }
 
         // Phase 2: Data zone
+        _dumpStopwatch.Restart();
+
         for(ulong i = _resume.NextBlock; i < blocks; i += blocksToRead)
         {
             if(_aborted)
