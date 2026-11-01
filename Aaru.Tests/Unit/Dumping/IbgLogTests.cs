@@ -147,6 +147,27 @@ public class IbgLogTests
     }
 
     [Test]
+    public void RestartingARowDropsTheStopButKeepsItsSnapshots()
+    {
+        IbgLog log = new(_logPath, 0x0008);
+
+        log.Write(5, 1500);
+        Thread.Sleep(150);
+        log.RestartRow();
+        log.Write(6, 1500);
+
+        Rows(log).Should().BeEmpty();
+
+        log.WritePendingRow();
+
+        string[] columns = Rows(log)[0].Split(',');
+
+        columns[0].Should().Be("10.00");
+        columns[1].Should().Be("5");
+        int.Parse(columns[2]).Should().BeLessThan(100);
+    }
+
+    [Test]
     public void NoPendingSnapshotsWriteNoRow()
     {
         IbgLog log = new(_logPath, 0x0008);

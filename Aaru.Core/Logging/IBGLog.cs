@@ -345,6 +345,14 @@ sealed class IbgLog
         _ibgSnaps      = 0;
     }
 
+    /// <summary>Starts timing the current row again, so a stop in the reads is not counted as part of it</summary>
+    internal void RestartRow()
+    {
+        if(_logFile == null || !_ibgStopwatch.IsRunning) return;
+
+        _ibgStopwatch.Restart();
+    }
+
     /// <summary>Writes the snapshots that did not fill a whole row yet</summary>
     internal void WritePendingRow()
     {
