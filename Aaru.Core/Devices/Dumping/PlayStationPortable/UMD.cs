@@ -153,9 +153,10 @@ public partial class Dump
                                   blockSize,
                                   blocksToRead,
                                   _private,
-                                  _dimensions);
+                                  _dimensions,
+                                  ResumingLogs);
 
-        var ibgLog = new IbgLog(_outputPrefix + ".ibg", 0x0010);
+        var ibgLog = new IbgLog(_outputPrefix + ".ibg", 0x0010, ResumingLogs);
 
         // TODO: Get the PFI from the UMD
         ret = outputOptical.Create(_outputPath, dskType, _formatOptions, blocks, 0, 0, blockSize);
