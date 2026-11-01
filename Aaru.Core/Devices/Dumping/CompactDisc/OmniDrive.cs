@@ -522,6 +522,13 @@ partial class Dump
             }
             else
             {
+                if(RecoverFromDriveCrash(i, speedMeter, ibgLog))
+                {
+                    blocksToRead = 0;
+
+                    continue;
+                }
+
                 if(crossingLeadOut && Sense.Decode(senseBuf)?.ASC == 0x21)
                 {
                     if(failedCrossingLeadOut) break;
