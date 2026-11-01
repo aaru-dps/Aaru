@@ -58,7 +58,6 @@ partial class Dump
     /// <param name="extents">Extents</param>
     /// <param name="imageWriteDuration">Duration of image write</param>
     /// <param name="leadOutExtents">Lead-out extents</param>
-    /// <param name="mhddLog">MHDD log</param>
     /// <param name="read6">Device supports READ(6)</param>
     /// <param name="read10">Device supports READ(10)</param>
     /// <param name="read12">Device supports READ(12)</param>
@@ -75,7 +74,7 @@ partial class Dump
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
     void DumpCdLeadOuts(uint blockSize, DumpHardware currentTry, ExtentsULong extents, ref double imageWriteDuration,
-                        ExtentsULong leadOutExtents, MhddLog mhddLog, bool read6, bool read10, bool read12, bool read16,
+                        ExtentsULong leadOutExtents, bool read6, bool read10, bool read12, bool read16,
                         bool readcd, MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
                         SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
                         ref string mcn, Track[] tracks, HashSet<int> subchannelExtents,
@@ -242,7 +241,6 @@ partial class Dump
                                       failedCrossingLeadOut);
                     }
 
-                    mhddLog.Write(i, cmdDuration);
                     extents.Add(i, blocksToRead, true);
                     leadOutExtents.Remove(i);
                     _writeStopwatch.Restart();

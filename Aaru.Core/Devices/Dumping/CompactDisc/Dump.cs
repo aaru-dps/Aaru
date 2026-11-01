@@ -1121,7 +1121,6 @@ sealed partial class Dump
                            extents,
                            ref imageWriteDuration,
                            leadOutExtents,
-                           mhddLog,
                            read6,
                            read10,
                            read12,
