@@ -362,6 +362,8 @@ partial class Dump
 
                     cmdDuration += plainDuration;
                 }
+
+                totalDuration += cmdDuration;
             }
             else if(_supportsPlextorD8 && audioExtents.Contains(badSector))
             {
