@@ -315,6 +315,9 @@ public partial class Dump
                                                                     _dev.Timeout,
                                                                     out _);
 
+    /// <summary>Whether a previous run read anything, so its IBG and MHDD logs must be kept</summary>
+    bool ResumingLogs => _resume?.NextBlock > 0;
+
     /// <summary>Starts dumping with the established fields and autodetecting the device type</summary>
     public void Start()
     {

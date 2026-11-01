@@ -270,9 +270,10 @@ public partial class Dump
                                           blockSize,
                                           blocksToRead,
                                           _private,
-                                          _dimensions);
+                                          _dimensions,
+                                          ResumingLogs);
 
-                    ibgLog = new IbgLog(_outputPrefix + ".ibg", ataProfile);
+                    ibgLog = new IbgLog(_outputPrefix + ".ibg", ataProfile, ResumingLogs);
 
                     if(_resume.NextBlock > 0)
                         UpdateStatus?.Invoke(string.Format(Localization.Core.Resuming_from_block_0, _resume.NextBlock));
