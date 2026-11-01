@@ -444,7 +444,6 @@ partial class Dump
             imageCreated = true;
         }
 
-        _dumpStopwatch.Restart();
         double imageWriteDuration      = 0;
         var    writeSingleOpticalTrack = true;
         uint   nominalNegativeSectors  = 0;
@@ -875,6 +874,8 @@ partial class Dump
             _resume.MissingTitleKeys ??= [.. Enumerable.Range(0, (int)blocks).Select(static n => (ulong)n)];
             InitializeMissingTitleKeysCache();
         }
+
+        _dumpStopwatch.Restart();
 
         if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
         {
