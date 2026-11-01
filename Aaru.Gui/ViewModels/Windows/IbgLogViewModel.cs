@@ -244,7 +244,7 @@ public partial class IbgLogViewModel : ViewModelBase
             case "DDCD-R":
             case "DDCD-RW":
                 multiplier    = 150;
-                maxSpeedValue = 11250; // 52x CD-ROM cap for graph scaling
+                maxSpeedValue = 7800; // 52x CD-ROM default for graph scaling
 
                 break;
             case "DVD-ROM":
