@@ -7516,5 +7516,35 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Drive_firmware_crashed_reading_sector_0_cycling_tray {
+            get {
+                return ResourceManager.GetString("Drive_firmware_crashed_reading_sector_0_cycling_tray", resourceCulture);
+            }
+        }
+        
+        public static string Close_drive_tray_with_same_disc_to_continue {
+            get {
+                return ResourceManager.GetString("Close_drive_tray_with_same_disc_to_continue", resourceCulture);
+            }
+        }
+        
+        public static string Drive_recovered_reading_sector_again {
+            get {
+                return ResourceManager.GetString("Drive_recovered_reading_sector_again", resourceCulture);
+            }
+        }
+        
+        public static string Sector_0_crashed_drive_again_treating_as_read_error {
+            get {
+                return ResourceManager.GetString("Sector_0_crashed_drive_again_treating_as_read_error", resourceCulture);
+            }
+        }
+        
+        public static string Drive_firmware_crashed_cycle_tray_and_resume_dump {
+            get {
+                return ResourceManager.GetString("Drive_firmware_crashed_cycle_tray_and_resume_dump", resourceCulture);
+            }
+        }
+        
     }
 }

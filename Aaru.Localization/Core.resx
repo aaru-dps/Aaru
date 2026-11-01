@@ -3830,4 +3830,19 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="Not_trimming_or_retrying_sectors_0" xml:space="preserve">
         <value>[slateblue1]Not trimming nor retrying sectors [teal]{0}[/].[/]</value>
     </data>
+    <data name="Drive_firmware_crashed_reading_sector_0_cycling_tray" xml:space="preserve">
+        <value>[red]The drive firmware crashed reading sector [teal]{0}[/], cycling the tray to revive it.[/]</value>
+    </data>
+    <data name="Close_drive_tray_with_same_disc_to_continue" xml:space="preserve">
+        <value>[olive]Please close the drive tray, with the same disc in it, to continue dumping.[/]</value>
+    </data>
+    <data name="Drive_recovered_reading_sector_again" xml:space="preserve">
+        <value>[slateblue1]Drive revived, reading the sector again.[/]</value>
+    </data>
+    <data name="Sector_0_crashed_drive_again_treating_as_read_error" xml:space="preserve">
+        <value>[olive]Sector [teal]{0}[/] crashed the drive again, treating it as a read error.[/]</value>
+    </data>
+    <data name="Drive_firmware_crashed_cycle_tray_and_resume_dump" xml:space="preserve">
+        <value>The drive firmware has crashed, it answers every command with an invalid field error, and ejecting did not revive it. Open and close the tray, and resume the dump.</value>
+    </data>
 </root>

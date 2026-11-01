@@ -140,6 +140,7 @@ public partial class Dump
     AbortReason                                _abortReason;
     int                                        _correctSectors;
     ulong                                      _dumpedBytes;
+    ulong?                                     _lastCrashSector;
     bool                                       _c2Supported;    // Drive returns C2 pointers alongside subchannel
     uint                                       _c2BlockSize;    // Block size when reading data + C2 + subchannel
     int                                        _c2Offset;       // Byte offset of the 294-byte C2 region in a C2 block

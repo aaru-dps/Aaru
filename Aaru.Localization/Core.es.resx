@@ -3677,4 +3677,19 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="Not_trimming_or_retrying_sectors_0" xml:space="preserve">
         <value>[slateblue1]No se recortarán ni reintentarán los sectores [teal]{0}[/].[/]</value>
     </data>
+    <data name="Drive_firmware_crashed_reading_sector_0_cycling_tray" xml:space="preserve">
+        <value>[red]El firmware de la unidad se ha colgado leyendo el sector [teal]{0}[/], abriendo y cerrando la bandeja para recuperarla.[/]</value>
+    </data>
+    <data name="Close_drive_tray_with_same_disc_to_continue" xml:space="preserve">
+        <value>[olive]Por favor cierre la bandeja de la unidad, con el mismo disco dentro, para continuar el volcado.[/]</value>
+    </data>
+    <data name="Drive_recovered_reading_sector_again" xml:space="preserve">
+        <value>[slateblue1]Unidad recuperada, leyendo el sector de nuevo.[/]</value>
+    </data>
+    <data name="Sector_0_crashed_drive_again_treating_as_read_error" xml:space="preserve">
+        <value>[olive]El sector [teal]{0}[/] ha vuelto a colgar la unidad, se tratará como un error de lectura.[/]</value>
+    </data>
+    <data name="Drive_firmware_crashed_cycle_tray_and_resume_dump" xml:space="preserve">
+        <value>El firmware de la unidad se ha colgado, responde a todos los comandos con un error de campo inválido, y expulsar no la ha recuperado. Abra y cierre la bandeja, y continúe el volcado.</value>
+    </data>
 </root>
