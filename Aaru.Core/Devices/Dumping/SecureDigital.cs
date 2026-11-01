@@ -715,7 +715,7 @@ public partial class Dump
         _speedStopwatch.Stop();
         _dumpStopwatch.Stop();
         EndProgress?.Invoke();
-        mhddLog.Close();
+        mhddLog.Flush();
 
         ibgLog.Close(_dev,
                      blocks,
@@ -768,6 +768,7 @@ public partial class Dump
                                              out double duration);
 
                 totalDuration += duration;
+                mhddLog.WriteRetry(badSector, duration, error);
 
                 if(error)
                 {
@@ -844,6 +845,7 @@ public partial class Dump
                                              out double duration);
 
                 totalDuration += duration;
+                mhddLog.WriteRetry(badSector, duration, error);
 
                 if(error)
                 {
@@ -877,6 +879,8 @@ public partial class Dump
         }
 
 #endregion Error handling
+
+        mhddLog.Close();
 
         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
