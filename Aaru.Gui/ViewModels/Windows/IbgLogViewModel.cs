@@ -313,8 +313,8 @@ public partial class IbgLogViewModel : ViewModelBase
         SpeedMultiplier = multiplier;
         MaxSector       = sectors;
 
-        // Find max speed for Y-axis scaling
-        if(maxSpeedValue == 0) maxSpeedValue = speeds.Select(static kvp => kvp.Value).Prepend(maxSpeedValue).Max();
+        // Find max speed for Y-axis scaling, the media default is extended if the log goes above it
+        maxSpeedValue = speeds.Select(static kvp => kvp.Value).Prepend(maxSpeedValue).Max();
 
         MaxSpeed = maxSpeedValue;
 
