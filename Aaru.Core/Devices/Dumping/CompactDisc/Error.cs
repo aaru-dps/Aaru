@@ -319,13 +319,14 @@ partial class Dump
 
             if(_omnidrive)
             {
+                // The first pass can use the drive's read-ahead, the next ones must really read the disc again
                 bool c2Sense = _dev.OmniDriveReadCdWithC2(out byte[] c2Buf,
                                                           out senseBuf,
                                                           badSectorToReRead,
                                                           sectorsToReRead,
                                                           _dev.Timeout,
                                                           out cmdDuration,
-                                                          true);
+                                                          pass > 1);
 
                 if(!c2Sense)
                 {
@@ -358,7 +359,7 @@ partial class Dump
                                                  sectorsToReRead,
                                                  _dev.Timeout,
                                                  out double plainDuration,
-                                                 true);
+                                                 pass > 1);
 
                     cmdDuration += plainDuration;
                 }
