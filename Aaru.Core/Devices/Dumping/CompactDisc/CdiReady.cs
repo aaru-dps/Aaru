@@ -366,6 +366,15 @@ partial class Dump
                     }
                     else
                     {
+                        if(RecoverFromDriveCrash(i + r, speedMeter, ibgLog))
+                        {
+                            if(_aborted) break;
+
+                            r--;
+
+                            continue;
+                        }
+
                         _errorLog?.WriteLine(i + r, _dev.Error, _dev.LastError, senseBuf.ToArray());
 
                         leadOutExtents.Add(i + r, firstTrack.EndSector);
@@ -550,6 +559,13 @@ partial class Dump
             }
             else
             {
+                if(RecoverFromDriveCrash(i, speedMeter, ibgLog))
+                {
+                    blocksToRead = 0;
+
+                    continue;
+                }
+
                 _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf.ToArray());
 
                 _resume.NextBlock = firstTrack.EndSector + 1;
