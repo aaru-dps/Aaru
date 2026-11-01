@@ -403,7 +403,8 @@ partial class Dump
                                   blockSize,
                                   blocksToRead,
                                   _private,
-                                  _dimensions);
+                                  _dimensions,
+                                  ResumingLogs);
 
         if(opticalDisc)
         {
@@ -421,7 +422,7 @@ partial class Dump
             }
         }
 
-        var ibgLog       = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
+        var ibgLog       = new IbgLog(_outputPrefix + ".ibg", sbcProfile, ResumingLogs);
         var imageCreated = false;
 
         if(!opticalDisc)
