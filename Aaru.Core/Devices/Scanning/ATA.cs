@@ -130,6 +130,7 @@ public sealed partial class MediaScan
             ibgLog  = new IbgLog(_ibgLogPath, ataProfile);
 
             InitProgress?.Invoke();
+            _scanStopwatch.Restart();
             uint   accumulatedSpeedSectors = 0;
             double accumulatedSpeedMs      = 0;
 
@@ -263,6 +264,7 @@ public sealed partial class MediaScan
             ulong currentBlock = 0;
             results.Blocks = (ulong)(cylinders * heads * sectors);
             InitProgress?.Invoke();
+            _scanStopwatch.Restart();
             uint   accumulatedSpeedSectors = 0;
             double accumulatedSpeedMs      = 0;
 
