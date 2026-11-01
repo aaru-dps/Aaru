@@ -668,7 +668,7 @@ partial class Dump
                                                  1,
                                                  _dev.Timeout,
                                                  out double cmdDuration,
-                                                 true);
+                                                 pass > 1);
 
                 totalDuration += cmdDuration;
                 mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
