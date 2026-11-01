@@ -306,7 +306,7 @@ public partial class Dump
 
         _dumpStopwatch.Stop();
         EndProgress?.Invoke();
-        mhddLog.Close();
+        mhddLog.Flush();
 
         ibgLog.Close(_dev,
                      blocks,
@@ -363,7 +363,8 @@ public partial class Dump
                                     1,
                                     false,
                                     _dev.Timeout,
-                                    out double _);
+                                    out double cmdDuration);
+                mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
 
                 if(sense || _dev.Error)
                 {
@@ -583,6 +584,7 @@ public partial class Dump
                                     out double cmdDuration);
 
                 totalDuration += cmdDuration;
+                mhddLog.WriteRetry(badSector, cmdDuration, sense || _dev.Error);
 
                 if(sense || _dev.Error) _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
 
@@ -629,6 +631,8 @@ public partial class Dump
         }
 
 #endregion Error handling
+
+        mhddLog.Close();
 
         _resume.BadBlocks.Sort();
 
