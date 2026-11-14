@@ -5791,6 +5791,9 @@ Probadores:
     <data name="Measure_DPM_after_dumping" xml:space="preserve">
         <value>Obtener la Medición de Posición de Datos de CDs, DVDs y Blu-rays después de volcarlos.</value>
     </data>
+    <data name="Dump_CD_Text_help" xml:space="preserve">
+        <value>Leer el CD-TEXT del lead-in de los CDs.</value>
+    </data>
     <data name="Title_DPM_comparison" xml:space="preserve">
         <value>Comparación de la Medición de Posición de Datos</value>
     </data>

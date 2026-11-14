@@ -11597,6 +11597,12 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Dump_CD_Text_help {
+            get {
+                return ResourceManager.GetString("Dump_CD_Text_help", resourceCulture);
+            }
+        }
+        
         public static string Title_DPM_comparison {
             get {
                 return ResourceManager.GetString("Title_DPM_comparison", resourceCulture);

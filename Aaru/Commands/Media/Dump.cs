@@ -125,6 +125,7 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
         AaruLogging.Debug(MODULE_NAME, "--aaru-metadata={0}",           Markup.Escape(settings.AaruMetadata ?? ""));
         AaruLogging.Debug(MODULE_NAME, "--c2-repair={0}",               settings.C2Repair);
         AaruLogging.Debug(MODULE_NAME, "--dpm={0}",                     settings.Dpm);
+        AaruLogging.Debug(MODULE_NAME, "--cd-text={0}",                 settings.CdText);
         AaruLogging.Debug(MODULE_NAME, "--paranoia={0}",                settings.Paranoia);
         AaruLogging.Debug(MODULE_NAME, "--cure-paranoia={0}",           settings.CureParanoia);
         AaruLogging.Debug(MODULE_NAME, "--raw={0}",                     settings.Raw);
@@ -573,7 +574,8 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
                                   settings.SkipSafeDisc,
                                   noRetrySectors,
                                   settings.C2Repair,
-                                  settings.Dpm);
+                                  settings.Dpm,
+                                  settings.CdText);
 
             AnsiConsole.Progress()
                        .AutoClear(true)
@@ -841,6 +843,10 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
         [CommandOption("--dpm")]
         [DefaultValue(true)]
         public bool Dpm { get; init; }
+        [LocalizedDescription(nameof(UI.Dump_CD_Text_help))]
+        [CommandOption("--cd-text")]
+        [DefaultValue(true)]
+        public bool CdText { get; init; }
         [LocalizedDescription(nameof(UI.Cure_paranoia_help))]
         [CommandOption("--cure-paranoia")]
         [DefaultValue(false)]

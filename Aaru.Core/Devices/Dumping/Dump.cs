@@ -127,6 +127,7 @@ public partial class Dump
     readonly        List<(ulong Start, ulong End)> _noRetrySectors;
     readonly        bool                       _c2Repair;
     readonly        bool                       _dpm;
+    readonly        bool                       _cdText;
     readonly        Stopwatch                  _speedStopwatch;
     readonly        bool                       _startReverse;
     readonly        bool                       _stopOnError;
@@ -220,6 +221,7 @@ public partial class Dump
     /// <param name="noRetrySectors">Sector ranges, both ends included, that must not be trimmed nor retried</param>
     /// <param name="c2Repair">Repair audio sectors the drive concealed using C2 pointers</param>
     /// <param name="dpm">Measure Data Position Measurement of optical discs after dumping them</param>
+    /// <param name="cdText">Read the CD-TEXT from the lead-in of CDs</param>
     public Dump(bool doResume, Device dev, string devicePath, IBaseWritableImage outputPlugin, ushort retryPasses,
                 bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, Encoding encoding,
                 string outputPrefix, string outputPath, Dictionary<string, string> formatOptions, Metadata preSidecar,
@@ -230,7 +232,7 @@ public partial class Dump
                 bool titleKeys, uint ignoreCdrRunOuts, bool createGraph, uint dimensions, bool paranoia,
                 bool cureParanoia, bool bypassWiiDecryption, bool startReverse, int errorRecovery, bool hyperSpeed,
                 bool ludicrousSpeed, bool leadout, bool skipSafedisc, List<(ulong Start, ulong End)> noRetrySectors,
-                bool c2Repair = true, bool dpm = true)
+                bool c2Repair = true, bool dpm = true, bool cdText = true)
     {
         _doResume              = doResume;
         _dev                   = dev;
@@ -285,6 +287,7 @@ public partial class Dump
         _noRetrySectors        = noRetrySectors ?? [];
         _c2Repair              = c2Repair;
         _dpm                   = dpm;
+        _cdText                = cdText;
         _dumpStopwatch         = new Stopwatch();
         _sidecarStopwatch      = new Stopwatch();
         _speedStopwatch        = new Stopwatch();

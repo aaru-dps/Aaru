@@ -175,6 +175,8 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
     [ObservableProperty]
     bool _measureDpm;
     [ObservableProperty]
+    bool _dumpCdText;
+    [ObservableProperty]
     bool _storeEncryptedAsIs;
     [ObservableProperty]
     bool _readTitleKeys;
@@ -220,6 +222,7 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
         Paranoia              = false;
         CureParanoia          = false;
         MeasureDpm            = true;
+        DumpCdText            = true;
         StoreEncryptedAsIs    = true;
         ReadTitleKeys         = false;
         BypassWiiDecryption   = false;
@@ -784,7 +787,8 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
                            false,
                            noRetrySectors,
                            true,
-                           MeasureDpm);
+                           MeasureDpm,
+                           DumpCdText);
 
         _ = Task.Run(DoWork);
     }

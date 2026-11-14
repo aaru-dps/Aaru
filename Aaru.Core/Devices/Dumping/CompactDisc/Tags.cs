@@ -128,6 +128,8 @@ partial class Dump
             }
         }
 
+        if(!_cdText) return;
+
         UpdateStatus?.Invoke(Localization.Core.Reading_CD_Text_from_Lead_In);
         sense = _dev.ReadCdText(out cmdBuf, out _, _dev.Timeout, out _);
 

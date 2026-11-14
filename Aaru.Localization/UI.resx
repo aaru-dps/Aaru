@@ -5878,6 +5878,9 @@ Do you want to continue?</value>
     <data name="Measure_DPM_after_dumping" xml:space="preserve">
         <value>Get the Data Position Measurement of CDs, DVDs and Blu-rays after dumping them.</value>
     </data>
+    <data name="Dump_CD_Text_help" xml:space="preserve">
+        <value>Read the CD-TEXT from the lead-in of CDs.</value>
+    </data>
     <data name="Title_DPM_comparison" xml:space="preserve">
         <value>Data Position Measurement comparison</value>
     </data>

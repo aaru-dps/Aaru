@@ -103,6 +103,10 @@
                                   IsVisible="{Binding Track1PregapVisible, Mode=OneWay}">
                             <TextBlock Text="{x:Static localization:UI.Try_to_read_track_1_pregap}" />
                         </CheckBox>
+                        <CheckBox IsChecked="{Binding DumpCdText, Mode=TwoWay}"
+                                  IsVisible="{Binding Track1PregapVisible, Mode=OneWay}">
+                            <TextBlock Text="{x:Static localization:UI.Dump_CD_Text_help}" />
+                        </CheckBox>
                         <CheckBox IsChecked="{Binding CreateSidecar, Mode=TwoWay}">
                             <TextBlock Text="{x:Static localization:UI.Create_Aaru_Metadata_sidecar}" />
                         </CheckBox>
