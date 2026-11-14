@@ -1833,7 +1833,7 @@
   </data>
     <data name="Track_0_Stereo_audio_track_with_50_15_s_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7"
           xml:space="preserve">
-    <value>[slateblue1]Track [teal]{0}[/] [italic](Stereo audio track with [teal]50/15 μs[/] pre-emphasis)[/] starts at [lime]{4}:{1:D2}:{2:D2}:{3:D2} and ends at [lime]{8}:{5:D2}:{6:D2}:{7:D2}[/][/]</value>
+    <value>[slateblue1]Track [teal]{0}[/] [italic](Stereo audio track with [teal]50/15 μs[/] pre-emphasis)[/] starts at [lime]{4}:{1:D2}:{2:D2}:{3:D2}[/] and ends at [lime]{8}:{5:D2}:{6:D2}:{7:D2}[/][/]</value>
   </data>
     <data name="Track_0_Stereo_audio_track_with_50_15_us_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6"
           xml:space="preserve">
@@ -1871,10 +1871,10 @@
         <value>[slateblue1]Reserved = [teal]0x{0:X2}[/][/]</value>
     </data>
     <data name="Skip_track_assignment_0_says_that_tracks_1_should_be_skipped" xml:space="preserve">
-    <value>[slateblue1]Skip track assignment [teal]{0}[/] says that tracks [teal]{1}[/] should be skipped</value>
+    <value>[slateblue1]Skip track assignment [teal]{0}[/] says that tracks [teal]{1}[/] should be skipped[/]</value>
   </data>
     <data name="Unskip_track_assignment_0_says_that_tracks_1_should_not_be_skipped" xml:space="preserve">
-    <value>[slateblue1]Unskip track assignment [teal]{0}[/] says that tracks [teal]{1}[/] should not be skipped</value>
+    <value>[slateblue1]Unskip track assignment [teal]{0}[/] says that tracks [teal]{1}[/] should not be skipped[/]</value>
   </data>
     <data name="Skip_time_interval_assignment_0_says_that_from_4_1_2_3_to_8_5_6_7_should_be_skipped"
           xml:space="preserve">

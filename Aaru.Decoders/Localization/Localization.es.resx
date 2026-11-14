@@ -8277,7 +8277,7 @@
     </data>
     <data name="Skip_time_interval_assignment_0_says_that_from_4_1_2_3_to_8_5_6_7_should_be_skipped"
           xml:space="preserve">
-        <value>[slateblue1]La asignación [teal]{0}[/] del intervalo de tiempo de omisión dice que desde [lime]{4}:{1:D2}:{2:D2}:{3:D2}[/] hasta [lime]{8}:{5:D2}:{6:D2}:{7:D2}[/] deben ser omitidos</value>
+        <value>[slateblue1]La asignación [teal]{0}[/] del intervalo de tiempo de omisión dice que desde [lime]{4}:{1:D2}:{2:D2}:{3:D2}[/] hasta [lime]{8}:{5:D2}:{6:D2}:{7:D2}[/] deben ser omitidos[/]</value>
     </data>
     <data name="Skip_track_0" xml:space="preserve">
         <value>[slateblue1]Omitir pista [teal]{0}[/][/]</value>
@@ -8856,7 +8856,7 @@
     </data>
     <data name="Track_0_Stereo_audio_track_with_no_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7"
           xml:space="preserve">
-        <value>[slateblue1]Pista [teal]{0}[/] (Audio estéreo sin pre-énfasis) comienza en [lime]{4}:{1:D2}:{2:D2}:{3:D2}[/] y termina en [lime]{8}:{5:D2}:{6:D2}:{7:D2}[/]</value>
+        <value>[slateblue1]Pista [teal]{0}[/] (Audio estéreo sin pre-énfasis) comienza en [lime]{4}:{1:D2}:{2:D2}:{3:D2}[/] y termina en [lime]{8}:{5:D2}:{6:D2}:{7:D2}[/][/]</value>
     </data>
     <data name="Track_number_0" xml:space="preserve">
         <value>[slateblue1]Pista número: [teal]{0}[/][/]</value>
@@ -9151,7 +9151,7 @@
   </data>
     <data name="Unskip_time_interval_assignment_0_says_that_from_1_2_3_to_4_5_6_should_not_be_skipped"
           xml:space="preserve">
-        <value>[slateblue1]La asignación [teal]{0}[/] de no-omitir intervarlos dice que desde [lime]{1:D2}:{2:D2}:{3:D2}[/] hasta [lime{4:D2}:{5:D2}:{6:D2}[/] no deben omitirse[/]</value>
+        <value>[slateblue1]La asignación [teal]{0}[/] de no-omitir intervarlos dice que desde [lime]{1:D2}:{2:D2}:{3:D2}[/] hasta [lime]{4:D2}:{5:D2}:{6:D2}[/] no deben omitirse[/]</value>
     </data>
     <data name="Unskip_time_interval_assignment_0_says_that_from_4_1_2_3_to_8_5_6_7_should_not_be_skipped"
           xml:space="preserve">
