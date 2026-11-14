@@ -766,7 +766,7 @@
         <value>[red]Output format does not support audio tracks, cannot continue...[/]</value>
     </data>
     <data name="Output_format_does_not_support_pregaps_not_continuing" xml:space="preserve">
-        <value>[red]Output format does not support pregaps, this may end in a loss of data, not continuing...</value>
+        <value>[red]Output format does not support pregaps, this may end in a loss of data, not continuing...[/]</value>
     </data>
     <data name="Output_format_does_not_support_pregaps_continuing" xml:space="preserve">
         <value>[olive]Output format does not support pregaps, this may end in a loss of data, continuing...[/]</value>
