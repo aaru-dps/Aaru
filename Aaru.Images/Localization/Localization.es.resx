@@ -990,7 +990,7 @@
     <value>Encontrado bloque de metadatos XML de CICM en la posición {0}</value>
   </data>
     <data name="Found_CloneCD_out_of_order_in_line_0" xml:space="preserve">
-    <value>Encontrado [CloneCD] fuera de orden en la línea {0}</value>
+    <value>Encontrado [[CloneCD]] fuera de orden en la línea {0}</value>
   </data>
     <data name="Found_comment_1_at_line_0" xml:space="preserve">
     <value>Encontrado comentario "{1}" en la línea {0}</value>

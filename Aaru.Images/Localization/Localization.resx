@@ -1876,7 +1876,7 @@
     <value>CloneCD</value>
   </data>
     <data name="Found_CloneCD_out_of_order_in_line_0" xml:space="preserve">
-    <value>Found [CloneCD] out of order in line {0}</value>
+    <value>Found [[CloneCD]] out of order in line {0}</value>
   </data>
     <data name="Found_Version_at_line_0" xml:space="preserve">
     <value>Found Version at line {0}</value>
