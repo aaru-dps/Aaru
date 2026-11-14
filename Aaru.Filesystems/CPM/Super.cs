@@ -181,8 +181,13 @@ public sealed partial class CPM
 
         AaruLogging.Debug(MODULE_NAME, Localization.Creating_allocation_blocks);
 
+        // Allocation blocks start after the sectors reserved for the system, block 0 is where the directory starts
+        var dataStart = (ulong)(_workingDefinition.sofs > 0
+                                    ? _workingDefinition.sofs
+                                    : _workingDefinition.ofs * _workingDefinition.sectorsPerTrack);
+
         // For each volume sector
-        for(ulong a = 0; a < (ulong)deinterleavedSectors.Count; a++)
+        for(ulong a = dataStart; a < (ulong)deinterleavedSectors.Count; a++)
         {
             deinterleavedSectors.TryGetValue(a, out byte[] sector);
 

@@ -298,13 +298,18 @@ public sealed partial class CPM
 
         if(blockSize <= 0 || sectorSize == 0) return;
 
+        // Allocation blocks start after the sectors reserved for the system
+        var dataStart = (ulong)(_workingDefinition.sofs > 0
+                                    ? _workingDefinition.sofs
+                                    : _workingDefinition.ofs * _workingDefinition.sectorsPerTrack);
+
         if(sectorSize > blockSize)
         {
             uint blocksPerSector = sectorSize / (uint)blockSize;
 
             if(blocksPerSector == 0) return;
 
-            AddLogicalSectorOverlap(allocationBlock / blocksPerSector, sectorExtents, overlaps);
+            AddLogicalSectorOverlap(dataStart + allocationBlock / blocksPerSector, sectorExtents, overlaps);
 
             return;
         }
@@ -315,7 +320,7 @@ public sealed partial class CPM
 
             if(sectorsPerBlock == 0) return;
 
-            ulong firstLogicalSector = (ulong)allocationBlock * sectorsPerBlock;
+            ulong firstLogicalSector = dataStart + (ulong)allocationBlock * sectorsPerBlock;
 
             for(uint i = 0; i < sectorsPerBlock; i++)
                 AddLogicalSectorOverlap(firstLogicalSector + i, sectorExtents, overlaps);
@@ -323,7 +328,7 @@ public sealed partial class CPM
             return;
         }
 
-        AddLogicalSectorOverlap(allocationBlock, sectorExtents, overlaps);
+        AddLogicalSectorOverlap(dataStart + allocationBlock, sectorExtents, overlaps);
     }
 
     void AddLogicalSectorOverlap(ulong logicalSector, IReadOnlyList<(ulong Start, ulong End)> sectorExtents,
