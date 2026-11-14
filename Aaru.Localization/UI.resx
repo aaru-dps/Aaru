@@ -737,7 +737,7 @@ In you are unsure, please press N to not continue.</value>
     <value>Input file 1 format not identified, not proceeding with comparison.</value>
   </data>
     <data name="First_input_file_format_identified_by_0_1" xml:space="preserve">
-    <value>[slateblue1]Input file 1 format identified by [green]{0}[/] ([red]{1}[/][/]).[/]</value>
+    <value>[slateblue1]Input file 1 format identified by [green]{0}[/] ([red]{1}[/]).[/]</value>
   </data>
     <data name="First_input_file_format_identified_by_0" xml:space="preserve">
     <value>[slateblue1]Input file 1 format identified by [green]{0}[/].[/]</value>
@@ -884,10 +884,10 @@ In you are unsure, please press N to not continue.</value>
     <value>[slateblue1]Comparing sector [lime]{0}[/] of [violet]{1}[/]...[/]</value>
   </data>
     <data name="Error_0_reading_sector_1_from_first_image" xml:space="preserve">
-        <value>[red]Error [orange3]{0}[/] reading sector [lime]{1}[/] from image 1.</value>
+        <value>[red]Error [orange3]{0}[/] reading sector [lime]{1}[/] from image 1.[/]</value>
     </data>
     <data name="Error_0_reading_sector_1_from_second_image" xml:space="preserve">
-        <value>[red]Error [orange3]{0}[/] reading sector [lime]{1}[/] from image 2.</value>
+        <value>[red]Error [orange3]{0}[/] reading sector [lime]{1}[/] from image 2.[/]</value>
     </data>
     <data name="Comparing_images" xml:space="preserve">
     <value>Comparing images...</value>
