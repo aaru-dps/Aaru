@@ -1502,7 +1502,7 @@ In you are unsure, please press N to not continue.</value>
     <value>Checking sectors...</value>
   </data>
     <data name="Checking_sector_0_of_1" xml:space="preserve">
-    <value>[slateblue1]Checking sector [lime]{0}[/] of [violet]{1}[/]</value>
+    <value>[slateblue1]Checking sector [lime]{0}[/] of [violet]{1}[/][/]</value>
   </data>
     <data name="There_is_at_least_one_sector_that_does_not_contain_a_checksum" xml:space="preserve">
     <value>[olive]There is at least one sector that does not contain a checksum[/]</value>
