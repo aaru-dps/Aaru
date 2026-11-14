@@ -1530,7 +1530,7 @@
         <value>[fuchsia]LOCATE LONG[/] [slatebluie1]funciona.[/]</value>
     </data>
     <data name="LOCATE_works" xml:space="preserve">
-        <value>[fuchsiaLOCATE[/] [slateblue1]funciona.[/]</value>
+        <value>[fuchsia]LOCATE[/] [slateblue1]funciona.[/]</value>
     </data>
     <data name="Locking_drive" xml:space="preserve">
     <value>[slateblue1]Bloqueando la unidad.[/]</value>
