@@ -76,8 +76,6 @@ public sealed partial class CPM : IReadOnlyFilesystem
     Partition _partition;
     /// <summary>Cached file passwords</summary>
     Dictionary<string, byte[]> _passwordCache;
-    /// <summary>Sector deinterleaving mask</summary>
-    int[] _sectorMask;
     /// <summary>True if there are CP/M 3 timestamps</summary>
     bool _standardTimestamps;
     /// <summary>Cached file <see cref="FileEntryInfo" /></summary>

@@ -65,112 +65,34 @@ public sealed partial class CPM
         if(!Identify(_device, partition) || !_cpmFound || _workingDefinition == null || _dpb == null)
             return ErrorNumber.InvalidArgument;
 
-        // Build the software interleaving sector mask
-        if(_workingDefinition.sides == 1)
+        if(!TryGetPhysicalSector(_workingDefinition, 0, out _))
         {
-            _sectorMask = new int[_workingDefinition.side1.sectorIds.Length];
+            LogUnsupportedOrder(_workingDefinition);
 
-            for(var m = 0; m < _sectorMask.Length; m++)
-                _sectorMask[m] = _workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0];
-        }
-        else
-        {
-            // Head changes after every track
-            if(string.Equals(_workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase))
-            {
-                _sectorMask = new int[_workingDefinition.side1.sectorIds.Length +
-                                      _workingDefinition.side2.sectorIds.Length];
-
-                for(var m = 0; m < _workingDefinition.side1.sectorIds.Length; m++)
-                    _sectorMask[m] = _workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0];
-
-                // Skip first track (first side)
-                for(var m = 0; m < _workingDefinition.side2.sectorIds.Length; m++)
-                {
-                    _sectorMask[m + _workingDefinition.side1.sectorIds.Length] =
-                        _workingDefinition.side2.sectorIds[m] -
-                        _workingDefinition.side2.sectorIds[0] +
-                        _workingDefinition.side1.sectorIds.Length;
-                }
-            }
-
-            // Head changes after whole side
-            else if(string.Equals(_workingDefinition.order, "CYLINDERS", StringComparison.InvariantCultureIgnoreCase))
-            {
-                for(var m = 0; m < _workingDefinition.side1.sectorIds.Length; m++)
-                    _sectorMask[m] = _workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0];
-
-                // Skip first track (first side) and first track (second side)
-                for(var m = 0; m < _workingDefinition.side1.sectorIds.Length; m++)
-                {
-                    _sectorMask[m + _workingDefinition.side1.sectorIds.Length] =
-                        _workingDefinition.side1.sectorIds[m] -
-                        _workingDefinition.side1.sectorIds[0]     +
-                        _workingDefinition.side1.sectorIds.Length +
-                        _workingDefinition.side2.sectorIds.Length;
-                }
-
-                // TODO: Implement CYLINDERS ordering
-                AaruLogging.Debug(MODULE_NAME, Localization.CYLINDERS_ordering_not_yet_implemented);
-
-                return ErrorNumber.NotImplemented;
-            }
-
-            // TODO: Implement COLUMBIA ordering
-            else if(string.Equals(_workingDefinition.order, "COLUMBIA", StringComparison.InvariantCultureIgnoreCase))
-            {
-                AaruLogging.Debug(MODULE_NAME,
-                                  Localization
-                                     .Dont_know_how_to_handle_COLUMBIA_ordering_not_proceeding_with_this_definition);
-
-                return ErrorNumber.NotImplemented;
-            }
-
-            // TODO: Implement EAGLE ordering
-            else if(string.Equals(_workingDefinition.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase))
-            {
-                AaruLogging.Debug(MODULE_NAME,
-                                  Localization
-                                     .Don_know_how_to_handle_EAGLE_ordering_not_proceeding_with_this_definition);
-
-                return ErrorNumber.NotImplemented;
-            }
-            else
-            {
-                AaruLogging.Debug(MODULE_NAME,
-                                  Localization.Unknown_order_type_0_not_proceeding_with_this_definition,
-                                  _workingDefinition.order);
-
-                return ErrorNumber.NotSupported;
-            }
+            return ErrorNumber.NotSupported;
         }
 
         // Deinterleave whole volume
         Dictionary<ulong, byte[]> deinterleavedSectors = new();
 
-        if(_workingDefinition.sides == 1 ||
-           string.Equals(_workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase))
+        AaruLogging.Debug(MODULE_NAME, Localization.Deinterleaving_whole_volume);
+
+        for(ulong p = 0; p < partition.Length; p++)
         {
-            AaruLogging.Debug(MODULE_NAME, Localization.Deinterleaving_whole_volume);
+            if(!TryGetPhysicalSector(_workingDefinition, p, out ulong physicalSector)) break;
 
-            for(var p = 0; p <= (int)(partition.End - partition.Start); p++)
-            {
-                ErrorNumber errno =
-                    _device.ReadSector((ulong)((int)partition.Start                        +
-                                               p / _sectorMask.Length * _sectorMask.Length +
-                                               _sectorMask[p % _sectorMask.Length]),
-                                       false,
-                                       out byte[] readSector,
-                                       out _);
+            // Images missing the last track
+            if(physicalSector >= partition.Length) break;
 
-                if(errno != ErrorNumber.NoError) return errno;
+            ErrorNumber errno = _device.ReadSector(partition.Start + physicalSector, false, out byte[] readSector, out _);
 
-                if(_workingDefinition.complement)
-                    for(var b = 0; b < readSector.Length; b++)
-                        readSector[b] = (byte)(~readSector[b] & 0xFF);
+            if(errno != ErrorNumber.NoError) return errno;
 
-                deinterleavedSectors.Add((ulong)p, readSector);
-            }
+            if(_workingDefinition.complement)
+                for(var b = 0; b < readSector.Length; b++)
+                    readSector[b] = (byte)(~readSector[b] & 0xFF);
+
+            deinterleavedSectors.Add(p, readSector);
         }
 
         int                       blockSize        = 128 << _dpb.bsh;
@@ -182,12 +104,8 @@ public sealed partial class CPM
         AaruLogging.Debug(MODULE_NAME, Localization.Creating_allocation_blocks);
 
         // Allocation blocks start after the sectors reserved for the system, block 0 is where the directory starts
-        var dataStart = (ulong)(_workingDefinition.sofs > 0
-                                    ? _workingDefinition.sofs
-                                    : _workingDefinition.ofs * _workingDefinition.sectorsPerTrack);
-
         // For each volume sector
-        for(ulong a = dataStart; a < (ulong)deinterleavedSectors.Count; a++)
+        for(ulong a = GetReservedSectors(_workingDefinition); a < (ulong)deinterleavedSectors.Count; a++)
         {
             deinterleavedSectors.TryGetValue(a, out byte[] sector);
 
@@ -267,7 +185,7 @@ public sealed partial class CPM
             switch(directory[dOff] & 0x7F)
             {
                 // Describes a file (does not support PDOS entries with user >= 16, because they're identical to password entries
-                case < 0x10 when allocationBlocks.Count > 256:
+                case < 0x10 when _dpb.dsm > 255:
                 {
                     DirectoryEntry16 entry =
                         Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry16>(directory, dOff, 32);
@@ -822,7 +740,6 @@ public sealed partial class CPM
         _cpmFound             = false;
         _workingDefinition    = null;
         _dpb                  = null;
-        _sectorMask           = null;
         _label                = null;
         _thirdPartyTimestamps = false;
         _standardTimestamps   = false;

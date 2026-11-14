@@ -72,6 +72,12 @@ public sealed partial class CPM
                     for(var i = 0; i < def.sectorsPerTrack; i++) def.side1.sectorIds[i] = i + 1;
                 }
 
+                // Some definitions give the number of blocks instead of the highest block number, but the volume
+                // cannot have more blocks than its geometry holds
+                int capacity = GetCapacityInBlocks(def);
+
+                if(capacity > 0 && def.dsm >= capacity) def.dsm = capacity - 1;
+
                 if(def.sides != 2 || def.side2 != null) continue;
 
                 {

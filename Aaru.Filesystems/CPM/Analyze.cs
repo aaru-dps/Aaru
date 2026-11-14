@@ -56,7 +56,7 @@ public sealed partial class CPM
         if(!_mounted) return ErrorNumber.AccessDenied;
         if(sectorExtents is null) return ErrorNumber.InvalidArgument;
 
-        if(_device is null || _workingDefinition is null || _dpb is null || _sectorMask is null)
+        if(_device is null || _workingDefinition is null || _dpb is null)
             return ErrorNumber.InvalidArgument;
 
         List<(ulong Start, ulong End)> normalizedExtents = NormalizeAnalyzeExtents(sectorExtents);
@@ -132,15 +132,12 @@ public sealed partial class CPM
     Dictionary<string, Dictionary<int, List<ushort>>> ParseFileExtents(byte[] directory)
     {
         Dictionary<string, Dictionary<int, List<ushort>>> fileExtents = [];
-        int blockSize = 128 << _dpb.bsh;
-        ulong sectorCount = _partition.End >= _partition.Start ? _partition.End - _partition.Start + 1 : 0;
-        ulong allocationBlockCount = blockSize > 0 ? sectorCount * _device.Info.SectorSize / (ulong)blockSize : 0;
 
         for(var dOff = 0; dOff < directory.Length; dOff += 32)
         {
             switch(directory[dOff] & 0x7F)
             {
-                case < 0x10 when allocationBlockCount > 256:
+                case < 0x10 when _dpb.dsm > 255:
                 {
                     DirectoryEntry16 entry =
                         Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry16>(directory, dOff, 32);
@@ -299,9 +296,7 @@ public sealed partial class CPM
         if(blockSize <= 0 || sectorSize == 0) return;
 
         // Allocation blocks start after the sectors reserved for the system
-        var dataStart = (ulong)(_workingDefinition.sofs > 0
-                                    ? _workingDefinition.sofs
-                                    : _workingDefinition.ofs * _workingDefinition.sectorsPerTrack);
+        ulong dataStart = GetReservedSectors(_workingDefinition);
 
         if(sectorSize > blockSize)
         {
@@ -341,11 +336,9 @@ public sealed partial class CPM
 
     ulong LogicalSectorToPhysicalSector(ulong logicalSector)
     {
-        if(_sectorMask is null || _sectorMask.Length == 0) return _partition.Start + logicalSector;
-
-        return _partition.Start                                                      +
-               logicalSector / (ulong)_sectorMask.Length * (ulong)_sectorMask.Length +
-               (ulong)_sectorMask[(int)(logicalSector % (ulong)_sectorMask.Length)];
+        return TryGetPhysicalSector(_workingDefinition, logicalSector, out ulong physicalSector)
+                   ? _partition.Start + physicalSector
+                   : ulong.MaxValue;
     }
 
     static void AddExtentOverlaps(ulong                                   startSector, ulong endSector,

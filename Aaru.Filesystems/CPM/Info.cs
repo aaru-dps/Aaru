@@ -270,6 +270,7 @@ public sealed partial class CPM
                                 comment         = "Amstrad PCW superblock",
                                 ofs             = _dpb.off,
                                 sectorsPerTrack = amsSb.spt,
+                                sides           = (int)sides,
                                 side1 = new Side
                                 {
                                     sideId    = 0,
@@ -894,6 +895,19 @@ public sealed partial class CPM
                 {
                     AaruLogging.Debug(MODULE_NAME, Localization.First_directory_block_seems_correct);
 
+                    // The highest block number is not known, use all the space after the reserved tracks
+                    if(_dpb.dsm == 0)
+                    {
+                        int capacity = GetCapacityInBlocks(partition.Length,
+                                                           GetReservedSectors(_workingDefinition),
+                                                           _workingDefinition.bytesPerSector,
+                                                           _dpb.bsh);
+
+                        if(capacity > 0) _dpb.dsm = (ushort)(capacity - 1);
+
+                        _workingDefinition.dsm = _dpb.dsm;
+                    }
+
                     return true;
                 }
 
@@ -910,105 +924,45 @@ public sealed partial class CPM
                 {
                     AaruLogging.Debug(MODULE_NAME, Localization.Trying_all_known_definitions);
 
+                    CpmDefinition bestDefinition     = null;
+                    byte[]        bestDirectory      = null;
+                    var           bestInvalidEntries = 0;
+                    var           bestFileEntries    = 0;
+
                     foreach(CpmDefinition def in from def in _definitions.definitions
                                                  let sectors = (ulong)(def.cylinders * def.sides * def.sectorsPerTrack)
-                                                 where sectors            == imagePlugin.Info.Sectors &&
-                                                       def.bytesPerSector == imagePlugin.Info.SectorSize
+                                                 where def.bytesPerSector == imagePlugin.Info.SectorSize &&
+                                                       (sectors == imagePlugin.Info.Sectors ||
+
+                                                        // Images missing the last track
+                                                        sectors > imagePlugin.Info.Sectors &&
+                                                        sectors - imagePlugin.Info.Sectors <=
+                                                        (ulong)def.sectorsPerTrack)
                                                  select def)
                     {
                         // Definition seems to describe current disk, at least, same number of volume sectors and bytes per sector
                         AaruLogging.Debug(MODULE_NAME, Localization.Trying_definition_0, def.comment);
-                        ulong offset;
 
-                        if(def.sofs != 0)
-                            offset = (ulong)def.sofs;
-                        else
-                            offset = (ulong)(def.ofs * def.sectorsPerTrack);
-
-                        int dirLen = (def.drm + 1) * 32 / def.bytesPerSector;
-
-                        if(def.sides == 1)
+                        if(!TryGetPhysicalSector(def, 0, out _))
                         {
-                            _sectorMask = new int[def.side1.sectorIds.Length];
+                            LogUnsupportedOrder(def);
 
-                            for(var m = 0; m < _sectorMask.Length; m++)
-                                _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
+                            continue;
                         }
-                        else
-                        {
-                            // Head changes after every track
-                            if(string.Equals(def.order, "SIDES", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                _sectorMask = new int[def.side1.sectorIds.Length + def.side2.sectorIds.Length];
 
-                                for(var m = 0; m < def.side1.sectorIds.Length; m++)
-                                    _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
+                        if(!SectorIdsMatch(imagePlugin, partition, def)) continue;
 
-                                // Skip first track (first side)
-                                for(var m = 0; m < def.side2.sectorIds.Length; m++)
-                                {
-                                    _sectorMask[m + def.side1.sectorIds.Length] =
-                                        def.side2.sectorIds[m] - def.side2.sectorIds[0] + def.side1.sectorIds.Length;
-                                }
-                            }
-
-                            // Head changes after whole side
-                            else if(string.Equals(def.order, "CYLINDERS", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                _sectorMask = new int[def.side1.sectorIds.Length + def.side2.sectorIds.Length];
-
-                                for(var m = 0; m < def.side1.sectorIds.Length; m++)
-                                    _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
-
-                                // Skip first track (first side) and first track (second side)
-                                for(var m = 0; m < def.side1.sectorIds.Length; m++)
-                                {
-                                    _sectorMask[m + def.side1.sectorIds.Length] =
-                                        def.side1.sectorIds[m] -
-                                        def.side1.sectorIds[0]     +
-                                        def.side1.sectorIds.Length +
-                                        def.side2.sectorIds.Length;
-                                }
-                            }
-
-                            // TODO: Implement COLUMBIA ordering
-                            else if(string.Equals(def.order, "COLUMBIA", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                AaruLogging.Debug(MODULE_NAME,
-                                                  Localization
-                                                     .Dont_know_how_to_handle_COLUMBIA_ordering_not_proceeding_with_this_definition);
-
-                                continue;
-                            }
-
-                            // TODO: Implement EAGLE ordering
-                            else if(string.Equals(def.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                AaruLogging.Debug(MODULE_NAME,
-                                                  Localization
-                                                     .Don_know_how_to_handle_EAGLE_ordering_not_proceeding_with_this_definition);
-
-                                continue;
-                            }
-                            else
-                            {
-                                AaruLogging.Debug(MODULE_NAME,
-                                                  Localization.Unknown_order_type_0_not_proceeding_with_this_definition,
-                                                  def.order);
-
-                                continue;
-                            }
-                        }
+                        ulong offset = GetReservedSectors(def);
+                        int   dirLen = (def.drm + 1) * 32 / def.bytesPerSector;
 
                         // Read the directory marked by this definition
                         var ms = new MemoryStream();
 
                         for(var p = 0; p < dirLen; p++)
                         {
-                            errno = imagePlugin.ReadSector((ulong)((int)offset                                 +
-                                                                   (int)partition.Start                        +
-                                                                   p / _sectorMask.Length * _sectorMask.Length +
-                                                                   _sectorMask[p % _sectorMask.Length]),
+                            if(!TryGetPhysicalSector(def, offset + (ulong)p, out ulong dirSectorAddress)) break;
+
+                            errno = imagePlugin.ReadSector(partition.Start + dirSectorAddress,
                                                            false,
                                                            out byte[] dirSector,
                                                            out _);
@@ -1033,90 +987,44 @@ public sealed partial class CPM
                             for(var b = 0; b < directory.Length; b++) directory[b] = (byte)(~directory[b] & 0xFF);
                         }
 
-                        // Check the directory
-                        if(CheckDir(directory))
+                        // Check the directory, and that its files fit in the volume the definition describes
+                        if(CheckDir(directory) && CheckAllocations(directory, def.dsm, def.al0, def.al1))
                         {
+                            int invalidEntries = CountInvalidEntries(directory);
+                            int fileEntries    = CountFileEntries(directory);
+
                             AaruLogging.Debug(MODULE_NAME,
                                               Localization.Definition_0_has_a_correct_directory,
                                               def.comment);
 
-                            // Build a Disc Parameter Block
-                            _workingDefinition = def;
-
-                            _dpb = new DiscParameterBlock
+                            // Definitions that read the directory from the wrong place, or in the wrong order, see file
+                            // data as entries or miss part of the directory. Prefer the fewest impossible entries,
+                            // then the most files, then the first definition.
+                            if(bestDefinition is null              ||
+                               invalidEntries < bestInvalidEntries ||
+                               invalidEntries == bestInvalidEntries && fileEntries > bestFileEntries)
                             {
-                                al0 = (byte)def.al0,
-                                al1 = (byte)def.al1,
-                                blm = (byte)def.blm,
-                                bsh = (byte)def.bsh,
-
-                                // Needed?
-                                cks = 0,
-                                drm = (ushort)def.drm,
-                                dsm = (ushort)def.dsm,
-                                exm = (byte)def.exm,
-                                off = (ushort)def.ofs,
-                                spt = (ushort)(def.sectorsPerTrack * def.bytesPerSector / 128)
-                            };
-
-                            switch(def.bytesPerSector)
-                            {
-                                case 128:
-                                    _dpb.psh = 0;
-                                    _dpb.phm = 0;
-
-                                    break;
-                                case 256:
-                                    _dpb.psh = 1;
-                                    _dpb.phm = 1;
-
-                                    break;
-                                case 512:
-                                    _dpb.psh = 2;
-                                    _dpb.phm = 3;
-
-                                    break;
-                                case 1024:
-                                    _dpb.psh = 3;
-                                    _dpb.phm = 7;
-
-                                    break;
-                                case 2048:
-                                    _dpb.psh = 4;
-                                    _dpb.phm = 15;
-
-                                    break;
-                                case 4096:
-                                    _dpb.psh = 5;
-                                    _dpb.phm = 31;
-
-                                    break;
-                                case 8192:
-                                    _dpb.psh = 6;
-                                    _dpb.phm = 63;
-
-                                    break;
-                                case 16384:
-                                    _dpb.psh = 7;
-                                    _dpb.phm = 127;
-
-                                    break;
-                                case 32768:
-                                    _dpb.psh = 8;
-                                    _dpb.phm = 255;
-
-                                    break;
+                                bestDefinition     = def;
+                                bestDirectory      = directory;
+                                bestInvalidEntries = invalidEntries;
+                                bestFileEntries    = fileEntries;
                             }
-
-                            _cpmFound          = true;
-                            _workingDefinition = def;
-
-                            return true;
                         }
 
-                        _label             = null;
-                        _labelCreationDate = null;
-                        _labelUpdateDate   = null;
+                        _label                = null;
+                        _labelCreationDate    = null;
+                        _labelUpdateDate      = null;
+                        _standardTimestamps   = false;
+                        _thirdPartyTimestamps = false;
+                    }
+
+                    if(bestDefinition is not null)
+                    {
+                        // Get the label and timestamps of the chosen directory again
+                        CheckDir(bestDirectory);
+                        UseDefinition(bestDefinition);
+
+                        return true;
                     }
                 }
             }
@@ -1204,6 +1112,7 @@ public sealed partial class CPM
 
                     break;
                 case "CYLINDERS":
+                case "EAGLE":
                     sb.AppendLine(Localization.Head_changes_after_whole_side);
 
                     break;
