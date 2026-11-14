@@ -649,7 +649,7 @@
         <value>[red]El dispositivo no está en la base de datos, por favor cree un reporte del mismo y adjúntelo en un reporte de Github.[/]</value>
     </data>
     <data name="Device_not_ready_Sense" xml:space="preserve">
-        <value>[red]El dispositivo no está listo. Sense [green]{0}[/] ASC [teal]{1:X2}h[/] ASCQ [aqua]{2:X2}h[/]</value>
+        <value>[red]El dispositivo no está listo. Sense [green]{0}[/] ASC [teal]{1:X2}h[/] ASCQ [aqua]{2:X2}h[/][/]</value>
     </data>
     <data name="Device_only_supports_SCSI_READ_10_but_has_more_than_0_blocks_1_blocks_total" xml:space="preserve">
     <value>El dispositivo sólo soporta SCSI READ (10) pero tiene más de {0} bloques ({1} en total)</value>
@@ -1701,7 +1701,7 @@
     <value>Sistema operativo: {0} {1}</value>
   </data>
     <data name="Output_format_does_not_support_0" xml:space="preserve">
-        <value>[red]El formato de salida no soporta [orange3]{0}[/].</value>
+        <value>[red]El formato de salida no soporta [orange3]{0}[/].[/]</value>
     </data>
     <data name="Output_format_does_not_support_0_continuing" xml:space="preserve">
         <value>[red]El formato de salida no soporta [orange3]{0}[/], continuando...[/]</value>
@@ -2489,7 +2489,7 @@
         <value>[slateblue1]Reintentando sector [lime]{0}[/], paso [teal]{1}[/], recuperando datos parciales, [italic]hacia adelante[/][/]</value>
     </data>
     <data name="Retrying_sector_0_pass_1_recovering_partial_data_reverse" xml:space="preserve">
-        <value>[slateblue1]Reintentando sector [lime]{0}, paso [teal]{1}, recuperando datos parciales, [italic]hacia atrás</value>
+        <value>[slateblue1]Reintentando sector [lime]{0}[/], paso [teal]{1}[/], recuperando datos parciales, [italic]hacia atrás[/][/]</value>
     </data>
     <data name="Retrying_sector_0_pass_1_reverse" xml:space="preserve">
         <value>[slateblue1]Reintentando sector [lime]{0}[/], paso [teal]{1}[/], [italic]hacia atrás[/][/]</value>
