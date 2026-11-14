@@ -51,7 +51,7 @@ public sealed class Spiral : IMediaGraph
     // same margin at the rim, and a capacity proportional to the recorded area, (end² - 50²) / (116² - 50²) of a CD's
     static readonly DiscParameters _videoNowParameters = new(85, 15, 33, 46, 50, 81, 0, 0, 133439, SKColors.Silver);
     static readonly DiscParameters _videoNowColorParameters =
-        new(100, 15, 33, 46, 50, 96, 0, 0, 220679, SKColors.Silver);
+        new(108, 15, 33, 46, 50, 104, 0, 0, 273253, SKColors.Silver);
     static readonly DiscParameters _ddcdRecordableParameters =
         new(120, 15, 33, 46, 50, 116, 45, 46, 666000, new SKColor(0xBD, 0xA0, 0x00));
     static readonly DiscParameters _ddcdRewritableParameters =
