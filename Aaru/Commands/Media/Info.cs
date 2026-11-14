@@ -398,7 +398,7 @@ sealed class MediaInfoCommand : Command<MediaInfoCommand.Settings>
                                  scsiInfo.DvdRamDds);
 
                 AaruLogging.WriteLine($"[bold]{UI.Disc_Definition_Structure}:[/]" +
-                                      $"\n{Markup.Escape(DDS.Prettify(scsiInfo.DvdRamDds))}");
+                                      $"\n{DDS.Prettify(scsiInfo.DvdRamDds)}");
             }
 
             if(scsiInfo.DvdRamCartridgeStatus != null)
@@ -573,7 +573,7 @@ sealed class MediaInfoCommand : Command<MediaInfoCommand.Settings>
 
                 AaruLogging.WriteLine(Localization.Core.Bluray_Disc_Information);
 #pragma warning disable PH2069
-                AaruLogging.WriteLine("{0}", Markup.Escape(DI.Prettify(scsiInfo.BlurayDiscInformation)));
+                AaruLogging.WriteLine("{0}", DI.Prettify(scsiInfo.BlurayDiscInformation));
 #pragma warning restore PH2069
             }
 
@@ -646,7 +646,7 @@ sealed class MediaInfoCommand : Command<MediaInfoCommand.Settings>
             if(scsiInfo.BlurayTrackResources != null)
             {
                 AaruLogging.WriteLine($"[bold]{Localization.Core.Track_Resources_Information}:[/]" +
-                                      $"\n{Markup.Escape(DiscInformation.Prettify(scsiInfo.BlurayTrackResources))}");
+                                      $"\n{DiscInformation.Prettify(scsiInfo.BlurayTrackResources)}");
 
                 DataFile.WriteTo(MODULE_NAME,
                                  outputPrefix,
@@ -658,7 +658,7 @@ sealed class MediaInfoCommand : Command<MediaInfoCommand.Settings>
             if(scsiInfo.BlurayPowResources != null)
             {
                 AaruLogging.WriteLine($"[bold]{Localization.Core.POW_Resources_Information}:[/]" +
-                                      $"\n{Markup.Escape(DiscInformation.Prettify(scsiInfo.BlurayPowResources))}");
+                                      $"\n{DiscInformation.Prettify(scsiInfo.BlurayPowResources)}");
 
                 DataFile.WriteTo(MODULE_NAME,
                                  outputPrefix,
@@ -731,7 +731,7 @@ sealed class MediaInfoCommand : Command<MediaInfoCommand.Settings>
                 DataFile.WriteTo(MODULE_NAME, outputPrefix, "_pma.bin", "SCSI READ TOC/PMA/ATIP", scsiInfo.Pma);
 
                 AaruLogging.WriteLine($"[bold]{Localization.Core.PMA}:[/]" +
-                                      $"\n[/]{Markup.Escape(PMA.Prettify(scsiInfo.Pma))}");
+                                      $"\n{PMA.Prettify(scsiInfo.Pma)}");
             }
 
             if(scsiInfo.CdTextLeadIn != null)
@@ -773,7 +773,7 @@ sealed class MediaInfoCommand : Command<MediaInfoCommand.Settings>
             if(scsiInfo.DecodedXboxSecuritySector.HasValue)
             {
                 AaruLogging.WriteLine($"[bold]{Localization.Core.Xbox_Security_Sector}:[/]" +
-                                      $"\n{Markup.Escape(SS.Prettify(scsiInfo.DecodedXboxSecuritySector))}");
+                                      $"\n{SS.Prettify(scsiInfo.DecodedXboxSecuritySector)}");
             }
 
             if(scsiInfo.XgdInfo != null)
