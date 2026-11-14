@@ -3040,7 +3040,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
         <value>[slateblue1]Hashing blocks [lime]{0}[/] of [violet]{1}[/][/]</value>
     </data>
     <data name="Hashing_file_0" xml:space="preserve">
-        <value>[slateblue1]Hashing file [green]{0}[/]...</value>
+        <value>[slateblue1]Hashing file [green]{0}[/]...[/]</value>
     </data>
     <data name="Checking_filesystems" xml:space="preserve">
         <value>[slateblue1]Checking filesystems...[/]</value>
