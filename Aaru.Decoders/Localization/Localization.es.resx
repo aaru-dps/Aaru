@@ -8750,7 +8750,7 @@
     <value>Este descriptor está duplicado</value>
   </data>
     <data name="This_disc_contains_a_CD_ROM_layer" xml:space="preserve">
-        <value>[slateblue1]El disco contiene una capa [rosybrownCD-ROM[/].[/]</value>
+        <value>[slateblue1]El disco contiene una capa [rosybrown]CD-ROM[/].[/]</value>
     </data>
     <data name="This_disc_contains_a_CD_RW_layer" xml:space="preserve">
         <value>[slateblue1]El disco contiene una capa [rosybrown]CD-RW[/].[/]</value>
