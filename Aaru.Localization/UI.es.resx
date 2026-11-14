@@ -2973,7 +2973,7 @@ Probadores:
         <value>[slateblue1]Escritos [lime]{0}[/] bytes del fichero [green]{1}[/] en [teal]{2}[/][/]</value>
     </data>
     <data name="Written_0_bytes_of_xattr_1_from_file_2_to_3" xml:space="preserve">
-        <value>[slateblue1]Escritos [lime]{0}[/] bytes del atributo extendido [fuchsia]{1}[/] del fichero [green]{2}[/] en [teal]{3}[/]</value>
+        <value>[slateblue1]Escritos [lime]{0}[/] bytes del atributo extendido [fuchsia]{1}[/] del fichero [green]{2}[/] en [teal]{3}[/][/]</value>
     </data>
     <data name="Written_Aaru_Metadata_to_output_image" xml:space="preserve">
         <value>[slateblue1]Escritos los metadatos de Aaru en la imagen.[/]</value>
