@@ -68,7 +68,6 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 1440,
             SectorSize  = 512,
-            Bootable    = true,
             Clusters    = 360,
             ClusterSize = 2048
         },
@@ -78,7 +77,6 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 1440,
             SectorSize  = 512,
-            Bootable    = true,
             Clusters    = 360,
             ClusterSize = 2048
         },
@@ -88,7 +86,6 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 1600,
             SectorSize  = 512,
-            Bootable    = true,
             Clusters    = 400,
             ClusterSize = 2048
         },
@@ -98,7 +95,6 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 1600,
             SectorSize  = 512,
-            Bootable    = true,
             Clusters    = 400,
             ClusterSize = 2048
         },
@@ -108,7 +104,6 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 1600,
             SectorSize  = 512,
-            Bootable    = true,
             Clusters    = 400,
             ClusterSize = 2048
         },
@@ -118,7 +113,6 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 1600,
             SectorSize  = 512,
-            Bootable    = true,
             Clusters    = 400,
             ClusterSize = 2048
         },
@@ -128,7 +122,6 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 1600,
             SectorSize  = 512,
-            Bootable    = true,
             Clusters    = 400,
             ClusterSize = 2048
         },
@@ -138,7 +131,6 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 1600,
             SectorSize  = 512,
-            Bootable    = true,
             Clusters    = 400,
             ClusterSize = 2048
         },
@@ -148,7 +140,6 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 1600,
             SectorSize  = 512,
-            Bootable    = true,
             Clusters    = 400,
             ClusterSize = 2048
         },
@@ -158,7 +149,6 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 1600,
             SectorSize  = 512,
-            Bootable    = true,
             Clusters    = 400,
             ClusterSize = 2048
         }

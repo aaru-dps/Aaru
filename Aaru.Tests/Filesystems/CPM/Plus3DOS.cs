@@ -51,7 +51,7 @@ public class Plus3DOS() : FilesystemTest("cpmfs")
             Sectors     = 360,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 359,
+            Clusters    = 175,
             ClusterSize = 1024
         },
         new()
@@ -61,7 +61,7 @@ public class Plus3DOS() : FilesystemTest("cpmfs")
             Sectors     = 360,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 359,
+            Clusters    = 175,
             ClusterSize = 1024
         }
     ];

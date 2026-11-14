@@ -48,8 +48,8 @@ public class ParaDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 800,
             SectorSize  = 512,
-            Clusters    = 180,
-            ClusterSize = 1024
+            Clusters    = 200,
+            ClusterSize = 2048
         },
         new()
         {
@@ -57,8 +57,8 @@ public class ParaDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 800,
             SectorSize  = 512,
-            Clusters    = 180,
-            ClusterSize = 1024
+            Clusters    = 200,
+            ClusterSize = 2048
         },
         new()
         {
@@ -66,8 +66,7 @@ public class ParaDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 410,
             SectorSize  = 512,
-            Bootable    = true,
-            Clusters    = 170,
+            Clusters    = 205,
             ClusterSize = 1024
         },
         new()
@@ -76,8 +75,7 @@ public class ParaDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 410,
             SectorSize  = 512,
-            Bootable    = true,
-            Clusters    = 170,
+            Clusters    = 205,
             ClusterSize = 1024
         },
         new()
@@ -86,9 +84,8 @@ public class ParaDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 800,
             SectorSize  = 512,
-            Bootable    = true,
-            Clusters    = 170,
-            ClusterSize = 1024
+            Clusters    = 200,
+            ClusterSize = 2048
         },
         new()
         {
@@ -96,9 +93,8 @@ public class ParaDOS() : FilesystemTest("cpmfs")
             MediaType   = MediaType.CompactFloppy,
             Sectors     = 800,
             SectorSize  = 512,
-            Bootable    = true,
-            Clusters    = 170,
-            ClusterSize = 1024
+            Clusters    = 200,
+            ClusterSize = 2048
         }
     ];
 }

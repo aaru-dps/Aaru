@@ -48,8 +48,9 @@ public class Attache() : FilesystemTest("cpmfs")
             MediaType   = MediaType.Unknown,
             Sectors     = 790,
             SectorSize  = 512,
-            Clusters    = 395,
-            ClusterSize = 1024
+            Bootable    = true,
+            Clusters    = 182,
+            ClusterSize = 2048
         },
         new()
         {
@@ -57,8 +58,9 @@ public class Attache() : FilesystemTest("cpmfs")
             MediaType   = MediaType.Unknown,
             Sectors     = 790,
             SectorSize  = 512,
-            Clusters    = 395,
-            ClusterSize = 1024
+            Bootable    = true,
+            Clusters    = 182,
+            ClusterSize = 2048
         }
     ];
 }

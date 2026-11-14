@@ -87,7 +87,7 @@ public class AmstradCPMPlus() : FilesystemTest("cpmfs")
             Sectors     = 360,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 359,
+            Clusters    = 175,
             ClusterSize = 1024
         },
         new()
@@ -97,7 +97,7 @@ public class AmstradCPMPlus() : FilesystemTest("cpmfs")
             Sectors     = 360,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 359,
+            Clusters    = 175,
             ClusterSize = 1024
         },
         new()
@@ -107,7 +107,7 @@ public class AmstradCPMPlus() : FilesystemTest("cpmfs")
             Sectors     = 1440,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 356,
+            Clusters    = 357,
             ClusterSize = 2048
         },
         new()
@@ -117,7 +117,7 @@ public class AmstradCPMPlus() : FilesystemTest("cpmfs")
             Sectors     = 1440,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 356,
+            Clusters    = 357,
             ClusterSize = 2048
         },
         new()
@@ -127,7 +127,7 @@ public class AmstradCPMPlus() : FilesystemTest("cpmfs")
             Sectors     = 360,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 359,
+            Clusters    = 175,
             ClusterSize = 1024
         },
         new()
@@ -137,7 +137,7 @@ public class AmstradCPMPlus() : FilesystemTest("cpmfs")
             Sectors     = 360,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 359,
+            Clusters    = 175,
             ClusterSize = 1024
         }
     ];

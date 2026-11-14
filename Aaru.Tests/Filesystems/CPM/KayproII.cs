@@ -51,7 +51,7 @@ public class KayproII() : ReadOnlyFilesystemTest("cpmfs")
             Sectors     = 400,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 194,
+            Clusters    = 195,
             ClusterSize = 1024
         },
         new()
@@ -61,7 +61,7 @@ public class KayproII() : ReadOnlyFilesystemTest("cpmfs")
             Sectors     = 400,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 194,
+            Clusters    = 195,
             ClusterSize = 1024
         }
     ];

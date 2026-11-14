@@ -1068,7 +1068,9 @@ public sealed partial class CPM
 
         if(_dpb.dsm > 0)
         {
-            sb.AppendFormat(Localization.Volume_contains_0_blocks_1_bytes, _dpb.dsm, _dpb.dsm * (128 << _dpb.bsh))
+            sb.AppendFormat(Localization.Volume_contains_0_blocks_1_bytes,
+                            _dpb.dsm + 1,
+                            (long)(_dpb.dsm + 1) * (128 << _dpb.bsh))
               .AppendLine();
         }
 
@@ -1160,10 +1162,7 @@ public sealed partial class CPM
         metadata.Bootable    |= _workingDefinition.sofs > 0 || _workingDefinition.ofs > 0;
         metadata.ClusterSize =  (uint)(128 << _dpb.bsh);
 
-        if(_dpb.dsm > 0)
-            metadata.Clusters = _dpb.dsm;
-        else
-            metadata.Clusters = partition.End - partition.Start;
+        metadata.Clusters = (ulong)_dpb.dsm + 1;
 
         if(_labelCreationDate != null) metadata.CreationDate = DateHandlers.CpmToDateTime(_labelCreationDate);
 

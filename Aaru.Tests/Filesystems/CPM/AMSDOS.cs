@@ -69,7 +69,7 @@ public class AMSDOS() : FilesystemTest("cpmfs")
             Sectors     = 320,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 155,
+            Clusters    = 156,
             ClusterSize = 1024
         },
         new()
@@ -79,7 +79,7 @@ public class AMSDOS() : FilesystemTest("cpmfs")
             Sectors     = 360,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 155,
+            Clusters    = 171,
             ClusterSize = 1024
         },
         new()
@@ -89,7 +89,7 @@ public class AMSDOS() : FilesystemTest("cpmfs")
             Sectors     = 360,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 170,
+            Clusters    = 171,
             ClusterSize = 1024
         },
         new()
@@ -99,7 +99,7 @@ public class AMSDOS() : FilesystemTest("cpmfs")
             Sectors     = 360,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 170,
+            Clusters    = 171,
             ClusterSize = 1024
         }
     ];

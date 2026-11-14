@@ -49,7 +49,7 @@ public class Bondwell() : FilesystemTest("cpmfs")
             Sectors     = 1440,
             SectorSize  = 256,
             Bootable    = true,
-            Clusters    = 174,
+            Clusters    = 175,
             ClusterSize = 2048
         },
         new()
@@ -59,7 +59,7 @@ public class Bondwell() : FilesystemTest("cpmfs")
             Sectors     = 1440,
             SectorSize  = 256,
             Bootable    = true,
-            Clusters    = 174,
+            Clusters    = 175,
             ClusterSize = 2048
         }
     ];

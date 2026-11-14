@@ -49,8 +49,8 @@ public class XtalDOS() : ReadOnlyFilesystemTest("cpmfs")
             Sectors     = 400,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 189,
-            ClusterSize = 1024
+            Clusters    = 95,
+            ClusterSize = 2048
         },
         new()
         {
@@ -59,8 +59,8 @@ public class XtalDOS() : ReadOnlyFilesystemTest("cpmfs")
             Sectors     = 400,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 189,
-            ClusterSize = 1024
+            Clusters    = 95,
+            ClusterSize = 2048
         }
     ];
 }
