@@ -5810,7 +5810,7 @@ Do you want to continue?</value>
         <value>Dump Lead-Out sectors if drive and image supports it.</value>
     </data>
     <data name="Detected_Omnidrive" xml:space="preserve">
-        <value>[slateblue1]Detected [/][#FFFFFF]O[/][#FFAFC8]m[/][#74D7EE]n[/][#E40303]i[/][#FF8C00]D[/][#FFED00]r[/][#008026]i[/][#004DFF]v[/][#750787]e[/][#613915]![/][000000]![/] [slateblue1]version[/] [purple]{0}.{1}.{2}[/]</value>
+        <value>[slateblue1]Detected [/][#FFFFFF]O[/][#FFAFC8]m[/][#74D7EE]n[/][#E40303]i[/][#FF8C00]D[/][#FFED00]r[/][#008026]i[/][#004DFF]v[/][#750787]e[/][#613915]![/][#000000]![/] [slateblue1]version[/] [purple]{0}.{1}.{2}[/]</value>
     </data>
     <data name="Yes__sir__Setting_ludicrous_speed_sir" xml:space="preserve">
         <value>[slateblue1]Yes, sir! Setting ludicrous speed sir![/]</value>
