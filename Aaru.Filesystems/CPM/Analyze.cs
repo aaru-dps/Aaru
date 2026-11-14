@@ -189,6 +189,9 @@ public sealed partial class CPM
         string extension = Encoding.ASCII.GetString(extensionBytes).Trim();
         int    user      = entry.statusUser & 0x0F;
 
+        // A file without name nor extension cannot be addressed, hide it
+        if(filename.Length == 0 && extension.Length == 0) return;
+
         if(user > 0) filename                         = $"{user:X1}:{filename}";
         if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
@@ -229,6 +232,9 @@ public sealed partial class CPM
         string filename  = Encoding.ASCII.GetString(filenameBytes).Trim();
         string extension = Encoding.ASCII.GetString(extensionBytes).Trim();
         int    user      = entry.statusUser & 0x0F;
+
+        // A file without name nor extension cannot be addressed, hide it
+        if(filename.Length == 0 && extension.Length == 0) return;
 
         if(user > 0) filename                         = $"{user:X1}:{filename}";
         if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;

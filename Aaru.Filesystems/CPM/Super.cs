@@ -293,6 +293,9 @@ public sealed partial class CPM
                     string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
                     string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
+                    // A file without name nor extension cannot be addressed, hide it
+                    if(filename.Length == 0 && extension.Length == 0) continue;
+
                     // If user is != 0, append user to name to have identical filenames
                     if(user > 0) filename = $"{user:X1}:{filename}";
 
@@ -398,6 +401,9 @@ public sealed partial class CPM
                     string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
                     string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
+                    // A file without name nor extension cannot be addressed, hide it
+                    if(filename.Length == 0 && extension.Length == 0) continue;
+
                     // If user is != 0, append user to name to have identical filenames
                     if(user > 0) filename = $"{user:X1}:{filename}";
 
@@ -487,6 +493,9 @@ public sealed partial class CPM
 
                     string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
                     string extension = Encoding.ASCII.GetString(entry.extension).Trim();
+
+                    // A file without name nor extension cannot be addressed, hide it
+                    if(filename.Length == 0 && extension.Length == 0) continue;
 
                     // If user is != 0, append user to name to have identical filenames
                     if(user > 0) filename = $"{user:X1}:{filename}";
