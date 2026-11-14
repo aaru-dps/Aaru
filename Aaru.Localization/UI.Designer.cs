@@ -885,6 +885,12 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Optical_disc_partitions {
+            get {
+                return ResourceManager.GetString("Optical_disc_partitions", resourceCulture);
+            }
+        }
+        
         public static string No_partitions_found {
             get {
                 return ResourceManager.GetString("No_partitions_found", resourceCulture);

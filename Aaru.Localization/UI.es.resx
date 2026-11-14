@@ -6142,4 +6142,7 @@ Probadores:
     <data name="Invalid_sector_range_list_0" xml:space="preserve">
         <value>Lista de sectores a no recortar ni reintentar no válida: {0}</value>
     </data>
+    <data name="Optical_disc_partitions" xml:space="preserve">
+        <value>Particiones de disco óptico</value>
+    </data>
 </root>

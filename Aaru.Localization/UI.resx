@@ -6229,4 +6229,7 @@ Do you want to continue?</value>
     <data name="Invalid_sector_range_list_0" xml:space="preserve">
         <value>Invalid list of sectors not to trim nor retry: {0}</value>
     </data>
+    <data name="Optical_disc_partitions" xml:space="preserve">
+        <value>Optical disc partitions</value>
+    </data>
 </root>

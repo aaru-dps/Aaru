@@ -508,13 +508,21 @@ public partial class MainWindowViewModel : ViewModelBase
                 {
                     AaruLogging.WriteLine(UI._0_partitions_found, partitions.Count);
 
+                    // Scheme used by the optical image plugins for their tracks, shown with a friendlier name
+                    string opticalTrackScheme =
+                        imageFormat is IOpticalMediaImage { Partitions.Count: > 0 } opticalImage
+                            ? opticalImage.Partitions[0].Scheme
+                            : null;
+
                     // Group partitions by scheme and process each one
                     foreach(string scheme in partitions.Select(static p => p.Scheme).Distinct().Order())
                     {
                         // TODO: Add icons to partition schemes
                         var schemeModel = new PartitionSchemeModel
                         {
-                            Name = scheme
+                            Name = opticalTrackScheme != null && scheme == opticalTrackScheme
+                                       ? UI.Optical_disc_partitions
+                                       : scheme
                         };
 
                         foreach(Partition partition in partitions.Where(p => p.Scheme == scheme)
