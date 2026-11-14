@@ -1510,25 +1510,25 @@
         <value>[slateblue1]Disc is normal speed (CLV) [orange3]CD-R[/][/]</value>
     </data>
     <data name="Disc_is_high_speed_CAV_CD_R" xml:space="preserve">
-        <value>[slateblue1]Disc is high speed (CAV) CD-R</value>
+        <value>[slateblue1]Disc is high speed (CAV) [orange3]CD-R[/][/]</value>
     </data>
     <data name="Disc_is_medium_type_A_low_beta_category_CD_R" xml:space="preserve">
-        <value>[slateblue1]Disc is medium type A, low beta category (A-) CD-R</value>
+        <value>[slateblue1]Disc is medium type A, low beta category (A-) [orange3]CD-R[/][/]</value>
     </data>
     <data name="Disc_is_medium_type_A_high_beta_category_CD_R" xml:space="preserve">
-        <value>[slateblue1]Disc is medium type A, high beta category (A+) CD-R</value>
+        <value>[slateblue1]Disc is medium type A, high beta category (A+) [orange3]CD-R[/][/]</value>
     </data>
     <data name="Disc_is_medium_type_B_low_beta_category_CD_R" xml:space="preserve">
-        <value>[slateblue1]Disc is medium type B, low beta category (B-) CD-R</value>
+        <value>[slateblue1]Disc is medium type B, low beta category (B-) [orange3]CD-R[/][/]</value>
     </data>
     <data name="Disc_is_medium_type_B_high_beta_category__CD_R" xml:space="preserve">
-        <value>[slateblue1]Disc is medium type B, high beta category (B+) CD-R</value>
+        <value>[slateblue1]Disc is medium type B, high beta category (B+) [orange3]CD-R[/][/]</value>
     </data>
     <data name="Disc_is_medium_type_C_low_beta_category__CD_R" xml:space="preserve">
-        <value>[slateblue1]Disc is medium type C, low beta category (C-) CD-R</value>
+        <value>[slateblue1]Disc is medium type C, low beta category (C-) [orange3]CD-R[/][/]</value>
     </data>
     <data name="Disc_is_medium_type_C_high_beta_category__CD_R" xml:space="preserve">
-        <value>[slateblue1]Disc is medium type C, high beta category (C+) CD-R</value>
+        <value>[slateblue1]Disc is medium type C, high beta category (C+) [orange3]CD-R[/][/]</value>
     </data>
     <data name="Unknown_CD_R_disc_subtype_0" xml:space="preserve">
         <value>[slateblue1]Unknown [orange3]CD-R[/] disc subtype:[/] [teal]{0}[/]</value>
