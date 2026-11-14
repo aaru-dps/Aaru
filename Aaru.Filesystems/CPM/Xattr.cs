@@ -45,21 +45,21 @@ public sealed partial class CPM
     {
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(['/'], StringSplitOptions.RemoveEmptyEntries);
+        string filename = GetFilename(path);
 
-        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
+        if(filename is null) return ErrorNumber.NotSupported;
 
-        if(!_fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return ErrorNumber.NoSuchFile;
+        if(!_fileCache.ContainsKey(filename)) return ErrorNumber.NoSuchFile;
 
         if(string.Equals(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture))
         {
-            if(!_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return ErrorNumber.NoError;
+            if(!_passwordCache.TryGetValue(filename, out buf)) return ErrorNumber.NoError;
         }
 
         if(!string.Equals(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture))
             return ErrorNumber.NoSuchExtendedAttribute;
 
-        return !_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)
+        return !_passwordCache.TryGetValue(filename, out buf)
                    ? ErrorNumber.NoError
                    : ErrorNumber.NoSuchExtendedAttribute;
     }
@@ -71,17 +71,17 @@ public sealed partial class CPM
 
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(['/'], StringSplitOptions.RemoveEmptyEntries);
+        string filename = GetFilename(path);
 
-        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
+        if(filename is null) return ErrorNumber.NotSupported;
 
-        if(!_fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return ErrorNumber.NoSuchFile;
+        if(!_fileCache.ContainsKey(filename)) return ErrorNumber.NoSuchFile;
 
         xattrs = [];
 
-        if(_passwordCache.ContainsKey(pathElements[0].ToUpperInvariant())) xattrs.Add("com.caldera.cpm.password");
+        if(_passwordCache.ContainsKey(filename)) xattrs.Add("com.caldera.cpm.password");
 
-        if(_decodedPasswordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+        if(_decodedPasswordCache.ContainsKey(filename))
             xattrs.Add("com.caldera.cpm.password.text");
 
         return ErrorNumber.NoError;

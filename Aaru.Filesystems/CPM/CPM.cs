@@ -108,4 +108,17 @@ public sealed partial class CPM : IReadOnlyFilesystem
     public Dictionary<string, string> Namespaces => null;
 
 #endregion
+
+    /// <summary>
+    ///     Gets the CP/M filename a path points to. CP/M has no directories, so only one leading path separator is
+    ///     removed and any other '/' is a normal character of the filename.
+    /// </summary>
+    /// <param name="path">Path to the file</param>
+    /// <returns>The uppercased filename, or <c>null</c> if the path is the root directory</returns>
+    static string GetFilename(string path)
+    {
+        if(string.IsNullOrEmpty(path) || path == "/") return null;
+
+        return (path[0] == '/' ? path[1..] : path).ToUpperInvariant();
+    }
 }

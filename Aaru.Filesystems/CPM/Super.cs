@@ -298,8 +298,6 @@ public sealed partial class CPM
 
                     if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
-                    filename = filename.Replace('/', '\u2215');
-
                     int entryNo = (32 * entry.extentCounter + entry.extentCounterHigh) / (_dpb.exm + 1);
 
                     // Do we have a stat for the file already?
@@ -405,8 +403,6 @@ public sealed partial class CPM
 
                     if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
-                    filename = filename.Replace('/', '\u2215');
-
                     int entryNo = (32 * entry.extentCounterHigh + entry.extentCounter) / (_dpb.exm + 1);
 
                     // Do we have a stat for the file already?
@@ -496,8 +492,6 @@ public sealed partial class CPM
                     if(user > 0) filename = $"{user:X1}:{filename}";
 
                     if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
-
-                    filename = filename.Replace('/', '\u2215');
 
                     // Do not repeat passwords
                     if(_passwordCache.ContainsKey(filename)) _passwordCache.Remove(filename);

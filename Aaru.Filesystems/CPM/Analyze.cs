@@ -192,8 +192,6 @@ public sealed partial class CPM
         if(user > 0) filename                         = $"{user:X1}:{filename}";
         if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
-        filename = filename.Replace('/', '\u2215');
-
         int entryNo = (32 * entry.extentCounter + entry.extentCounterHigh) / (_dpb.exm + 1);
 
         if(!fileExtents.TryGetValue(filename, out Dictionary<int, List<ushort>> extentBlocks)) extentBlocks = [];
@@ -234,8 +232,6 @@ public sealed partial class CPM
 
         if(user > 0) filename                         = $"{user:X1}:{filename}";
         if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
-
-        filename = filename.Replace('/', '\u2215');
 
         int entryNo = (32 * entry.extentCounterHigh + entry.extentCounter) / (_dpb.exm + 1);
 

@@ -46,11 +46,11 @@ public sealed partial class CPM
 
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(['/'], StringSplitOptions.RemoveEmptyEntries);
+        string filename = GetFilename(path);
 
-        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
+        if(filename is null) return ErrorNumber.IsDirectory;
 
-        if(!_fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file)) return ErrorNumber.NoSuchFile;
+        if(!_fileCache.TryGetValue(filename, out byte[] file)) return ErrorNumber.NoSuchFile;
 
         node = new CpmFileNode
         {
@@ -112,16 +112,10 @@ public sealed partial class CPM
 
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(['/'], StringSplitOptions.RemoveEmptyEntries);
+        string filename = GetFilename(path);
 
-        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
-
-        if(!string.IsNullOrEmpty(path) && !string.Equals(path, "/", StringComparison.OrdinalIgnoreCase))
-        {
-            return _statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat)
-                       ? ErrorNumber.NoError
-                       : ErrorNumber.NoSuchFile;
-        }
+        if(filename is not null)
+            return _statCache.TryGetValue(filename, out stat) ? ErrorNumber.NoError : ErrorNumber.NoSuchFile;
 
         stat = new FileEntryInfo
         {
