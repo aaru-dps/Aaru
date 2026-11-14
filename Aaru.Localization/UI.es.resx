@@ -1274,7 +1274,7 @@
         <value>[slateblue1]Calculando hash de los bytes [lime]{0}[/] a [violet]{1}[/][/]</value>
     </data>
     <data name="Hashing_file_0_of_1" xml:space="preserve">
-        <value>[slateblue1]Calculando hash del fichero [lime]{0}[/] de [violet]{1}[/]</value>
+        <value>[slateblue1]Calculando hash del fichero [lime]{0}[/] de [violet]{1}[/][/]</value>
     </data>
     <data name="Hashing_file_less_block_0" xml:space="preserve">
         <value>[slateblue1]Calculando hash del bloque [lime]{0}[/] sin fichero[/]</value>
@@ -2829,7 +2829,7 @@ Probadores:
         <value>[slateblue1]La pista [teal]{0}[/] empieza en el LBA [lime]{1}[/], termina en el [lime]{2}[/], tiene un hueco anterior de [green]{3}[/] sectores y es de tipo [darkorange]{4}[/][/]</value>
     </data>
     <data name="Track_0_starts_at_sector_1_and_ends_at_sector_2" xml:space="preserve">
-        <value>[slateblue1]La pista [teal]{0}[/] empieza en el sector [lime]{1}[/] y termina en el [lime]{2}[/]</value>
+        <value>[slateblue1]La pista [teal]{0}[/] empieza en el sector [lime]{1}[/] y termina en el [lime]{2}[/][/]</value>
     </data>
     <data name="Track_Resources" xml:space="preserve">
     <value>Recursos de pista</value>
