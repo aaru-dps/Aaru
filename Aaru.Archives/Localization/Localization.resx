@@ -87,7 +87,7 @@
         <value>[bold][slateblue1]Required variant:[/][/] [rosybrown]{0}[/]</value>
     </data>
     <data name="Requisite_for_language_0_1" xml:space="preserve">
-        <value>[bold][slateblue1]Requisite for language [italic][rosybrown]{0}[/][/]:[/][/] [green]{1}[/][/]</value>
+        <value>[bold][slateblue1]Requisite for language [italic][rosybrown]{0}[/][/]:[/][/] [green]{1}[/]</value>
     </data>
     <data name="SIS_Platform_UID_Series_60_1st_Edition" xml:space="preserve">
         <value>Series 60 1st Edition</value>

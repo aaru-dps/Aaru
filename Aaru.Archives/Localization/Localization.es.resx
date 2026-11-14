@@ -67,7 +67,7 @@
         <value>[bold][slateblue1]Ficheros para el idioma [rosybrown][italic]`{0}`[/][/]:[/][/]</value>
     </data>
     <data name="Files_for_all_languages" xml:space="preserve">
-        <value>[bold][slateblue1]Ficheros para todos los idiomas:[/]</value>
+        <value>[bold][slateblue1]Ficheros para todos los idiomas:[/][/]</value>
     </data>
     <data name="Required_UID_0_version_1_2" xml:space="preserve">
         <value>[bold][slateblue1]Requerida [rosybrown]{0}[/] versión [teal]{1}.{2}[/][/][/]</value>
@@ -235,10 +235,10 @@
         <value>[bold][slateblue1]Opción [teal]{0}[/]:[/][/]</value>
     </data>
     <data name="Name_for_language_0_1" xml:space="preserve">
-        <value>[bold][slateblue1]Nombre para el idioma [italic][rosybrown]{0}[/][/]: [green]{1}[/]</value>
+        <value>[bold][slateblue1]Nombre para el idioma [italic][rosybrown]{0}[/][/]:[/][/] [green]{1}[/]</value>
     </data>
     <data name="Found_component_name_for_language_0_at_1_with_a_length_of_2_bytes" xml:space="preserve">
-        <value>[slateblue1]Encontrado nombre de componente para el idioma [italic][rosybrown]{0}[/][/] en [teal]{1}[/] con una longitud de [lime]{2}[/] bytes</value>
+        <value>[slateblue1]Encontrado nombre de componente para el idioma [italic][rosybrown]{0}[/][/] en [teal]{1}[/] con una longitud de [lime]{2}[/] bytes[/]</value>
     </data>
     <data name="This_file_format_is_not_yet_implemented" xml:space="preserve">
         <value>[red]Este formato todavía no está implementado, no se puede decodificar más información.[/]</value>
