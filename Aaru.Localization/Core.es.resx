@@ -1581,7 +1581,7 @@
         <value>[slateblue1]Medio identificado como [fuchsia]{0}[/].[/]</value>
     </data>
     <data name="Media_is_number_0_on_a_set_of_1_medias" xml:space="preserve">
-        <value>[slateblue1]El medio es el número [teal]{0}[/] de un conjunto de [teal]{1}[/]</value>
+        <value>[slateblue1]El medio es el número [teal]{0}[/] de un conjunto de [teal]{1}[/][/]</value>
     </data>
     <data name="Media_manufacturer_0" xml:space="preserve">
     <value>Fabricante del medio: {0}</value>
