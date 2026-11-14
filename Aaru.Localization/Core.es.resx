@@ -2187,7 +2187,7 @@
         <value>[slateblue1]Leyendo byte [lime]{0}[/] de [violet]{1}[/] ([aqua]{2}[/])[/]</value>
     </data>
     <data name="Reading_cylinder_0_head_1_sector_2_3" xml:space="preserve">
-        <value>[slateblue1]Leyendo cilindro [lime]{0}[/] cabeza [lime]{1}[/] sector [lime]{2}[/] ([aqua]{3}]/])</value>
+        <value>[slateblue1]Leyendo cilindro [lime]{0}[/] cabeza [lime]{1}[/] sector [lime]{2}[/] ([aqua]{3}[/])[/]</value>
     </data>
     <data name="Reading_disc_key" xml:space="preserve">
     <value>[slateblue1]Leyendo [italic]llave del disco[/].[/]</value>

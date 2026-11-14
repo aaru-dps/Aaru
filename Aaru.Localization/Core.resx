@@ -1378,7 +1378,7 @@
     <value>Output format does not support ATA IDENTIFY.</value>
   </data>
     <data name="Reading_cylinder_0_head_1_sector_2_3" xml:space="preserve">
-    <value>[slateblue1]Reading cylinder [lime]{0}[/] head [lime]{1}[/] sector [lime]{2}[/] ([aqua]{3}[/])</value>
+    <value>[slateblue1]Reading cylinder [lime]{0}[/] head [lime]{1}[/] sector [lime]{2}[/] ([aqua]{3}[/])[/]</value>
   </data>
     <data name="Error_reading_cylinder_0_head_1_sector_2" xml:space="preserve">
     <value>Error reading cylinder {0} head {1} sector {2}.</value>
