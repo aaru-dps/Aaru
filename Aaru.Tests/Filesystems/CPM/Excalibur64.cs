@@ -45,22 +45,22 @@ public class Excalibur64() : FilesystemTest("cpmfs")
         new()
         {
             TestFile    = "filename.img",
-            MediaType   = MediaType.Unknown,
-            Sectors     = 400,
+            MediaType   = MediaType.AppleSonyDS,
+            Sectors     = 1600,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 189,
-            ClusterSize = 1024
+            Clusters    = 395,
+            ClusterSize = 2048
         },
         new()
         {
             TestFile    = "files.img",
-            MediaType   = MediaType.Unknown,
-            Sectors     = 400,
+            MediaType   = MediaType.AppleSonyDS,
+            Sectors     = 1600,
             SectorSize  = 512,
             Bootable    = true,
-            Clusters    = 189,
-            ClusterSize = 1024
+            Clusters    = 395,
+            ClusterSize = 2048
         }
     ];
 }

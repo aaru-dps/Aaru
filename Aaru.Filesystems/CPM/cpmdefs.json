@@ -21812,6 +21812,100 @@
       "sofs":            0
     },
     {
+      "al0":             192,
+      "al1":             0,
+      "bitrate":         "LOW",
+      "blm":             15,
+      "bsh":             4,
+      "bytesPerSector":  1024,
+      "comment":         "Excalibur 64 - DSDD 80 track - 1024 x 5",
+      "complement":      false,
+      "cylinders":       80,
+      "drm":             127,
+      "dsm":             394,
+      "encoding":        "MFM",
+      "evenOdd":         false,
+      "exm":             0,
+      "ofs":             2,
+      "order":           "SIDES",
+      "sectorsPerTrack": 5,
+      "side1":           {
+        "sectorIds": [
+          1,
+          4,
+          2,
+          5,
+          3
+        ],
+        "sideId":    0
+      },
+      "side2":           {
+        "sectorIds": [
+          1,
+          4,
+          2,
+          5,
+          3
+        ],
+        "sideId":    1
+      },
+      "sides":           2,
+      "skew":            0,
+      "sofs":            0
+    },
+    {
+      "al0":             192,
+      "al1":             0,
+      "bitrate":         "LOW",
+      "blm":             15,
+      "bsh":             4,
+      "bytesPerSector":  512,
+      "comment":         "Excalibur 64 - DSDD 80 track - 1024 x 5, as 512 x 10",
+      "complement":      false,
+      "cylinders":       80,
+      "drm":             127,
+      "dsm":             394,
+      "encoding":        "MFM",
+      "evenOdd":         false,
+      "exm":             0,
+      "ofs":             2,
+      "order":           "SIDES",
+      "sectorsPerTrack": 10,
+      "side1":           {
+        "sectorIds": [
+          1,
+          2,
+          7,
+          8,
+          3,
+          4,
+          9,
+          10,
+          5,
+          6
+        ],
+        "sideId":    0
+      },
+      "side2":           {
+        "sectorIds": [
+          1,
+          2,
+          7,
+          8,
+          3,
+          4,
+          9,
+          10,
+          5,
+          6
+        ],
+        "sideId":    1
+      },
+      "sides":           2,
+      "skew":            0,
+      "sofs":            0
+    },
+    {
       "al0":             128,
       "al1":             0,
       "bitrate":         "LOW",

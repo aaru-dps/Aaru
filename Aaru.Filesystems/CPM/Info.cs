@@ -61,6 +61,10 @@ public sealed partial class CPM
             case MediaType.Apple32DS:
             case MediaType.Apple33SS:
             case MediaType.Apple33DS:
+
+            // Raw images of 400 and 800 KiB are identified as these
+            case MediaType.AppleSonySS:
+            case MediaType.AppleSonyDS:
             case MediaType.DOS_525_SS_DD_8:
             case MediaType.DOS_525_SS_DD_9:
             case MediaType.DOS_525_DS_DD_8:
