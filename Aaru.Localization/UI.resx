@@ -480,7 +480,7 @@ In you are unsure, please press N to not continue.</value>
         <value>[red]Error reading file:[/] [orange3]{0}[/]</value>
     </data>
     <data name="Error_0_reading_root_directory" xml:space="preserve">
-        <value>[red]Error [orange3]{0}[/] reading root directory.[red]</value>
+        <value>[red]Error [orange3]{0}[/] reading root directory.[/]</value>
     </data>
     <data name="Retrieving_file_information" xml:space="preserve">
         <value>[slateblue1]Retrieving file information...[/]</value>
@@ -2520,7 +2520,7 @@ Do you want to continue?</value>
     <value>Save READ ATIP response</value>
   </data>
     <data name="Title_Miscellaneous" xml:space="preserve">
-    <value>[bold][darkorange3]Miscellaneous</value>
+    <value>[bold][darkorange3]Miscellaneous[/][/]</value>
   </data>
     <data name="Title_Media_catalog_number" xml:space="preserve">
     <value>[bold][slateblue1]Media catalog number[/][/]</value>
@@ -2859,7 +2859,7 @@ Do you want to continue?</value>
         <value>[slateblue1]Converting tag [orange3]{0}[/] for sectors [lime]{1}[/] to [violet]{2}[/] ([aqua]{3:P2}[/] done)[/]</value>
     </data>
     <data name="Converting_sectors_in_track_0" xml:space="preserve">
-        <value>[slateblue1]Converting sectors in track [teal]{0}[/]</value>
+        <value>[slateblue1]Converting sectors in track [teal]{0}[/][/]</value>
     </data>
     <data name="Converting_sectors_0_to_1_in_track_2_3_done" xml:space="preserve">
         <value>[slateblue1]Converting sectors [lime]{0}[/] to [violet]{1}[/] in track [teal]{2}[/] ([aqua]{3:P2}[/] done)[/]</value>

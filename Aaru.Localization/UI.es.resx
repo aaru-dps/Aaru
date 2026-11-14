@@ -542,7 +542,7 @@
         <value>[slateblue1]Convirtiendo etiquetas en la pista [teal]{0}[/] de [teal]{1}[/][/]</value>
     </data>
     <data name="Converting_tag_0" xml:space="preserve">
-        <value>[slateblue1]Convirtiendo etiqueta [orange3]{0}[/]</value>
+        <value>[slateblue1]Convirtiendo etiqueta [orange3]{0}[/][/]</value>
     </data>
     <data name="Converting_tag_0_for_sectors_1_to_2_3_done" xml:space="preserve">
         <value>[slateblue1]Convirtiendo etiqueta [orange3]{0}[/] para los sectores del [lime]{1}[/] al [violet]{2}[/] ([aqua]{3:P2}[/] completado)[/]</value>
@@ -1016,7 +1016,7 @@
         <value>[red]Error [orange3]{0}[/] leyendo etiqueta del medio, no se continuará...[/]</value>
     </data>
     <data name="Error_0_reading_root_directory" xml:space="preserve">
-        <value>[red]Error [orange3]{0}[/] leyendo directorio raíz.[red]</value>
+        <value>[red]Error [orange3]{0}[/] leyendo directorio raíz.[/]</value>
     </data>
     <data name="Error_0_reading_SCSI_INQUIRY_response_from_disc_image" xml:space="preserve">
     <value>Error {0} leyendo la respuesta de SCSI INQUIRY de la imagen</value>
