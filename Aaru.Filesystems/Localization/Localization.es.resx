@@ -622,7 +622,7 @@
     <value>Nombre de fichero del desensamblador: {0}</value>
   </data>
     <data name="Disc_bootable_following_0_specifications" xml:space="preserve">
-    <value>[fuchsia]El disco arranca siguiendo las especificaciones {0}.[fuchsia]</value>
+    <value>[fuchsia]El disco arranca siguiendo las especificaciones {0}.[/]</value>
   </data>
     <data name="Disc_ID_is_0" xml:space="preserve">
     <value>El ID del disco es {0}</value>
