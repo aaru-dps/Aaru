@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Aaru.Logging;
+using Humanizer;
 using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Session = Aaru.CommonTypes.Structs.Session;
@@ -161,7 +162,9 @@ public sealed partial class Wux
                 Length   = _imageInfo.Sectors,
                 Size     = _imageInfo.Sectors * _imageInfo.SectorSize,
                 Offset   = 0,
-                Type     = "Nintendo Wii U Optical Disc"
+                Name     = string.Format(Localization.Track_0, 1),
+                Type     = Tracks[0].Type.Humanize(),
+                Scheme   = Localization.Optical_disc_track
             }
         ];
 

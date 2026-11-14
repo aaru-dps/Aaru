@@ -44,6 +44,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.DVD;
 using Aaru.Helpers;
 using Aaru.Logging;
+using Humanizer;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Marshal = Aaru.Helpers.Marshal;
 using Sector = Aaru.Decoders.CD.Sector;
@@ -553,13 +554,14 @@ public sealed partial class Alcohol120
             {
                 var partition = new Partition
                 {
-                    Description = string.Format(Localization.Track_0, trk.point),
-                    Start       = trk.startLba,
-                    Size        = extra.sectors * trk.sectorSize,
-                    Length      = extra.sectors,
-                    Sequence    = trk.point,
-                    Offset      = trk.startOffset,
-                    Type        = trk.mode.ToString()
+                    Name     = string.Format(Localization.Track_0, trk.point),
+                    Start    = trk.startLba,
+                    Size     = extra.sectors * trk.sectorSize,
+                    Length   = extra.sectors,
+                    Sequence = trk.point,
+                    Offset   = trk.startOffset,
+                    Type     = TrackModeToTrackType(trk.mode).Humanize(),
+                    Scheme   = Localization.Optical_disc_track
                 };
 
                 Partitions.Add(partition);

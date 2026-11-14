@@ -419,13 +419,14 @@ public sealed partial class EasyCD
                 // Build partition
                 var partition = new Partition
                 {
-                    Sequence    = trackSequence - 1,
-                    Start       = currentSector,
-                    Length      = trackLength,
-                    Offset      = offsetEntry.offset,
-                    Size        = trackLength * (ulong)sectorSize,
-                    Description = string.Format(Localization.Track_0, trackSequence),
-                    Type        = aTrackType.Humanize()
+                    Sequence = trackSequence - 1,
+                    Start    = currentSector,
+                    Length   = trackLength,
+                    Offset   = offsetEntry.offset,
+                    Size     = trackLength * (ulong)sectorSize,
+                    Name     = string.Format(Localization.Track_0, trackSequence),
+                    Type     = aTrackType.Humanize(),
+                    Scheme   = Localization.Optical_disc_track
                 };
 
                 Tracks.Add(track);

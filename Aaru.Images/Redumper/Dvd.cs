@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.DVD;
 using Aaru.Helpers;
 using Aaru.Logging;
+using Humanizer;
 using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Images;
@@ -174,7 +175,9 @@ public sealed partial class Redumper
                 Length   = _imageInfo.Sectors,
                 Size     = _imageInfo.Sectors * _imageInfo.SectorSize,
                 Offset   = 0,
-                Type     = "DVD Data"
+                Name     = string.Format(Localization.Track_0, 1),
+                Type     = Tracks[0].Type.Humanize(),
+                Scheme   = Localization.Optical_disc_track
             }
         ];
 

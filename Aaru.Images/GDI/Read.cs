@@ -42,6 +42,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 using Aaru.Logging;
+using Humanizer;
 using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.Images;
@@ -286,14 +287,14 @@ public sealed partial class Gdi
                 // Index 01
                 var partition = new Partition
                 {
-                    Description = string.Format(Localization.Track_0, _discImage.Tracks[i].Sequence),
-                    Name        = null,
-                    Start       = _discImage.Tracks[i].StartSector,
-                    Size        = _discImage.Tracks[i].Sectors * _discImage.Tracks[i].Bps,
-                    Length      = _discImage.Tracks[i].Sectors,
-                    Sequence    = _discImage.Tracks[i].Sequence,
-                    Offset      = byteOffset,
-                    Type        = _discImage.Tracks[i].TrackType.ToString()
+                    Name     = string.Format(Localization.Track_0, _discImage.Tracks[i].Sequence),
+                    Start    = _discImage.Tracks[i].StartSector,
+                    Size     = _discImage.Tracks[i].Sectors * _discImage.Tracks[i].Bps,
+                    Length   = _discImage.Tracks[i].Sectors,
+                    Sequence = _discImage.Tracks[i].Sequence,
+                    Offset   = byteOffset,
+                    Type     = _discImage.Tracks[i].TrackType.Humanize(),
+                    Scheme   = Localization.Optical_disc_track
                 };
 
                 byteOffset += partition.Size;

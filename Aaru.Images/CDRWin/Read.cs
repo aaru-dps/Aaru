@@ -44,6 +44,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Aaru.Logging;
+using Humanizer;
 using Partition = Aaru.CommonTypes.Partition;
 using Session = Aaru.CommonTypes.Structs.Session;
 using Track = Aaru.CommonTypes.Structs.Track;
@@ -1331,14 +1332,14 @@ public sealed partial class CdrWin
                 }
 
                 // Index 01
-                partition.Description = string.Format(Localization.Track_0, _discImage.Tracks[i].Sequence);
-                partition.Name        = _discImage.Tracks[i].Title;
-                partition.Start       = (ulong)_discImage.Tracks[i].Indexes[1];
-                partition.Size        = _discImage.Tracks[i].Sectors * _discImage.Tracks[i].Bps;
-                partition.Length      = _discImage.Tracks[i].Sectors;
-                partition.Sequence    = partitionSequence;
-                partition.Offset      = partition.Start * 2352;
-                partition.Type        = _discImage.Tracks[i].TrackType;
+                partition.Name     = string.Format(Localization.Track_0, _discImage.Tracks[i].Sequence);
+                partition.Start    = (ulong)_discImage.Tracks[i].Indexes[1];
+                partition.Size     = _discImage.Tracks[i].Sectors * _discImage.Tracks[i].Bps;
+                partition.Length   = _discImage.Tracks[i].Sectors;
+                partition.Sequence = partitionSequence;
+                partition.Offset   = partition.Start * 2352;
+                partition.Type     = CdrWinTrackTypeToTrackType(_discImage.Tracks[i].TrackType).Humanize();
+                partition.Scheme   = Localization.Optical_disc_track;
 
                 partitionSequence++;
 

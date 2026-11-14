@@ -42,6 +42,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Aaru.Logging;
+using Humanizer;
 using Sentry;
 
 namespace Aaru.Images;
@@ -1241,13 +1242,13 @@ public sealed partial class Nero
                 // Create partition
                 var partition = new Partition
                 {
-                    Description = string.Format(Localization.Track_0, track.Sequence),
-                    Size        = neroTrack.EndOfTrack - neroTrack.Index1,
-                    Name        = StringHandlers.CToString(neroTrack.Isrc),
-                    Sequence    = partitionSequence,
-                    Offset      = partitionStartByte,
-                    Start       = (ulong)track.Indexes[1],
-                    Type        = NeroTrackModeToTrackType((DaoMode)neroTrack.Mode).ToString()
+                    Name     = string.Format(Localization.Track_0, track.Sequence),
+                    Size     = neroTrack.EndOfTrack - neroTrack.Index1,
+                    Sequence = partitionSequence,
+                    Offset   = partitionStartByte,
+                    Start    = (ulong)track.Indexes[1],
+                    Type     = NeroTrackModeToTrackType((DaoMode)neroTrack.Mode).Humanize(),
+                    Scheme   = Localization.Optical_disc_track
                 };
 
                 partition.Length = partition.Size / neroTrack.SectorSize;
@@ -1401,13 +1402,13 @@ public sealed partial class Nero
                 // Create partition
                 var partition = new Partition
                 {
-                    Description = string.Format(Localization.Track_0, track.Sequence),
-                    Length      = track.EndSector - track.StartSector + 1,
-                    Name        = StringHandlers.CToString(_neroTracks[1].Isrc),
-                    Sequence    = 1,
-                    Offset      = 0,
-                    Start       = (ulong)track.Indexes[1],
-                    Type        = track.Type.ToString()
+                    Name     = string.Format(Localization.Track_0, track.Sequence),
+                    Length   = track.EndSector - track.StartSector + 1,
+                    Sequence = 1,
+                    Offset   = 0,
+                    Start    = (ulong)track.Indexes[1],
+                    Type     = track.Type.Humanize(),
+                    Scheme   = Localization.Optical_disc_track
                 };
 
                 partition.Size = partition.Length * _neroTracks[1].SectorSize;

@@ -611,12 +611,13 @@ public sealed partial class DiscJuggler
 
                 var partition = new Partition
                 {
-                    Description = track.Description,
-                    Length      = trackLen,
-                    Sequence    = track.Sequence,
-                    Offset      = track.FileOffset,
-                    Start       = track.StartSector,
-                    Type        = track.Type.Humanize()
+                    Name     = string.Format(Localization.Track_0, track.Sequence),
+                    Length   = trackLen,
+                    Sequence = track.Sequence,
+                    Offset   = track.FileOffset,
+                    Start    = track.StartSector,
+                    Type     = track.Type.Humanize(),
+                    Scheme   = Localization.Optical_disc_track
                 };
 
                 if(track.Sequence > 1 && track.Pregap > 0)

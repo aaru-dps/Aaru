@@ -36,6 +36,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Humanizer;
 using Partition = Aaru.CommonTypes.Partition;
 using Track = Aaru.CommonTypes.Structs.Track;
 
@@ -131,6 +132,9 @@ public sealed partial class Ewf
         {
             if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc) return null;
 
+            CommonTypes.Enums.TrackType type =
+                _tracks is { Count: > 0 } ? _tracks[0].Type : CommonTypes.Enums.TrackType.CdMode1;
+
             List<Partition> parts =
             [
                 new()
@@ -139,8 +143,10 @@ public sealed partial class Ewf
                     Length   = _imageInfo.Sectors,
                     Offset   = 0,
                     Sequence = 0,
-                    Type     = "MODE1/2048",
-                    Size     = _imageInfo.Sectors * _imageInfo.SectorSize
+                    Name     = string.Format(Localization.Track_0, 1),
+                    Type     = type.Humanize(),
+                    Size     = _imageInfo.Sectors * _imageInfo.SectorSize,
+                    Scheme   = Localization.Optical_disc_track
                 }
             ];
 

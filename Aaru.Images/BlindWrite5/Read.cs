@@ -1112,7 +1112,8 @@ public sealed partial class BlindWrite5
 
                 track.Indexes[1] = (int)track.StartSector;
 
-                partition.Description = track.Description;
+                partition.Name   = string.Format(Localization.Track_0, track.Sequence);
+                partition.Scheme = Localization.Optical_disc_track;
 
                 partition.Size = (track.EndSector - track.StartSector) * (ulong)track.RawBytesPerSector;
 

@@ -46,6 +46,7 @@ using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Aaru.Logging;
+using Humanizer;
 using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.Images;
@@ -1205,13 +1206,14 @@ public sealed partial class Chd
             {
                 var partition = new Partition
                 {
-                    Description = aaruTrack.Description,
                     Size = (aaruTrack.EndSector - (ulong)aaruTrack.Indexes[1] + 1) * (ulong)aaruTrack.RawBytesPerSector,
                     Length = aaruTrack.EndSector - (ulong)aaruTrack.Indexes[1] + 1,
                     Sequence = aaruTrack.Sequence,
                     Offset = partPos,
                     Start = (ulong)aaruTrack.Indexes[1],
-                    Type = aaruTrack.Type.ToString()
+                    Type = aaruTrack.Type.Humanize(),
+                    Name = string.Format(Localization.Track_0, aaruTrack.Sequence),
+                    Scheme = Localization.Optical_disc_track
                 };
 
                 partPos += partition.Length;

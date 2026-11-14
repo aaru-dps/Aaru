@@ -301,13 +301,14 @@ public sealed partial class WinOnCD
                 // Build partition
                 var partition = new Partition
                 {
-                    Sequence    = trackSequence - 1,
-                    Start       = trackFirstSector,
-                    Length      = trackLength,
-                    Offset      = entry.image_offset,
-                    Size        = trackLength * (ulong)entry.sector_size,
-                    Description = string.Format(Localization.Track_0, trackSequence),
-                    Type        = trackType.Humanize()
+                    Sequence = trackSequence - 1,
+                    Start    = trackFirstSector,
+                    Length   = trackLength,
+                    Offset   = entry.image_offset,
+                    Size     = trackLength * (ulong)entry.sector_size,
+                    Name     = string.Format(Localization.Track_0, trackSequence),
+                    Type     = trackType.Humanize(),
+                    Scheme   = Localization.Optical_disc_track
                 };
 
                 // Store C2D flags for this track

@@ -42,6 +42,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 using Aaru.Logging;
+using Humanizer;
 using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.Images;
@@ -777,14 +778,14 @@ public sealed partial class Cdrdao
                 // Index 01
                 var partition = new Partition
                 {
-                    Description = string.Format(Localization.Track_0, _discimage.Tracks[i].Sequence),
-                    Name        = _discimage.Tracks[i].Title,
-                    Start       = _discimage.Tracks[i].StartSector,
-                    Size        = _discimage.Tracks[i].Sectors * _discimage.Tracks[i].Bps,
-                    Length      = _discimage.Tracks[i].Sectors,
-                    Sequence    = partitionSequence,
-                    Offset      = byteOffset,
-                    Type        = _discimage.Tracks[i].Tracktype
+                    Name     = string.Format(Localization.Track_0, _discimage.Tracks[i].Sequence),
+                    Start    = _discimage.Tracks[i].StartSector,
+                    Size     = _discimage.Tracks[i].Sectors * _discimage.Tracks[i].Bps,
+                    Length   = _discimage.Tracks[i].Sectors,
+                    Sequence = partitionSequence,
+                    Offset   = byteOffset,
+                    Type     = CdrdaoTrackTypeToTrackType(_discimage.Tracks[i].Tracktype).Humanize(),
+                    Scheme   = Localization.Optical_disc_track
                 };
 
                 byteOffset += partition.Size;

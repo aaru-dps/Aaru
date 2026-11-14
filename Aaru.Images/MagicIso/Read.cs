@@ -43,6 +43,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Aaru.Logging;
+using Humanizer;
 using Partition = Aaru.CommonTypes.Partition;
 using Session = Aaru.CommonTypes.Structs.Session;
 using Track = Aaru.CommonTypes.Structs.Track;
@@ -346,13 +347,14 @@ public sealed partial class MagicIso
         [
             new Partition
             {
-                Sequence    = 0,
-                Start       = 0,
-                Length      = totalSectors,
-                Offset      = 0,
-                Size        = totalSectors * 2048,
-                Description = string.Format(Localization.Track_0, 1),
-                Type        = "MODE1/2048"
+                Sequence = 0,
+                Start    = 0,
+                Length   = totalSectors,
+                Offset   = 0,
+                Size     = totalSectors * 2048,
+                Name     = string.Format(Localization.Track_0, 1),
+                Type     = TrackType.CdMode1.Humanize(),
+                Scheme   = Localization.Optical_disc_track
             }
         ];
 
@@ -745,13 +747,14 @@ public sealed partial class MagicIso
 
             Partitions.Add(new Partition
             {
-                Sequence    = t.sequence - 1,
-                Start       = t.startSector,
-                Length      = t.endSector - t.startSector + 1,
-                Offset      = t.virtualByteOffset,
-                Size        = (t.endSector - t.startSector + 1) * t.sectorSize,
-                Description = string.Format(Localization.Track_0, t.sequence),
-                Type        = track.Type.ToString()
+                Sequence = t.sequence - 1,
+                Start    = t.startSector,
+                Length   = t.endSector - t.startSector + 1,
+                Offset   = t.virtualByteOffset,
+                Size     = (t.endSector - t.startSector + 1) * t.sectorSize,
+                Name     = string.Format(Localization.Track_0, t.sequence),
+                Type     = track.Type.Humanize(),
+                Scheme   = Localization.Optical_disc_track
             });
 
             if(t.endSector + 1 > discSectors) discSectors = t.endSector + 1;

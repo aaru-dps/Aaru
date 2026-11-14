@@ -804,13 +804,14 @@ public sealed partial class CloneCd
 
                 var partition = new Partition
                 {
-                    Description = track.Description,
-                    Size        = (track.EndSector - (ulong)track.Indexes[1] + 1) * (ulong)track.RawBytesPerSector,
-                    Length      = track.EndSector - (ulong)track.Indexes[1] + 1,
-                    Sequence    = track.Sequence,
-                    Offset      = track.FileOffset,
-                    Start       = (ulong)track.Indexes[1],
-                    Type        = track.Type.Humanize()
+                    Name     = string.Format(Localization.Track_0, track.Sequence),
+                    Size     = (track.EndSector - (ulong)track.Indexes[1] + 1) * (ulong)track.RawBytesPerSector,
+                    Length   = track.EndSector - (ulong)track.Indexes[1] + 1,
+                    Sequence = track.Sequence,
+                    Offset   = track.FileOffset,
+                    Start    = (ulong)track.Indexes[1],
+                    Type     = track.Type.Humanize(),
+                    Scheme   = Localization.Optical_disc_track
                 };
 
                 Partitions.Add(partition);

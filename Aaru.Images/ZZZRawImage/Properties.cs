@@ -37,6 +37,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Humanizer;
 using Partition = Aaru.CommonTypes.Partition;
 using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
@@ -147,12 +148,10 @@ public sealed partial class ZZZRawImage
                 Length   = _imageInfo.Sectors,
                 Offset   = 0,
                 Sequence = 0,
-                Type = _rawCompactDisc
-                           ? _mode2 || _toastXa ? "MODE2/2352" : "MODE1/2352"
-                           : _imageInfo.MediaType is MediaType.PD650 or MediaType.PD650_WORM
-                               ? "DATA/512"
-                               : "MODE1/2048",
-                Size = _imageInfo.Sectors * _imageInfo.SectorSize
+                Name     = string.Format(Localization.Track_0, 1),
+                Type     = Tracks[0].Type.Humanize(),
+                Size     = _imageInfo.Sectors * _imageInfo.SectorSize,
+                Scheme   = Localization.Optical_disc_track
             };
 
             parts.Add(part);

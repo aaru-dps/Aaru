@@ -712,11 +712,12 @@ public sealed partial class BlindWrite4
 
                 var partition = new Partition
                 {
-                    Description = track.Description,
-                    Size        = (track.EndSector - track.StartSector + 1) * 2352,
-                    Length      = track.EndSector - track.StartSector + 1,
-                    Sequence    = track.Sequence,
-                    Start       = track.StartSector + track.Pregap
+                    Name     = string.Format(Localization.Track_0, track.Sequence),
+                    Size     = (track.EndSector - track.StartSector + 1) * 2352,
+                    Length   = track.EndSector - track.StartSector + 1,
+                    Sequence = track.Sequence,
+                    Start    = track.StartSector + track.Pregap,
+                    Scheme   = Localization.Optical_disc_track
                 };
 
                 partition.Offset = partition.Start * 2352;

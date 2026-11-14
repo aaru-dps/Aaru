@@ -43,6 +43,7 @@ using Aaru.Compression;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Aaru.Logging;
+using Humanizer;
 using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.Images;
@@ -728,13 +729,14 @@ public sealed partial class PowerISO
         [
             new Partition
             {
-                Sequence    = 0,
-                Start       = 0,
-                Length      = totalSectors,
-                Offset      = 0,
-                Size        = totalSectors * SECTOR_SIZE,
-                Description = string.Format(Localization.Track_0, 1),
-                Type        = "MODE1/2048"
+                Sequence = 0,
+                Start    = 0,
+                Length   = totalSectors,
+                Offset   = 0,
+                Size     = totalSectors * SECTOR_SIZE,
+                Name     = string.Format(Localization.Track_0, 1),
+                Type     = Tracks[0].Type.Humanize(),
+                Scheme   = Localization.Optical_disc_track
             }
         ];
 
