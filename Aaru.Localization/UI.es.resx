@@ -2373,7 +2373,7 @@ Probadores:
         <value>[slateblue1]Revisión del firmware de la unidad[/]</value>
     </data>
     <data name="Title_Drive_has_kreon_firmware" xml:space="preserve">
-        <value>[bold[blue]La unidad tiene firmware Kreon:[/][/]</value>
+        <value>[bold][blue]La unidad tiene firmware Kreon:[/][/]</value>
     </data>
     <data name="Title_Drive_information" xml:space="preserve">
     <value>Información de la unidad</value>

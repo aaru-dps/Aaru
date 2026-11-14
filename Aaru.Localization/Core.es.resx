@@ -1548,7 +1548,7 @@
         <value>[bold][blue]Mapeado:[/][/]</value>
     </data>
     <data name="Maximum_PoweRec_speed_for_currently_inserted_media_is_0_1" xml:space="preserve">
-        <value>[slateblue1]La velocidad máxima de PowerRec para el medio actualmente insertado es [lime]{0}[/] Kb/seg ([teal]{1}x[/])</value>
+        <value>[slateblue1]La velocidad máxima de PowerRec para el medio actualmente insertado es [lime]{0}[/] Kb/seg ([teal]{1}x[/])[/]</value>
     </data>
     <data name="MCN" xml:space="preserve">
     <value>MCN</value>
