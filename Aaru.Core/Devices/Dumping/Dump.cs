@@ -355,48 +355,52 @@ public partial class Dump
 
         if(_dev.IsConnectionLost) AbortForConnectionLost();
 
-        switch(_dev.IsUsb)
+        try
         {
-            case true when _dev.UsbVendorId == 0x054C && _dev.UsbProductId is 0x01C8 or 0x01C9 or 0x02D2:
-                PlayStationPortable();
+            switch(_dev.IsUsb)
+            {
+                case true when _dev.UsbVendorId == 0x054C && _dev.UsbProductId is 0x01C8 or 0x01C9 or 0x02D2:
+                    PlayStationPortable();
 
-                break;
-            case true when _dev.UsbVendorId == 0x0403 && _dev.UsbProductId == 0x97C1:
-                Retrode();
+                    break;
+                case true when _dev.UsbVendorId == 0x0403 && _dev.UsbProductId == 0x97C1:
+                    Retrode();
 
-                break;
-            default:
-                switch(_dev.Type)
-                {
-                    case DeviceType.ATA:
-                        Ata();
+                    break;
+                default:
+                    switch(_dev.Type)
+                    {
+                        case DeviceType.ATA:
+                            Ata();
 
-                        break;
-                    case DeviceType.MMC:
-                    case DeviceType.SecureDigital:
-                        SecureDigital();
+                            break;
+                        case DeviceType.MMC:
+                        case DeviceType.SecureDigital:
+                            SecureDigital();
 
-                        break;
-                    case DeviceType.NVMe:
-                        NVMe();
+                            break;
+                        case DeviceType.NVMe:
+                            NVMe();
 
-                        break;
-                    case DeviceType.ATAPI:
-                    case DeviceType.SCSI:
-                        Scsi();
+                            break;
+                        case DeviceType.ATAPI:
+                        case DeviceType.SCSI:
+                            Scsi();
 
-                        break;
-                    default:
-                        _dev.ConnectionLost -= AbortForConnectionLost;
-                        StoppingErrorMessage?.Invoke(Localization.Core.Unknown_device_type);
+                            break;
+                        default:
+                            StoppingErrorMessage?.Invoke(Localization.Core.Unknown_device_type);
 
-                        return;
-                }
+                            return;
+                    }
 
-                break;
+                    break;
+            }
         }
-
-        _dev.ConnectionLost -= AbortForConnectionLost;
+        finally
+        {
+            _dev.ConnectionLost -= AbortForConnectionLost;
+        }
 
         // A lost connection has already been reported when it happened
         if(_aborted)
