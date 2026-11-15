@@ -956,6 +956,9 @@ partial class Dump
             _speedStopwatch.Stop();
             totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
 
+            // The read failed because the connection to the remote was lost, not because of the media
+            if(_dev.IsConnectionLost) continue;
+
             if(sense && !senseBuf.IsEmpty)
             {
                 decSense = Sense.Decode(senseBuf);

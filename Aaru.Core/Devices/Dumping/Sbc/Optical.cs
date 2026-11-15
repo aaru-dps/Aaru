@@ -232,6 +232,9 @@ partial class Dump
                 sense = scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
                 totalDuration += cmdDuration;
 
+                // The read failed because the connection to the remote was lost, not because of the media
+                if(_dev.IsConnectionLost) continue;
+
                 if(!sense && !_dev.Error)
                 {
                     mhddLog.Write(i, cmdDuration, blocksToRead);

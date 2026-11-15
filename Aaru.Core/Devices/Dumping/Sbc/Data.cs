@@ -106,6 +106,9 @@ partial class Dump
             totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
             _speedStopwatch.Stop();
 
+            // The read failed because the connection to the remote was lost, not because of the media
+            if(_dev.IsConnectionLost) continue;
+
             if(!sense && !_dev.Error)
             {
                 if(Settings.Settings.Current.EnableDecryption && discKey != null && _titleKeys)

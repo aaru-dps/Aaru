@@ -156,6 +156,9 @@ public sealed partial class MediaScan
                 _speedStopwatch.Stop();
                 results.ProcessingTime  += _speedStopwatch.Elapsed.TotalMilliseconds;
 
+                // The read failed because the connection to the remote was lost, not because of the media
+                if(_dev.IsConnectionLost) break;
+
                 if(!error)
                 {
                     switch(_speedStopwatch.Elapsed.TotalMilliseconds)
@@ -283,6 +286,9 @@ public sealed partial class MediaScan
                         _speedStopwatch.Restart();
                         bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out double _, out _);
                         results.ProcessingTime += _speedStopwatch.Elapsed.TotalMilliseconds;
+
+                        // The read failed because the connection to the remote was lost, not because of the media
+                        if(_dev.IsConnectionLost) break;
 
                         if(!error)
                         {

@@ -656,6 +656,9 @@ public partial class Dump
 
             _speedStopwatch.Stop();
 
+            // The read failed because the connection to the remote was lost, not because of the media
+            if(_dev.IsConnectionLost) continue;
+
             if(!error)
             {
                 totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;

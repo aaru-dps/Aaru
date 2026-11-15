@@ -416,6 +416,9 @@ public sealed partial class MediaScan
 
                 results.ProcessingTime += _speedStopwatch.Elapsed.TotalMilliseconds;
 
+                // The read failed because the connection to the remote was lost, not because of the media
+                if(_dev.IsConnectionLost) break;
+
                 if(!sense)
                 {
                     switch(_speedStopwatch.Elapsed.TotalMilliseconds)
@@ -564,6 +567,9 @@ public sealed partial class MediaScan
                 sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration, out _, out _);
                 _speedStopwatch.Stop();
                 results.ProcessingTime  += _speedStopwatch.Elapsed.TotalMilliseconds;
+
+                // The read failed because the connection to the remote was lost, not because of the media
+                if(_dev.IsConnectionLost) break;
 
                 if(!sense && !_dev.Error)
                 {

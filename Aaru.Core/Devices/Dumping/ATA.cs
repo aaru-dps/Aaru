@@ -334,6 +334,9 @@ public partial class Dump
                         bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out _, out _, out _);
                         _speedStopwatch.Stop();
 
+                        // The read failed because the connection to the remote was lost, not because of the media
+                        if(_dev.IsConnectionLost) continue;
+
                         _writeStopwatch.Restart();
 
                         if(!error)
@@ -649,6 +652,10 @@ public partial class Dump
                                 _speedStopwatch.Stop();
 
                                 totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
+
+                                // The read failed because the connection to the remote was lost, not because of
+                                // the media
+                                if(_dev.IsConnectionLost) continue;
 
                                 _writeStopwatch.Restart();
 

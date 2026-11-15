@@ -574,6 +574,9 @@ partial class Dump
                 _speedStopwatch.Stop();
             }
 
+            // The read failed because the connection to the remote was lost, not because of the media
+            if(_dev.IsConnectionLost) continue;
+
             // Overcome the track mode change drive error
             if(inData && !nextData && sense)
             {
@@ -766,6 +769,9 @@ partial class Dump
 
                         totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
                     }
+
+                    // The read failed because the connection to the remote was lost, not because of the media
+                    if(_dev.IsConnectionLost) break;
 
                     if(!sense && !_dev.Error)
                     {

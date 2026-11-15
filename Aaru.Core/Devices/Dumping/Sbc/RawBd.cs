@@ -126,6 +126,9 @@ partial class Dump
                 totalDuration += cmdDuration;
                 _speedStopwatch.Stop();
 
+                // The read failed because the connection to the remote was lost, not because of the media
+                if(_dev.IsConnectionLost) continue;
+
                 if(!sense && !_dev.Error)
                 {
                     // ReadBlocks returns sectors in logical order (-N..-1); WriteSectorsLong expects ascending order.
@@ -204,6 +207,9 @@ partial class Dump
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
             totalDuration += cmdDuration;
             _speedStopwatch.Stop();
+
+            // The read failed because the connection to the remote was lost, not because of the media
+            if(_dev.IsConnectionLost) continue;
 
             if(!sense && !_dev.Error)
             {
@@ -292,6 +298,9 @@ partial class Dump
                 sense         =  scsiReader.ReadBlocks(out buffer, lba, toRead, out double cmdDuration, out _, out _);
                 totalDuration += cmdDuration;
                 _speedStopwatch.Stop();
+
+                // The read failed because the connection to the remote was lost, not because of the media
+                if(_dev.IsConnectionLost) continue;
 
                 if(!sense && !_dev.Error)
                 {

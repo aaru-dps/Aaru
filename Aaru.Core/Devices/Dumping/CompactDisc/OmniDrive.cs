@@ -269,6 +269,8 @@ partial class Dump
 
             _speedStopwatch.Stop();
 
+            // The read failed because the connection to the remote was lost, not because of the media
+            if(_dev.IsConnectionLost) continue;
 
             if(!sense && !_dev.Error)
             {
@@ -799,6 +801,9 @@ partial class Dump
                                          blocksToRead,
                                          _dev.Timeout,
                                          out cmdDuration);
+
+            // The read failed because the connection to the remote was lost, not because of the media
+            if(_dev.IsConnectionLost) continue;
 
             // OmniDrive seems to be doing something crazy, the command should return scrambled sectors, but as
             // CD-i Ready is "magic", it seems to be making it return descrambled sectors here, so let's check

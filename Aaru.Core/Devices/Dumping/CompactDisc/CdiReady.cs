@@ -286,6 +286,9 @@ partial class Dump
                     totalDuration += cmdDuration;
                     _speedStopwatch.Stop();
 
+                    // The read failed because the connection to the remote was lost, not because of the media
+                    if(_dev.IsConnectionLost) break;
+
                     if(!sense && !_dev.Error)
                     {
                         mhddLog.Write(i + r, cmdDuration);
@@ -396,6 +399,9 @@ partial class Dump
                     _speedStopwatch.Reset();
                 }
             }
+
+            // The read failed because the connection to the remote was lost, not because of the media
+            if(_dev.IsConnectionLost) continue;
 
             if(!sense && !_dev.Error)
             {
