@@ -458,7 +458,6 @@ public partial class Dump
         _abortReason = AbortReason.ConnectionLost;
         _aborted     = true;
         _sidecarClass?.Abort();
-        _dpmMeasurement?.Abort();
     }
 
     /// <summary>Aborts the dump in progress</summary>
