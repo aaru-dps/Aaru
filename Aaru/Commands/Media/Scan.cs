@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using Aaru.CommonTypes;
@@ -183,9 +184,12 @@ sealed class MediaScanCommand : Command<MediaScanCommand.Settings>
 
         AaruLogging.WriteLine(Localization.Core._0_sectors_took_more_than_500_ms, results.F);
 
-        AaruLogging.WriteLine(Localization.Core._0_sectors_could_not_be_read, results.UnreadableSectors.Count);
+        // A scan that fails before reading, like when the connection to the remote is lost, has no list
+        List<ulong> unreadableSectors = results.UnreadableSectors ?? [];
 
-        foreach(ulong bad in results.UnreadableSectors)
+        AaruLogging.WriteLine(Localization.Core._0_sectors_could_not_be_read, unreadableSectors.Count);
+
+        foreach(ulong bad in unreadableSectors)
             AaruLogging.WriteLine(Localization.Core.Sector_0_could_not_be_read, bad);
 
         AaruLogging.WriteLine();
@@ -203,7 +207,7 @@ sealed class MediaScanCommand : Command<MediaScanCommand.Settings>
 
         dev.Close();
 
-        return (int)ErrorNumber.NoError;
+        return dev.IsConnectionLost ? (int)ErrorNumber.InOutError : (int)ErrorNumber.NoError;
     }
 
 #region Nested type: Settings
