@@ -350,6 +350,11 @@ public partial class Dump
                                                FormatSectorRanges(_noRetrySectors)));
         }
 
+        // A remote device can lose its connection at any command, abort the dump gracefully when it does
+        _dev.ConnectionLost += AbortForConnectionLost;
+
+        if(_dev.IsConnectionLost) AbortForConnectionLost();
+
         switch(_dev.IsUsb)
         {
             case true when _dev.UsbVendorId == 0x054C && _dev.UsbProductId is 0x01C8 or 0x01C9 or 0x02D2:
@@ -382,6 +387,7 @@ public partial class Dump
 
                         break;
                     default:
+                        _dev.ConnectionLost -= AbortForConnectionLost;
                         StoppingErrorMessage?.Invoke(Localization.Core.Unknown_device_type);
 
                         return;
@@ -389,6 +395,8 @@ public partial class Dump
 
                 break;
         }
+
+        _dev.ConnectionLost -= AbortForConnectionLost;
 
         if(_aborted)
         {
@@ -426,6 +434,18 @@ public partial class Dump
                                  ResumeJsonContext.Default);
 
         fs.Close();
+    }
+
+    /// <summary>Aborts the dump because the connection to the remote device has been lost</summary>
+    void AbortForConnectionLost()
+    {
+        if(_aborted) return;
+
+        StoppingErrorMessage?.Invoke(Localization.Core.Connection_to_remote_lost_operation_aborted);
+        _abortReason = AbortReason.FatalError;
+        _aborted     = true;
+        _sidecarClass?.Abort();
+        _dpmMeasurement?.Abort();
     }
 
     /// <summary>Aborts the dump in progress</summary>

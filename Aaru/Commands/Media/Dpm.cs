@@ -266,10 +266,15 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
                             measurement.Abort();
                         };
 
+                        // Stop measuring when the connection to the remote is lost
+                        dev.ConnectionLost += measurement.Abort;
+
                         dpm = measurement.Measure(settings.Start, end, settings.Speed);
+
+                        dev.ConnectionLost -= measurement.Abort;
                     });
 
-        if(settings.Eject && dev.IsRemovable)
+        if(settings.Eject && dev.IsRemovable && !dev.IsConnectionLost)
         {
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -281,7 +286,7 @@ sealed class MediaDpmCommand : Command<MediaDpmCommand.Settings>
 
         dev.Close();
 
-        if(dpm is null) return (int)ErrorNumber.InOutError;
+        if(dpm is null || dev.IsConnectionLost) return (int)ErrorNumber.InOutError;
 
         // Resume the image to add the DPM
         ulong     sectors         = aif.Info.Sectors;

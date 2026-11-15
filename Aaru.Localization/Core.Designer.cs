@@ -7546,5 +7546,10 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Connection_to_remote_lost_operation_aborted {
+            get {
+                return ResourceManager.GetString("Connection_to_remote_lost_operation_aborted", resourceCulture);
+            }
+        }
     }
 }

@@ -109,6 +109,9 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
         bool isAdmin = dev is Devices.Remote.Device remoteDev2 ? remoteDev2.IsAdmin : DetectOS.IsAdmin;
 
+        // The remote could not be asked, the connection loss has already been reported
+        if(dev.IsConnectionLost) return (int)ErrorNumber.InOutError;
+
         if(!isAdmin)
         {
             AaruLogging.Error(UI.Device_report_must_be_run_as_admin);
@@ -1527,6 +1530,9 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
             default:
                 throw new NotSupportedException(Localization.Core.Unknown_device_type);
         }
+
+        // Do not save a report truncated by a lost connection to the remote
+        if(dev.IsConnectionLost) return (int)ErrorNumber.InOutError;
 
         var jsonFs = new FileStream(jsonFile, FileMode.Create);
 

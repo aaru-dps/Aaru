@@ -146,7 +146,7 @@ sealed class MediaInfoCommand : Command<MediaInfoCommand.Settings>
                 throw new NotSupportedException(Localization.Core.Unknown_device_type);
         }
 
-        return (int)ErrorNumber.NoError;
+        return dev.IsConnectionLost ? (int)ErrorNumber.InOutError : (int)ErrorNumber.NoError;
     }
 
     static void DoAtaMediaInfo() => AaruLogging.Error(UI.Please_use_device_info_command_for_ATA_devices);

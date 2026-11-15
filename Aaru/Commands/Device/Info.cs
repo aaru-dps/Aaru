@@ -1296,6 +1296,8 @@ sealed class DeviceInfoCommand : Command<DeviceInfoCommand.Settings>
 
         dev.Close();
 
+        if(dev.IsConnectionLost) return (int)ErrorNumber.InOutError;
+
         AaruLogging.WriteLine();
 
         // Open main database

@@ -652,7 +652,7 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
                             dumper.Start();
                         });
 
-            if(eject && dev.IsRemovable)
+            if(eject && dev.IsRemovable && !dev.IsConnectionLost)
             {
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
@@ -697,6 +697,8 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
             }
 
             dev.Close();
+
+            if(dev.IsConnectionLost) return (int)ErrorNumber.InOutError;
         }
 
         return (int)ErrorNumber.NoError;

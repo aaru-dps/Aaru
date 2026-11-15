@@ -3845,4 +3845,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="Drive_firmware_crashed_cycle_tray_and_resume_dump" xml:space="preserve">
         <value>The drive firmware has crashed, it answers every command with an invalid field error, and ejecting did not revive it. Open and close the tray, and resume the dump.</value>
     </data>
+    <data name="Connection_to_remote_lost_operation_aborted" xml:space="preserve">
+        <value>The connection to the remote was lost, the operation has been aborted.</value>
+    </data>
 </root>

@@ -3692,4 +3692,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="Drive_firmware_crashed_cycle_tray_and_resume_dump" xml:space="preserve">
         <value>El firmware de la unidad se ha colgado, responde a todos los comandos con un error de campo inválido, y expulsar no la ha recuperado. Abra y cierre la bandeja, y continúe el volcado.</value>
     </data>
+    <data name="Connection_to_remote_lost_operation_aborted" xml:space="preserve">
+        <value>Se perdió la conexión con el remoto, la operación ha sido abortada.</value>
+    </data>
 </root>

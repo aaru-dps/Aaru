@@ -83,18 +83,41 @@ public sealed partial class MediaScan
     /// <exception cref="NotSupportedException">Unknown device type</exception>
     public ScanResults Scan()
     {
-        ScanResults results = _dev.Type switch
-                              {
-                                  DeviceType.ATA => Ata(),
-                                  DeviceType.MMC or DeviceType.SecureDigital => SecureDigital(),
-                                  DeviceType.NVMe => Nvme(),
-                                  DeviceType.ATAPI or DeviceType.SCSI => Scsi(),
-                                  _ => throw new NotSupportedException(Localization.Core.Unknown_device_type)
-                              };
+        // A remote device can lose its connection at any command, abort the scan gracefully when it does
+        _dev.ConnectionLost += AbortForConnectionLost;
 
-        if(_aborted) UpdateStatus?.Invoke(Localization.Core.Operation_aborted_by_user);
+        if(_dev.IsConnectionLost) AbortForConnectionLost();
+
+        ScanResults results;
+
+        try
+        {
+            results = _dev.Type switch
+                      {
+                          DeviceType.ATA => Ata(),
+                          DeviceType.MMC or DeviceType.SecureDigital => SecureDigital(),
+                          DeviceType.NVMe => Nvme(),
+                          DeviceType.ATAPI or DeviceType.SCSI => Scsi(),
+                          _ => throw new NotSupportedException(Localization.Core.Unknown_device_type)
+                      };
+        }
+        finally
+        {
+            _dev.ConnectionLost -= AbortForConnectionLost;
+        }
+
+        if(_aborted && !_dev.IsConnectionLost) UpdateStatus?.Invoke(Localization.Core.Operation_aborted_by_user);
 
         return results;
+    }
+
+    /// <summary>Aborts the scan because the connection to the remote device has been lost</summary>
+    void AbortForConnectionLost()
+    {
+        if(_aborted) return;
+
+        StoppingErrorMessage?.Invoke(Localization.Core.Connection_to_remote_lost_operation_aborted);
+        _aborted = true;
     }
 
     /// <summary>Updates the speed, and the bytes this scan has read, after a read</summary>
