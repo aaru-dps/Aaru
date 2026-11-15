@@ -1129,6 +1129,9 @@ In you are unsure, please press N to not continue.</value>
     <data name="No_plugin_supports_requested_extension" xml:space="preserve">
         <value>[red]No plugin supports requested extension.[/]</value>
     </data>
+    <data name="No_format_or_extension_specified_defaulting_to_AaruFormat" xml:space="preserve">
+        <value>[slateblue1]No output format or file extension specified, defaulting to [green]AaruFormat[/] ([green].aif[/]).[/]</value>
+    </data>
     <data name="More_than_one_plugin_supports_requested_extension" xml:space="preserve">
         <value>[red]More than one plugin supports requested extension.[/]</value>
     </data>

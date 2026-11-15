@@ -2241,6 +2241,12 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string No_format_or_extension_specified_defaulting_to_AaruFormat {
+            get {
+                return ResourceManager.GetString("No_format_or_extension_specified_defaulting_to_AaruFormat", resourceCulture);
+            }
+        }
+        
         public static string More_than_one_plugin_supports_requested_extension {
             get {
                 return ResourceManager.GetString("More_than_one_plugin_supports_requested_extension", resourceCulture);

@@ -1799,6 +1799,9 @@
     <data name="No_plugin_supports_requested_extension" xml:space="preserve">
         <value>[red]Ninguna extensión soportada.[/]</value>
     </data>
+    <data name="No_format_or_extension_specified_defaulting_to_AaruFormat" xml:space="preserve">
+        <value>[slateblue1]No se ha especificado formato de salida ni extensión, usando [green]AaruFormat[/] ([green].aif[/]) por defecto.[/]</value>
+    </data>
     <data name="Number_in_sequence_for_media_by_image" xml:space="preserve">
     <value>El número en la secuencia del medio representado por la imagen.</value>
   </data>

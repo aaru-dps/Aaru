@@ -207,6 +207,13 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
         List<IBaseWritableImage> candidates = [];
         string                   extension  = Path.GetExtension(settings.OutputPath);
 
+        // Default to AaruFormat when neither a format nor an extension has been specified
+        if(string.IsNullOrEmpty(settings.Format) && string.IsNullOrEmpty(extension))
+        {
+            extension = ".aif";
+            AaruLogging.WriteLine(UI.No_format_or_extension_specified_defaulting_to_AaruFormat);
+        }
+
         // Try extension
         if(string.IsNullOrEmpty(settings.Format))
         {
@@ -459,7 +466,7 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
             {
                 candidates.AddRange(from plugin in plugins.WritableImages.Values
                                     where plugin is not null
-                                    where plugin.KnownExtensions.Contains(Path.GetExtension(settings.OutputPath))
+                                    where plugin.KnownExtensions.Contains(extension)
                                     select plugin);
             }
 
