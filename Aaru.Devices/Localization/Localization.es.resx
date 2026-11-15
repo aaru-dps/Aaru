@@ -504,4 +504,7 @@
     <data name="LiteOn_READ_DVD_RAW_took_0_ms" xml:space="preserve">
         <value>Lite-On READ DVD (RAW) tardó {0} ms.</value>
     </data>
+    <data name="Connection_to_remote_lost_0" xml:space="preserve">
+        <value>Se perdió la conexión con el remoto: {0}</value>
+    </data>
 </root>

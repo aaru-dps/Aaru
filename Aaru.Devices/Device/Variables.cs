@@ -30,6 +30,7 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
@@ -58,6 +59,26 @@ public partial class Device
     /// <summary>Gets the last error number.</summary>
     /// <value>The last error.</value>
     public int LastError { get; private protected set; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the connection to the device has been lost, only remote devices can lose
+    ///     it
+    /// </summary>
+    /// <value><c>true</c> if the connection has been lost; otherwise, <c>false</c>.</value>
+    public bool IsConnectionLost { get; private set; }
+
+    /// <summary>Raised once when the connection to the device is lost, every command fails from then on</summary>
+    public event Action ConnectionLost;
+
+    /// <summary>Marks the connection to the device as lost and raises <see cref="ConnectionLost" /></summary>
+    private protected void OnConnectionLost()
+    {
+        if(IsConnectionLost) return;
+
+        IsConnectionLost = true;
+        Error            = true;
+        ConnectionLost?.Invoke();
+    }
 
     /// <summary>Gets the device type.</summary>
     /// <value>The device type.</value>

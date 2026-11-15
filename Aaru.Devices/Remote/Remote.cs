@@ -98,7 +98,7 @@ public class Remote : IDisposable
 
             if(len < hdrBuf.Length)
             {
-                AaruLogging.Error(Localization.Could_not_read_from_the_network);
+                NetworkError(Localization.Could_not_read_from_the_network);
 
                 throw new IOException();
             }
@@ -128,7 +128,7 @@ public class Remote : IDisposable
 
                 if(len < buf.Length)
                 {
-                    AaruLogging.Error(Localization.Could_not_read_from_the_network);
+                    NetworkError(Localization.Could_not_read_from_the_network);
 
                     throw new IOException();
                 }
@@ -152,7 +152,7 @@ public class Remote : IDisposable
 
             if(len < buf.Length)
             {
-                AaruLogging.Error(Localization.Could_not_read_from_the_network);
+                NetworkError(Localization.Could_not_read_from_the_network);
 
                 throw new IOException();
             }
@@ -186,11 +186,11 @@ public class Remote : IDisposable
 
             buf = Marshal.StructureToByteArrayLittleEndian(clientHello);
 
-            len = _socket.Send(buf, SocketFlags.None);
+            len = Send(buf);
 
             if(len >= buf.Length) return;
 
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             throw new IOException();
         }
@@ -221,6 +221,12 @@ public class Remote : IDisposable
     /// <summary>Remote server protocol version</summary>
     public int ServerProtocolVersion { get; }
 
+    /// <summary>The connection to the remote has been lost, every command fails from now on</summary>
+    public bool ConnectionLost { get; private set; }
+
+    /// <summary>Raised once when the connection to the remote is lost</summary>
+    public event Action Disconnected;
+
     /// <summary>Is remote running with administrative (aka root) privileges?</summary>
     public bool IsRoot
     {
@@ -240,11 +246,11 @@ public class Remote : IDisposable
 
             byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-            int len = _socket.Send(buf, SocketFlags.None);
+            int len = Send(buf);
 
             if(len != buf.Length)
             {
-                AaruLogging.Error(Localization.Could_not_write_to_the_network);
+                NetworkError(Localization.Could_not_write_to_the_network);
 
                 return false;
             }
@@ -255,7 +261,7 @@ public class Remote : IDisposable
 
             if(len < hdrBuf.Length)
             {
-                AaruLogging.Error(Localization.Could_not_read_from_the_network);
+                NetworkError(Localization.Could_not_read_from_the_network);
 
                 return false;
             }
@@ -282,7 +288,7 @@ public class Remote : IDisposable
 
             if(len < buf.Length)
             {
-                AaruLogging.Error(Localization.Could_not_read_from_the_network);
+                NetworkError(Localization.Could_not_read_from_the_network);
 
                 return false;
             }
@@ -336,11 +342,11 @@ public class Remote : IDisposable
 
         byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return [];
         }
@@ -351,7 +357,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return [];
         }
@@ -381,7 +387,7 @@ public class Remote : IDisposable
 
             if(len < buf.Length)
             {
-                AaruLogging.Error(Localization.Could_not_read_from_the_network);
+                NetworkError(Localization.Could_not_read_from_the_network);
 
                 return [];
             }
@@ -405,7 +411,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return [];
         }
@@ -455,11 +461,11 @@ public class Remote : IDisposable
 
         byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
             lastError = -1;
 
             return false;
@@ -471,7 +477,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
             lastError = -1;
 
             return false;
@@ -502,7 +508,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
             lastError = -1;
 
             return false;
@@ -575,11 +581,11 @@ public class Remote : IDisposable
         if(buffer != null)
             Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdScsi>() + cmdPkt.cdb_len, cmdPkt.buf_len);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -590,7 +596,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -616,7 +622,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -626,7 +632,7 @@ public class Remote : IDisposable
         if(res.sense_len                                                            > (uint)senseBuffer.Length ||
            (ulong)Marshal.SizeOf<AaruPacketResScsi>() + res.sense_len + res.buf_len > (ulong)buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -689,11 +695,11 @@ public class Remote : IDisposable
 
         if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaChs>(), cmdPkt.buf_len);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -704,7 +710,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -730,7 +736,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -739,7 +745,7 @@ public class Remote : IDisposable
 
         if((ulong)Marshal.SizeOf<AaruPacketResAtaChs>() + res.buf_len > (ulong)buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -802,11 +808,11 @@ public class Remote : IDisposable
 
         if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba28>(), cmdPkt.buf_len);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -817,7 +823,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -843,7 +849,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -852,7 +858,7 @@ public class Remote : IDisposable
 
         if((ulong)Marshal.SizeOf<AaruPacketResAtaLba28>() + res.buf_len > (ulong)buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -915,11 +921,11 @@ public class Remote : IDisposable
 
         if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba48>(), cmdPkt.buf_len);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -930,7 +936,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -956,7 +962,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -965,7 +971,7 @@ public class Remote : IDisposable
 
         if((ulong)Marshal.SizeOf<AaruPacketResAtaLba48>() + res.buf_len > (ulong)buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -1034,11 +1040,11 @@ public class Remote : IDisposable
 
         if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdSdhci>(), cmdPkt.command.buf_len);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -1049,7 +1055,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -1075,7 +1081,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -1084,7 +1090,7 @@ public class Remote : IDisposable
 
         if((ulong)Marshal.SizeOf<AaruPacketResSdhci>() + res.res.buf_len > (ulong)buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -1122,11 +1128,11 @@ public class Remote : IDisposable
 
         byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return DeviceType.Unknown;
         }
@@ -1137,7 +1143,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return DeviceType.Unknown;
         }
@@ -1163,7 +1169,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return DeviceType.Unknown;
         }
@@ -1200,11 +1206,11 @@ public class Remote : IDisposable
 
         byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1215,7 +1221,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1241,7 +1247,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1325,11 +1331,11 @@ public class Remote : IDisposable
 
         byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1340,7 +1346,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1366,7 +1372,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1416,11 +1422,11 @@ public class Remote : IDisposable
 
         byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1431,7 +1437,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1457,7 +1463,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1496,11 +1502,11 @@ public class Remote : IDisposable
 
         byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1511,7 +1517,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1537,7 +1543,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1557,39 +1563,108 @@ public class Remote : IDisposable
     /// <param name="size">Expected total size in bytes</param>
     /// <param name="socketFlags">Socket flags</param>
     /// <returns>Retrieved number of bytes</returns>
-    static int Receive(Socket socket, byte[] buffer, int size, SocketFlags socketFlags)
+    int Receive(Socket socket, byte[] buffer, int size, SocketFlags socketFlags)
     {
-        if(socketFlags.HasFlag(SocketFlags.Peek))
+        if(ConnectionLost) return 0;
+
+        try
         {
-            // MSG_PEEK does not consume data, so every call reads from the front of the queue and
-            // accumulating at an offset would duplicate the leading bytes.
-            var got = 0;
-
-            while(got < size)
+            if(socketFlags.HasFlag(SocketFlags.Peek))
             {
-                int len = socket.Receive(buffer, 0, size, socketFlags);
+                // MSG_PEEK does not consume data, so every call reads from the front of the queue and
+                // accumulating at an offset would duplicate the leading bytes.
+                var got = 0;
 
-                if(len <= 0) break;
+                while(got < size)
+                {
+                    int len = socket.Receive(buffer, 0, size, socketFlags);
 
-                got = len;
+                    if(len <= 0) break;
+
+                    got = len;
+                }
+
+                return got;
             }
 
-            return got;
+            var offset = 0;
+
+            while(size > 0)
+            {
+                int got = socket.Receive(buffer, offset, size, socketFlags);
+
+                if(got <= 0) break;
+
+                offset += got;
+                size   -= got;
+            }
+
+            return offset;
         }
-
-        var offset = 0;
-
-        while(size > 0)
+        catch(SocketException ex)
         {
-            int got = socket.Receive(buffer, offset, size, socketFlags);
+            LoseConnection(ex);
 
-            if(got <= 0) break;
-
-            offset += got;
-            size   -= got;
+            return 0;
         }
+        catch(ObjectDisposedException ex)
+        {
+            LoseConnection(ex);
 
-        return offset;
+            return 0;
+        }
+    }
+
+    /// <summary>Sends a buffer to the remote, without throwing if the connection has been lost</summary>
+    /// <param name="buffer">Data buffer</param>
+    /// <returns>Sent number of bytes, 0 if the connection has been lost</returns>
+    int Send(byte[] buffer)
+    {
+        if(ConnectionLost) return 0;
+
+        try
+        {
+            return _socket.Send(buffer, SocketFlags.None);
+        }
+        catch(SocketException ex)
+        {
+            LoseConnection(ex);
+
+            return 0;
+        }
+        catch(ObjectDisposedException ex)
+        {
+            LoseConnection(ex);
+
+            return 0;
+        }
+    }
+
+    /// <summary>Reports a network error, unless the connection is lost, that has already been reported</summary>
+    /// <param name="message">Error message</param>
+    void NetworkError(string message)
+    {
+        if(ConnectionLost) return;
+
+        AaruLogging.Error(message);
+    }
+
+    /// <summary>
+    ///     Marks the connection as lost, tells the user, closes the socket and raises <see cref="Disconnected" />
+    /// </summary>
+    /// <param name="ex">Exception thrown by the socket</param>
+    void LoseConnection(Exception ex)
+    {
+        if(ConnectionLost) return;
+
+        ConnectionLost = true;
+
+        SentrySdk.CaptureException(ex);
+        AaruLogging.Error(Localization.Connection_to_remote_lost_0, ex.Message);
+
+        _socket.Close();
+
+        Disconnected?.Invoke();
     }
 
     /// <summary>Closes the remote device, without closing the network connection</summary>
@@ -1611,15 +1686,8 @@ public class Remote : IDisposable
 
         if(_socket.SafeHandle.IsClosed) return;
 
-        try
-        {
-            _socket.Send(buf, SocketFlags.None);
-        }
-        catch(SocketException ex)
-        {
-            // The peer may already be gone
-            SentrySdk.CaptureException(ex);
-        }
+        // The peer may already be gone, sending never throws
+        Send(buf);
     }
 
     /// <summary>
@@ -1692,11 +1760,11 @@ public class Remote : IDisposable
             off += command.buffer.Length;
         }
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -1707,7 +1775,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -1734,7 +1802,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -1775,7 +1843,7 @@ public class Remote : IDisposable
         {
             if((ulong)off + (ulong)command.buffer.Length > (ulong)buf.Length)
             {
-                AaruLogging.Error(Localization.Could_not_read_from_the_network);
+                NetworkError(Localization.Could_not_read_from_the_network);
 
                 return -1;
             }
@@ -1846,11 +1914,11 @@ public class Remote : IDisposable
 
         byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1861,7 +1929,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1894,7 +1962,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1948,11 +2016,11 @@ public class Remote : IDisposable
 
         byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-        int len = _socket.Send(buf, SocketFlags.None);
+        int len = Send(buf);
 
         if(len != buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_write_to_the_network);
+            NetworkError(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1963,7 +2031,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1996,7 +2064,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -2014,7 +2082,7 @@ public class Remote : IDisposable
 
         if((ulong)Marshal.SizeOf<AaruPacketResOsRead>() + length > (ulong)buf.Length)
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            NetworkError(Localization.Could_not_read_from_the_network);
 
             return false;
         }

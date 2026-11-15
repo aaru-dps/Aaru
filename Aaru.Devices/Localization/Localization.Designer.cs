@@ -1009,5 +1009,11 @@ namespace Aaru.Devices {
                 return ResourceManager.GetString("LiteOn_READ_DVD_RAW_took_0_ms", resourceCulture);
             }
         }
+        
+        internal static string Connection_to_remote_lost_0 {
+            get {
+                return ResourceManager.GetString("Connection_to_remote_lost_0", resourceCulture);
+            }
+        }
     }
 }

@@ -111,7 +111,8 @@ public sealed partial class Device : Devices.Device
 
         try
         {
-            dev._remote = new Remote(aaruUri);
+            dev._remote              =  new Remote(aaruUri);
+            dev._remote.Disconnected += dev.OnConnectionLost;
         }
         catch(Exception ex)
         {
