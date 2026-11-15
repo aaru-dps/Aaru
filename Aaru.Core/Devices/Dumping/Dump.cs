@@ -398,11 +398,20 @@ public partial class Dump
 
         _dev.ConnectionLost -= AbortForConnectionLost;
 
+        // A lost connection has already been reported when it happened
         if(_aborted)
         {
-            UpdateStatus?.Invoke(_abortReason == AbortReason.User
-                                     ? Localization.Core.Operation_aborted_by_user
-                                     : Localization.Core.Dump_aborted_due_to_fatal_error);
+            switch(_abortReason)
+            {
+                case AbortReason.User:
+                    UpdateStatus?.Invoke(Localization.Core.Operation_aborted_by_user);
+
+                    break;
+                case AbortReason.FatalError:
+                    UpdateStatus?.Invoke(Localization.Core.Dump_aborted_due_to_fatal_error);
+
+                    break;
+            }
         }
 
         _errorLog.Close();
@@ -442,7 +451,7 @@ public partial class Dump
         if(_aborted) return;
 
         StoppingErrorMessage?.Invoke(Localization.Core.Connection_to_remote_lost_operation_aborted);
-        _abortReason = AbortReason.FatalError;
+        _abortReason = AbortReason.ConnectionLost;
         _aborted     = true;
         _sidecarClass?.Abort();
         _dpmMeasurement?.Abort();
@@ -451,8 +460,10 @@ public partial class Dump
     /// <summary>Aborts the dump in progress</summary>
     public void Abort()
     {
-        _abortReason = AbortReason.User;
-        _aborted     = true;
+        // Keep the reason of an abort already in progress, so it is not reported as aborted by the user
+        if(_abortReason == AbortReason.None) _abortReason = AbortReason.User;
+
+        _aborted = true;
         _sidecarClass?.Abort();
         _dpmMeasurement?.Abort();
     }
@@ -519,7 +530,8 @@ public partial class Dump
     {
         None,
         User,
-        FatalError
+        FatalError,
+        ConnectionLost
     }
 
     /// <summary>Event raised when the progress bar is not longer needed</summary>
