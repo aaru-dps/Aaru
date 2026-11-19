@@ -42,15 +42,17 @@ namespace Aaru.Devices;
 public partial class Device
 {
     /// <summary>
-    ///     Reads sector 0 of the User TOC (U-TOC) from a recordable MiniDisc (vendor command D1h). On MD-DATA discs it
-    ///     describes the system and data tracks; it is not available on blank or premastered discs.
+    ///     Reads a sector of the User TOC (U-TOC) from a recordable MiniDisc (vendor command D1h). On MD-DATA discs it
+    ///     describes the system and data tracks; it is not available on blank or premastered discs. Byte 13h of sector 0
+    ///     is a bitmap of the sectors in use.
     /// </summary>
     /// <param name="buffer">Buffer where the response will be stored</param>
     /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="sector">U-TOC sector to read, 0 to 7</param>
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-    public bool MiniDiscReadDataTOC(out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint timeout,
+    public bool MiniDiscReadDataTOC(out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint sector, uint timeout,
                                     out double duration)
     {
         const ushort transferLength = 2336;
@@ -60,6 +62,10 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.MiniDiscReadDTOC;
 
+        cdb[2] = (byte)((sector & 0xFF000000) >> 24);
+        cdb[3] = (byte)((sector & 0xFF0000)   >> 16);
+        cdb[4] = (byte)((sector & 0xFF00)     >> 8);
+        cdb[5] = (byte)(sector   & 0xFF);
         cdb[7] = (transferLength & 0xFF00) >> 8;
         cdb[8] = transferLength & 0xFF;
 
@@ -76,7 +82,8 @@ public partial class Device
 
     /// <summary>
     ///     Reads a sector of the Premastered TOC (P-TOC) from a MiniDisc (vendor command D4h). Sector 0 starts with the
-    ///     "MINI" (audio) or "MINX" (MD-DATA) signature at offset 8; recordable discs only have sector 0.
+    ///     "MINI" (audio) or "MINX" (MD-DATA) signature at offset 8, and its byte 13h is a bitmap of the sectors in use;
+    ///     recordable discs only have sector 0, premastered discs up to 4.
     /// </summary>
     /// <param name="buffer">Buffer where the response will be stored</param>
     /// <param name="senseBuffer">Sense buffer.</param>
@@ -213,6 +220,9 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.MiniDiscGetType;
 
+        // As sent by Sony's Windows driver, the response is 01h and the first sector of the data track on MD-DATA discs,
+        // FFh otherwise
+        cdb[2] = 0x01;
         cdb[7] = 0;
         cdb[8] = transferLength & 0xFF;
 

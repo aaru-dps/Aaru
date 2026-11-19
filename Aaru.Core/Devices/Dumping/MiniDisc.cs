@@ -165,24 +165,25 @@ partial class Dump
         if(!sense && !_dev.Error) mediaTags.Add(MediaTagType.MiniDiscD5, cmdBuf);
 
         // Vendor command D1h returns the User TOC (U-TOC), only present on recorded discs
-        sense = _dev.MiniDiscReadDataTOC(out cmdBuf, out _, _dev.Timeout, out _);
+        byte[] toc = ReadMiniDiscToc(sector => (_dev.MiniDiscReadDataTOC(out byte[] buffer,
+                                                                         out _,
+                                                                         sector,
+                                                                         _dev.Timeout,
+                                                                         out _),
+                                                buffer));
 
-        if(!sense && !_dev.Error) mediaTags.Add(MediaTagType.MiniDiscUTOC, cmdBuf);
+        if(toc is not null) mediaTags.Add(MediaTagType.MiniDiscUTOC, toc);
 
         // Vendor command D4h returns the Premastered TOC (P-TOC), one sector on recordable discs, up to four on
         // premastered ones
-        var ptocMs = new MemoryStream();
+        toc = ReadMiniDiscToc(sector => (_dev.MiniDiscReadUserTOC(out byte[] buffer,
+                                                                  out _,
+                                                                  sector,
+                                                                  _dev.Timeout,
+                                                                  out _),
+                                         buffer));
 
-        for(uint i = 0; i < 3; i++)
-        {
-            sense = _dev.MiniDiscReadUserTOC(out cmdBuf, out _, i, _dev.Timeout, out _);
-
-            if(sense || _dev.Error) break;
-
-            ptocMs.Write(cmdBuf, 0, 2336);
-        }
-
-        if(ptocMs.Length > 0) mediaTags.Add(MediaTagType.MiniDiscDTOC, ptocMs.ToArray());
+        if(toc is not null) mediaTags.Add(MediaTagType.MiniDiscDTOC, toc);
 
         ret = true;
 
@@ -895,5 +896,50 @@ partial class Dump
         UpdateStatus?.Invoke("");
 
         Statistics.AddMedia(dskType, true);
+    }
+
+    /// <summary>Reads the sectors of a MiniDisc TOC that are in use</summary>
+    /// <remarks>
+    ///     Byte 13h of sector 0 is a bitmap of the sectors in use, bit n for sector n. Sectors are stored in place, from
+    ///     0 to the last one in use, with unused or unreadable ones left empty.
+    /// </remarks>
+    /// <param name="readSector">Reads a TOC sector, returning <c>true</c> on error, and its contents</param>
+    /// <returns>TOC sectors, or <c>null</c> if sector 0 cannot be read</returns>
+    byte[] ReadMiniDiscToc(Func<uint, (bool sense, byte[] buffer)> readSector)
+    {
+        const int tocSectorSize = 2336;
+        const int maxTocSectors = 8;
+
+        (bool sense, byte[] sector0) = readSector(0);
+
+        if(sense || _dev.Error || sector0 is null || sector0.Length < tocSectorSize) return null;
+
+        byte inUse      = sector0[0x13];
+        int  lastSector = 0;
+
+        for(int i = 1; i < maxTocSectors; i++)
+            if((inUse & 1 << i) != 0)
+                lastSector = i;
+
+        byte[] toc = new byte[(lastSector + 1) * tocSectorSize];
+        Array.Copy(sector0, 0, toc, 0, tocSectorSize);
+
+        for(uint i = 1; i <= lastSector; i++)
+        {
+            if((inUse & 1 << (int)i) == 0) continue;
+
+            (sense, byte[] sector) = readSector(i);
+
+            if(sense || _dev.Error || sector is null || sector.Length < tocSectorSize)
+            {
+                AaruLogging.Debug(MODULE_NAME, "Could not read MiniDisc TOC sector {0}", i);
+
+                continue;
+            }
+
+            Array.Copy(sector, 0, toc, i * tocSectorSize, tocSectorSize);
+        }
+
+        return toc;
     }
 }
