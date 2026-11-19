@@ -1986,7 +1986,10 @@ public enum ScsiCommands : byte
     MiniDiscWriteUTOC    = 0xD2,
     /// <summary>Reads a Premastered TOC (P-TOC) sector</summary>
     MiniDiscReadPTOC     = 0xD4,
-    /// <summary>Unknown, returns 4 empty bytes</summary>
+    /// <summary>
+    ///     Reads the result of the last format: a 4-byte header whose bytes 2-3 hold the number of 4-byte entries that
+    ///     follow, presumably defects found while certifying; no entries on a good disc
+    /// </summary>
     MiniDiscD5           = 0xD5,
     /// <summary>Stops playing audio</summary>
     MiniDiscStopPlay     = 0xD6,

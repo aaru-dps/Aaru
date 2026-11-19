@@ -119,7 +119,11 @@ public partial class Device
         return sense;
     }
 
-    /// <summary>Sends a D5h command to a MD-DATA drive (harmless)</summary>
+    /// <summary>
+    ///     Reads the 4-byte header of the result of the last format from an MD-DATA drive (vendor command D5h). Bytes 2-3
+    ///     hold the number of 4-byte entries that follow, presumably defects found while certifying, which Sony's
+    ///     drivers read by sending the command again with a 4 + 4 * entries allocation length right after formatting.
+    /// </summary>
     /// <param name="buffer">Buffer where the response will be stored</param>
     /// <param name="senseBuffer">Sense buffer.</param>
     /// <param name="timeout">Timeout in seconds.</param>
