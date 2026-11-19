@@ -200,11 +200,11 @@
     <data name="MediaTek_READ_DRAM_took_0_ms" xml:space="preserve">
     <value>MediaTek READ DRAM took {0} ms.</value>
   </data>
-    <data name="MINIDISC_READ_DTOC_took_0_ms" xml:space="preserve">
-    <value>MINIDISC READ DTOC took {0} ms.</value>
-  </data>
     <data name="MINIDISC_READ_UTOC_took_0_ms" xml:space="preserve">
-    <value>MINIDISC READ UTOC took {0} ms.</value>
+    <value>MINIDISC READ U-TOC took {0} ms.</value>
+  </data>
+    <data name="MINIDISC_READ_PTOC_took_0_ms" xml:space="preserve">
+    <value>MINIDISC READ P-TOC took {0} ms.</value>
   </data>
     <data name="MINIDISC_command_D5h_took_0_ms" xml:space="preserve">
     <value>MINIDISC command D5h took {0} ms.</value>

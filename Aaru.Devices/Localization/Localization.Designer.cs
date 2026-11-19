@@ -399,15 +399,15 @@ namespace Aaru.Devices {
             }
         }
         
-        internal static string MINIDISC_READ_DTOC_took_0_ms {
-            get {
-                return ResourceManager.GetString("MINIDISC_READ_DTOC_took_0_ms", resourceCulture);
-            }
-        }
-        
         internal static string MINIDISC_READ_UTOC_took_0_ms {
             get {
                 return ResourceManager.GetString("MINIDISC_READ_UTOC_took_0_ms", resourceCulture);
+            }
+        }
+        
+        internal static string MINIDISC_READ_PTOC_took_0_ms {
+            get {
+                return ResourceManager.GetString("MINIDISC_READ_PTOC_took_0_ms", resourceCulture);
             }
         }
         

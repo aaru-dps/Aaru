@@ -165,7 +165,7 @@ partial class Dump
         if(!sense && !_dev.Error) mediaTags.Add(MediaTagType.MiniDiscD5, cmdBuf);
 
         // Vendor command D1h returns the User TOC (U-TOC), only present on recorded discs
-        byte[] toc = ReadMiniDiscToc(sector => (_dev.MiniDiscReadDataTOC(out byte[] buffer,
+        byte[] toc = ReadMiniDiscToc(sector => (_dev.MiniDiscReadUserTOC(out byte[] buffer,
                                                                          out _,
                                                                          sector,
                                                                          _dev.Timeout,
@@ -176,7 +176,7 @@ partial class Dump
 
         // Vendor command D4h returns the Premastered TOC (P-TOC), one sector on recordable discs, up to four on
         // premastered ones
-        toc = ReadMiniDiscToc(sector => (_dev.MiniDiscReadUserTOC(out byte[] buffer,
+        toc = ReadMiniDiscToc(sector => (_dev.MiniDiscReadPremasteredTOC(out byte[] buffer,
                                                                   out _,
                                                                   sector,
                                                                   _dev.Timeout,

@@ -193,11 +193,11 @@
     <data name="MediaTek_READ_DRAM_took_0_ms" xml:space="preserve">
     <value>MediaTek READ DRAM tardó {0} ms.</value>
   </data>
-    <data name="MINIDISC_READ_DTOC_took_0_ms" xml:space="preserve">
-    <value>MINIDISC READ DTOC tardó {0} ms.</value>
-  </data>
     <data name="MINIDISC_READ_UTOC_took_0_ms" xml:space="preserve">
-    <value>MINIDISC READ UTOC tardó {0} ms.</value>
+    <value>MINIDISC READ U-TOC tardó {0} ms.</value>
+  </data>
+    <data name="MINIDISC_READ_PTOC_took_0_ms" xml:space="preserve">
+    <value>MINIDISC READ P-TOC tardó {0} ms.</value>
   </data>
     <data name="MINIDISC_command_D5h_took_0_ms" xml:space="preserve">
     <value>MINIDISC command D5h tardó {0} ms.</value>

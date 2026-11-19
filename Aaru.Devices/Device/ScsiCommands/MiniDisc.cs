@@ -52,45 +52,6 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-    public bool MiniDiscReadDataTOC(out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint sector, uint timeout,
-                                    out double duration)
-    {
-        const ushort transferLength = 2336;
-        senseBuffer = SenseBuffer;
-        Span<byte> cdb = CdbBuffer[..10];
-        cdb.Clear();
-
-        cdb[0] = (byte)ScsiCommands.MiniDiscReadDTOC;
-
-        cdb[2] = (byte)((sector & 0xFF000000) >> 24);
-        cdb[3] = (byte)((sector & 0xFF0000)   >> 16);
-        cdb[4] = (byte)((sector & 0xFF00)     >> 8);
-        cdb[5] = (byte)(sector   & 0xFF);
-        cdb[7] = (transferLength & 0xFF00) >> 8;
-        cdb[8] = transferLength & 0xFF;
-
-        buffer = new byte[transferLength];
-
-        LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.In, out duration, out bool sense);
-
-        Error = LastError != 0;
-
-        AaruLogging.Debug(SCSI_MODULE_NAME, Localization.MINIDISC_READ_DTOC_took_0_ms, duration);
-
-        return sense;
-    }
-
-    /// <summary>
-    ///     Reads a sector of the Premastered TOC (P-TOC) from a MiniDisc (vendor command D4h). Sector 0 starts with the
-    ///     "MINI" (audio) or "MINX" (MD-DATA) signature at offset 8, and its byte 13h is a bitmap of the sectors in use;
-    ///     recordable discs only have sector 0, premastered discs up to 4.
-    /// </summary>
-    /// <param name="buffer">Buffer where the response will be stored</param>
-    /// <param name="senseBuffer">Sense buffer.</param>
-    /// <param name="sector">P-TOC sector to read</param>
-    /// <param name="timeout">Timeout in seconds.</param>
-    /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
     public bool MiniDiscReadUserTOC(out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint sector, uint timeout,
                                     out double duration)
     {
@@ -115,6 +76,45 @@ public partial class Device
         Error = LastError != 0;
 
         AaruLogging.Debug(SCSI_MODULE_NAME, Localization.MINIDISC_READ_UTOC_took_0_ms, duration);
+
+        return sense;
+    }
+
+    /// <summary>
+    ///     Reads a sector of the Premastered TOC (P-TOC) from a MiniDisc (vendor command D4h). Sector 0 starts with the
+    ///     "MINI" (audio) or "MINX" (MD-DATA) signature at offset 8, and its byte 13h is a bitmap of the sectors in use;
+    ///     recordable discs only have sector 0, premastered discs up to 4.
+    /// </summary>
+    /// <param name="buffer">Buffer where the response will be stored</param>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="sector">P-TOC sector to read</param>
+    /// <param name="timeout">Timeout in seconds.</param>
+    /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+    /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+    public bool MiniDiscReadPremasteredTOC(out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint sector,
+                                           uint       timeout, out double duration)
+    {
+        const ushort transferLength = 2336;
+        senseBuffer = SenseBuffer;
+        Span<byte> cdb = CdbBuffer[..10];
+        cdb.Clear();
+
+        cdb[0] = (byte)ScsiCommands.MiniDiscReadPTOC;
+
+        cdb[2] = (byte)((sector & 0xFF000000) >> 24);
+        cdb[3] = (byte)((sector & 0xFF0000)   >> 16);
+        cdb[4] = (byte)((sector & 0xFF00)     >> 8);
+        cdb[5] = (byte)(sector   & 0xFF);
+        cdb[7] = (transferLength & 0xFF00) >> 8;
+        cdb[8] = transferLength & 0xFF;
+
+        buffer = new byte[transferLength];
+
+        LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.In, out duration, out bool sense);
+
+        Error = LastError != 0;
+
+        AaruLogging.Debug(SCSI_MODULE_NAME, Localization.MINIDISC_READ_PTOC_took_0_ms, duration);
 
         return sense;
     }

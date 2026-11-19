@@ -1980,19 +1980,19 @@ public enum ScsiCommands : byte
 
 #region MiniDisc vendor commands
 
-    /// <summary>Gets some list of pointers only present on MD-DATA discs</summary>
-    MiniDiscReadDTOC     = 0xD1,
-    /// <summary>Writes some list of pointers only present on MD-DATA discs</summary>
-    MiniDiscWriteDTOC    = 0xD2,
-    /// <summary>Reads UTOC</summary>
-    MiniDiscReadUTOC     = 0xD4,
+    /// <summary>Reads a User TOC (U-TOC) sector, only present on recorded discs</summary>
+    MiniDiscReadUTOC     = 0xD1,
+    /// <summary>Writes a User TOC (U-TOC) sector</summary>
+    MiniDiscWriteUTOC    = 0xD2,
+    /// <summary>Reads a Premastered TOC (P-TOC) sector</summary>
+    MiniDiscReadPTOC     = 0xD4,
     /// <summary>Unknown, returns 4 empty bytes</summary>
     MiniDiscD5           = 0xD5,
     /// <summary>Stops playing audio</summary>
     MiniDiscStopPlay     = 0xD6,
     /// <summary>Gets current audio playing position</summary>
     MiniDiscReadPosition = 0xD7,
-    /// <summary>Gets some values that are identical amongst audio discs and data discs, different between them</summary>
+    /// <summary>Gets the disc type: 01h and the first sector of the data track on MD-DATA discs, FFh otherwise</summary>
     MiniDiscGetType      = 0xD8,
 
 #endregion
