@@ -7,10 +7,6 @@
 //
 // Component      : High Performance Optical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Mounts and unmounts the High Performance Optical File System.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -51,129 +47,84 @@ public sealed partial class HPOFS
     public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
                              Dictionary<string, string> options,     string    @namespace)
     {
-        _encoding = encoding ?? Encoding.GetEncoding("ibm850");
-
-        if(options is not null && options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
-
-        // Read BPB at sector 0 (little-endian)
-        ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, false, out byte[] bpbSector, out _);
-
-        if(errno != ErrorNumber.NoError) return errno;
-
-        if(bpbSector.Length < 512) return ErrorNumber.InvalidArgument;
-
-        _bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(bpbSector);
-
-        if(!_bpb.fs_type.SequenceEqual(_type)) return ErrorNumber.InvalidArgument;
-
-        // Read Media Information Block at sector 0x0D (big-endian)
-        errno = imagePlugin.ReadSector(MEDINFO_SECTOR_PRIMARY + partition.Start,
-                                       false,
-                                       out byte[] medInfoSector,
-                                       out _);
-
-        if(errno != ErrorNumber.NoError) return errno;
-
-        _medInfo = Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);
-
-        if(!_medInfo.blockId.SequenceEqual(_medinfoSignature)) return ErrorNumber.InvalidArgument;
-
-        // Read Volume Information Block at sector 0x0E (big-endian)
-        errno = imagePlugin.ReadSector(VOLINFO_SECTOR_PRIMARY + partition.Start,
-                                       false,
-                                       out byte[] volInfoSector,
-                                       out _);
-
-        if(errno != ErrorNumber.NoError) return errno;
-
-        _volInfo = Marshal.ByteArrayToStructureBigEndian<VolumeInformationBlock>(volInfoSector);
-
-        if(!_volInfo.blockId.SequenceEqual(_volinfoSignature)) return ErrorNumber.InvalidArgument;
-
-        // Read DCI Record at sector 0x14 (big-endian)
-        errno = imagePlugin.ReadSector(DCI_SECTOR_PRIMARY + partition.Start, false, out byte[] dciSector, out _);
-
-        if(errno != ErrorNumber.NoError) return errno;
-
-        _dciRecord = Marshal.ByteArrayToStructureBigEndian<DciRecord>(dciSector);
-
-        if(!_dciRecord.signature.SequenceEqual(_mastSignature)) return ErrorNumber.InvalidArgument;
-
-        // Try to find and read the full SMI block for directory sector pointers
-        _hasSmiBlock = false;
-        uint smiScanLimit = _bpb.big_sectors > 0 ? _bpb.big_sectors : _bpb.sectors;
-
-        if(smiScanLimit > 0x200) smiScanLimit = 0x200;
-
-        for(uint s = 0x15; s < smiScanLimit; s++)
-        {
-            ErrorNumber smiErrno = imagePlugin.ReadSector(s + partition.Start, false, out byte[] smiData, out _);
-
-            if(smiErrno != ErrorNumber.NoError || smiData.Length < 8) continue;
-
-            if(!smiData[..8].SequenceEqual(_smiSignature)) continue;
-
-            _smiBlock    = Marshal.ByteArrayToStructureBigEndian<SmiBlock>(smiData);
-            _hasSmiBlock = true;
-
-            AaruLogging.Debug(MODULE_NAME, "Found SMI block at sector 0x{0:X4}", s);
-
-            AaruLogging.Debug(MODULE_NAME,
-                              "  dirRange1Sector=0x{0:X8}, dirData1Sector=0x{1:X8}",
-                              _smiBlock.dirRange1Sector,
-                              _smiBlock.dirData1Sector);
-
-            break;
-        }
-
-        // Set up encoding based on codepage type
-        if(_medInfo.codepageType == CODEPAGE_TYPE_EBCDIC && _medInfo.codepage > 0)
-        {
-            try
-            {
-                _encoding = Encoding.GetEncoding(_medInfo.codepage);
-            }
-            catch
-            {
-                // Fallback to default
-            }
-        }
-        else if(_medInfo.codepage > 0)
-        {
-            try
-            {
-                _encoding = Encoding.GetEncoding(_medInfo.codepage);
-            }
-            catch
-            {
-                // Fallback to default
-            }
-        }
-
         _image     = imagePlugin;
         _partition = partition;
 
-        // Build metadata
-        uint totalSectors = _bpb.big_sectors > 0 ? _bpb.big_sectors : _bpb.sectors;
+        ErrorNumber errno = ReadSuperblocks(imagePlugin, partition, out _bpb, out _medInfo, out bool worm);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        _bytesPerSector = _bpb.bps;
+
+        if(_bytesPerSector == 0 || _bytesPerSector != imagePlugin.Info.SectorSize) return ErrorNumber.InvalidArgument;
+
+        _encoding = GetVolumeEncoding(_medInfo, encoding);
+
+        ulong  totalSectors = _medInfo.sectors > 0 ? _medInfo.sectors : partition.End - partition.Start + 1;
+        ulong  freeSectors;
+        string owner;
+
+        if(worm)
+        {
+            errno = ReadWormVmi(out byte[] vmi);
+
+            if(errno != ErrorNumber.NoError)
+            {
+                AaruLogging.Debug(MODULE_NAME, "Could not find volume management information");
+
+                return errno;
+            }
+
+            errno = ReadWormDirectory(vmi);
+
+            // Nothing can be written past the next writable sector
+            uint nextWrite = BigEndianBitConverter.ToUInt32(vmi, VMI_NEXT_WRITE_OFFSET);
+            freeSectors = nextWrite < totalSectors ? totalSectors - nextWrite : 0;
+            owner       = DecodePadded(vmi[VMI_OWNER_OFFSET..(VMI_OWNER_OFFSET + 32)], _encoding);
+        }
+        else
+        {
+            errno = ReadVolumeInformation(out _volInfo);
+
+            if(errno != ErrorNumber.NoError) return errno;
+
+            errno = ReadDirectory();
+
+            if(CountFreeSectors(out freeSectors) != ErrorNumber.NoError)
+            {
+                AaruLogging.Debug(MODULE_NAME, "Could not read free space");
+                freeSectors = 0;
+            }
+
+            owner = DecodePadded(_volInfo.owner, _encoding);
+        }
+
+        if(errno != ErrorNumber.NoError)
+        {
+            AaruLogging.Debug(MODULE_NAME, "Could not read directory: {0}", errno);
+
+            return errno;
+        }
 
         Metadata = new FileSystem
         {
-            Clusters               = totalSectors / _bpb.spc,
-            ClusterSize            = (uint)(_bpb.bps * _bpb.spc),
+            Clusters               = totalSectors,
+            ClusterSize            = _bytesPerSector,
             CreationDate           = DateHandlers.DosToDateTime(_medInfo.creationDate, _medInfo.creationTime),
             Type                   = FS_TYPE,
-            VolumeName             = StringHandlers.SpacePaddedToString(_medInfo.volumeLabel, _encoding),
+            VolumeName             = DecodePadded(_medInfo.volumeLabel, _encoding),
             VolumeSerial           = $"{_medInfo.serial:X8}",
             SystemIdentifier       = StringHandlers.SpacePaddedToString(_bpb.oem_name),
-            DataPreparerIdentifier = StringHandlers.SpacePaddedToString(_volInfo.owner, _encoding)
+            DataPreparerIdentifier = owner,
+            FreeClusters           = freeSectors
         };
 
         _statfs = new FileSystemInfo
         {
-            Blocks         = totalSectors / (ulong)_bpb.spc,
+            Blocks         = totalSectors,
             FilenameLength = MAX_FILENAME_LENGTH,
-            FreeBlocks     = 0,
+            Files          = (ulong)_entries.Count,
+            FreeBlocks     = freeSectors,
             Id = new FileSystemId
             {
                 IsInt    = true,
@@ -182,20 +133,6 @@ public sealed partial class HPOFS
             PluginId = Id,
             Type     = FS_TYPE
         };
-
-        // Decode root directory
-        _directoryCache = new Dictionary<string, Dictionary<string, CachedDirectoryEntry>>();
-
-        ErrorNumber dirError = FindAndDecodeRootDirectory(out Dictionary<string, CachedDirectoryEntry> rootEntries);
-
-        if(dirError != ErrorNumber.NoError)
-        {
-            AaruLogging.Debug(MODULE_NAME, "Could not decode root directory");
-
-            _rootDirectoryCache = new Dictionary<string, CachedDirectoryEntry>();
-        }
-        else
-            _rootDirectoryCache = rootEntries;
 
         _mounted = true;
 
@@ -207,297 +144,200 @@ public sealed partial class HPOFS
     {
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        _mounted            = false;
-        _rootDirectoryCache = null;
-        _directoryCache     = null;
+        _mounted  = false;
+        _entries  = null;
+        _children = null;
+        _root     = null;
 
         return ErrorNumber.NoError;
     }
 
-    /// <summary>
-    ///     Finds and decodes all directory entries by reading the root directory system file entry
-    ///     at sector 6, extracting its SUBF extent list pointer, and parsing the directory B-tree.
-    /// </summary>
-    ErrorNumber FindAndDecodeRootDirectory(out Dictionary<string, CachedDirectoryEntry> rootEntries)
+    /// <summary>Reads the boot sector and the media information block, from the copies if the primaries are bad</summary>
+    ErrorNumber ReadSuperblocks(IMediaImage imagePlugin, Partition partition, out BiosParameterBlock bpb,
+                                out MediaInformationBlock medInfo, out bool worm)
     {
-        rootEntries = null;
+        bpb     = default(BiosParameterBlock);
+        medInfo = default(MediaInformationBlock);
+        worm    = false;
 
-        uint totalSectors = _bpb.big_sectors > 0 ? _bpb.big_sectors : _bpb.sectors;
+        if(partition.Start + BACKUP_AREA_OFFSET + MEDINFO_SECTOR >= partition.End) return ErrorNumber.InvalidArgument;
 
-        // Collect all entries from directory DATA sectors
-        List<(string fullPath, uint timestamp, byte attributes, uint sectorAddress, uint creationTimestamp, uint
-                modificationTimestamp, uint fileSize, ushort dataSectorCount, uint dataStartLba, uint subfSector)>
-            allEntries = new();
-
-        // Read the root directory system file entry at sector 6.
-        // This sector contains the directory's SUBF extent list pointer at offset +0x4C.
-        ErrorNumber dirEntryErrno =
-            _image.ReadSector(ROOT_DIR_ENTRY_SECTOR + _partition.Start, false, out byte[] dirEntryData, out _);
-
-        if(dirEntryErrno != ErrorNumber.NoError || dirEntryData.Length < 0x50)
+        foreach(ulong area in _superblockAreas)
         {
-            AaruLogging.Debug(MODULE_NAME, "Failed to read root directory entry at sector {0}", ROOT_DIR_ENTRY_SECTOR);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start + area, false, out byte[] bootSector, out _);
 
-            return ErrorNumber.NoSuchFile;
+            if(errno != ErrorNumber.NoError || bootSector.Length < 512) continue;
+
+            bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(bootSector);
+
+            if(!bpb.fs_type.SequenceEqual(_type)) continue;
+
+            errno = imagePlugin.ReadSector(partition.Start + area + MEDINFO_SECTOR, false, out byte[] medSector, out _);
+
+            if(errno != ErrorNumber.NoError || medSector.Length < 512) continue;
+
+            medInfo = Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medSector, 0, 512);
+
+            if(medInfo.blockId.SequenceEqual(_medinfoSignature)) return ErrorNumber.NoError;
+
+            if(!medInfo.blockId.SequenceEqual(_smiSignature)) continue;
+
+            worm = true;
+
+            return ErrorNumber.NoError;
         }
 
-        // Verify the system file type is SYSFILE_TYPE_DIRECTORY (3)
-        var sysFileType = BigEndianBitConverter.ToUInt32(dirEntryData, 0x00);
+        return ErrorNumber.InvalidArgument;
+    }
 
-        if(sysFileType != SYSFILE_TYPE_DIRECTORY)
+    /// <summary>Reads the volume information block, from the copy if the primary is bad</summary>
+    ErrorNumber ReadVolumeInformation(out VolumeInformationBlock volInfo)
+    {
+        volInfo = default(VolumeInformationBlock);
+
+        foreach(ulong area in _superblockAreas)
         {
-            AaruLogging.Debug(MODULE_NAME,
-                              "Sector {0} is not a directory system file entry (type={1}, expected={2})",
-                              ROOT_DIR_ENTRY_SECTOR,
-                              sysFileType,
-                              SYSFILE_TYPE_DIRECTORY);
+            ErrorNumber errno = ReadSectors(area + VOLINFO_SECTOR, 1, out byte[] sector);
 
-            return ErrorNumber.NoSuchFile;
+            if(errno != ErrorNumber.NoError || sector.Length < 512) continue;
+
+            volInfo = Marshal.ByteArrayToStructureBigEndian<VolumeInformationBlock>(sector, 0, 512);
+
+            if(volInfo.blockId.SequenceEqual(_volinfoSignature)) return ErrorNumber.NoError;
         }
 
-        // Extract the SUBF extent list sector from offset +0x4C
-        var subfSector = BigEndianBitConverter.ToUInt32(dirEntryData, 0x4C);
+        return ErrorNumber.InvalidArgument;
+    }
 
-        AaruLogging.Debug(MODULE_NAME, "Root directory SUBF sector=0x{0:X4}", subfSector);
+    /// <summary>Gets the encoding used for names and labels on the volume</summary>
+    static Encoding GetVolumeEncoding(MediaInformationBlock medInfo, Encoding requested)
+    {
+        if(requested is not null) return requested;
 
-        if(subfSector == 0 || subfSector >= totalSectors || subfSector == EXTENT_END_MARKER)
+        int codepage = medInfo.codepageType == CODEPAGE_TYPE_EBCDIC && medInfo.codepage == 0 ? 500 : medInfo.codepage;
+
+        try
         {
-            AaruLogging.Debug(MODULE_NAME, "Invalid SUBF sector pointer: 0x{0:X4}", subfSector);
-
-            return ErrorNumber.NoSuchFile;
+            if(codepage > 0) return Encoding.GetEncoding(codepage);
+        }
+        catch(Exception ex) when(ex is ArgumentException or NotSupportedException)
+        {
+            AaruLogging.Debug(MODULE_NAME, "Codepage {0} is not supported", codepage);
         }
 
-        ReadDirectoryFromSubf(subfSector, allEntries);
+        return medInfo.codepageType == CODEPAGE_TYPE_EBCDIC
+                   ? Encoding.GetEncoding("IBM500")
+                   : Encoding.GetEncoding("ibm850");
+    }
 
-        if(allEntries.Count == 0)
+    /// <summary>Reads the whole directory B-tree and builds the directory hierarchy</summary>
+    ErrorNumber ReadDirectory()
+    {
+        ErrorNumber errno = GetSystemFileExtents(DIRECTORY_RECORD_SECTOR, out Extent[] extents);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        errno = ReadBTree(extents, out List<(byte[] key, byte[] record)> leaves);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        // RPS 10 and 1 store names in uppercase and are case insensitive
+        StringComparer comparer = _medInfo.rps is RPS_REWRITABLE_MIXED_CASE or RPS_WORM_MIXED_CASE
+                                      ? StringComparer.Ordinal
+                                      : StringComparer.OrdinalIgnoreCase;
+
+        _entries  = new Dictionary<string, Entry>(comparer);
+        _children = new Dictionary<string, List<string>>(comparer);
+        _root     = null;
+
+        _children[""] = [];
+
+        foreach((byte[] key, byte[] record) in leaves)
         {
-            AaruLogging.Debug(MODULE_NAME, "FindAndDecodeRootDirectory: no entries found in any DATA sector");
+            if(key.Length < 4) continue;
 
-            return ErrorNumber.NoSuchFile;
-        }
+            int nameLength = BigEndianBitConverter.ToUInt16(key, 0);
 
-        AaruLogging.Debug(MODULE_NAME, "FindAndDecodeRootDirectory: collected {0} total entries", allEntries.Count);
+            if(nameLength == 0 || 4 + nameLength > key.Length) continue;
 
-        // Build directory tree from full paths
-        rootEntries = new Dictionary<string, CachedDirectoryEntry>(StringComparer.OrdinalIgnoreCase);
+            byte[] rawName = new byte[nameLength];
+            Array.Copy(key, 4, rawName, 0, nameLength);
 
-        HashSet<string> rootDirectories = new(StringComparer.OrdinalIgnoreCase);
+            Entry entry = DecodeRecord(record);
 
-        // Determine directory separator
-        var dirSep = '/';
+            if(entry is null) continue;
 
-        foreach((string fullPath, uint timestamp, byte attributes, uint sectorAddress, uint creationTimestamp,
-                 uint modificationTimestamp, uint fileSize, ushort dataSectorCount, uint dataStartLba,
-                 uint entrySubfSector) in allEntries)
-        {
-            bool isDirectory = (attributes & 0x10) != 0;
-
-            int sepIdx = fullPath.IndexOf(dirSep);
-
-            if(sepIdx < 0)
+            // System files
+            if(rawName[0] is SYSTEM_NAME_PREFIX or 0)
             {
-                // Root-level entry
-                if(!rootEntries.ContainsKey(fullPath))
-                {
-                    rootEntries[fullPath] = new CachedDirectoryEntry
-                    {
-                        Name                  = fullPath,
-                        Timestamp             = timestamp,
-                        IsDirectory           = isDirectory,
-                        Attributes            = attributes,
-                        SectorAddress         = sectorAddress,
-                        CreationTimestamp     = creationTimestamp,
-                        ModificationTimestamp = modificationTimestamp,
-                        FileSize              = fileSize,
-                        DataSectorCount       = dataSectorCount,
-                        DataStartLba          = dataStartLba,
-                        SubfSector            = entrySubfSector
-                    };
-                }
-                else if(isDirectory) rootEntries[fullPath].IsDirectory = true;
+                // "\x0F\x0Froot" is the root directory
+                if(rawName.Length == 6 && rawName[1] == SYSTEM_NAME_PREFIX && rawName[2] == (byte)'r') _root = entry;
+
+                continue;
             }
-            else
+
+            // Path separator is 0x2F regardless of the volume codepage, so split before decoding
+            string path = string.Join("/",
+                                      SplitPath(rawName, PATH_SEPARATOR)
+                                         .Select(c => StringHandlers.CToString(c, _encoding)));
+
+            if(!_entries.TryAdd(path, entry))
             {
-                // Multi-component path: first component is a root directory
-                string rootDir = fullPath[..sepIdx];
-                rootDirectories.Add(rootDir);
+                AaruLogging.Debug(MODULE_NAME, "Duplicate directory entry {0}", path);
 
-                // Get the directory path and filename
-                int lastSep = fullPath.LastIndexOf(dirSep);
-
-                string dirPath  = fullPath[..lastSep];
-                string fileName = fullPath[(lastSep + 1)..];
-
-                if(string.IsNullOrWhiteSpace(fileName)) continue;
-
-                if(!_directoryCache.ContainsKey(dirPath))
-                {
-                    _directoryCache[dirPath] =
-                        new Dictionary<string, CachedDirectoryEntry>(StringComparer.OrdinalIgnoreCase);
-                }
-
-                if(!_directoryCache[dirPath].ContainsKey(fileName))
-                {
-                    _directoryCache[dirPath][fileName] = new CachedDirectoryEntry
-                    {
-                        Name                  = fileName,
-                        Timestamp             = timestamp,
-                        IsDirectory           = isDirectory,
-                        Attributes            = attributes,
-                        SectorAddress         = sectorAddress,
-                        CreationTimestamp     = creationTimestamp,
-                        ModificationTimestamp = modificationTimestamp,
-                        FileSize              = fileSize,
-                        DataSectorCount       = dataSectorCount,
-                        DataStartLba          = dataStartLba,
-                        SubfSector            = entrySubfSector
-                    };
-                }
-
-                // Create intermediate directory entries
-                string[] parts = fullPath.Split(dirSep);
-
-                for(var i = 1; i < parts.Length - 1; i++)
-                {
-                    var    parentPath = string.Join(dirSep, parts[..i]);
-                    string childName  = parts[i];
-
-                    if(!_directoryCache.ContainsKey(parentPath))
-                    {
-                        _directoryCache[parentPath] =
-                            new Dictionary<string, CachedDirectoryEntry>(StringComparer.OrdinalIgnoreCase);
-                    }
-
-                    if(!_directoryCache[parentPath].ContainsKey(childName))
-                    {
-                        _directoryCache[parentPath][childName] = new CachedDirectoryEntry
-                        {
-                            Name          = childName,
-                            Timestamp     = 0,
-                            IsDirectory   = true,
-                            Attributes    = 0x10,
-                            SectorAddress = 0
-                        };
-                    }
-                }
+                continue;
             }
+
+            if(entry.IsDirectory) _children.TryAdd(path, []);
         }
 
-        // Add root directories to root entries (or mark existing entries as directories)
-        foreach(string dirName in rootDirectories)
+        // Attach every entry to its parent. Keys are sorted so parents come first, but do not rely on it.
+        foreach(string path in _entries.Keys)
         {
-            if(rootEntries.TryGetValue(dirName, out CachedDirectoryEntry existing))
-                existing.IsDirectory = true;
-            else
+            int    separator = path.LastIndexOf('/');
+            string parent    = separator < 0 ? "" : path[..separator];
+            string name      = separator < 0 ? path : path[(separator + 1)..];
+
+            if(!_children.TryGetValue(parent, out List<string> siblings))
             {
-                rootEntries[dirName] = new CachedDirectoryEntry
-                {
-                    Name          = dirName,
-                    Timestamp     = 0,
-                    IsDirectory   = true,
-                    Attributes    = 0x10,
-                    SectorAddress = 0
-                };
+                AaruLogging.Debug(MODULE_NAME, "Entry {0} has no parent directory", path);
+
+                continue;
             }
+
+            siblings.Add(name);
         }
+
+        AaruLogging.Debug(MODULE_NAME, "Directory contains {0} entries", _entries.Count);
 
         return ErrorNumber.NoError;
     }
 
-    /// <summary>Reads directory B-tree DATA nodes from a SUBF extent chain</summary>
-    void ReadDirectoryFromSubf(uint subfSectorLba,
-                               List<(string fullPath, uint timestamp, byte attributes, uint sectorAddress, uint
-                                   creationTimestamp, uint modificationTimestamp, uint fileSize, ushort dataSectorCount,
-                                   uint dataStartLba, uint subfSector)> allEntries)
+    /// <summary>Decodes a fixed length string padded with spaces in the volume codepage</summary>
+    static string DecodePadded(byte[] data, Encoding encoding)
     {
-        ErrorNumber subfErrno = _image.ReadSector(subfSectorLba + _partition.Start, false, out byte[] subfData, out _);
+        if(data is null) return null;
 
-        if(subfErrno != ErrorNumber.NoError || subfData.Length < 0x20) return;
+        string decoded = encoding.GetString(data).TrimEnd(' ', '\0');
 
-        if(!subfData[..4].SequenceEqual(_subfSignature)) return;
-
-        var extentCount = BigEndianBitConverter.ToUInt16(subfData, 0x10);
-
-        AaruLogging.Debug(MODULE_NAME, "SUBF at sector 0x{0:X4}: {1} extents", subfSectorLba, extentCount);
-
-        // Collect extent information for both per-extent scanning and gap detection
-        List<(uint startLba, ushort sectorCount)> extents = new();
-
-        for(var ei = 0; ei < extentCount; ei++)
-        {
-            int extOff = 0x20 + ei * 8;
-
-            if(extOff + 8 > subfData.Length) break;
-
-            var sectorCount = BigEndianBitConverter.ToUInt16(subfData, extOff);
-            var startLba    = BigEndianBitConverter.ToUInt32(subfData, extOff + 4);
-
-            if(startLba == EXTENT_END_MARKER) break;
-
-            AaruLogging.Debug(MODULE_NAME, "SUBF extent [{0}]: {1} sectors at LBA 0x{2:X4}", ei, sectorCount, startLba);
-
-            extents.Add((startLba, sectorCount));
-        }
-
-        if(extents.Count == 0) return;
-
-        // Phase 1: Scan within each SUBF extent (nodes are 4-sector aligned from extent start)
-        foreach((uint startLba, ushort sectorCount) in extents)
-        {
-            for(uint nodeOff = 0; nodeOff + 4 <= sectorCount; nodeOff += 4)
-                ReadAndParseDataNode(startLba + nodeOff, allEntries);
-        }
-
-        // Phase 2: Scan gap areas between extents for additional DATA leaf nodes.
-        // B-tree INDX and DATA nodes may exist in sectors between extents.
-        // Sort extents by start LBA and find gaps.
-        var sorted = extents.OrderBy(e => e.startLba).ToList();
-
-        for(var i = 0; i < sorted.Count - 1; i++)
-        {
-            uint gapStart = sorted[i].startLba + sorted[i].sectorCount;
-            uint gapEnd   = sorted[i + 1].startLba;
-
-            if(gapStart >= gapEnd) continue;
-
-            AaruLogging.Debug(MODULE_NAME, "Scanning gap between extents: LBA 0x{0:X4} to 0x{1:X4}", gapStart, gapEnd);
-
-            // Scan gap with step 4, trying both alignments from adjacent extents
-            for(uint sector = gapStart; sector + 4 <= gapEnd; sector += 4) ReadAndParseDataNode(sector, allEntries);
-
-            // Also try offset +2 alignment (in case gap nodes align to the other extent)
-            uint altStart = gapStart + (4 - (gapStart - sorted[0].startLba) % 4) % 4;
-
-            if(altStart != gapStart && altStart + 4 <= gapEnd)
-            {
-                for(uint sector = altStart; sector + 4 <= gapEnd; sector += 4) ReadAndParseDataNode(sector, allEntries);
-            }
-        }
+        return decoded.Length == 0 ? null : decoded;
     }
 
-    /// <summary>Reads a 4-sector B-tree node and parses it if it's a DATA leaf node</summary>
-    void ReadAndParseDataNode(uint nodeSector,
-                              List<(string fullPath, uint timestamp, byte attributes, uint sectorAddress, uint
-                                  creationTimestamp, uint modificationTimestamp, uint fileSize, ushort dataSectorCount,
-                                  uint dataStartLba, uint subfSector)> allEntries)
+    /// <summary>Splits a raw directory key into path components</summary>
+    static IEnumerable<byte[]> SplitPath(byte[] rawName, byte separator)
     {
-        ErrorNumber nodeErrno = _image.ReadSectors(nodeSector + _partition.Start, false, 4, out byte[] nodeData, out _);
+        var start = 0;
 
-        if(nodeErrno != ErrorNumber.NoError || nodeData.Length < 0x28) return;
+        for(var i = 0; i <= rawName.Length; i++)
+        {
+            if(i < rawName.Length && rawName[i] != separator) continue;
 
-        // Check for DATA signature and level 0 (leaf nodes only)
-        if(!nodeData[..4].SequenceEqual(_dataSignature)) return;
+            byte[] component = new byte[i - start];
+            Array.Copy(rawName, start, component, 0, i - start);
 
-        var level = BigEndianBitConverter.ToUInt16(nodeData, 0x14);
+            yield return component;
 
-        if(level != 0) return;
-
-        List<(string fullPath, uint timestamp, byte attributes, uint sectorAddress, uint creationTimestamp, uint
-                modificationTimestamp, uint fileSize, ushort dataSectorCount, uint dataStartLba, uint subfSector)>
-            nodeEntries = ParseDataEntries(nodeData);
-
-        AaruLogging.Debug(MODULE_NAME, "DATA node at sector 0x{0:X4}: {1} entries", nodeSector, nodeEntries.Count);
-
-        allEntries.AddRange(nodeEntries);
+            start = i + 1;
+        }
     }
 }

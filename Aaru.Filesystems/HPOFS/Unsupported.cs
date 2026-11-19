@@ -7,10 +7,6 @@
 //
 // Component      : High Performance Optical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Unsupported operations for the High Performance Optical File System.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -30,28 +26,12 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 
 namespace Aaru.Filesystems;
 
 public sealed partial class HPOFS
 {
-    /// <inheritdoc />
-    public ErrorNumber ListXAttr(string path, out List<string> xattrs)
-    {
-        xattrs = [];
-
-        if(!_mounted) return ErrorNumber.AccessDenied;
-
-        xattrs = new List<string>();
-
-        return ErrorNumber.NoError;
-    }
-
-    /// <inheritdoc />
-    public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf) => ErrorNumber.NotSupported;
-
     /// <inheritdoc />
     public ErrorNumber ReadLink(string path, out string dest)
     {

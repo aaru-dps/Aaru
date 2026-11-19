@@ -7,11 +7,6 @@
 //
 // Component      : High Performance Optical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Identifies the High Performance Optical File System and shows
-//     information.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -49,160 +44,92 @@ public sealed partial class HPOFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(16 + partition.Start >= partition.End) return false;
+        if(partition.Start + MEDINFO_SECTOR >= partition.End) return false;
 
-        ErrorNumber errno =
-            imagePlugin.ReadSector(0 + partition.Start,
-                                   false,
-                                   out byte[] hpofsBpbSector,
-                                   out _); // Seek to BIOS parameter block, on logical sector 0
+        ErrorNumber errno = imagePlugin.ReadSector(partition.Start, false, out byte[] bootSector, out _);
 
-        if(errno != ErrorNumber.NoError) return false;
+        if(errno != ErrorNumber.NoError || bootSector.Length < 512) return false;
 
-        if(hpofsBpbSector.Length < 512) return false;
+        BiosParameterBlock bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(bootSector);
 
-        BiosParameterBlock bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
+        if(!bpb.fs_type.SequenceEqual(_type)) return false;
 
-        return bpb.fs_type.SequenceEqual(_type);
+        errno = imagePlugin.ReadSector(partition.Start + MEDINFO_SECTOR, false, out byte[] medSector, out _);
+
+        if(errno != ErrorNumber.NoError || medSector.Length < 8) return false;
+
+        byte[] signature = medSector[..8];
+
+        return signature.SequenceEqual(_medinfoSignature) || signature.SequenceEqual(_smiSignature);
     }
 
     /// <inheritdoc />
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        encoding    ??= Encoding.GetEncoding("ibm850");
-        information =   "";
-        metadata    =   new FileSystem();
+        information = "";
+        metadata    = new FileSystem();
+
+        _image     = imagePlugin;
+        _partition = partition;
+
+        ErrorNumber errno = ReadSuperblocks(imagePlugin,
+                                            partition,
+                                            out BiosParameterBlock bpb,
+                                            out MediaInformationBlock mib,
+                                            out bool worm);
+
+        if(errno != ErrorNumber.NoError) return;
+
+        encoding = GetVolumeEncoding(mib, encoding);
+        _medInfo = mib;
+
+        var    vib         = new VolumeInformationBlock();
+        bool   hasVib      = !worm && ReadVolumeInformation(out vib) == ErrorNumber.NoError;
+        ushort percentFull = vib.percentFull;
+        string owner       = hasVib ? DecodePadded(vib.owner, encoding) : null;
+        bool   hasPercent  = hasVib;
+
+        if(worm && ReadWormVmi(out byte[] vmi) == ErrorNumber.NoError)
+        {
+            owner       = DecodePadded(vmi[VMI_OWNER_OFFSET..(VMI_OWNER_OFFSET + 32)], encoding);
+            percentFull = BigEndianBitConverter.ToUInt16(vmi, VMI_PERCENT_FULL_OFFSET);
+            hasPercent  = true;
+        }
+
+        AaruLogging.Debug(MODULE_NAME, "mib.serial = 0x{0:X8}",       mib.serial);
+        AaruLogging.Debug(MODULE_NAME, "mib.codepageType = {0}",      mib.codepageType);
+        AaruLogging.Debug(MODULE_NAME, "mib.codepage = {0}",          mib.codepage);
+        AaruLogging.Debug(MODULE_NAME, "mib.rps = {0}",               mib.rps);
+        AaruLogging.Debug(MODULE_NAME, "mib.bps = {0}",               mib.bps);
+        AaruLogging.Debug(MODULE_NAME, "mib.bps2 = {0}",              mib.bps2);
+        AaruLogging.Debug(MODULE_NAME, "mib.sectors = {0}",           mib.sectors);
+        AaruLogging.Debug(MODULE_NAME, "mib.unknown_e4 = 0x{0:X8}",   mib.unknown_e4);
+        AaruLogging.Debug(MODULE_NAME, "mib.major = {0}",             mib.major);
+        AaruLogging.Debug(MODULE_NAME, "mib.minor = {0}",             mib.minor);
+        AaruLogging.Debug(MODULE_NAME, "mib.unknown_f8 = 0x{0:X4}",   mib.unknown_f8);
+        AaruLogging.Debug(MODULE_NAME, "vib.dirIntentCount = 0x{0:X8}", vib.dirIntentCount);
+        AaruLogging.Debug(MODULE_NAME, "vib.dirUpdateCount = 0x{0:X8}", vib.dirUpdateCount);
+        AaruLogging.Debug(MODULE_NAME, "percentFull = {0}",           percentFull);
+
+        string label   = DecodePadded(mib.volumeLabel, encoding);
+        string comment = DecodePadded(mib.comment,     encoding);
+        ulong  sectors = mib.sectors > 0 ? mib.sectors : partition.End - partition.Start + 1;
 
         var sb = new StringBuilder();
 
-        ErrorNumber errno =
-            imagePlugin.ReadSector(0 + partition.Start,
-                                   false,
-                                   out byte[] hpofsBpbSector,
-                                   out _); // Seek to BIOS parameter block, on logical sector 0
-
-        if(errno != ErrorNumber.NoError) return;
-
-        errno = imagePlugin.ReadSector(13 + partition.Start,
-                                       false,
-                                       out byte[] medInfoSector,
-                                       out _); // Seek to media information block, on logical sector 13
-
-        if(errno != ErrorNumber.NoError) return;
-
-        errno = imagePlugin.ReadSector(14 + partition.Start,
-                                       false,
-                                       out byte[] volInfoSector,
-                                       out _); // Seek to volume information block, on logical sector 14
-
-        if(errno != ErrorNumber.NoError) return;
-
-        BiosParameterBlock bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
-
-        MediaInformationBlock mib = Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);
-
-        VolumeInformationBlock vib = Marshal.ByteArrayToStructureBigEndian<VolumeInformationBlock>(volInfoSector);
-
-        AaruLogging.Debug(MODULE_NAME, "bpb.oem_name = \"{0}\"", StringHandlers.CToString(bpb.oem_name));
-
-        AaruLogging.Debug(MODULE_NAME, "bpb.bps = {0}",            bpb.bps);
-        AaruLogging.Debug(MODULE_NAME, "bpb.spc = {0}",            bpb.spc);
-        AaruLogging.Debug(MODULE_NAME, "bpb.rsectors = {0}",       bpb.rsectors);
-        AaruLogging.Debug(MODULE_NAME, "bpb.fats_no = {0}",        bpb.fats_no);
-        AaruLogging.Debug(MODULE_NAME, "bpb.root_ent = {0}",       bpb.root_ent);
-        AaruLogging.Debug(MODULE_NAME, "bpb.sectors = {0}",        bpb.sectors);
-        AaruLogging.Debug(MODULE_NAME, "bpb.media = 0x{0:X2}",     bpb.media);
-        AaruLogging.Debug(MODULE_NAME, "bpb.spfat = {0}",          bpb.spfat);
-        AaruLogging.Debug(MODULE_NAME, "bpb.sptrk = {0}",          bpb.sptrk);
-        AaruLogging.Debug(MODULE_NAME, "bpb.heads = {0}",          bpb.heads);
-        AaruLogging.Debug(MODULE_NAME, "bpb.hsectors = {0}",       bpb.hsectors);
-        AaruLogging.Debug(MODULE_NAME, "bpb.big_sectors = {0}",    bpb.big_sectors);
-        AaruLogging.Debug(MODULE_NAME, "bpb.drive_no = 0x{0:X2}",  bpb.drive_no);
-        AaruLogging.Debug(MODULE_NAME, "bpb.nt_flags = {0}",       bpb.nt_flags);
-        AaruLogging.Debug(MODULE_NAME, "bpb.signature = 0x{0:X2}", bpb.signature);
-        AaruLogging.Debug(MODULE_NAME, "bpb.serial_no = 0x{0:X8}", bpb.serial_no);
-
-        AaruLogging.Debug(MODULE_NAME,
-                          "bpb.volume_label = \"{0}\"",
-                          StringHandlers.SpacePaddedToString(bpb.volume_label));
-
-        AaruLogging.Debug(MODULE_NAME, "bpb.fs_type = \"{0}\"", StringHandlers.CToString(bpb.fs_type));
-
-        AaruLogging.Debug(MODULE_NAME, "bpb.boot_code is empty? = {0}", ArrayHelpers.ArrayIsNullOrEmpty(bpb.boot_code));
-
-        AaruLogging.Debug(MODULE_NAME, "bpb.hpofsMarker = 0x{0:X4}", bpb.hpofsMarker);
-        AaruLogging.Debug(MODULE_NAME, "bpb.hpofsReserved = {0}",    bpb.hpofsReserved);
-        AaruLogging.Debug(MODULE_NAME, "bpb.hpofsVersion = {0}",     bpb.hpofsVersion);
-        AaruLogging.Debug(MODULE_NAME, "bpb.signature2 = 0x{0:X4}",  bpb.signature2);
-        AaruLogging.Debug(MODULE_NAME, "mib.blockId = \"{0}\"",      StringHandlers.CToString(mib.blockId));
-
-        AaruLogging.Debug(MODULE_NAME,
-                          "mib.volumeLabel = \"{0}\"",
-                          StringHandlers.SpacePaddedToString(mib.volumeLabel));
-
-        AaruLogging.Debug(MODULE_NAME, "mib.comment = \"{0}\"", StringHandlers.SpacePaddedToString(mib.comment));
-
-        AaruLogging.Debug(MODULE_NAME, "mib.serial = 0x{0:X8}", mib.serial);
-
-        AaruLogging.Debug(MODULE_NAME,
-                          "mib.creationTimestamp = {0}",
-                          DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime));
-
-        AaruLogging.Debug(MODULE_NAME, "mib.codepageType = {0}", mib.codepageType);
-        AaruLogging.Debug(MODULE_NAME, "mib.codepage = {0}",     mib.codepage);
-        AaruLogging.Debug(MODULE_NAME, "mib.rps = {0}",          mib.rps);
-        AaruLogging.Debug(MODULE_NAME, "mib.bps = {0}",          mib.bps);
-        AaruLogging.Debug(MODULE_NAME, "mib.bpc = {0}",          mib.bpc);
-        AaruLogging.Debug(MODULE_NAME, "mib.unknown2 = {0}",     mib.unknown2);
-        AaruLogging.Debug(MODULE_NAME, "mib.sectors = {0}",      mib.sectors);
-        AaruLogging.Debug(MODULE_NAME, "mib.unknown3 = {0}",     mib.unknown3);
-        AaruLogging.Debug(MODULE_NAME, "mib.unknown4 = {0}",     mib.unknown4);
-        AaruLogging.Debug(MODULE_NAME, "mib.major = {0}",        mib.major);
-        AaruLogging.Debug(MODULE_NAME, "mib.minor = {0}",        mib.minor);
-        AaruLogging.Debug(MODULE_NAME, "mib.unknown5 = {0}",     mib.unknown5);
-        AaruLogging.Debug(MODULE_NAME, "mib.unknown6 = {0}",     mib.unknown6);
-
-        AaruLogging.Debug(MODULE_NAME, "mib.filler is empty? = {0}", ArrayHelpers.ArrayIsNullOrEmpty(mib.filler));
-
-        AaruLogging.Debug(MODULE_NAME, "vib.blockId = \"{0}\"", StringHandlers.CToString(vib.blockId));
-        AaruLogging.Debug(MODULE_NAME, "vib.unknown = {0}",     vib.unknown);
-        AaruLogging.Debug(MODULE_NAME, "vib.unknown2 = {0}",    vib.unknown2);
-
-        AaruLogging.Debug(MODULE_NAME, "vib.unknown3 is empty? = {0}", ArrayHelpers.ArrayIsNullOrEmpty(vib.unknown3));
-
-        AaruLogging.Debug(MODULE_NAME, "vib.unknown4 = \"{0}\"", StringHandlers.SpacePaddedToString(vib.unknown4));
-
-        AaruLogging.Debug(MODULE_NAME, "vib.owner = \"{0}\"", StringHandlers.SpacePaddedToString(vib.owner));
-
-        AaruLogging.Debug(MODULE_NAME, "vib.unknown5 = \"{0}\"", StringHandlers.SpacePaddedToString(vib.unknown5));
-
-        AaruLogging.Debug(MODULE_NAME, "vib.unknown6 = {0}",    vib.unknown6);
-        AaruLogging.Debug(MODULE_NAME, "vib.percentFull = {0}", vib.percentFull);
-        AaruLogging.Debug(MODULE_NAME, "vib.unknown7 = {0}",    vib.unknown7);
-
-        AaruLogging.Debug(MODULE_NAME, "vib.filler is empty? = {0}", ArrayHelpers.ArrayIsNullOrEmpty(vib.filler));
-
         sb.AppendLine(Localization.HPOFS_Name);
+        sb.AppendLine(worm ? Localization.HPOFS_WORM_volume : Localization.HPOFS_rewritable_volume);
         sb.AppendFormat(Localization.OEM_name_0, StringHandlers.SpacePaddedToString(bpb.oem_name)).AppendLine();
         sb.AppendFormat(Localization._0_bytes_per_sector, bpb.bps).AppendLine();
-        sb.AppendFormat(Localization._0_sectors_per_cluster, bpb.spc).AppendLine();
-        sb.AppendFormat(Localization.Media_descriptor_0, bpb.media).AppendLine();
-        sb.AppendFormat(Localization._0_sectors_per_track, bpb.sptrk).AppendLine();
-        sb.AppendFormat(Localization._0_heads, bpb.heads).AppendLine();
-        sb.AppendFormat(Localization._0_sectors_hidden_before_BPB, bpb.hsectors).AppendLine();
-        sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, mib.sectors, mib.sectors * bpb.bps).AppendLine();
-        sb.AppendFormat(Localization.BIOS_drive_number_0, bpb.drive_no).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, sectors, sectors * bpb.bps).AppendLine();
         sb.AppendFormat(Localization.Serial_number_0, mib.serial).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(mib.volumeLabel, encoding))
-          .AppendLine();
+        if(label is not null) sb.AppendFormat(Localization.Volume_label_0, label).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_comment_0, StringHandlers.SpacePaddedToString(mib.comment, encoding))
-          .AppendLine();
+        if(comment is not null) sb.AppendFormat(Localization.Volume_comment_0, comment).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_owner_0, StringHandlers.SpacePaddedToString(vib.owner, encoding))
-          .AppendLine();
+        if(owner is not null) sb.AppendFormat(Localization.Volume_owner_0, owner).AppendLine();
 
         sb.AppendFormat(Localization.Volume_created_on_0,
                         DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime))
@@ -210,23 +137,26 @@ public sealed partial class HPOFS
 
         sb.AppendFormat(Localization.Volume_uses_0_codepage_1,
                         mib.codepageType is > 0 and < 3
-                            ? mib.codepageType == 2 ? Localization.EBCDIC : Localization.ASCII
+                            ? mib.codepageType == CODEPAGE_TYPE_EBCDIC
+                                  ? Localization.EBCDIC
+                                  : Localization.ASCII
                             : Localization.Unknown_codepage,
                         mib.codepage)
           .AppendLine();
 
-        sb.AppendFormat(Localization.RPS_level_0,                  mib.rps).AppendLine();
-        sb.AppendFormat(Localization.Filesystem_version_0_1,       mib.major, mib.minor).AppendLine();
-        sb.AppendFormat(Localization.Volume_can_be_filled_up_to_0, vib.percentFull).AppendLine();
+        sb.AppendFormat(Localization.RPS_level_0,            mib.rps).AppendLine();
+        sb.AppendFormat(Localization.Filesystem_version_0_1, mib.major, mib.minor).AppendLine();
+
+        if(hasPercent) sb.AppendFormat(Localization.Volume_can_be_filled_up_to_0, percentFull).AppendLine();
 
         metadata = new FileSystem
         {
-            Clusters               = mib.sectors / bpb.spc,
-            ClusterSize            = (uint)(bpb.bps * bpb.spc),
+            Clusters               = sectors,
+            ClusterSize            = bpb.bps,
             CreationDate           = DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime),
-            DataPreparerIdentifier = StringHandlers.SpacePaddedToString(vib.owner, encoding),
+            DataPreparerIdentifier = owner,
             Type                   = FS_TYPE,
-            VolumeName             = StringHandlers.SpacePaddedToString(mib.volumeLabel, encoding),
+            VolumeName             = label,
             VolumeSerial           = $"{mib.serial:X8}",
             SystemIdentifier       = StringHandlers.SpacePaddedToString(bpb.oem_name)
         };

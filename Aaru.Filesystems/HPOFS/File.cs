@@ -7,10 +7,6 @@
 //
 // Component      : High Performance Optical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     File operations for the High Performance Optical File System.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -31,7 +27,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -48,66 +43,50 @@ public sealed partial class HPOFS
 
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        // Normalize path
-        string cleanPath = path.Replace('\\', '/').Trim('/');
+        ErrorNumber errno = GetEntry(path, out string _, out Entry entry);
 
-        // Root directory
-        if(string.IsNullOrEmpty(cleanPath))
+        if(errno != ErrorNumber.NoError) return errno;
+
+        // Root without a record
+        if(entry is null)
         {
             stat = new FileEntryInfo
             {
                 Attributes = FileAttributes.Directory,
-                BlockSize  = _bpb.bps,
+                BlockSize  = _bytesPerSector,
                 Links      = 1
             };
 
             return ErrorNumber.NoError;
         }
 
-        // Split into directory + filename
-        int lastSep = cleanPath.LastIndexOf('/');
-
-        CachedDirectoryEntry entry;
-
-        if(lastSep < 0)
-        {
-            // Root-level entry
-            if(!_rootDirectoryCache.TryGetValue(cleanPath, out entry)) return ErrorNumber.NoSuchFile;
-        }
-        else
-        {
-            string dirPath  = cleanPath[..lastSep];
-            string fileName = cleanPath[(lastSep + 1)..];
-
-            if(!_directoryCache.TryGetValue(dirPath, out Dictionary<string, CachedDirectoryEntry> dirEntries))
-                return ErrorNumber.NoSuchFile;
-
-            if(!dirEntries.TryGetValue(fileName, out entry)) return ErrorNumber.NoSuchFile;
-        }
-
-        FileAttributes attrs = FileAttributes.None;
-
-        if(entry.IsDirectory) attrs              |= FileAttributes.Directory;
-        if((entry.Attributes & 0x01) != 0) attrs |= FileAttributes.ReadOnly;
-        if((entry.Attributes & 0x02) != 0) attrs |= FileAttributes.Hidden;
-        if((entry.Attributes & 0x04) != 0) attrs |= FileAttributes.System;
-        if((entry.Attributes & 0x20) != 0) attrs |= FileAttributes.Archive;
-
         stat = new FileEntryInfo
         {
-            Attributes = attrs,
-            BlockSize  = _bpb.bps,
-            Links      = 1,
-            Length     = entry.FileSize,
-            Blocks     = entry.FileSize > 0 ? (entry.FileSize + _bpb.bps - 1) / _bpb.bps : 0,
-            Inode      = entry.SectorAddress
+            Attributes = entry.IsDirectory ? FileAttributes.Directory : FileAttributes.File,
+            BlockSize  = _bytesPerSector,
+            Inode      = entry.Record.fileId,
+            Links      = 1
         };
 
-        if(entry.CreationTimestamp > 0)
-            stat.CreationTimeUtc = DateTimeOffset.FromUnixTimeSeconds(entry.CreationTimestamp).UtcDateTime;
+        if(entry.Record.creationDate != 0 || entry.Record.creationTime != 0)
+            stat.CreationTime = DateHandlers.DosToDateTime(entry.Record.creationDate, entry.Record.creationTime);
 
-        if(entry.ModificationTimestamp > 0)
-            stat.LastWriteTimeUtc = DateTimeOffset.FromUnixTimeSeconds(entry.ModificationTimestamp).UtcDateTime;
+        if(entry.Record.writeDate != 0 || entry.Record.writeTime != 0)
+            stat.LastWriteTime = DateHandlers.DosToDateTime(entry.Record.writeDate, entry.Record.writeTime);
+
+        if(entry.Subfiles.Length >= SUBFILE_DATA)
+        {
+            SubfileDescriptor data = entry.Subfiles[SUBFILE_DATA - 1];
+            stat.Length = data.size;
+            stat.Blocks = data.allocated / _bytesPerSector;
+        }
+
+        byte attributes = entry.Record.attributes;
+
+        if((attributes & 0x01) != 0) stat.Attributes |= FileAttributes.ReadOnly;
+        if((attributes & 0x02) != 0) stat.Attributes |= FileAttributes.Hidden;
+        if((attributes & 0x04) != 0) stat.Attributes |= FileAttributes.System;
+        if((attributes & 0x20) != 0) stat.Attributes |= FileAttributes.Archive;
 
         return ErrorNumber.NoError;
     }
@@ -119,42 +98,30 @@ public sealed partial class HPOFS
 
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        ErrorNumber err = Stat(path, out FileEntryInfo stat);
+        ErrorNumber errno = GetEntry(path, out string _, out Entry entry);
 
-        if(err != ErrorNumber.NoError) return err;
+        if(errno != ErrorNumber.NoError) return errno;
 
-        if(stat.Attributes.HasFlag(FileAttributes.Directory) && !_debug) return ErrorNumber.IsDirectory;
+        if(entry is null || entry.IsDirectory) return ErrorNumber.IsDirectory;
 
-        // Find the directory entry to get extent information
-        string cleanPath = path.Replace('\\', '/').Trim('/');
-        int    lastSep   = cleanPath.LastIndexOf('/');
+        Extent[] extents = [];
+        long     length  = 0;
 
-        CachedDirectoryEntry entry;
-
-        if(lastSep < 0)
+        if(entry.Subfiles.Length >= SUBFILE_DATA)
         {
-            if(!_rootDirectoryCache.TryGetValue(cleanPath, out entry)) return ErrorNumber.NoSuchFile;
+            SubfileDescriptor data = entry.Subfiles[SUBFILE_DATA - 1];
+
+            errno = GetExtents(data, SUBFILE_DATA, out extents);
+
+            if(errno != ErrorNumber.NoError) return errno;
+
+            length = data.size;
         }
-        else
-        {
-            string dirPath  = cleanPath[..lastSep];
-            string fileName = cleanPath[(lastSep + 1)..];
-
-            if(!_directoryCache.TryGetValue(dirPath, out Dictionary<string, CachedDirectoryEntry> dirEntries))
-                return ErrorNumber.NoSuchFile;
-
-            if(!dirEntries.TryGetValue(fileName, out entry)) return ErrorNumber.NoSuchFile;
-        }
-
-        // Build the extent list
-        List<(uint startLba, ushort sectorCount)> extents = BuildFileExtentList(entry);
-
-        if(extents.Count == 0 && entry.FileSize > 0) return ErrorNumber.InvalidArgument;
 
         node = new HpofsFileNode
         {
             Path    = path,
-            Length  = entry.FileSize,
+            Length  = length,
             Offset  = 0,
             Extents = extents
         };
@@ -167,9 +134,9 @@ public sealed partial class HPOFS
     {
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not HpofsFileNode mynode) return ErrorNumber.InvalidArgument;
+        if(node is not HpofsFileNode hpofsNode) return ErrorNumber.InvalidArgument;
 
-        mynode.Extents = null;
+        hpofsNode.Extents = null;
 
         return ErrorNumber.NoError;
     }
@@ -181,112 +148,26 @@ public sealed partial class HPOFS
 
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
+        if(node is not HpofsFileNode hpofsNode || hpofsNode.Extents is null) return ErrorNumber.InvalidArgument;
 
-        if(node is not HpofsFileNode mynode) return ErrorNumber.InvalidArgument;
+        if(buffer is null || buffer.Length < length || length < 0) return ErrorNumber.InvalidArgument;
 
-        read = length;
+        if(hpofsNode.Offset < 0) return ErrorNumber.InvalidArgument;
 
-        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
+        if(hpofsNode.Offset >= hpofsNode.Length) return ErrorNumber.NoError;
 
-        if(read <= 0)
-        {
-            read = 0;
+        length = Math.Min(length, hpofsNode.Length - hpofsNode.Offset);
 
-            return ErrorNumber.NoError;
-        }
+        if(length == 0) return ErrorNumber.NoError;
 
-        long bytesRead   = 0;
-        long remaining   = read;
-        long fileOffset  = mynode.Offset;
-        long extentStart = 0;
+        ErrorNumber errno = ReadFromExtents(hpofsNode.Extents, (ulong)hpofsNode.Offset, (uint)length, out byte[] data);
 
-        foreach((uint startLba, ushort sectorCount) in mynode.Extents)
-        {
-            long extentBytes = (long)sectorCount * _bpb.bps;
+        if(errno != ErrorNumber.NoError) return errno;
 
-            // Skip extents that are entirely before the current offset
-            if(extentStart + extentBytes <= fileOffset)
-            {
-                extentStart += extentBytes;
-
-                continue;
-            }
-
-            // Calculate position within this extent
-            long offsetInExtent = fileOffset - extentStart;
-            long bytesToRead    = Math.Min(remaining, extentBytes - offsetInExtent);
-
-            // Determine which sectors to read
-            long firstSector    = offsetInExtent                                / _bpb.bps;
-            long offsetInSector = offsetInExtent                                % _bpb.bps;
-            long sectorsToRead  = (bytesToRead + offsetInSector + _bpb.bps - 1) / _bpb.bps;
-
-            ErrorNumber errno = _image.ReadSectors((ulong)(startLba + firstSector) + _partition.Start,
-                                                   false,
-                                                   (uint)sectorsToRead,
-                                                   out byte[] buf,
-                                                   out _);
-
-            if(errno != ErrorNumber.NoError)
-            {
-                read = bytesRead;
-
-                return errno;
-            }
-
-            Array.Copy(buf, offsetInSector, buffer, bytesRead, bytesToRead);
-
-            bytesRead  += bytesToRead;
-            remaining  -= bytesToRead;
-            fileOffset += bytesToRead;
-
-            if(remaining <= 0) break;
-
-            extentStart += extentBytes;
-        }
-
-        mynode.Offset += bytesRead;
-        read          =  bytesRead;
+        Array.Copy(data, 0, buffer, 0, length);
+        read              =  length;
+        hpofsNode.Offset += length;
 
         return ErrorNumber.NoError;
-    }
-
-    /// <summary>Builds the list of data extents for a file from its inline extent and optional SUBF chain</summary>
-    List<(uint startLba, ushort sectorCount)> BuildFileExtentList(CachedDirectoryEntry entry)
-    {
-        List<(uint startLba, ushort sectorCount)> extents = new();
-
-        // Add the inline extent from the B-tree record (+0x40 sector count, +0x44 start LBA)
-        if(entry.DataSectorCount > 0 && entry.DataStartLba != EXTENT_END_MARKER)
-            extents.Add((entry.DataStartLba, entry.DataSectorCount));
-
-        // If there is a SUBF sector for additional extents, read and parse it
-        if(entry.SubfSector == EXTENT_END_MARKER || entry.SubfSector == 0) return extents;
-
-        ErrorNumber subfErrno =
-            _image.ReadSector(entry.SubfSector + _partition.Start, false, out byte[] subfData, out _);
-
-        if(subfErrno != ErrorNumber.NoError || subfData.Length < 0x20) return extents;
-
-        if(!subfData[..4].SequenceEqual(_subfSignature)) return extents;
-
-        var extentCount = BigEndianBitConverter.ToUInt16(subfData, 0x10);
-
-        for(var ei = 0; ei < extentCount; ei++)
-        {
-            int extOff = 0x20 + ei * 8;
-
-            if(extOff + 8 > subfData.Length) break;
-
-            var sectorCount = BigEndianBitConverter.ToUInt16(subfData, extOff);
-            var startLba    = BigEndianBitConverter.ToUInt32(subfData, extOff + 4);
-
-            if(startLba == EXTENT_END_MARKER) break;
-
-            if(sectorCount > 0) extents.Add((startLba, sectorCount));
-        }
-
-        return extents;
     }
 }

@@ -92,6 +92,128 @@ public class Hpofs() : ReadOnlyFilesystemTest("hpofs")
             SystemId     = "IBM 10.2",
             VolumeName   = "VOLUME LABEL",
             VolumeSerial = "ABEF2C14"
+        },
+        new()
+        {
+            TestFile     = "hpofs_floppy.img.lz",
+            MediaType    = MediaType.DOS_35_HD,
+            Sectors      = 2880,
+            SectorSize   = 512,
+            Clusters     = 2880,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "NO NAME",
+            VolumeSerial = "2C545C15"
+        },
+        new()
+        {
+            TestFile     = "hpofs_230m_r10_cp850_empty.img.lz",
+            MediaType    = MediaType.ECMA_201,
+            Sectors      = 446325,
+            SectorSize   = 512,
+            Clusters     = 446325,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "01RVN",
+            VolumeSerial = "ACC36814"
+        },
+        new()
+        {
+            TestFile     = "hpofs_230m_r10_cp850_fstester_empty.img.lz",
+            MediaType    = MediaType.ECMA_201,
+            Sectors      = 446325,
+            SectorSize   = 512,
+            Clusters     = 446325,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "MLKJIHGFEDCBA9876SRETCARAHC23XAM",
+            VolumeSerial = "ECA2E014"
+        },
+        new()
+        {
+            TestFile     = "hpofs_230m_r266_cp850_empty.img.lz",
+            MediaType    = MediaType.ECMA_201,
+            Sectors      = 446325,
+            SectorSize   = 512,
+            Clusters     = 446325,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "01RVN",
+            VolumeSerial = "ACD0B814"
+        },
+        new()
+        {
+            TestFile     = "hpofs_230m_r266_cp850_fstester_empty.img.lz",
+            MediaType    = MediaType.ECMA_201,
+            Sectors      = 446325,
+            SectorSize   = 512,
+            Clusters     = 446325,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "MLKJIHGFEDCBA9876SRETCARAHC23XAM",
+            VolumeSerial = "ECE34C14"
+        },
+        new()
+        {
+            TestFile     = "hpofs_230m_r266_cp500_files.img.lz",
+            MediaType    = MediaType.ECMA_201,
+            Sectors      = 446325,
+            SectorSize   = 512,
+            Clusters     = 446325,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            EncodingName = "IBM500",
+            VolumeName   = "FILES_266",
+            VolumeSerial = "EC8A9C14"
+        },
+        new()
+        {
+            TestFile     = "hpofs_230m_r1_cp850_empty.img.lz",
+            MediaType    = MediaType.ECMA_201,
+            Sectors      = 446325,
+            SectorSize   = 512,
+            Clusters     = 446325,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "1RBVN",
+            VolumeSerial = "ACA20414"
+        },
+        new()
+        {
+            TestFile     = "hpofs_230m_r1_cp850_fstester_empty.img.lz",
+            MediaType    = MediaType.ECMA_201,
+            Sectors      = 446325,
+            SectorSize   = 512,
+            Clusters     = 446325,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "NO NAME",
+            VolumeSerial = "ECC18414"
+        },
+        new()
+        {
+            TestFile     = "hpofs_230m_r257_cp850_empty.img.lz",
+            MediaType    = MediaType.ECMA_201,
+            Sectors      = 446325,
+            SectorSize   = 512,
+            Clusters     = 446325,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "752RBVN",
+            VolumeSerial = "ACAAD814"
+        },
+        new()
+        {
+            TestFile     = "hpofs_230m_r257_cp500_files.img.lz",
+            MediaType    = MediaType.ECMA_201,
+            Sectors      = 446325,
+            SectorSize   = 512,
+            Clusters     = 446325,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            EncodingName = "IBM500",
+            VolumeName   = "FILES_257",
+            VolumeSerial = "EC898014"
         }
     ];
 }

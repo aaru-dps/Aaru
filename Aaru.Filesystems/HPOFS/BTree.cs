@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     B-tree directory node parsing for the High Performance Optical File System.
+//     Reads extents, subfiles and B-tree files (directory and free space).
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,7 +30,10 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 using Aaru.Logging;
 
@@ -38,172 +41,275 @@ namespace Aaru.Filesystems;
 
 public sealed partial class HPOFS
 {
-    /// <summary>Parses separator keys and child pointers from an INDX (interior) B-tree node</summary>
-    /// <remarks>
-    ///     INDX node entry area layout (starts at offset 0x24):
-    ///     [4] leftChild (uint32 big-endian) — first child node ID
-    ///     Then alternating entries and child pointers:
-    ///     entry: [2] kl (uint16 BE) + [2] rd (uint16 BE, always 0) + [kl] key bytes
-    ///     [4] childPtr (uint32 big-endian) — child node ID for keys >= this entry's key
-    ///     End marker: kl = 0
-    ///     Key format: [4] timestamp (uint32 BE) + [kl-4] name (null-padded)
-    /// </remarks>
-    (List<uint> children, List<(string name, uint timestamp)> keys) ParseIndxEntries(byte[] nodeData)
+    /// <summary>Reads sectors relative to the start of the partition</summary>
+    ErrorNumber ReadSectors(ulong lba, uint count, out byte[] buffer)
     {
-        List<uint>                          children = new();
-        List<(string name, uint timestamp)> keys     = new();
+        buffer = null;
 
-        if(nodeData.Length < 0x28) return (children, keys);
+        if(lba + count > _partition.End - _partition.Start + 1) return ErrorNumber.InvalidArgument;
 
-        // Read leftChild pointer at +0x24
-        var leftChild = BigEndianBitConverter.ToUInt32(nodeData, 0x24);
-        children.Add(leftChild);
-
-        var offset = 0x28;
-
-        while(offset + 4 <= nodeData.Length)
-        {
-            var kl = BigEndianBitConverter.ToUInt16(nodeData, offset);
-
-            // End marker
-            if(kl == 0) break;
-
-            var rd = BigEndianBitConverter.ToUInt16(nodeData, offset + 2);
-
-            // Key starts at offset + 4, length = kl bytes
-            if(offset + 4 + kl > nodeData.Length) break;
-
-            // Parse key: timestamp(u32) + name(null-padded)
-            if(kl >= 4)
-            {
-                var timestamp   = BigEndianBitConverter.ToUInt32(nodeData, offset + 4);
-                int nameAreaLen = kl - 4;
-                var name        = "";
-
-                if(nameAreaLen > 0 && nameAreaLen <= MAX_FILENAME_LENGTH)
-                    name = _encoding.GetString(nodeData, offset + 8, nameAreaLen).TrimEnd('\0');
-
-                keys.Add((name, timestamp));
-            }
-
-            // Skip past entry: kl(2) + rd(2) + key[kl]
-            offset += 4 + kl;
-
-            // Read embedded child pointer after this entry
-            if(offset + 4 > nodeData.Length) break;
-
-            var childPtr = BigEndianBitConverter.ToUInt32(nodeData, offset);
-            children.Add(childPtr);
-            offset += 4;
-        }
-
-        return (children, keys);
+        return _image.ReadSectors(_partition.Start + lba, false, count, out buffer, out _);
     }
 
-    /// <summary>Parses directory entries from a DATA (leaf) B-tree node</summary>
-    /// <remarks>
-    ///     DATA node entry area layout (starts at offset 0x24):
-    ///     Each entry:
-    ///     [2] kl (uint16 BE, key length)
-    ///     [2] rd (uint16 BE, record descriptor / record length)
-    ///     [kl] key bytes: [4] timestamp (uint32 BE) + [kl-4] name (null-padded)
-    ///     [rd] record bytes
-    ///     End marker: kl = 0
-    ///     Record format (rd = 0xDC = 220 bytes for directory entries):
-    ///     +0x00: sectorAddress (uint32 BE)
-    ///     +0x04: sectorAddressDup (uint32 BE, same value)
-    ///     +0x08: extentCount (uint32 BE)
-    ///     +0x0C: entryType (uint8: 0x20=file/dir, 0x40=attribute, 0x60=system)
-    ///     +0x0E: dosAttributes (uint8: 0x01=rdonly, 0x02=hidden, 0x04=system, 0x10=dir, 0x20=archive)
-    ///     +0x1C: timestamp1 (uint32 BE, creation time, Unix epoch)
-    ///     +0x20: timestamp2 (uint32 BE, modification time, Unix epoch)
-    ///     +0x40: dataSectorCount (uint16 BE, sector count for first inline data extent)
-    ///     +0x44: dataStartLba (uint32 BE, start LBA for first inline data extent)
-    ///     +0x4C: subfSector (uint32 BE, SUBF sector for additional extents; 0xFFFFFFFF = none)
-    ///     +0x58: fileSize (uint32 BE)
-    /// </remarks>
-    List<(string fullPath, uint timestamp, byte attributes, uint sectorAddress, uint creationTimestamp, uint
-            modificationTimestamp, uint fileSize, ushort dataSectorCount, uint dataStartLba, uint subfSector)>
-        ParseDataEntries(byte[] nodeData)
+    /// <summary>Gets the extents of a subfile, in file order</summary>
+    /// <param name="descriptor">Subfile descriptor</param>
+    /// <param name="subfile">Subfile number, 1-based, selects the extent list signature</param>
+    /// <param name="extents">Extents</param>
+    ErrorNumber GetExtents(SubfileDescriptor descriptor, int subfile, out Extent[] extents)
     {
-        List<(string fullPath, uint timestamp, byte attributes, uint sectorAddress, uint creationTimestamp, uint
-            modificationTimestamp, uint fileSize, ushort dataSectorCount, uint dataStartLba, uint subfSector)> entries =
-            new();
+        extents = null;
+        List<Extent> list = [];
 
-        var offset = 0x24;
+        ulong firstLba = (ulong)descriptor.firstLbaHigh << 32 | descriptor.firstLbaLow;
 
-        while(offset + 4 <= nodeData.Length)
+        if(firstLba != NO_LBA && descriptor.firstSectors > 0) list.Add(new Extent(firstLba, descriptor.firstSectors));
+
+        ulong secondLba = (ulong)descriptor.secondLbaHigh << 32 | descriptor.secondLbaLow;
+
+        // No extent lists, second extent is inline
+        if(descriptor.lists == 0)
         {
-            var kl = BigEndianBitConverter.ToUInt16(nodeData, offset);
+            if(secondLba != NO_LBA && descriptor.secondSectors > 0)
+                list.Add(new Extent(secondLba, descriptor.secondSectors));
 
-            // End marker
-            if(kl == 0) break;
+            extents = list.ToArray();
 
-            var rd = BigEndianBitConverter.ToUInt16(nodeData, offset + 2);
-
-            // Key must hold at least a timestamp
-            if(kl < 4) break;
-
-            int stride = 4 + kl + rd;
-
-            // Bounds check
-            if(offset + stride > nodeData.Length) break;
-
-            // Parse key: timestamp(u32) + name(null-padded)
-            var timestamp   = BigEndianBitConverter.ToUInt32(nodeData, offset + 4);
-            int nameAreaLen = kl - 4;
-            var name        = "";
-
-            if(nameAreaLen > 0 && nameAreaLen <= MAX_FILENAME_LENGTH)
-                name = _encoding.GetString(nodeData, offset + 8, nameAreaLen).TrimEnd('\0');
-
-            // Parse record data
-            int    recordStart           = offset + 4 + kl;
-            uint   sectorAddress         = 0;
-            byte   attributes            = 0;
-            uint   creationTimestamp     = 0;
-            uint   modificationTimestamp = 0;
-            uint   fileSize              = 0;
-            ushort dataSectorCount       = 0;
-            uint   dataStartLba          = 0;
-            var    subfSector            = 0xFFFFFFFF;
-
-            if(rd >= 4) sectorAddress = BigEndianBitConverter.ToUInt32(nodeData, recordStart);
-
-            if(rd >= 0x0F) attributes = nodeData[recordStart + 0x0E];
-
-            if(rd >= 0x20) creationTimestamp = BigEndianBitConverter.ToUInt32(nodeData, recordStart + 0x1C);
-
-            if(rd >= 0x24) modificationTimestamp = BigEndianBitConverter.ToUInt32(nodeData, recordStart + 0x20);
-
-            if(rd >= 0x5C && (attributes & 0x10) == 0)
-                fileSize = BigEndianBitConverter.ToUInt32(nodeData, recordStart + 0x58);
-
-            if(rd >= 0x48 && (attributes & 0x10) == 0)
-            {
-                dataSectorCount = BigEndianBitConverter.ToUInt16(nodeData, recordStart + 0x40);
-                dataStartLba    = BigEndianBitConverter.ToUInt32(nodeData, recordStart + 0x44);
-            }
-
-            if(rd >= 0x50 && (attributes & 0x10) == 0)
-                subfSector = BigEndianBitConverter.ToUInt32(nodeData, recordStart + 0x4C);
-
-            if(!string.IsNullOrWhiteSpace(name))
-            {
-                AaruLogging.Debug(MODULE_NAME,
-                                  "DATA entry: name='{0}', ts=0x{1:X8}, attrs=0x{2:X2}, sector=0x{3:X8}",
-                                  name,
-                                  timestamp,
-                                  attributes,
-                                  sectorAddress);
-
-                entries.Add((name, timestamp, attributes, sectorAddress, creationTimestamp, modificationTimestamp,
-                             fileSize, dataSectorCount, dataStartLba, subfSector));
-            }
-
-            offset += stride;
+            return ErrorNumber.NoError;
         }
 
-        return entries;
+        // Rest of extents are in a chain of extent list blocks, each one sector long
+        ulong listLba = secondLba;
+
+        for(uint i = 0; i < descriptor.lists; i++)
+        {
+            ErrorNumber errno = ReadSectors(listLba, 1, out byte[] block);
+
+            if(errno != ErrorNumber.NoError) return errno;
+
+            ExtentListHeader header =
+                Marshal.ByteArrayToStructureBigEndian<ExtentListHeader>(block, 0, EXTENT_LIST_HEADER_SIZE);
+
+            if(!header.signature.SequenceEqual(_extentListSignatures[subfile - 1]))
+            {
+                AaruLogging.Debug(MODULE_NAME, "Invalid extent list signature at LBA {0}", listLba);
+
+                return ErrorNumber.InvalidArgument;
+            }
+
+            var found = 0;
+
+            for(int pos = EXTENT_LIST_HEADER_SIZE; pos + EXTENT_SIZE <= block.Length && found < header.extents;
+                pos += EXTENT_SIZE)
+            {
+                ushort sectors = BigEndianBitConverter.ToUInt16(block, pos);
+                ulong  lba     = (ulong)BigEndianBitConverter.ToUInt16(block, pos + 2) << 32 |
+                                 BigEndianBitConverter.ToUInt32(block, pos + 4);
+
+                if(lba == NO_LBA) continue;
+
+                found++;
+
+                if(sectors > 0) list.Add(new Extent(lba, sectors));
+            }
+
+            ulong next = (ulong)header.nextHigh << 32 | header.nextLow;
+
+            // A single list block has been seen pointing to itself
+            if(next == NO_LBA || next == secondLba || next == listLba) break;
+
+            listLba = next;
+        }
+
+        extents = list.ToArray();
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <summary>Reads part of a subfile given its extents</summary>
+    ErrorNumber ReadFromExtents(Extent[] extents, ulong offset, uint length, out byte[] data)
+    {
+        data = new byte[length];
+        ulong filePos = 0;
+        uint  done    = 0;
+
+        foreach(Extent extent in extents)
+        {
+            if(done >= length) break;
+
+            ulong extentBytes = (ulong)extent.Sectors * _bytesPerSector;
+
+            if(offset + done >= filePos + extentBytes)
+            {
+                filePos += extentBytes;
+
+                continue;
+            }
+
+            ulong inExtent    = offset + done - filePos;
+            var   firstSector = (uint)(inExtent / _bytesPerSector);
+            var   inSector    = (uint)(inExtent % _bytesPerSector);
+            ulong toCopy      = Math.Min(extentBytes - inExtent, length - done);
+            var   sectors     = (uint)((inSector + toCopy + _bytesPerSector - 1) / _bytesPerSector);
+
+            ErrorNumber errno = ReadSectors(extent.Lba + firstSector, sectors, out byte[] buffer);
+
+            if(errno != ErrorNumber.NoError) return errno;
+
+            Array.Copy(buffer, inSector, data, done, (long)toCopy);
+            done    += (uint)toCopy;
+            filePos += extentBytes;
+        }
+
+        if(done >= length) return ErrorNumber.NoError;
+
+        // Happens on WORM volumes when writing was interrupted before the data was placed
+        AaruLogging.Debug(MODULE_NAME, "Extents end before requested data, {0} of {1} bytes", done, length);
+
+        return ErrorNumber.InOutError;
+    }
+
+    /// <summary>Reads all leaf entries of a B-tree file, in key order</summary>
+    /// <param name="extents">Extents of the B-tree file</param>
+    /// <param name="entries">Key and record of each entry</param>
+    ErrorNumber ReadBTree(Extent[] extents, out List<(byte[] key, byte[] record)> entries)
+    {
+        entries = [];
+
+        ErrorNumber errno = ReadFromExtents(extents, 0, _bytesPerSector, out byte[] mastSector);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        MasterRecord master = Marshal.ByteArrayToStructureBigEndian<MasterRecord>(mastSector, 0, 0x9C);
+
+        if(!master.signature.SequenceEqual(_mastSignature))
+        {
+            AaruLogging.Debug(MODULE_NAME, "B-tree master record not found");
+
+            return ErrorNumber.InvalidArgument;
+        }
+
+        if(master.nodeSize < NODE_HEADER_SIZE + 2) return ErrorNumber.InvalidArgument;
+
+        AaruLogging.Debug(MODULE_NAME,
+                          "B-tree with nodes of {0} bytes, {1} used, root {2}, first leaf {3}",
+                          master.nodeSize,
+                          master.usedNodes,
+                          master.rootNode,
+                          master.firstLeaf);
+
+        // Leaves are chained, so all entries can be read in order without walking the index
+        uint          node    = master.firstLeaf;
+        HashSet<uint> visited = [];
+
+        while(node != 0 && visited.Add(node))
+        {
+            errno = ReadFromExtents(extents, (ulong)node * master.nodeSize, master.nodeSize, out byte[] data);
+
+            if(errno != ErrorNumber.NoError) return errno;
+
+            NodeHeader header = Marshal.ByteArrayToStructureBigEndian<NodeHeader>(data, 0, NODE_HEADER_SIZE);
+
+            if(!header.signature.SequenceEqual(_dataSignature))
+            {
+                AaruLogging.Debug(MODULE_NAME, "B-tree node {0} is not a leaf", node);
+
+                return ErrorNumber.InvalidArgument;
+            }
+
+            // Slot table at the end of the node holds the offset of each entry, in key order
+            for(var i = 0; i < header.entries; i++)
+            {
+                int slot = data.Length - 2 - i * 2;
+
+                if(slot < NODE_HEADER_SIZE) return ErrorNumber.InvalidArgument;
+
+                ushort offset = BigEndianBitConverter.ToUInt16(data, slot);
+
+                if(offset < NODE_HEADER_SIZE || offset + 4 > slot) return ErrorNumber.InvalidArgument;
+
+                ushort keyLength    = BigEndianBitConverter.ToUInt16(data, offset);
+                ushort recordLength = BigEndianBitConverter.ToUInt16(data, offset + 2);
+
+                if(offset + 4 + keyLength + recordLength > slot) return ErrorNumber.InvalidArgument;
+
+                byte[] key    = new byte[keyLength];
+                byte[] record = new byte[recordLength];
+                Array.Copy(data, offset + 4,             key,    0, keyLength);
+                Array.Copy(data, offset + 4 + keyLength, record, 0, recordLength);
+                entries.Add((key, record));
+            }
+
+            node = header.next;
+        }
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <summary>Decodes a file record and its subfile descriptors</summary>
+    static Entry DecodeRecord(byte[] record)
+    {
+        if(record.Length < FILE_RECORD_SIZE) return null;
+
+        var entry = new Entry
+        {
+            Record = Marshal.ByteArrayToStructureBigEndian<FileRecord>(record, 0, FILE_RECORD_SIZE)
+        };
+
+        int subfiles = (entry.Record.flags & FLAGS_SUBFILES_MASK) >> FLAGS_SUBFILES_SHIFT;
+
+        subfiles = Math.Min(subfiles, (record.Length - FILE_RECORD_SIZE) / SUBFILE_DESCRIPTOR_SIZE);
+
+        entry.Subfiles = new SubfileDescriptor[subfiles];
+
+        for(var i = 0; i < subfiles; i++)
+        {
+            entry.Subfiles[i] =
+                Marshal.ByteArrayToStructureBigEndian<SubfileDescriptor>(record,
+                                                                         FILE_RECORD_SIZE +
+                                                                         i * SUBFILE_DESCRIPTOR_SIZE,
+                                                                         SUBFILE_DESCRIPTOR_SIZE);
+        }
+
+        return entry;
+    }
+
+    /// <summary>Reads the file record of a system file and gets the extents of its data</summary>
+    ErrorNumber GetSystemFileExtents(ulong recordSector, out Extent[] extents)
+    {
+        extents = null;
+
+        ErrorNumber errno = ReadSectors(recordSector, 1, out byte[] sector);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        Entry entry = DecodeRecord(sector);
+
+        if(entry is null || entry.Subfiles.Length < 1) return ErrorNumber.InvalidArgument;
+
+        return GetExtents(entry.Subfiles[0], SUBFILE_DATA, out extents);
+    }
+
+    /// <summary>Counts the free sectors listed in the free space B-tree</summary>
+    ErrorNumber CountFreeSectors(out ulong free)
+    {
+        free = 0;
+
+        ErrorNumber errno = GetSystemFileExtents(FREEFILE_RECORD_SECTOR, out Extent[] extents);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        errno = ReadBTree(extents, out List<(byte[] key, byte[] record)> entries);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        // Key is a byte and a 48-bit LBA, record is a byte and a 32-bit sector count
+        foreach((byte[] _, byte[] record) in entries)
+        {
+            if(record.Length < 5) continue;
+
+            free += BigEndianBitConverter.ToUInt32(record, 1);
+        }
+
+        return ErrorNumber.NoError;
     }
 }

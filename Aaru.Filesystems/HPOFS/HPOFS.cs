@@ -36,63 +36,64 @@ using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
-// Information from test floppy images created with OS/2 HPOFS 2.0
-// Need to get IBM document GA32-0224 -> IBM 3995 Optical Library Dataserver Products: Optical Disk Format
+// Reverse engineered from OS/2 HPOFS20.IFS and UHPOFS.DLL, and verified against volumes written by them.
+// IBM document GA32-0224 (IBM 3995 Optical Library Dataserver Products: Optical Disk Format) describes the format.
 /// <inheritdoc />
 /// <summary>Implements IBM's High Performance Optical File System</summary>
 public sealed partial class HPOFS : IReadOnlyFilesystem
 {
-    const string       MODULE_NAME = "HPOFS Plugin";
-    BiosParameterBlock _bpb;
-    DciRecord          _dciRecord;
+    const string MODULE_NAME = "HPOFS Plugin";
 
-    bool                                                         _debug;
-    Dictionary<string, Dictionary<string, CachedDirectoryEntry>> _directoryCache;
-    Encoding                                                     _encoding;
-    bool                                                         _hasSmiBlock;
-    IMediaImage                                                  _image;
-    MediaInformationBlock                                        _medInfo;
-    bool                                                         _mounted;
-    Partition                                                    _partition;
-    Dictionary<string, CachedDirectoryEntry>                     _rootDirectoryCache;
-    SmiBlock                                                     _smiBlock;
-    FileSystemInfo                                               _statfs;
-    VolumeInformationBlock                                       _volInfo;
+    BiosParameterBlock _bpb;
+    uint               _bytesPerSector;
+    /// <summary>Children of each directory, in on-disk (key) order, keyed by directory path without leading slash</summary>
+    Dictionary<string, List<string>> _children;
+    /// <summary>All entries, keyed by path without leading slash</summary>
+    Dictionary<string, Entry> _entries;
+    Encoding                  _encoding;
+    IMediaImage               _image;
+    MediaInformationBlock     _medInfo;
+    bool                      _mounted;
+    Partition                 _partition;
+    Entry                     _root;
+    FileSystemInfo            _statfs;
+    VolumeInformationBlock    _volInfo;
 
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions => [];
+
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => [];
 
-#region Nested type: CachedDirectoryEntry
+#region Nested type: Entry
 
-    /// <summary>Cached directory entry for mounted filesystem operations</summary>
-    sealed class CachedDirectoryEntry
+    /// <summary>A file or directory, as decoded from its directory key and file record</summary>
+    sealed class Entry
     {
-        /// <summary>DOS-style attribute byte from the directory entry</summary>
-        public byte Attributes;
-        /// <summary>Creation timestamp (Unix epoch, from record +0x1C)</summary>
-        public uint CreationTimestamp;
-        /// <summary>Sector count of the first inline data extent (from record +0x40)</summary>
-        public ushort DataSectorCount;
-        /// <summary>Start LBA of the first inline data extent (from record +0x44)</summary>
-        public uint DataStartLba;
-        /// <summary>File size in bytes (from record +0x58)</summary>
-        public uint FileSize;
-        /// <summary>Is this entry a directory?</summary>
-        public bool IsDirectory;
-        /// <summary>Modification timestamp (Unix epoch, from record +0x20)</summary>
-        public uint ModificationTimestamp;
-        /// <summary>Filename (last path component)</summary>
-        public string Name;
-        /// <summary>Sector address this entry points to</summary>
-        public uint SectorAddress;
-        /// <summary>SUBF sector for additional file data extents (0xFFFFFFFF = none)</summary>
-        public uint SubfSector;
-        /// <summary>Timestamp or checksum value from the INDX entry</summary>
-        public uint Timestamp;
+        /// <summary>Decoded file record header</summary>
+        public FileRecord Record;
+        /// <summary>Subfile descriptors present in the record</summary>
+        public SubfileDescriptor[] Subfiles;
+        /// <summary>Version of the entry, on WORM volumes, counting down from 0xFFFFFFFE</summary>
+        public uint Version;
+        /// <summary>Is this a directory?</summary>
+        public bool IsDirectory => (Record.attributes & 0x10) != 0;
+    }
+
+#endregion
+
+#region Nested type: Extent
+
+    /// <summary>A run of contiguous sectors</summary>
+    readonly struct Extent(ulong lba, uint sectors)
+    {
+        /// <summary>First sector, relative to the partition</summary>
+        public readonly ulong Lba = lba;
+        /// <summary>Number of sectors</summary>
+        public readonly uint Sectors = sectors;
     }
 
 #endregion
@@ -101,10 +102,11 @@ public sealed partial class HPOFS : IReadOnlyFilesystem
 
     sealed class HpofsDirNode : IDirNode
     {
-        internal string[]                                 Contents;
-        internal Dictionary<string, CachedDirectoryEntry> Entries;
-        internal int                                      Position;
-        public   string                                   Path { get; init; }
+        internal string[] Contents;
+        internal int      Position;
+
+        /// <inheritdoc />
+        public string Path { get; init; }
     }
 
 #endregion
@@ -113,7 +115,7 @@ public sealed partial class HPOFS : IReadOnlyFilesystem
 
     sealed class HpofsFileNode : IFileNode
     {
-        internal List<(uint startLba, ushort sectorCount)> Extents;
+        internal Extent[] Extents;
 
         /// <inheritdoc />
         public string Path { get; init; }

@@ -7,10 +7,6 @@
 //
 // Component      : High Performance Optical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Sector overlap analysis for the High Performance Optical File System.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -55,185 +51,111 @@ public sealed partial class HPOFS
         files = [];
 
         if(!_mounted) return ErrorNumber.AccessDenied;
+
         if(sectorExtents is null) return ErrorNumber.InvalidArgument;
 
-        List<(ulong Start, ulong End)> normalizedExtents = NormalizeAnalyzeExtents(sectorExtents);
+        List<(ulong Start, ulong End)> requested = NormalizeAnalyzeExtents(sectorExtents);
 
-        if(normalizedExtents.Count == 0) return ErrorNumber.NoError;
+        if(requested.Count == 0) return ErrorNumber.NoError;
 
         try
         {
             initProgress?.Invoke();
 
-            return TraverseDirectoryForAffectedSectors("/",
-                                                       _rootDirectoryCache,
-                                                       normalizedExtents,
-                                                       files,
-                                                       updateProgress,
-                                                       pulseProgress);
+            // The directory itself
+            if(GetSystemFileExtents(DIRECTORY_RECORD_SECTOR, out Extent[] directoryExtents) == ErrorNumber.NoError)
+                AddOverlaps("/", null, 0, directoryExtents, requested, files);
+
+            long current = 0;
+
+            foreach(KeyValuePair<string, Entry> item in _entries.OrderBy(static e => e.Key, StringComparer.Ordinal))
+            {
+                current++;
+                updateProgress?.Invoke("/" + item.Key, current, _entries.Count);
+
+                for(var subfile = 1; subfile <= item.Value.Subfiles.Length && subfile <= SUBFILE_EA; subfile++)
+                {
+                    ErrorNumber errno = GetExtents(item.Value.Subfiles[subfile - 1], subfile, out Extent[] extents);
+
+                    if(errno != ErrorNumber.NoError) return errno;
+
+                    AddOverlaps("/" + item.Key,
+                                subfile == SUBFILE_EA ? EA_PREFIX_OS2 : null,
+                                item.Value.Record.fileId,
+                                extents,
+                                requested,
+                                files);
+                }
+            }
         }
         finally
         {
             endProgress?.Invoke();
         }
+
+        return ErrorNumber.NoError;
     }
 
 #endregion
 
-    ErrorNumber TraverseDirectoryForAffectedSectors(string path,
-                                                    Dictionary<string, CachedDirectoryEntry> directoryEntries,
-                                                    IReadOnlyList<(ulong Start, ulong End)> sectorExtents,
-                                                    List<FileSectorInfo> files, UpdateProgressHandler updateProgress,
-                                                    PulseProgressHandler pulseProgress)
+    /// <summary>Adds the parts of some extents that overlap the requested sectors</summary>
+    void AddOverlaps(string path, string stream, ulong inode, IEnumerable<Extent> extents,
+                     IReadOnlyList<(ulong Start, ulong End)> requested, List<FileSectorInfo> files)
     {
-        pulseProgress?.Invoke(path);
+        List<(ulong Start, ulong End)> overlaps = [];
 
-        KeyValuePair<string, CachedDirectoryEntry>[] orderedEntries = directoryEntries
-                                                                     .Where(static entry =>
-                                                                                !string.IsNullOrWhiteSpace(entry.Key) &&
-                                                                                entry.Key is not "." and not "..")
-                                                                     .OrderBy(static entry => entry.Key,
-                                                                              StringComparer.OrdinalIgnoreCase)
-                                                                     .ToArray();
-
-        long maximum = orderedEntries.Length > 0 ? orderedEntries.Length : 1;
-
-        for(var i = 0; i < orderedEntries.Length; i++)
+        foreach(Extent extent in extents)
         {
-            string entryPath = path == "/" ? "/" + orderedEntries[i].Key : path + "/" + orderedEntries[i].Key;
-            CachedDirectoryEntry entry = orderedEntries[i].Value;
+            ulong start = _partition.Start + extent.Lba;
+            ulong end   = start + extent.Sectors - 1;
 
-            updateProgress?.Invoke(entryPath, i + 1, maximum);
-
-            if(entry.IsDirectory)
+            foreach((ulong Start, ulong End) wanted in requested)
             {
-                string subdirectoryPath = entryPath.Trim('/');
+                if(wanted.End < start || wanted.Start > end) continue;
 
-                if(_directoryCache != null &&
-                   _directoryCache.TryGetValue(subdirectoryPath,
-                                               out Dictionary<string, CachedDirectoryEntry> subDirectory))
-                {
-                    ErrorNumber errno = TraverseDirectoryForAffectedSectors(entryPath,
-                                                                            subDirectory,
-                                                                            sectorExtents,
-                                                                            files,
-                                                                            updateProgress,
-                                                                            pulseProgress);
-
-                    if(errno != ErrorNumber.NoError) return errno;
-                }
-
-                continue;
+                overlaps.Add((Math.Max(start, wanted.Start), Math.Min(end, wanted.End)));
             }
-
-            ErrorNumber overlapErrno = AddOverlappingFile(entryPath, entry, sectorExtents, files);
-
-            if(overlapErrno != ErrorNumber.NoError) return overlapErrno;
         }
 
-        return ErrorNumber.NoError;
-    }
-
-    ErrorNumber AddOverlappingFile(string                                  path,          CachedDirectoryEntry entry,
-                                   IReadOnlyList<(ulong Start, ulong End)> sectorExtents, List<FileSectorInfo> files)
-    {
-        if(entry.FileSize == 0) return ErrorNumber.NoError;
-
-        List<(uint startLba, ushort sectorCount)> extents = BuildFileExtentList(entry);
-
-        ErrorNumber errno = FindOverlappingExtents(extents,
-                                                   entry.FileSize,
-                                                   sectorExtents,
-                                                   out List<(ulong Start, ulong End)> overlaps);
-
-        if(errno != ErrorNumber.NoError) return errno;
-
-        if(overlaps.Count == 0) return ErrorNumber.NoError;
+        if(overlaps.Count == 0) return;
 
         files.Add(new FileSectorInfo
         {
             Path            = path,
-            Inode           = entry.SectorAddress,
-            AffectedSectors = overlaps
+            Stream          = stream,
+            Inode           = inode,
+            AffectedSectors = NormalizeAnalyzeExtents(overlaps)
         });
-
-        return ErrorNumber.NoError;
-    }
-
-    ErrorNumber FindOverlappingExtents(IReadOnlyList<(uint startLba, ushort sectorCount)> extents, uint logicalSize,
-                                       IReadOnlyList<(ulong Start, ulong End)>            sectorExtents,
-                                       out List<(ulong Start, ulong End)>                 overlaps)
-    {
-        overlaps = [];
-
-        if(logicalSize == 0 || extents.Count == 0) return ErrorNumber.NoError;
-
-        ulong remainingBytes = logicalSize;
-        ulong sectorSize     = _image.Info.SectorSize;
-
-        for(var i = 0; i < extents.Count && remainingBytes > 0; i++)
-        {
-            if(extents[i].sectorCount == 0) continue;
-
-            ulong extentBytes = (ulong)extents[i].sectorCount * _bpb.bps;
-            ulong bytesInRun  = Math.Min(extentBytes, remainingBytes);
-
-            if(bytesInRun == 0) continue;
-
-            ulong startSector  = _partition.Start + extents[i].startLba;
-            ulong sectorsInRun = (bytesInRun + sectorSize - 1) / sectorSize;
-
-            if(sectorsInRun == 0) sectorsInRun = 1;
-
-            AddExtentOverlaps(startSector, startSector + sectorsInRun - 1, sectorExtents, overlaps);
-            remainingBytes -= bytesInRun;
-        }
-
-        overlaps = NormalizeAnalyzeExtents(overlaps);
-
-        return ErrorNumber.NoError;
-    }
-
-    static void AddExtentOverlaps(ulong                                   startSector, ulong endSector,
-                                  IReadOnlyList<(ulong Start, ulong End)> sectorExtents,
-                                  List<(ulong Start, ulong End)>          overlaps)
-    {
-        foreach((ulong Start, ulong End) requestedExtent in sectorExtents)
-        {
-            if(requestedExtent.End < startSector || requestedExtent.Start > endSector) continue;
-
-            overlaps.Add((Math.Max(startSector, requestedExtent.Start), Math.Min(endSector, requestedExtent.End)));
-        }
     }
 
     static List<(ulong Start, ulong End)> NormalizeAnalyzeExtents(IEnumerable<(ulong Start, ulong End)> extents)
     {
-        var orderedExtents = extents.Where(static extent => extent.End >= extent.Start)
-                                    .OrderBy(static extent => extent.Start)
-                                    .ThenBy(static extent => extent.End)
-                                    .ToList();
+        List<(ulong Start, ulong End)> ordered = extents.Where(static extent => extent.End >= extent.Start)
+                                                        .OrderBy(static extent => extent.Start)
+                                                        .ThenBy(static extent => extent.End)
+                                                        .ToList();
 
-        List<(ulong Start, ulong End)> normalizedExtents = [];
+        List<(ulong Start, ulong End)> normalized = [];
 
-        if(orderedExtents.Count == 0) return normalizedExtents;
+        if(ordered.Count == 0) return normalized;
 
-        (ulong Start, ulong End) currentExtent = orderedExtents[0];
+        (ulong Start, ulong End) current = ordered[0];
 
-        for(var i = 1; i < orderedExtents.Count; i++)
+        for(var i = 1; i < ordered.Count; i++)
         {
-            if(orderedExtents[i].Start <= currentExtent.End + 1)
+            if(ordered[i].Start <= current.End + 1)
             {
-                currentExtent.End = Math.Max(currentExtent.End, orderedExtents[i].End);
+                current.End = Math.Max(current.End, ordered[i].End);
 
                 continue;
             }
 
-            normalizedExtents.Add(currentExtent);
-            currentExtent = orderedExtents[i];
+            normalized.Add(current);
+            current = ordered[i];
         }
 
-        normalizedExtents.Add(currentExtent);
+        normalized.Add(current);
 
-        return normalizedExtents;
+        return normalized;
     }
 }

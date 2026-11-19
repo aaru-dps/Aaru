@@ -1311,6 +1311,18 @@ namespace Aaru.Filesystems {
             }
         }
 
+        internal static string HPOFS_WORM_volume {
+            get {
+                return ResourceManager.GetString("HPOFS_WORM_volume", resourceCulture);
+            }
+        }
+
+        internal static string HPOFS_rewritable_volume {
+            get {
+                return ResourceManager.GetString("HPOFS_rewritable_volume", resourceCulture);
+            }
+        }
+
         internal static string OEM_name_0 {
             get {
                 return ResourceManager.GetString("OEM_name_0", resourceCulture);

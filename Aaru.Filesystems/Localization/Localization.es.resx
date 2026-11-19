@@ -1260,6 +1260,12 @@
     <data name="HPOFS_Name" xml:space="preserve">
     <value>Sistema de ficheros óptico de alto rendimiento</value>
   </data>
+    <data name="HPOFS_WORM_volume" xml:space="preserve">
+    <value>El volumen está formateado como un sistema de ficheros de una sola escritura (WORM).</value>
+  </data>
+    <data name="HPOFS_rewritable_volume" xml:space="preserve">
+    <value>El volumen está formateado como un sistema de ficheros regrabable.</value>
+  </data>
     <data name="HP_Logical_Interchange_Format" xml:space="preserve">
     <value>Format de Intercambio Lógico de HP</value>
   </data>

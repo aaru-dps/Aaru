@@ -656,6 +656,12 @@
     <data name="HPOFS_Name" xml:space="preserve">
     <value>High Performance Optical File System</value>
   </data>
+    <data name="HPOFS_WORM_volume" xml:space="preserve">
+    <value>Volume is formatted as a write-once (WORM) filesystem.</value>
+  </data>
+    <data name="HPOFS_rewritable_volume" xml:space="preserve">
+    <value>Volume is formatted as a rewritable filesystem.</value>
+  </data>
     <data name="OEM_name_0" xml:space="preserve">
     <value>OEM name: {0}</value>
   </data>

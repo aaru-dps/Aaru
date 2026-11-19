@@ -7,11 +7,6 @@
 //
 // Component      : High Performance Optical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Directory listing operations for the High Performance Optical File
-//     System.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -31,9 +26,7 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 
@@ -48,44 +41,19 @@ public sealed partial class HPOFS
 
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        // Normalize path
-        string normalizedPath = path ?? "/";
+        ErrorNumber errno = GetEntry(path, out string key, out Entry entry);
 
-        if(normalizedPath is "" or ".") normalizedPath = "/";
+        if(errno != ErrorNumber.NoError) return errno;
 
-        // Root directory case
-        if(normalizedPath is "/" or "\\")
-        {
-            if(_rootDirectoryCache.Count == 0) return ErrorNumber.NoSuchFile;
+        if(entry is not null && !entry.IsDirectory) return ErrorNumber.NotDirectory;
 
-            node = new HpofsDirNode
-            {
-                Path     = "/",
-                Position = 0,
-                Contents = _rootDirectoryCache.Keys.ToArray(),
-                Entries  = _rootDirectoryCache
-            };
-
-            return ErrorNumber.NoError;
-        }
-
-        // Strip leading slash
-        string cleanPath = normalizedPath.StartsWith("/", StringComparison.Ordinal)
-                               ? normalizedPath[1..]
-                               : normalizedPath;
-
-        // Strip trailing slash
-        if(cleanPath.EndsWith("/", StringComparison.Ordinal)) cleanPath = cleanPath[..^1];
-
-        if(!_directoryCache.TryGetValue(cleanPath, out Dictionary<string, CachedDirectoryEntry> dirEntries))
-            return ErrorNumber.NoSuchFile;
+        if(!_children.TryGetValue(key, out List<string> contents)) return ErrorNumber.NoSuchFile;
 
         node = new HpofsDirNode
         {
-            Path     = normalizedPath,
+            Path     = "/" + key,
             Position = 0,
-            Contents = dirEntries.Keys.ToArray(),
-            Entries  = dirEntries
+            Contents = contents.ToArray()
         };
 
         return ErrorNumber.NoError;
@@ -113,12 +81,30 @@ public sealed partial class HPOFS
 
         if(hpofsNode.Position < 0) return ErrorNumber.InvalidArgument;
 
-        // End of directory
         if(hpofsNode.Position >= hpofsNode.Contents.Length) return ErrorNumber.NoError;
 
-        // Get current filename and advance position
         filename = hpofsNode.Contents[hpofsNode.Position++];
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Finds an entry by path</summary>
+    /// <param name="path">Path</param>
+    /// <param name="key">Normalized path, without leading or trailing slashes, empty for root</param>
+    /// <param name="entry">Entry, <c>null</c> for the root directory if it has no record</param>
+    ErrorNumber GetEntry(string path, out string key, out Entry entry)
+    {
+        key   = (path ?? "").Replace('\\', '/').Trim('/');
+        entry = null;
+
+        if(key is "" or ".")
+        {
+            key   = "";
+            entry = _root;
+
+            return ErrorNumber.NoError;
+        }
+
+        return _entries.TryGetValue(key, out entry) ? ErrorNumber.NoError : ErrorNumber.NoSuchFile;
     }
 }
