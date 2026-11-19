@@ -1305,6 +1305,66 @@ namespace Aaru.Filesystems {
             }
         }
 
+        internal static string MDFS_Name {
+            get {
+                return ResourceManager.GetString("MDFS_Name", resourceCulture);
+            }
+        }
+
+        internal static string MDFS_Long_names_namespace {
+            get {
+                return ResourceManager.GetString("MDFS_Long_names_namespace", resourceCulture);
+            }
+        }
+
+        internal static string MDFS_DOS_names_namespace {
+            get {
+                return ResourceManager.GetString("MDFS_DOS_names_namespace", resourceCulture);
+            }
+        }
+
+        internal static string MDFS_0_allocation_units_of_1_sectors_2_bytes {
+            get {
+                return ResourceManager.GetString("MDFS_0_allocation_units_of_1_sectors_2_bytes", resourceCulture);
+            }
+        }
+
+        internal static string MDFS_0_free_1_used_2_defective_allocation_units {
+            get {
+                return ResourceManager.GetString("MDFS_0_free_1_used_2_defective_allocation_units", resourceCulture);
+            }
+        }
+
+        internal static string MDFS_0_directories_and_1_files {
+            get {
+                return ResourceManager.GetString("MDFS_0_directories_and_1_files", resourceCulture);
+            }
+        }
+
+        internal static string MDFS_Volume_management_area_at_sector_0_1_bytes {
+            get {
+                return ResourceManager.GetString("MDFS_Volume_management_area_at_sector_0_1_bytes", resourceCulture);
+            }
+        }
+
+        internal static string MDFS_Volume_management_area_is_mirrored {
+            get {
+                return ResourceManager.GetString("MDFS_Volume_management_area_is_mirrored", resourceCulture);
+            }
+        }
+
+        internal static string MDFS_Volume_is_write_protected {
+            get {
+                return ResourceManager.GetString("MDFS_Volume_is_write_protected", resourceCulture);
+            }
+        }
+
+        internal static string MDFS_Volume_uses_32_bit_extent_records {
+            get {
+                return ResourceManager.GetString("MDFS_Volume_uses_32_bit_extent_records", resourceCulture);
+            }
+        }
+
         internal static string HPOFS_Name {
             get {
                 return ResourceManager.GetString("HPOFS_Name", resourceCulture);

@@ -3959,4 +3959,34 @@
   <data name="Shift_JIS_detected_in_primary_volume_descriptor" xml:space="preserve">
     <value>Se han detectado caracteres Shift-JIS en los identificadores del descriptor de volumen primario</value>
   </data>
+  <data name="MDFS_Name" xml:space="preserve">
+    <value>Sistema de Archivos de MiniDisc</value>
+  </data>
+  <data name="MDFS_Long_names_namespace" xml:space="preserve">
+    <value>Nombres largos, o nombres 8.3 si no existen (por defecto)</value>
+  </data>
+  <data name="MDFS_DOS_names_namespace" xml:space="preserve">
+    <value>Nombres 8.3</value>
+  </data>
+  <data name="MDFS_0_allocation_units_of_1_sectors_2_bytes" xml:space="preserve">
+    <value>{0} unidades de asignación de {1} sectores ({2} bytes)</value>
+  </data>
+  <data name="MDFS_0_free_1_used_2_defective_allocation_units" xml:space="preserve">
+    <value>{0} unidades de asignación libres, {1} usadas y {2} defectuosas</value>
+  </data>
+  <data name="MDFS_0_directories_and_1_files" xml:space="preserve">
+    <value>{0} directorios y {1} archivos</value>
+  </data>
+  <data name="MDFS_Volume_management_area_at_sector_0_1_bytes" xml:space="preserve">
+    <value>Área de gestión del volumen en el sector {0}, de {1} bytes</value>
+  </data>
+  <data name="MDFS_Volume_management_area_is_mirrored" xml:space="preserve">
+    <value>El área de gestión del volumen está duplicada</value>
+  </data>
+  <data name="MDFS_Volume_is_write_protected" xml:space="preserve">
+    <value>El volumen está protegido contra escritura</value>
+  </data>
+  <data name="MDFS_Volume_uses_32_bit_extent_records" xml:space="preserve">
+    <value>El volumen usa registros de extensiones de 32 bits</value>
+  </data>
 </root>

@@ -3995,4 +3995,34 @@
   <data name="Shift_JIS_detected_in_primary_volume_descriptor" xml:space="preserve">
     <value>Shift-JIS characters detected in primary volume descriptor identifiers</value>
   </data>
+  <data name="MDFS_Name" xml:space="preserve">
+    <value>MiniDisc File System</value>
+  </data>
+  <data name="MDFS_Long_names_namespace" xml:space="preserve">
+    <value>Long names, falling back to 8.3 names (default)</value>
+  </data>
+  <data name="MDFS_DOS_names_namespace" xml:space="preserve">
+    <value>8.3 names</value>
+  </data>
+  <data name="MDFS_0_allocation_units_of_1_sectors_2_bytes" xml:space="preserve">
+    <value>{0} allocation units of {1} sectors ({2} bytes)</value>
+  </data>
+  <data name="MDFS_0_free_1_used_2_defective_allocation_units" xml:space="preserve">
+    <value>{0} free, {1} used and {2} defective allocation units</value>
+  </data>
+  <data name="MDFS_0_directories_and_1_files" xml:space="preserve">
+    <value>{0} directories and {1} files</value>
+  </data>
+  <data name="MDFS_Volume_management_area_at_sector_0_1_bytes" xml:space="preserve">
+    <value>Volume management area at sector {0}, {1} bytes long</value>
+  </data>
+  <data name="MDFS_Volume_management_area_is_mirrored" xml:space="preserve">
+    <value>Volume management area is mirrored</value>
+  </data>
+  <data name="MDFS_Volume_is_write_protected" xml:space="preserve">
+    <value>Volume is write protected</value>
+  </data>
+  <data name="MDFS_Volume_uses_32_bit_extent_records" xml:space="preserve">
+    <value>Volume uses 32-bit extent records</value>
+  </data>
 </root>
