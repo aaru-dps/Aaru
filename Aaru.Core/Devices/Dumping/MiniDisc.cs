@@ -164,11 +164,14 @@ partial class Dump
 
         if(!sense && !_dev.Error) mediaTags.Add(MediaTagType.MiniDiscD5, cmdBuf);
 
+        // Vendor command D1h returns the User TOC (U-TOC), only present on recorded discs
         sense = _dev.MiniDiscReadDataTOC(out cmdBuf, out _, _dev.Timeout, out _);
 
-        if(!sense && !_dev.Error) mediaTags.Add(MediaTagType.MiniDiscDTOC, cmdBuf);
+        if(!sense && !_dev.Error) mediaTags.Add(MediaTagType.MiniDiscUTOC, cmdBuf);
 
-        var utocMs = new MemoryStream();
+        // Vendor command D4h returns the Premastered TOC (P-TOC), one sector on recordable discs, up to four on
+        // premastered ones
+        var ptocMs = new MemoryStream();
 
         for(uint i = 0; i < 3; i++)
         {
@@ -176,10 +179,10 @@ partial class Dump
 
             if(sense || _dev.Error) break;
 
-            utocMs.Write(cmdBuf, 0, 2336);
+            ptocMs.Write(cmdBuf, 0, 2336);
         }
 
-        if(utocMs.Length > 0) mediaTags.Add(MediaTagType.MiniDiscUTOC, utocMs.ToArray());
+        if(ptocMs.Length > 0) mediaTags.Add(MediaTagType.MiniDiscDTOC, ptocMs.ToArray());
 
         ret = true;
 

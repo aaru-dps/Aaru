@@ -41,7 +41,10 @@ namespace Aaru.Devices;
 
 public partial class Device
 {
-    /// <summary>Reads the data TOC from an MD-DATA</summary>
+    /// <summary>
+    ///     Reads sector 0 of the User TOC (U-TOC) from a recordable MiniDisc (vendor command D1h). On MD-DATA discs it
+    ///     describes the system and data tracks; it is not available on blank or premastered discs.
+    /// </summary>
     /// <param name="buffer">Buffer where the response will be stored</param>
     /// <param name="senseBuffer">Sense buffer.</param>
     /// <param name="timeout">Timeout in seconds.</param>
@@ -71,10 +74,13 @@ public partial class Device
         return sense;
     }
 
-    /// <summary>Reads the user TOC from an MD-DATA</summary>
+    /// <summary>
+    ///     Reads a sector of the Premastered TOC (P-TOC) from a MiniDisc (vendor command D4h). Sector 0 starts with the
+    ///     "MINI" (audio) or "MINX" (MD-DATA) signature at offset 8; recordable discs only have sector 0.
+    /// </summary>
     /// <param name="buffer">Buffer where the response will be stored</param>
     /// <param name="senseBuffer">Sense buffer.</param>
-    /// <param name="sector">TOC sector to read</param>
+    /// <param name="sector">P-TOC sector to read</param>
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
