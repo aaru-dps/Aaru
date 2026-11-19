@@ -2832,6 +2832,12 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="VideoNow_frame_is_offset_0_bytes" xml:space="preserve">
     <value>[slateblue1]VideoNow frame is offset [lime]{0}[/] bytes.[/]</value>
   </data>
+    <data name="Could_not_find_Atari_Jaguar_CD_header_offset" xml:space="preserve">
+        <value>[olive]Could not find Atari Jaguar CD header offset, dump may not be correct.[/]</value>
+    </data>
+    <data name="Atari_Jaguar_CD_header_is_offset_0_bytes" xml:space="preserve">
+        <value>[slateblue1]Atari Jaguar CD header is offset [lime]{0}[/] bytes.[/]</value>
+    </data>
     <data name="READ_DISC_STRUCTURE_Recognized_Format_Layers_0" xml:space="preserve">
     <value>READ DISC STRUCTURE: Recognized Format Layers
 {0}</value>

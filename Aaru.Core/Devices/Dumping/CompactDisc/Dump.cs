@@ -342,6 +342,24 @@ sealed partial class Dump
         if(dskType is MediaType.CDI or MediaType.CDIREADY && tracks.Length == 1 && tracks[0].Type == TrackType.Audio)
             tracks[0].Type = TrackType.CdMode2Formless;
 
+        // Atari Jaguar CD data tracks start with a header that, depending on the disc write offset, can lie in the pregap
+        // of the first track of the session. Read those pregaps instead of skipping them with the lead-in and lead-out.
+        if(dskType == MediaType.JaguarCD)
+        {
+            foreach(Track trk in tracks.Where(static t => t.Session > 1 && t.Pregap > 0))
+            {
+                if(tracks.Where(t => t.Session == trk.Session).MinBy(static t => t.Sequence).Sequence != trk.Sequence)
+                    continue;
+
+                trk.Indexes[1]  =  (int)trk.StartSector;
+                trk.StartSector -= trk.Pregap;
+                trk.Indexes[0]  =  (int)trk.StartSector;
+
+                for(ulong sector = trk.StartSector; sector < trk.StartSector + trk.Pregap; sector++)
+                    leadOutExtents.Remove(sector);
+            }
+        }
+
         if(hiddenTrack || firstLba > 0)
         {
             UpdateStatus?.Invoke(Localization.Core.Disc_contains_a_hidden_track);
@@ -1348,6 +1366,9 @@ sealed partial class Dump
             {
                 // First session's first track (sequence 1, or 0 when there is a hidden track) has its pregap in the lead-in
                 if(trk.Sequence is 0 or 1) continue;
+
+                // Atari Jaguar CD session pregaps were already included in their tracks to be read
+                if(dskType == MediaType.JaguarCD) continue;
 
                 trk.StartSector -= trk.Pregap;
                 trk.Indexes[0]  =  (int)trk.StartSector;

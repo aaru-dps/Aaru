@@ -66,6 +66,14 @@ public static class MMC
     const string PS2_JAPANESE_HASH = "b82bffb809070d61fe050b7e1545df53d8f3cc648257cdff7502bc0ba6b38870";
     const string MODULE_NAME       = "Media detection";
 
+    /// <summary>
+    ///     Byte, from the start of index 1 of the first track of the second session, where the Atari Jaguar CD boot
+    ///     header should start. Atari's CD-ROM manual requires every data track to start with its header, and Atari adds
+    ///     a 2 second pregap to each track when mastering, so the header belongs at index 1. It is long aligned for the
+    ///     Jaguar, which on every dumped disc falls on the second 16-bit word of a sample.
+    /// </summary>
+    const int JAGUAR_HEADER_START = 2;
+
     static readonly byte[] _ps3Id = "PlayStation3\0\0\0\0"u8.ToArray();
 
     static readonly byte[] _ps4Id = "PlayStation4\0\0\0\0"u8.ToArray();
@@ -289,6 +297,26 @@ public static class MMC
         }
 
         return 0;
+    }
+
+    /// <summary>
+    ///     Gets the combined offset of an Atari Jaguar CD from where the header of the first track of the second session
+    ///     is found, relative to where it belongs (see <see cref="JAGUAR_HEADER_START" />). The header position relative
+    ///     to index 1 drifts by a few dozen samples between tracks of the same disc, as the audio and the subchannel were
+    ///     not sample locked when mastering, so only this first data track must be used.
+    /// </summary>
+    /// <param name="data">Audio sectors read around index 1 of the first track of the second session</param>
+    /// <param name="index1Position">Position, in bytes, of the start of index 1 inside <paramref name="data" /></param>
+    /// <returns>Combined offset in bytes, or <c>null</c> if the header is not in <paramref name="data" /></returns>
+    internal static int? GetJaguarOffset(byte[] data, int index1Position)
+    {
+        if(data is null) return null;
+
+        int headerPosition = data.AsSpan().IndexOf(_atariSignature);
+
+        if(headerPosition < 0) return null;
+
+        return headerPosition - (index1Position + JAGUAR_HEADER_START);
     }
 
     internal static void DetectDiscType(ref MediaType mediaType, int sessions, FullTOC.CDFullTOC? decodedToc,

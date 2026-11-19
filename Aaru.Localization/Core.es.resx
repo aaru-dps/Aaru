@@ -3341,6 +3341,12 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="VideoNow_frame_is_offset_0_bytes" xml:space="preserve">
     <value>[slateblue1]El fotograma de VideoNow está desplazado [lime]{0}[/] bytes.[/]</value>
   </data>
+    <data name="Could_not_find_Atari_Jaguar_CD_header_offset" xml:space="preserve">
+        <value>[olive]No se pudo encontrar el desplazamiento de la cabecera del Atari Jaguar CD, el volcado podría ser incorrecto.[/]</value>
+    </data>
+    <data name="Atari_Jaguar_CD_header_is_offset_0_bytes" xml:space="preserve">
+        <value>[slateblue1]La cabecera del Atari Jaguar CD está desplazada [lime]{0}[/] bytes.[/]</value>
+    </data>
     <data name="Video_layer_0_size_0_sectors" xml:space="preserve">
         <value>[slateblue1]Tamaño de la capa [teal]0[/] de video: [violet]{0}[/] sectores[/]</value>
     </data>

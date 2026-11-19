@@ -5491,6 +5491,18 @@ namespace Aaru.Localization {
                 return ResourceManager.GetString("VideoNow_frame_is_offset_0_bytes", resourceCulture);
             }
         }
+
+        public static string Could_not_find_Atari_Jaguar_CD_header_offset {
+            get {
+                return ResourceManager.GetString("Could_not_find_Atari_Jaguar_CD_header_offset", resourceCulture);
+            }
+        }
+
+        public static string Atari_Jaguar_CD_header_is_offset_0_bytes {
+            get {
+                return ResourceManager.GetString("Atari_Jaguar_CD_header_is_offset_0_bytes", resourceCulture);
+            }
+        }
         
         public static string Found_enhanced_graphics_RW_packet {
             get {

@@ -47,6 +47,12 @@ namespace Aaru.Core.Media.Info;
 /// <summary>Core operations for retrieving information about CD based media</summary>
 public static class CompactDisc
 {
+    /// <summary>
+    ///     Sectors read before and after index 1 of the first track of the second session of an Atari Jaguar CD when
+    ///     looking for its header. The header has been seen up to a sector away from index 1.
+    /// </summary>
+    const uint JAGUAR_SECTORS_AROUND_INDEX1 = 4;
+
     /// <summary>Gets the offset bytes from a Compact Disc</summary>
     /// <param name="cdOffset">Offset entry from database</param>
     /// <param name="dbDev">Device entry from database</param>
@@ -81,6 +87,13 @@ public static class CompactDisc
         driveOffset             = cdOffset?.Offset * 4;
         combinedOffset          = null;
         supportsPlextorReadCdDa = false;
+
+        if(dskType == MediaType.JaguarCD)
+        {
+            combinedOffset = GetJaguarOffset(dev, tracks, sectorSize, updateStatus);
+
+            return;
+        }
 
         if(dskType != MediaType.VideoNowColor && dskType != MediaType.VideoNow)
         {
@@ -360,56 +373,7 @@ public static class CompactDisc
         }
         else
         {
-            var videoNowColorFrame = new byte[9 * sectorSize];
-
-            for(var i = 0; i < 9; i++)
-            {
-                sense = dev.ReadCd(out cmdBuf,
-                                   out _,
-                                   (uint)i,
-                                   sectorSize,
-                                   1,
-                                   MmcSectorTypes.AllTypes,
-                                   false,
-                                   false,
-                                   true,
-                                   MmcHeaderCodes.AllHeaders,
-                                   true,
-                                   true,
-                                   MmcErrorField.None,
-                                   MmcSubchannel.None,
-                                   dev.Timeout,
-                                   out _);
-
-                if(sense || dev.Error)
-                {
-                    sense = dev.ReadCd(out cmdBuf,
-                                       out _,
-                                       (uint)i,
-                                       sectorSize,
-                                       1,
-                                       MmcSectorTypes.Cdda,
-                                       false,
-                                       false,
-                                       true,
-                                       MmcHeaderCodes.None,
-                                       true,
-                                       true,
-                                       MmcErrorField.None,
-                                       MmcSubchannel.None,
-                                       dev.Timeout,
-                                       out _);
-
-                    if(sense || dev.Error)
-                    {
-                        videoNowColorFrame = null;
-
-                        break;
-                    }
-                }
-
-                Array.Copy(cmdBuf, 0, videoNowColorFrame, i * sectorSize, sectorSize);
-            }
+            byte[] videoNowColorFrame = ReadAudioSectors(dev, 0, 9, sectorSize);
 
             if(videoNowColorFrame is null)
             {
@@ -431,5 +395,109 @@ public static class CompactDisc
                 updateStatus?.Invoke(string.Format(Localization.Core.VideoNow_frame_is_offset_0_bytes, combinedOffset));
             }
         }
+    }
+
+    /// <summary>
+    ///     Gets the combined offset of an Atari Jaguar CD by finding the header of the first track of the second session
+    ///     around its index 1
+    /// </summary>
+    /// <param name="dev">Opened device</param>
+    /// <param name="tracks">Disc track list</param>
+    /// <param name="sectorSize">Sector size in bytes</param>
+    /// <param name="updateStatus">UpdateStatus event</param>
+    /// <returns>Combined offset in bytes, or <c>null</c> if the header could not be found</returns>
+    static int? GetJaguarOffset(Aaru.Devices.Device dev, Track[] tracks, uint sectorSize,
+                                UpdateStatusHandler updateStatus)
+    {
+        Track bootTrack = tracks.Where(static t => t.Session > 1).MinBy(static t => t.Sequence);
+
+        if(bootTrack is null)
+        {
+            updateStatus?.Invoke(Localization.Core.Could_not_find_Atari_Jaguar_CD_header_offset);
+
+            return null;
+        }
+
+        // The dump moves the start of this track back to index 0 to read its pregap, so prefer the real index 1
+        ulong index1 = bootTrack.Indexes.TryGetValue(1, out int index1Lba)
+                           ? (ulong)index1Lba
+                           : bootTrack.StartSector;
+
+        if(index1 < JAGUAR_SECTORS_AROUND_INDEX1)
+        {
+            updateStatus?.Invoke(Localization.Core.Could_not_find_Atari_Jaguar_CD_header_offset);
+
+            return null;
+        }
+
+        byte[] buffer = ReadAudioSectors(dev,
+                                         (uint)(index1 - JAGUAR_SECTORS_AROUND_INDEX1),
+                                         JAGUAR_SECTORS_AROUND_INDEX1 * 2 + 1,
+                                         sectorSize);
+
+        int? offset = MMC.GetJaguarOffset(buffer, (int)(JAGUAR_SECTORS_AROUND_INDEX1 * sectorSize));
+
+        updateStatus?.Invoke(offset is null
+                                 ? Localization.Core.Could_not_find_Atari_Jaguar_CD_header_offset
+                                 : string.Format(Localization.Core.Atari_Jaguar_CD_header_is_offset_0_bytes, offset));
+
+        return offset;
+    }
+
+    /// <summary>Reads consecutive audio sectors, 2352 bytes each, without subchannel</summary>
+    /// <param name="dev">Opened device</param>
+    /// <param name="startLba">First sector to read</param>
+    /// <param name="count">How many sectors to read</param>
+    /// <param name="sectorSize">Sector size in bytes</param>
+    /// <returns>The sectors, or <c>null</c> if any of them could not be read</returns>
+    static byte[] ReadAudioSectors(Aaru.Devices.Device dev, uint startLba, uint count, uint sectorSize)
+    {
+        byte[] buffer = new byte[count * sectorSize];
+
+        for(uint i = 0; i < count; i++)
+        {
+            bool sense = dev.ReadCd(out byte[] cmdBuf,
+                                    out _,
+                                    startLba + i,
+                                    sectorSize,
+                                    1,
+                                    MmcSectorTypes.AllTypes,
+                                    false,
+                                    false,
+                                    true,
+                                    MmcHeaderCodes.AllHeaders,
+                                    true,
+                                    true,
+                                    MmcErrorField.None,
+                                    MmcSubchannel.None,
+                                    dev.Timeout,
+                                    out _);
+
+            if(sense || dev.Error)
+            {
+                sense = dev.ReadCd(out cmdBuf,
+                                   out _,
+                                   startLba + i,
+                                   sectorSize,
+                                   1,
+                                   MmcSectorTypes.Cdda,
+                                   false,
+                                   false,
+                                   true,
+                                   MmcHeaderCodes.None,
+                                   true,
+                                   true,
+                                   MmcErrorField.None,
+                                   MmcSubchannel.None,
+                                   dev.Timeout,
+                                   out _);
+
+                if(sense || dev.Error) return null;
+            }
+
+            Array.Copy(cmdBuf, 0, buffer, i * sectorSize, sectorSize);
+        }
+
+        return buffer;
     }
 }
