@@ -575,6 +575,21 @@ public sealed partial class ZZZRawImage
             }
         }
 
+        // It's an MD-DATA disc, whose dumps always use 2048-byte logical blocks
+        if(_mediaTags.ContainsKey(MediaTagType.MiniDiscType) ||
+           _mediaTags.ContainsKey(MediaTagType.MiniDiscD5)   ||
+           _mediaTags.ContainsKey(MediaTagType.MiniDiscUTOC) ||
+           _mediaTags.ContainsKey(MediaTagType.MiniDiscDTOC))
+        {
+            _imageInfo.MediaType = MediaType.MDData;
+
+            if(_imageInfo.SectorSize != 2048 && _imageInfo.ImageSize % 2048 == 0)
+            {
+                _imageInfo.SectorSize = 2048;
+                _imageInfo.Sectors    = _imageInfo.ImageSize / 2048;
+            }
+        }
+
         // It's a compact disc
         if(_mediaTags.ContainsKey(MediaTagType.CD_FullTOC))
         {
