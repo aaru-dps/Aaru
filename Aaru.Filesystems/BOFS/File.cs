@@ -27,10 +27,12 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
+using Aaru.Logging;
 
 namespace Aaru.Filesystems;
 
@@ -64,35 +66,18 @@ public sealed partial class BOFS
         {
             // Contiguous file
             fileNode.ContiguousSector = entry.FirstAllocList & 0x7FFFFFFF;
-            fileNode.Fat              = null;
+            fileNode.Extents          = null;
         }
         else
         {
             // Fragmented file - read FAT
             fileNode.ContiguousSector = -1;
 
-            // Read the FAT block (512 bytes)
-            const int bofsLogicalSectorSize           = 512;
-            ulong     fatByteOffset                   = (ulong)entry.FirstAllocList * bofsLogicalSectorSize;
-            ulong     deviceSectorOffsetFromPartition = fatByteOffset               / _imagePlugin.Info.SectorSize;
-            ulong     offsetInDeviceSector            = fatByteOffset               % _imagePlugin.Info.SectorSize;
-            ulong     absoluteDeviceSector            = _partition.Start + deviceSectorOffsetFromPartition;
-
-            ErrorNumber errno = _imagePlugin.ReadSectors(absoluteDeviceSector, false, 1, out byte[] sectorData, out _);
+            ErrorNumber errno = ReadExtents(entry.FirstAllocList, out List<(uint start, uint count)> extents);
 
             if(errno != ErrorNumber.NoError) return errno;
 
-            if(sectorData.Length < (int)(offsetInDeviceSector + bofsLogicalSectorSize))
-                return ErrorNumber.InvalidArgument;
-
-            var fatBuffer = new byte[bofsLogicalSectorSize];
-            Array.Copy(sectorData, (int)offsetInDeviceSector, fatBuffer, 0, bofsLogicalSectorSize);
-
-            // Parse FAT as array of uint32
-            fileNode.Fat = new uint[bofsLogicalSectorSize / sizeof(uint)];
-
-            for(var i = 0; i < fileNode.Fat.Length; i++)
-                fileNode.Fat[i] = BigEndianBitConverter.ToUInt32(fatBuffer, i * sizeof(uint));
+            fileNode.Extents = extents;
         }
 
         node = fileNode;
@@ -220,7 +205,7 @@ public sealed partial class BOFS
 
         const int bofsLogicalSectorSize = 512;
 
-        if(file.Fat == null)
+        if(file.Extents == null)
         {
             // Contiguous file
             physicalByteOffset = file.ContiguousSector * bofsLogicalSectorSize + logicalOffset;
@@ -232,22 +217,8 @@ public sealed partial class BOFS
         // Fragmented file - search FAT for the extent containing logicalOffset
         long currentOffset = 0;
 
-        // FAT starts at index 2, entries are pairs of (start_sector, size_in_sectors)
-        // Maximum 63 extents (indices 2-127, but we check i < 63 which gives us indices up to 126)
-        for(var i = 0; i < 63; i++)
+        foreach((uint startSector, uint sizeSectors) in file.Extents)
         {
-            int startIndex = 2 + i * 2;
-            int sizeIndex  = 2 + i * 2 + 1;
-
-            // Bounds check
-            if(startIndex >= file.Fat.Length || sizeIndex >= file.Fat.Length) return ErrorNumber.InvalidArgument;
-
-            uint startSector = file.Fat[startIndex];
-            uint sizeSectors = file.Fat[sizeIndex];
-
-            // Check for end of FAT
-            if(startSector == 0xFFFFFFFF) return ErrorNumber.InvalidArgument;
-
             long extentSizeBytes = (long)sizeSectors * bofsLogicalSectorSize;
 
             // Check if logicalOffset is in this extent
@@ -301,14 +272,74 @@ public sealed partial class BOFS
         return ErrorNumber.NoError;
     }
 
+    /// <summary>Reads every FAT block in a file's chain and collects its extents</summary>
+    /// <remarks>
+    ///     Each 512-byte FAT block starts with the sector of the next FAT block (0 ends the chain) and a second word,
+    ///     followed by up to 63 pairs of (start sector, sector count). A start sector of 0xFFFFFFFF ends the pairs.
+    /// </remarks>
+    /// <param name="firstFatSector">Sector of the first FAT block</param>
+    /// <param name="extents">Extents in file order</param>
+    /// <returns>Error code</returns>
+    private ErrorNumber ReadExtents(int firstFatSector, out List<(uint start, uint count)> extents)
+    {
+        extents = [];
+
+        const int bofsLogicalSectorSize = 512;
+        const int extentsPerBlock       = 63;
+        var       visited               = new HashSet<uint>();
+        var       fatSector             = (uint)firstFatSector;
+
+        while(fatSector != 0)
+        {
+            if(fatSector >= (uint)_track0.TotalSectors || !visited.Add(fatSector))
+            {
+                AaruLogging.Debug(MODULE_NAME, "ReadExtents: invalid or looping FAT block {0}", fatSector);
+
+                return ErrorNumber.InvalidArgument;
+            }
+
+            ulong fatByteOffset        = (ulong)fatSector * bofsLogicalSectorSize;
+            ulong offsetInDeviceSector = fatByteOffset % _imagePlugin.Info.SectorSize;
+            ulong absoluteDeviceSector = _partition.Start + fatByteOffset / _imagePlugin.Info.SectorSize;
+
+            uint  deviceSectorSize = _imagePlugin.Info.SectorSize;
+            ulong bytesNeeded      = offsetInDeviceSector + bofsLogicalSectorSize;
+            var   sectorsToRead    = (uint)((bytesNeeded + deviceSectorSize - 1) / deviceSectorSize);
+
+            ErrorNumber errno =
+                _imagePlugin.ReadSectors(absoluteDeviceSector, false, sectorsToRead, out byte[] sectorData, out _);
+
+            if(errno != ErrorNumber.NoError) return errno;
+
+            if(sectorData.Length < (int)(offsetInDeviceSector + bofsLogicalSectorSize))
+                return ErrorNumber.InvalidArgument;
+
+            var offset = (int)offsetInDeviceSector;
+
+            for(var i = 0; i < extentsPerBlock; i++)
+            {
+                uint start = BigEndianBitConverter.ToUInt32(sectorData, offset + 8 + i * 8);
+                uint count = BigEndianBitConverter.ToUInt32(sectorData, offset + 12 + i * 8);
+
+                if(start == 0xFFFFFFFF) break;
+
+                extents.Add((start, count));
+            }
+
+            fatSector = BigEndianBitConverter.ToUInt32(sectorData, offset);
+        }
+
+        return ErrorNumber.NoError;
+    }
+
     /// <summary>File node for tracking open file state</summary>
     private sealed class BOFSFileNode : IFileNode
     {
         /// <summary>File entry data</summary>
         public FileEntry Entry { get; set; }
 
-        /// <summary>FAT (File Allocation Table) if fragmented, null if contiguous</summary>
-        public uint[] Fat { get; set; }
+        /// <summary>Extents (start sector, sector count) gathered from the FAT chain, null if contiguous</summary>
+        public List<(uint start, uint count)> Extents { get; set; }
 
         /// <summary>Contiguous sector if not fragmented, -1 otherwise</summary>
         public long ContiguousSector { get; set; }
