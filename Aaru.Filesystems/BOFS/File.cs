@@ -181,7 +181,7 @@ public sealed partial class BOFS
                 Attributes = FileAttributes.Directory,
                 Inode      = 0,
                 Links      = 2, // . and ..
-                Mode       = (uint)_track0.RootMode,
+                Mode       = _track0.VersionNumber >= VERSION_3 ? (uint)_track0.RootMode : null,
                 Length     = 0,
                 Blocks     = 0,
                 BlockSize  = _track0.BytesPerSector
@@ -255,7 +255,7 @@ public sealed partial class BOFS
                                   (ulong)_track0.BytesPerSector)
                          : 0,
             BlockSize = _track0.BytesPerSector,
-            Mode      = (uint)entry.Mode
+            Mode      = _track0.VersionNumber >= VERSION_3 ? (uint)entry.Mode : null
         };
 
         // Set attributes based on FileType

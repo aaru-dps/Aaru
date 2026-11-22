@@ -162,10 +162,10 @@ public sealed partial class BOFS
         AaruLogging.Debug(MODULE_NAME, "Validating superblock...");
 
         // Validate superblock
-        if(_track0.VersionNumber != 0x30000 || _track0.BytesPerSector != 512)
+        if(_track0.VersionNumber is not (VERSION_2 or VERSION_3) || _track0.BytesPerSector != 512)
         {
             AaruLogging.Debug(MODULE_NAME, "Superblock validation failed!");
-            AaruLogging.Debug(MODULE_NAME, "  Version: 0x{0:X8} (expected 0x30000)", _track0.VersionNumber);
+            AaruLogging.Debug(MODULE_NAME, "  Version: 0x{0:X8} (expected 0x20000 or 0x30000)", _track0.VersionNumber);
             AaruLogging.Debug(MODULE_NAME, "  Bytes per sector: {0} (expected 512)", _track0.BytesPerSector);
 
             return ErrorNumber.InvalidArgument;

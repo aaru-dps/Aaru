@@ -46,7 +46,7 @@ public sealed partial class BOFS
 
         Track0 track0 = Marshal.ByteArrayToStructureBigEndian<Track0>(sector);
 
-        return track0.VersionNumber is 0x30000 && track0.BytesPerSector is 512;
+        return track0.VersionNumber is VERSION_2 or VERSION_3 && track0.BytesPerSector is 512;
     }
 
     /// <inheritdoc />
@@ -93,7 +93,8 @@ public sealed partial class BOFS
         sb.AppendFormat(Localization.Hint_of_first_free_sector_for_a_file_0, track0.FreeSectorHint).AppendLine();
         sb.AppendLine(track0.Removable != 0 ? Localization.Volume_is_removable : Localization.Volume_is_not_removable);
         sb.AppendFormat(Localization.Root_reference_0, track0.RootReference).AppendLine();
-        sb.AppendFormat(Localization.Root_mode_0,      track0.RootMode).AppendLine();
+
+        if(track0.VersionNumber >= VERSION_3) sb.AppendFormat(Localization.Root_mode_0, track0.RootMode).AppendLine();
 
         information = sb.ToString();
 

@@ -34,6 +34,10 @@ namespace Aaru.Filesystems;
 public sealed partial class BOFS
 {
     const int DIR_TYPE = -1; // SDIR - subdirectory marker
+    /// <summary>Version used by BeOS 1.1d6, has no root mode in the superblock nor mode in file entries</summary>
+    const int VERSION_2 = 0x20000;
+    /// <summary>Version used from BeOS 1.1d7 to DR8</summary>
+    const int VERSION_3 = 0x30000;
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [SwapEndian]
@@ -102,7 +106,7 @@ public sealed partial class BOFS
         /// </summary>
         public int RootReference;
         /// <summary>
-        ///     Root mode
+        ///     Root mode, only on version 3, version 2 has filler here
         /// </summary>
         public int RootMode;
         /// <summary>
