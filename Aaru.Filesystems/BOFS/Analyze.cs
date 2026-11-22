@@ -33,7 +33,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using Aaru.Helpers;
 
 namespace Aaru.Filesystems;
 
@@ -186,35 +185,15 @@ public sealed partial class BOFS
             return ErrorNumber.NoError;
         }
 
-        ulong fatByteOffset                   = (uint)entry.FirstAllocList * bofsLogicalSectorSize;
-        ulong deviceSectorOffsetFromPartition = fatByteOffset              / _imagePlugin.Info.SectorSize;
-        ulong offsetInDeviceSector            = fatByteOffset              % _imagePlugin.Info.SectorSize;
-        ulong absoluteDeviceSector            = _partition.Start + deviceSectorOffsetFromPartition;
-
-        ErrorNumber errno = _imagePlugin.ReadSectors(absoluteDeviceSector, false, 1, out byte[] sectorData, out _);
+        ErrorNumber errno = ReadExtents(entry.FirstAllocList, out List<(uint start, uint count)> extents);
 
         if(errno != ErrorNumber.NoError) return errno;
 
-        if(sectorData.Length < (int)(offsetInDeviceSector + bofsLogicalSectorSize)) return ErrorNumber.InvalidArgument;
-
-        var fat       = new uint[bofsLogicalSectorSize / sizeof(uint)];
-        var fatBuffer = new byte[bofsLogicalSectorSize];
-
-        Array.Copy(sectorData, (int)offsetInDeviceSector, fatBuffer, 0, (int)bofsLogicalSectorSize);
-
-        for(var i = 0; i < fat.Length; i++) fat[i] = BigEndianBitConverter.ToUInt32(fatBuffer, i * sizeof(uint));
-
-        for(var i = 0; i < 63 && remainingBytes > 0; i++)
+        foreach((uint startLogicalSector, uint sizeLogicalSectors) in extents)
         {
-            int startIndex = 2 + i * 2;
-            int sizeIndex  = 3 + i * 2;
+            if(remainingBytes == 0) break;
 
-            if(sizeIndex >= fat.Length) break;
-
-            uint startLogicalSector = fat[startIndex];
-            uint sizeLogicalSectors = fat[sizeIndex];
-
-            if(startLogicalSector == 0xFFFFFFFF || sizeLogicalSectors == 0) break;
+            if(sizeLogicalSectors == 0) continue;
 
             ulong extentBytes = sizeLogicalSectors * bofsLogicalSectorSize;
             ulong bytesInRun  = Math.Min(extentBytes, remainingBytes);
