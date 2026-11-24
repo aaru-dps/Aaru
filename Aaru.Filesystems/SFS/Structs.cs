@@ -212,8 +212,9 @@ public sealed partial class SFS
     /// <summary>
     ///     Object structure describing a file or directory (SFS\0 version - 25 bytes fixed).
     ///     Multiple objects can be stored in an ObjectContainer block.
-    ///     Note: In SFS\2 (version 4), there is an additional 16-bit sizeh field after sizeOrFirstDirBlock,
-    ///     making the structure 27 bytes. This is handled manually during parsing.
+    ///     Note: In SFS\2 (version 4) files have a 48-bit size stored as a 16-bit sizeh (high bits) followed by
+    ///     a 32-bit size (low bits) at offset 16, and directories have firstdirblock at offset 16 followed by
+    ///     2 unused bytes, making the structure 27 bytes. This is handled manually during parsing.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [SwapEndian]

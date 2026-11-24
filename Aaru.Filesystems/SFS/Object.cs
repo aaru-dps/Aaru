@@ -48,7 +48,9 @@ public sealed partial class SFS
         // Object structure: skip header fields to reach the name
         // SFS\0: ownerUid(2) + ownerGid(2) + objectNode(4) + protection(4) +
         //        dataOrHashtable(4) + sizeOrFirstDirBlock(4) + dateModified(4) + bits(1) = 25 bytes
-        // SFS\2: Same + sizeh(2) = 27 bytes
+        // SFS\2: ownerUid(2) + ownerGid(2) + objectNode(4) + protection(4) + dataOrHashtable(4) +
+        //        sizeh(2) + size(4) (files) or firstDirBlock(4) + pad(2) (directories) +
+        //        dateModified(4) + bits(1) = 27 bytes
         // The name immediately follows the fixed part of the object
         int nameOffset = objectOffset + _objectSize;
 

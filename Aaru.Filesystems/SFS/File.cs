@@ -508,32 +508,35 @@ public sealed partial class SFS
         //   owneruid (2) + ownergid (2) + objectnode (4) + protection (4) +
         //   data/hashtable (4) + size/firstdirblock (4) + datemodified (4) + bits (1)
         // SFS\2 (27 bytes):
-        //   owneruid (2) + ownergid (2) + objectnode (4) + protection (4) +
-        //   data/hashtable (4) + size/firstdirblock (4) + sizeh (2) + datemodified (4) + bits (1)
+        //   owneruid (2) + ownergid (2) + objectnode (4) + protection (4) + data/hashtable (4) +
+        //   sizeh (2) + size (4) for files, or firstdirblock (4) + pad (2) for directories +
+        //   datemodified (4) + bits (1)
 
         if(objectOffset + _objectSize > objectData.Length) return ErrorNumber.InvalidArgument;
 
-        var ownerUid   = BigEndianBitConverter.ToUInt16(objectData, objectOffset);
-        var ownerGid   = BigEndianBitConverter.ToUInt16(objectData, objectOffset + 2);
-        var protection = BigEndianBitConverter.ToUInt32(objectData, objectOffset + 8);
-        var dataOrHash = BigEndianBitConverter.ToUInt32(objectData, objectOffset + 12);
-        var sizeOrDir  = BigEndianBitConverter.ToUInt32(objectData, objectOffset + 16);
+        ushort ownerUid   = BigEndianBitConverter.ToUInt16(objectData, objectOffset);
+        ushort ownerGid   = BigEndianBitConverter.ToUInt16(objectData, objectOffset + 2);
+        uint   protection = BigEndianBitConverter.ToUInt32(objectData, objectOffset + 8);
 
-        ushort     sizeh;
+        long       fileSize;
         uint       dateModified;
         ObjectBits bits;
 
         if(_isSfs2)
         {
-            // SFS\2: sizeh at offset 20, datemodified at 22, bits at 26
-            sizeh        = BigEndianBitConverter.ToUInt16(objectData, objectOffset + 20);
+            // SFS\2: 48-bit size as sizeh (high 16 bits) at 16 and size (low 32 bits) at 18,
+            // datemodified at 22, bits at 26
+            ushort sizeh = BigEndianBitConverter.ToUInt16(objectData, objectOffset + 16);
+            uint   size  = BigEndianBitConverter.ToUInt32(objectData, objectOffset + 18);
+
+            fileSize     = (long)sizeh << 32 | size;
             dateModified = BigEndianBitConverter.ToUInt32(objectData, objectOffset + 22);
             bits         = (ObjectBits)objectData[objectOffset + 26];
         }
         else
         {
-            // SFS\0: datemodified at offset 20, bits at 24
-            sizeh        = 0;
+            // SFS\0: size at 16, datemodified at 20, bits at 24
+            fileSize     = BigEndianBitConverter.ToUInt32(objectData, objectOffset + 16);
             dateModified = BigEndianBitConverter.ToUInt32(objectData, objectOffset + 20);
             bits         = (ObjectBits)objectData[objectOffset + 24];
         }
@@ -561,9 +564,7 @@ public sealed partial class SFS
 
         if((bits & ObjectBits.Directory) == 0)
         {
-            // In SFS\2, file size is 48-bit: (sizeOrDir << 16) | sizeh
-            // sizeh contains the LOW 16 bits, sizeOrDir contains the HIGH 32 bits
-            length = _isSfs2 ? (long)sizeOrDir << 16 | sizeh : sizeOrDir;
+            length = fileSize;
             blocks = (length + _blockSize - 1) / _blockSize;
         }
 
