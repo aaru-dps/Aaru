@@ -147,6 +147,11 @@ public sealed partial class SFS
                     continue;
                 }
 
+                // Links own no data extents: the data field of a soft link points to its SLNK block and the one of
+                // a hard link holds the object node of its target, whose data is reported under its own path
+                if((objectBits & (byte)ObjectBits.Link) != 0) continue;
+
+                // SFS\0 and SFS\2 both store the first extent at offset 12
                 uint firstExtent = BigEndianBitConverter.ToUInt32(objectData, objectOffset + 12);
 
                 errno = Stat(entryPath, out FileEntryInfo stat);
