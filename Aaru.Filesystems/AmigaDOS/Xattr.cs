@@ -60,13 +60,10 @@ public sealed partial class AmigaDOSPlugin
 
         if(error != ErrorNumber.NoError) return error;
 
-        // Read comment length - located at blockSize - 46*4 bytes from start
-        // Layout: ... | commLen (1) | comment (79) | days (4) | mins (4) | ticks (4) | nameLen (1) | name (30) | ...
-        int  commLenOffset = blockData.Length - 46 * 4;
-        byte commLen       = blockData[commLenOffset];
-
         // If there's a comment, add the xattr to the list
-        if(commLen is > 0 and <= MAX_COMMENT_LENGTH) xattrs.Add(Xattrs.XATTR_AMIGA_COMMENTS);
+        if(GetInlineCommentBytes(blockData, _hasLongNames).Length > 0 ||
+           GetCommentBlockPointer(blockData, _hasLongNames)       != 0)
+            xattrs.Add(Xattrs.XATTR_AMIGA_COMMENTS);
 
         return ErrorNumber.NoError;
     }
@@ -99,17 +96,13 @@ public sealed partial class AmigaDOSPlugin
 
         if(error != ErrorNumber.NoError) return error;
 
-        // Read comment length and comment
-        // Layout: ... | commLen (1) | comment (79) | days (4) | mins (4) | ticks (4) | nameLen (1) | name (30) | ...
-        int  commLenOffset = blockData.Length - 46 * 4;
-        byte commLen       = blockData[commLenOffset];
+        error = GetEntryComment(blockData, blockNum, out byte[] comment);
 
-        if(commLen is 0 or > MAX_COMMENT_LENGTH) return ErrorNumber.NoSuchExtendedAttribute;
+        if(error != ErrorNumber.NoError) return error;
 
-        // Extract the comment (BCPL string - length byte followed by characters)
-        int commentOffset = commLenOffset + 1;
-        buf = new byte[commLen];
-        Array.Copy(blockData, commentOffset, buf, 0, commLen);
+        if(comment.Length == 0) return ErrorNumber.NoSuchExtendedAttribute;
+
+        buf = comment;
 
         return ErrorNumber.NoError;
     }

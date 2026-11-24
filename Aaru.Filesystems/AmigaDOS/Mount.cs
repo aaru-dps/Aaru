@@ -112,14 +112,6 @@ public sealed partial class AmigaDOSPlugin
                           _hasLongNames,
                           _isMuFs);
 
-        // FFS2/OFS2 (long filenames) is not supported - we don't have proper implementation reference
-        if(_hasLongNames)
-        {
-            AaruLogging.Debug(MODULE_NAME, "FFS2/OFS2 (long filenames) is not supported");
-
-            return ErrorNumber.NotSupported;
-        }
-
         // Validate boot block checksum
         bootBlockSectors[4] = bootBlockSectors[5] = bootBlockSectors[6] = bootBlockSectors[7] = 0;
         uint bsum                                 = AmigaBootChecksum(bootBlockSectors);
@@ -308,21 +300,7 @@ public sealed partial class AmigaDOSPlugin
                 // Get secondary type (at end of block)
                 var secType = BigEndianBitConverter.ToUInt32(blockData, blockData.Length - 4);
 
-                // Get entry name (Pascal string at fixed offset from end)
-                // BLK_DIRECTORYNAME_START = SizeBlock - 20 (in longs) = blockData.Length - 80 bytes
-                int  nameOffset = blockData.Length - 20 * 4;
-                byte nameLen    = blockData[nameOffset];
-
-                // Standard AmigaDOS allows 30 characters, name is stored as Pascal string
-                // The length byte determines actual length, but we validate against max
-                if(nameLen > MAX_NAME_LENGTH) nameLen = MAX_NAME_LENGTH;
-
-                // Ensure we don't read beyond block boundaries
-                int availableSpace = blockData.Length - nameOffset - 1;
-
-                if(nameLen > availableSpace) nameLen = (byte)availableSpace;
-
-                string name = nameLen > 0 ? _encoding.GetString(blockData, nameOffset + 1, nameLen) : string.Empty;
+                string name = GetEntryName(blockData);
 
                 // Store in cache
                 if(!string.IsNullOrEmpty(name) && !_rootDirectoryCache.ContainsKey(name))

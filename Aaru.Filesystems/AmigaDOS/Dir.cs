@@ -253,17 +253,7 @@ public sealed partial class AmigaDOSPlugin
                     break;
                 }
 
-                // Get entry name (Pascal string)
-                int  nameOffset = entryBlockData.Length - 20 * 4;
-                byte nameLen    = entryBlockData[nameOffset];
-
-                if(nameLen > MAX_NAME_LENGTH) nameLen = MAX_NAME_LENGTH;
-
-                int availableSpace = entryBlockData.Length - nameOffset - 1;
-
-                if(nameLen > availableSpace) nameLen = (byte)availableSpace;
-
-                string name = nameLen > 0 ? _encoding.GetString(entryBlockData, nameOffset + 1, nameLen) : string.Empty;
+                string name = GetEntryName(entryBlockData);
 
                 if(!string.IsNullOrEmpty(name) && !entries.ContainsKey(name)) entries[name] = blockPtr;
 

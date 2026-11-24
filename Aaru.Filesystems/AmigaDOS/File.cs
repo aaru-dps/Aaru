@@ -352,9 +352,9 @@ public sealed partial class AmigaDOSPlugin
         // Block offsets (in longs from end of block)
         int protectOffset  = blockData.Length - 48 * 4; // BLK_PROTECT = SizeBlock - 48
         int byteSizeOffset = blockData.Length - 47 * 4; // BLK_BYTE_SIZE = SizeBlock - 47
-        int daysOffset     = blockData.Length - 23 * 4; // BLK_DAYS = SizeBlock - 23
-        int minsOffset     = blockData.Length - 22 * 4; // BLK_MINS = SizeBlock - 22
-        int ticksOffset    = blockData.Length - 21 * 4; // BLK_TICKS = SizeBlock - 21
+        int daysOffset     = GetEntryDateOffset(blockData.Length, _hasLongNames);
+        int minsOffset     = daysOffset + 4;
+        int ticksOffset    = daysOffset + 8;
 
         var protect  = BigEndianBitConverter.ToUInt32(blockData, protectOffset);
         var byteSize = BigEndianBitConverter.ToUInt32(blockData, byteSizeOffset);

@@ -44,8 +44,35 @@ public sealed partial class AmigaDOSPlugin
     /// <summary>Maximum filename length for AmigaDOS</summary>
     const int MAX_NAME_LENGTH = 30;
 
+    /// <summary>Maximum filename length for long name volumes (DOS\6 and DOS\7)</summary>
+    const int MAX_LONG_NAME_LENGTH = 107;
+
     /// <summary>Maximum comment length</summary>
     const int MAX_COMMENT_LENGTH = 79;
+
+    /// <summary>Primary type of a comment block (DOS\6 and DOS\7)</summary>
+    const uint TYPE_COMMENT = 64;
+
+    /// <summary>Bytes from the end of a header block to the comment, or to the merged name and comment</summary>
+    const int ENTRY_COMMENT_FROM_END = 184;
+
+    /// <summary>Bytes from the end of a header block to the name</summary>
+    const int ENTRY_NAME_FROM_END = 80;
+
+    /// <summary>Bytes from the end of a header block to the date stamp</summary>
+    const int ENTRY_DATE_FROM_END = 92;
+
+    /// <summary>Size of the merged name and comment field of long name header blocks</summary>
+    const int LONG_NAME_AND_COMMENT_SIZE = 112;
+
+    /// <summary>Bytes from the end of a long name header block to the comment block pointer</summary>
+    const int LONG_COMMENT_BLOCK_FROM_END = 72;
+
+    /// <summary>Bytes from the end of a long name header block to the date stamp</summary>
+    const int LONG_DATE_FROM_END = 60;
+
+    /// <summary>Offset of the comment in a comment block</summary>
+    const int COMMENT_BLOCK_TEXT_OFFSET = 24;
 
     /// <summary>OFS data block header size in bytes</summary>
     const int OFS_DATA_HEADER_SIZE = 24;

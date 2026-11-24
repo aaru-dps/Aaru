@@ -54,11 +54,11 @@ public sealed partial class AmigaDOSPlugin
         stat = new FileSystemInfo
         {
             Blocks         = _totalBlocks,
-            FilenameLength = MAX_NAME_LENGTH,
+            FilenameLength = (ushort)(_hasLongNames ? MAX_LONG_NAME_LENGTH : MAX_NAME_LENGTH),
             FreeBlocks     = freeBlocks,
             FreeFiles      = 0, // AmigaDOS doesn't have a fixed inode count
             PluginId       = Id,
-            Type           = _isFfs ? FS_TYPE_FFS : FS_TYPE_OFS
+            Type           = _hasLongNames ? _isFfs ? FS_TYPE_FFS2 : FS_TYPE_OFS2 : _isFfs ? FS_TYPE_FFS : FS_TYPE_OFS
         };
 
         return ErrorNumber.NoError;
