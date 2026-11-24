@@ -74,5 +74,13 @@ public sealed partial class SFS
     /// <summary>Initial value of the block checksum in SFS\2</summary>
     const uint CHECKSUM_SEED_SFS2 = 2;
 
+    /// <summary>
+    ///     Block number accuracy in SFS\0: index node container entries are block numbers shifted left by
+    ///     (log2(block size) - BLCKFACCURACY)
+    /// </summary>
+    const int BLCKFACCURACY = 5;
+    /// <summary>Shift applied to index node container entries in SFS\2</summary>
+    const int NODE_SHIFT_SFS2 = 1;
+
     const string FS_TYPE = "sfs";
 }

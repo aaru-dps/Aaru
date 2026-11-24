@@ -70,9 +70,10 @@ public sealed partial class SFS
         blockAddress = 0;
         uint nodeIndex = _objectNodeRoot;
 
-        // shifts_block32 = shifts_block - BLCKFACCURACY (5)
-        // shifts_block = log2(block_size)
-        int shiftsBlock32 = _blockShift - 5;
+        // Index node container entries are block numbers stored shifted left.
+        // SFS\0: shift = log2(block size) - BLCKFACCURACY
+        // SFS\2: shift = 1
+        int shiftsBlock32 = _isSfs2 ? NODE_SHIFT_SFS2 : _blockShift - BLCKFACCURACY;
 
         if(shiftsBlock32 < 0) shiftsBlock32 = 0;
 
