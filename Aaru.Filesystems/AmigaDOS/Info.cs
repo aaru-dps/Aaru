@@ -328,6 +328,15 @@ public sealed partial class AmigaDOSPlugin
         sbInformation.AppendFormat(Localization.Volume_block_size_is_0_bytes, blockSize).AppendLine();
         sbInformation.AppendFormat(Localization.Volume_has_0_blocks,          blocks).AppendLine();
 
+        // Long name volumes cache the number of allocated blocks in the root block
+        if((bootBlk.diskType & 0xFF) is 6 or 7 && rootBlk.bitmapFlag != 0 && rootBlk.numBlocksUsed != 0)
+        {
+            sbInformation.AppendFormat(Localization.Volume_has_0_blocks_used_1_bytes,
+                                       rootBlk.numBlocksUsed,
+                                       (ulong)rootBlk.numBlocksUsed * blockSize)
+                         .AppendLine();
+        }
+
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
                                    DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks))
                      .AppendLine();

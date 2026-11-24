@@ -39,17 +39,26 @@ public sealed partial class AmigaDOSPlugin
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
+
+        // Long name volumes cache the number of allocated blocks in the root block, otherwise the bitmap would
+        // need to be counted
+        ulong freeBlocks = 0;
+
+        if(_hasLongNames                 &&
+           _rootBlock.bitmapFlag    != 0 &&
+           _rootBlock.numBlocksUsed != 0 &&
+           _rootBlock.numBlocksUsed <= _totalBlocks)
+            freeBlocks = _totalBlocks - _rootBlock.numBlocksUsed;
 
         stat = new FileSystemInfo
         {
             Blocks         = _totalBlocks,
             FilenameLength = MAX_NAME_LENGTH,
-            FreeBlocks     = 0, // Would need to parse bitmap blocks to calculate
+            FreeBlocks     = freeBlocks,
             FreeFiles      = 0, // AmigaDOS doesn't have a fixed inode count
-            PluginId = Id,
-            Type     = _isFfs ? FS_TYPE_FFS : FS_TYPE_OFS
+            PluginId       = Id,
+            Type           = _isFfs ? FS_TYPE_FFS : FS_TYPE_OFS
         };
 
         return ErrorNumber.NoError;

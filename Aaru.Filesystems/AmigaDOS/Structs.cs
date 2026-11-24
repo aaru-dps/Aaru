@@ -98,8 +98,11 @@ public sealed partial class AmigaDOSPlugin
         public byte padding;
         /// <summary>Offset 0x18+hashTableSize*4+152, unused</summary>
         public uint reserved1;
-        /// <summary>Offset 0x18+hashTableSize*4+156, unused</summary>
-        public uint reserved2;
+        /// <summary>
+        ///     Offset 0x18+hashTableSize*4+156, blocks allocated in the bitmap (DOS\6 and DOS\7 only, valid when the
+        ///     bitmap flag is set and the value is not zero)
+        /// </summary>
+        public uint numBlocksUsed;
         /// <summary>Offset 0x18+hashTableSize*4+160, last disk alteration days since 1978/01/01</summary>
         public uint vDays;
         /// <summary>Offset 0x18+hashTableSize*4+164, last disk alteration minutes past midnight</summary>
@@ -112,8 +115,8 @@ public sealed partial class AmigaDOSPlugin
         public uint cMins;
         /// <summary>Offset 0x18+hashTableSize*4+180, filesystem creation ticks since 1978/01/01</summary>
         public uint cTicks;
-        /// <summary>Offset 0x18+hashTableSize*4+184, unused</summary>
-        public uint nextHash;
+        /// <summary>Offset 0x18+hashTableSize*4+184, copy of the DOS type (DOS\6 and DOS\7 only)</summary>
+        public uint fileSystemType;
         /// <summary>Offset 0x18+hashTableSize*4+188, unused</summary>
         public uint parentDir;
         /// <summary>Offset 0x18+hashTableSize*4+192, first directory cache block</summary>
