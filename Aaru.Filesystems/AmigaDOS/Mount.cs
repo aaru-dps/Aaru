@@ -95,10 +95,12 @@ public sealed partial class AmigaDOSPlugin
         // 0 = OFS, 1 = FFS, 2 = OFS INTL, 3 = FFS INTL, 4 = OFS DIRCACHE, 5 = FFS DIRCACHE, 6 = OFS2, 7 = FFS2
         var dosFlags = (byte)(_bootBlock.diskType & 0xFF);
 
-        _isFfs        = (dosFlags & 0x01)                 == 0x01; // Bit 0: FFS vs OFS
-        _isIntl       = (dosFlags & 0x02)                 == 0x02; // Bit 1: International mode
-        _hasDirCache  = (dosFlags & 0x04)                 == 0x04; // Bit 2: Directory cache
-        _hasLongNames = dosFlags                          >= 6;    // 6 and 7 have long filename support
+        // The AmigaOS 4 FastFileSystem uses international case folding for DOS\2 to DOS\7, keeps a directory
+        // cache only on DOS\4 and DOS\5, and enables long names only on DOS\6 and DOS\7
+        _isFfs        = (dosFlags & 0x01) == 0x01; // Bit 0: FFS vs OFS
+        _isIntl       = dosFlags          >= 2;
+        _hasDirCache  = dosFlags is 4 or 5;
+        _hasLongNames = dosFlags is 6 or 7;
         _isMuFs       = (_bootBlock.diskType & MUFS_MASK) == MUFS_MASK;
 
         AaruLogging.Debug(MODULE_NAME,
