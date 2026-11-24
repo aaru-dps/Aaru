@@ -69,5 +69,10 @@ public sealed partial class SFS
     /// <summary>Size of ExtentBNode in SFS\2 (16 bytes - 32-bit blocks field)</summary>
     const int EXTENTBNODE_SIZE_SFS2 = 16;
 
+    /// <summary>Initial value of the block checksum in SFS\0</summary>
+    const uint CHECKSUM_SEED_SFS0 = 1;
+    /// <summary>Initial value of the block checksum in SFS\2</summary>
+    const uint CHECKSUM_SEED_SFS2 = 2;
+
     const string FS_TYPE = "sfs";
 }

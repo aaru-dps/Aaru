@@ -91,9 +91,11 @@ public sealed partial class SFS
             _rootBlock = Marshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockData);
         }
 
+        // Determine if this is SFS\2 format, needed to know the checksum seed
+        _isSfs2 = _rootBlock.blockId == SFS2_MAGIC;
+
         // Validate checksum
-        // Validate checksum
-        if(!ValidateChecksum(rootBlockData))
+        if(!ValidateChecksum(rootBlockData, _isSfs2))
         {
             AaruLogging.Debug(MODULE_NAME, "Root block checksum invalid");
 
@@ -110,20 +112,19 @@ public sealed partial class SFS
             return ErrorNumber.InvalidArgument;
         }
 
-        // Validate version
-        if(_rootBlock.version is not STRUCTURE_VERSION_SFS0 and not STRUCTURE_VERSION_SFS2)
+        // Validate version, SFS\0 uses version 3 and SFS\2 uses version 4
+        ushort expectedVersion = _isSfs2 ? STRUCTURE_VERSION_SFS2 : STRUCTURE_VERSION_SFS0;
+
+        if(_rootBlock.version != expectedVersion)
         {
             AaruLogging.Debug(MODULE_NAME,
-                              "Unsupported structure version: {0}, expected {1} or {2}",
+                              "Unsupported structure version: {0}, expected {1}",
                               _rootBlock.version,
-                              STRUCTURE_VERSION_SFS0,
-                              STRUCTURE_VERSION_SFS2);
+                              expectedVersion);
 
             return ErrorNumber.NotSupported;
         }
 
-        // Determine if this is SFS\2 format
-        _isSfs2     = _rootBlock.version == STRUCTURE_VERSION_SFS2;
         _objectSize = _isSfs2 ? OBJECT_SIZE_SFS2 : OBJECT_SIZE_SFS0;
 
         AaruLogging.Debug(MODULE_NAME, "SFS format: {0}, object size: {1}", _isSfs2 ? "SFS\\2" : "SFS\\0", _objectSize);
@@ -161,7 +162,7 @@ public sealed partial class SFS
             return ErrorNumber.InvalidArgument;
         }
 
-        if(!ValidateChecksum(rootOcData))
+        if(!ValidateChecksum(rootOcData, _isSfs2))
         {
             AaruLogging.Debug(MODULE_NAME, "Root object container checksum invalid");
 

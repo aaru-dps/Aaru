@@ -36,22 +36,17 @@ public sealed partial class SFS
 {
     /// <summary>Validates the checksum of a block</summary>
     /// <param name="blockData">The block data to validate</param>
+    /// <param name="isSfs2">Whether the volume is SFS\2, which uses a different checksum seed</param>
     /// <returns>True if the checksum is valid, false otherwise</returns>
-    static bool ValidateChecksum(byte[] blockData)
+    static bool ValidateChecksum(byte[] blockData, bool isSfs2)
     {
-        // The checksum is validated by summing all 32-bit big-endian words in the block.
-        // Starting with sum=1, if the result is 0, the checksum is valid.
-        // Some implementations may result in -1 (0xFFFFFFFF), so we accept that too.
-        uint sum = 1;
+        // The checksum is validated by summing all 32-bit big-endian words in the block, starting with a seed.
+        // The block is valid if the result is 0. The seed is 1 for SFS\0 and 2 for SFS\2.
+        uint sum = isSfs2 ? CHECKSUM_SEED_SFS2 : CHECKSUM_SEED_SFS0;
 
-        for(var i = 0; i < blockData.Length; i += 4)
-        {
-            var value = BigEndianBitConverter.ToUInt32(blockData, i);
-            sum += value;
-        }
+        for(int i = 0; i + 4 <= blockData.Length; i += 4) sum += BigEndianBitConverter.ToUInt32(blockData, i);
 
-        // Accept 0 or -1 as valid
-        return sum is 0 or 0xFFFFFFFF;
+        return sum == 0;
     }
 
     /// <summary>Calculates the block shift (log2 of block size)</summary>
