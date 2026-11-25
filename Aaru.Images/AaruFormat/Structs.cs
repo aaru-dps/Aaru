@@ -38,7 +38,7 @@ public sealed partial class AaruFormat
         /// <summary>
         ///     Size of each logical sector in bytes (512, 2048, 2352, 4096, etc.)
         /// </summary>
-        public uint SectorSize;
+        public uint  SectorSize;
         /// <summary>
         ///     Image format version string (NUL-terminated, e.g., "6.0")
         /// </summary>
@@ -57,15 +57,15 @@ public sealed partial class AaruFormat
         /// <summary>
         ///     Image creation timestamp (Windows FILETIME: 100ns since 1601-01-01 UTC)
         /// </summary>
-        public long CreationTime;
+        public long              CreationTime;
         /// <summary>
         ///     Last modification timestamp (Windows FILETIME format)
         /// </summary>
-        public long LastModificationTime;
+        public long              LastModificationTime;
         /// <summary>
         ///     Media type identifier (see \ref MediaType enum; 0=Unknown)
         /// </summary>
-        public MediaType MediaType;
+        public MediaType         MediaType;
         /// <summary>
         ///     Media type for sidecar generation (internal archival use)
         /// </summary>
@@ -131,15 +131,15 @@ public sealed partial class AaruFormat
         /// <summary>
         ///     Number of DumpHardwareEntry records that follow.
         /// </summary>
-        public ushort Entries;
+        public ushort    Entries;
         /// <summary>
         ///     Total payload bytes after this header (sum of entries, strings, and extents arrays).
         /// </summary>
-        public uint Length;
+        public uint      Length;
         /// <summary>
         ///     CRC64-ECMA of the payload (byte-swapped for legacy v1 images, handled automatically).
         /// </summary>
-        public ulong Crc64;
+        public ulong     Crc64;
     }
 
 #endregion
@@ -153,12 +153,12 @@ public sealed partial class AaruFormat
         ///     File number (unique within the partition). Identifies this file among all files in the same
         ///     partition. Numbering scheme is tape-format-dependent.
         /// </summary>
-        public uint File;
+        public uint  File;
         /// <summary>
         ///     Partition number containing this file. References a partition defined in the
         ///     TapePartitionHeader block. Valid range: 0-255.
         /// </summary>
-        public byte Partition;
+        public byte  Partition;
         /// <summary>
         ///     First block of the file (inclusive). This is the starting block address of the file data.
         ///     Block addresses are 0-based within the partition.
@@ -182,7 +182,7 @@ public sealed partial class AaruFormat
         ///     Partition number (unique identifier for this partition). Identifies this partition among all
         ///     partitions on the tape. Valid range: 0-255, though most tapes use 0-3.
         /// </summary>
-        public byte Number;
+        public byte  Number;
         /// <summary>
         ///     First block in the partition (inclusive). Starting block address for this partition's
         ///     address space. Often 0, but format-dependent.
@@ -206,7 +206,7 @@ public sealed partial class AaruFormat
         /// <summary>
         ///     Track number (1..99 typical for CD audio/data). 0 may indicate placeholder/non-standard.
         /// </summary>
-        public byte Sequence;
+        public byte      Sequence;
         /// <summary>
         ///     Track type (value from \ref TrackType).
         /// </summary>
@@ -214,19 +214,19 @@ public sealed partial class AaruFormat
         /// <summary>
         ///     Inclusive starting LBA of the track.
         /// </summary>
-        public long Start;
+        public long      Start;
         /// <summary>
         ///     Inclusive ending LBA of the track.
         /// </summary>
-        public long End;
+        public long      End;
         /// <summary>
         ///     Pre-gap length in sectors preceding track start (0 if none).
         /// </summary>
-        public long Pregap;
+        public long      Pregap;
         /// <summary>
         ///     Session number (1-based). 1 for single-session discs.
         /// </summary>
-        public byte Session;
+        public byte      Session;
         /// <summary>
         ///     ISRC raw 13-byte code (no null terminator). All zeros if not present.
         /// </summary>
@@ -245,12 +245,41 @@ public sealed partial class AaruFormat
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct FluxCaptureEntry
     {
-        public uint Head;
+        public uint   Head;
         public ushort Track;
-        public byte SubTrack;
-        public uint CaptureIndex;
-        public ulong IndexResolution;
-        public ulong DataResolution;
+        public byte   SubTrack;
+        public uint   CaptureIndex;
+        public ulong  IndexResolution;
+        public ulong  DataResolution;
+    }
+
+#endregion
+
+#region Nested type: TwinSectorInfoEntry
+
+    /// <summary>
+    ///     Native mirror of libaaruformat's TwinSectorInfo, one entry returned by aaruf_get_twin_sectors().
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct TwinSectorInfoEntry
+    {
+        /// <summary>
+        ///     Sector address as passed to the read/write functions.
+        /// </summary>
+        public ulong SectorAddress;
+        /// <summary>
+        ///     Number of physical instances (&gt;= 2).
+        /// </summary>
+        public uint  Count;
+        /// <summary>
+        ///     1 if <see cref="SectorAddress" /> is a negative sector.
+        /// </summary>
+        public byte  Negative;
+        /// <summary>
+        ///     Always 0.
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] Reserved;
     }
 
 #endregion

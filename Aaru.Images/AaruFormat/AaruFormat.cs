@@ -10,6 +10,7 @@ public sealed partial class AaruFormat : IWritableOpticalImage,
                                          IVerifiableImage,
                                          IWritableTapeImage,
                                          IWritableFluxImage,
+                                         ITwinSectorsImage,
                                          IDisposable
 {
     const string MODULE_NAME = "Aaru Format plugin";
