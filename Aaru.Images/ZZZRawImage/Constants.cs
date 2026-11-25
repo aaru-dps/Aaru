@@ -59,7 +59,7 @@ public sealed partial class ZZZRawImage
         (MediaTagType.DVDRAM_DDS, ".dds.bin"), (MediaTagType.DVDRAM_SpareArea, ".sai.bin"),
         (MediaTagType.DVDR_PFI, ".pfir.bin"), (MediaTagType.DVDR_PreRecordedInfo, ".pri.bin"),
         (MediaTagType.Floppy_LeadOut, ".leadout.bin"), (MediaTagType.HDDVD_CPI, ".cpi.bin"),
-        (MediaTagType.MiniDiscD5, ".d5.bin"), (MediaTagType.MiniDiscDTOC, ".dtoc.bin"),
+        (MediaTagType.MiniDiscDefectList, ".defectlist.bin"), (MediaTagType.MiniDiscPTOC, ".ptoc.bin"),
         (MediaTagType.MiniDiscType, ".mdtype.bin"), (MediaTagType.MiniDiscUTOC, ".utoc.bin"),
         (MediaTagType.MMC_ExtendedCSD, ".ecsd.bin"), (MediaTagType.PCMCIA_CIS, ".cis.bin"),
         (MediaTagType.SCSI_INQUIRY, ".inquiry.bin"), (MediaTagType.SCSI_MODEPAGE_2A, ".modepage2a.bin"),

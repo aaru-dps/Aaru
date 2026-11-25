@@ -162,7 +162,7 @@ partial class Dump
 
         sense = _dev.MiniDiscD5(out cmdBuf, out _, _dev.Timeout, out _);
 
-        if(!sense && !_dev.Error) mediaTags.Add(MediaTagType.MiniDiscD5, cmdBuf);
+        if(!sense && !_dev.Error) mediaTags.Add(MediaTagType.MiniDiscDefectList, cmdBuf);
 
         // Vendor command D1h returns the User TOC (U-TOC), only present on recorded discs
         byte[] toc = ReadMiniDiscToc(sector => (_dev.MiniDiscReadUserTOC(out byte[] buffer,
@@ -183,7 +183,7 @@ partial class Dump
                                                                   out _),
                                          buffer));
 
-        if(toc is not null) mediaTags.Add(MediaTagType.MiniDiscDTOC, toc);
+        if(toc is not null) mediaTags.Add(MediaTagType.MiniDiscPTOC, toc);
 
         ret = true;
 

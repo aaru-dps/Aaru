@@ -153,7 +153,7 @@ public sealed partial class MDFS
             // Dumps made by older versions of Aaru stored the U-TOC and the P-TOC under each other's tag
             foreach(MediaTagType tag in new[]
                     {
-                        MediaTagType.MiniDiscUTOC, MediaTagType.MiniDiscDTOC
+                        MediaTagType.MiniDiscUTOC, MediaTagType.MiniDiscPTOC
                     })
             {
                 if(!TryReadMediaTag(imagePlugin, tag, out byte[] toc)) continue;

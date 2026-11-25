@@ -376,15 +376,15 @@ public enum MediaTagType
     /// <summary>8 bytes response that seems to define type of MiniDisc</summary>
     [Description("MiniDisc type definition")]
     MiniDiscType = 69,
-    /// <summary>4 bytes response to vendor command D5h</summary>
-    [Description("Vendor command D5h response")]
-    MiniDiscD5 = 70,
+    /// <summary>MD-DATA Defect List, response to D5h</summary>
+    [Description("MD-DATA Defect List")]
+    MiniDiscDefectList = 70,
     /// <summary>User TOC, contains fragments, track names, and can be from 1 to 3 sectors of 2336 bytes</summary>
     [Description("MD-DATA User TOC")]
     MiniDiscUTOC = 71,
-    /// <summary>Not entirely clear kind of TOC that only appears on MD-DATA discs</summary>
-    [Description("MD-DATA DTOC")]
-    MiniDiscDTOC = 72,
+    /// <summary>Pre-mastered TOC that only appears on MD-DATA discs</summary>
+    [Description("MD-DATA Pre-mastered TOC")]
+    MiniDiscPTOC = 72,
     /// <summary>Decrypted DVD disc key</summary>
     [Description("Disc key (Decrypted)")]
     DVD_DiscKey_Decrypted = 73,

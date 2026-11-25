@@ -577,9 +577,9 @@ public sealed partial class ZZZRawImage
 
         // It's an MD-DATA disc, whose dumps always use 2048-byte logical blocks
         if(_mediaTags.ContainsKey(MediaTagType.MiniDiscType) ||
-           _mediaTags.ContainsKey(MediaTagType.MiniDiscD5)   ||
+           _mediaTags.ContainsKey(MediaTagType.MiniDiscDefectList)   ||
            _mediaTags.ContainsKey(MediaTagType.MiniDiscUTOC) ||
-           _mediaTags.ContainsKey(MediaTagType.MiniDiscDTOC))
+           _mediaTags.ContainsKey(MediaTagType.MiniDiscPTOC))
         {
             _imageInfo.MediaType = MediaType.MDData;
 
