@@ -237,7 +237,12 @@ public sealed partial class Merger
 
             currentCount++;
 
-            if(result) continue;
+            if(result)
+            {
+                _secondaryEdgeSectors.Add((sectorAddress, true));
+
+                continue;
+            }
 
             ErrorMessage?.Invoke(string.Format(UI.Error_0_writing_negative_sector_1_continuing,
                                                outputImage.ErrorMessage,
@@ -545,7 +550,12 @@ public sealed partial class Merger
 
             currentSector++;
 
-            if(result) continue;
+            if(result)
+            {
+                _secondaryEdgeSectors.Add((sectorAddress, false));
+
+                continue;
+            }
 
             ErrorMessage?.Invoke(string.Format(UI.Error_0_writing_overflow_sector_1_continuing,
                                                outputImage.ErrorMessage,

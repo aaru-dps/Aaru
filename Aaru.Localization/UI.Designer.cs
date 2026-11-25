@@ -12311,5 +12311,71 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Continue_merge_even_if_data_lost {
+            get {
+                return ResourceManager.GetString("Continue_merge_even_if_data_lost", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_reading_twin_sectors_of_image_1_not_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_reading_twin_sectors_of_image_1_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Image_0_has_twin_sectors_output_format_does_not_support_not_continuing {
+            get {
+                return ResourceManager.GetString("Image_0_has_twin_sectors_output_format_does_not_support_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Image_0_has_twin_sectors_output_format_does_not_support_continuing {
+            get {
+                return ResourceManager.GetString("Image_0_has_twin_sectors_output_format_does_not_support_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Copying_twin_sectors_of_0_sectors {
+            get {
+                return ResourceManager.GetString("Copying_twin_sectors_of_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Copying_twin_1_of_sector_0 {
+            get {
+                return ResourceManager.GetString("Copying_twin_1_of_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_reading_twin_1_of_sector_2_not_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_reading_twin_1_of_sector_2_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_writing_twin_1_of_sector_2_not_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_writing_twin_1_of_sector_2_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_reading_tag_1_of_twin_2_of_sector_3_not_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_reading_tag_1_of_twin_2_of_sector_3_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_writing_tag_1_of_twin_2_of_sector_3_not_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_writing_tag_1_of_twin_2_of_sector_3_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Skipping_twin_1_of_sector_0_not_found {
+            get {
+                return ResourceManager.GetString("Skipping_twin_1_of_sector_0_not_found", resourceCulture);
+            }
+        }
+        
     }
 }

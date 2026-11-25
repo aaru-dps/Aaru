@@ -6151,4 +6151,37 @@ Probadores:
     <data name="Optical_disc_partitions" xml:space="preserve">
         <value>Particiones de disco óptico</value>
     </data>
+    <data name="Continue_merge_even_if_data_lost" xml:space="preserve">
+        <value>Continuar la fusión incluso si se pierden datos en el proceso.</value>
+    </data>
+    <data name="Error_0_reading_twin_sectors_of_image_1_not_continuing" xml:space="preserve">
+        <value>Error {0} leyendo la lista de sectores gemelos de la imagen {1}, no se continuará...</value>
+    </data>
+    <data name="Image_0_has_twin_sectors_output_format_does_not_support_not_continuing" xml:space="preserve">
+        <value>La imagen {0} contiene sectores gemelos que el formato de salida no soporta, no se continuará...</value>
+    </data>
+    <data name="Image_0_has_twin_sectors_output_format_does_not_support_continuing" xml:space="preserve">
+        <value>La imagen {0} contiene sectores gemelos que el formato de salida no soporta, se perderán, continuando...</value>
+    </data>
+    <data name="Copying_twin_sectors_of_0_sectors" xml:space="preserve">
+        <value>Copiando los sectores gemelos de {0} sectores...</value>
+    </data>
+    <data name="Copying_twin_1_of_sector_0" xml:space="preserve">
+        <value>Copiando el gemelo {1} del sector {0}</value>
+    </data>
+    <data name="Error_0_reading_twin_1_of_sector_2_not_continuing" xml:space="preserve">
+        <value>Error {0} leyendo el gemelo {1} del sector {2}, no se continuará...</value>
+    </data>
+    <data name="Error_0_writing_twin_1_of_sector_2_not_continuing" xml:space="preserve">
+        <value>Error {0} escribiendo el gemelo {1} del sector {2}, no se continuará...</value>
+    </data>
+    <data name="Error_0_reading_tag_1_of_twin_2_of_sector_3_not_continuing" xml:space="preserve">
+        <value>Error {0} leyendo la etiqueta {1} del gemelo {2} del sector {3}, no se continuará...</value>
+    </data>
+    <data name="Error_0_writing_tag_1_of_twin_2_of_sector_3_not_continuing" xml:space="preserve">
+        <value>Error {0} escribiendo la etiqueta {1} del gemelo {2} del sector {3}, no se continuará...</value>
+    </data>
+    <data name="Skipping_twin_1_of_sector_0_not_found" xml:space="preserve">
+        <value>Gemelo {1} del sector {0} no encontrado, omitiendo...</value>
+    </data>
 </root>

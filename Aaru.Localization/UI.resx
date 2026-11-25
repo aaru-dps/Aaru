@@ -6238,4 +6238,37 @@ Do you want to continue?</value>
     <data name="Optical_disc_partitions" xml:space="preserve">
         <value>Optical disc partitions</value>
     </data>
+    <data name="Continue_merge_even_if_data_lost" xml:space="preserve">
+        <value>Continue merging even if data will be lost in the process.</value>
+    </data>
+    <data name="Error_0_reading_twin_sectors_of_image_1_not_continuing" xml:space="preserve">
+        <value>Error {0} reading the list of twin sectors of image {1}, not continuing...</value>
+    </data>
+    <data name="Image_0_has_twin_sectors_output_format_does_not_support_not_continuing" xml:space="preserve">
+        <value>Image {0} contains twin sectors that the output format does not support, not continuing...</value>
+    </data>
+    <data name="Image_0_has_twin_sectors_output_format_does_not_support_continuing" xml:space="preserve">
+        <value>Image {0} contains twin sectors that the output format does not support, they will be lost, continuing...</value>
+    </data>
+    <data name="Copying_twin_sectors_of_0_sectors" xml:space="preserve">
+        <value>Copying twin sectors of {0} sectors...</value>
+    </data>
+    <data name="Copying_twin_1_of_sector_0" xml:space="preserve">
+        <value>Copying twin {1} of sector {0}</value>
+    </data>
+    <data name="Error_0_reading_twin_1_of_sector_2_not_continuing" xml:space="preserve">
+        <value>Error {0} reading twin {1} of sector {2}, not continuing...</value>
+    </data>
+    <data name="Error_0_writing_twin_1_of_sector_2_not_continuing" xml:space="preserve">
+        <value>Error {0} writing twin {1} of sector {2}, not continuing...</value>
+    </data>
+    <data name="Error_0_reading_tag_1_of_twin_2_of_sector_3_not_continuing" xml:space="preserve">
+        <value>Error {0} reading tag {1} of twin {2} of sector {3}, not continuing...</value>
+    </data>
+    <data name="Error_0_writing_tag_1_of_twin_2_of_sector_3_not_continuing" xml:space="preserve">
+        <value>Error {0} writing tag {1} of twin {2} of sector {3}, not continuing...</value>
+    </data>
+    <data name="Skipping_twin_1_of_sector_0_not_found" xml:space="preserve">
+        <value>Twin {1} of sector {0} not found, skipping...</value>
+    </data>
 </root>

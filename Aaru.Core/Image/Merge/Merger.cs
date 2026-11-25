@@ -7,6 +7,7 @@ using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs;
 using Aaru.Images;
 using Aaru.Localization;
 using File = System.IO.File;
@@ -54,7 +55,8 @@ public sealed partial class Merger
     bool                       ignoreNegativeSectors,
     bool                       ignoreOverflowSectors,
     bool                       ignoreSectorNotFound,
-    int                        errorRecovery
+    int                        errorRecovery,
+    bool                       force
 )
 {
     const string            MODULE_NAME = "Image merger";
@@ -65,6 +67,10 @@ public sealed partial class Merger
     ///     Sectors chosen from the secondary image that could not be read from it, so the output kept the primary's.
     /// </summary>
     readonly HashSet<ulong> _skippedSecondarySectors = [];
+    /// <summary>
+    ///     Negative and overflow sectors whose contents in the output were written from the secondary image.
+    /// </summary>
+    readonly HashSet<(ulong sectorAddress, bool negative)> _secondaryEdgeSectors = [];
 
     static bool IsSkippableNotFound(ErrorNumber errno) => errno is ErrorNumber.SectorNotFound or ErrorNumber.NoData;
 
@@ -221,6 +227,18 @@ public sealed partial class Merger
 
         // Validate sector tags compatibility between formats
         errno = ValidateSectorTags(primaryImage, outputFormat, out bool useLong);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        // Twin sectors are only kept when the output format can store them
+        errno = GetTwinSectors(primaryImage, primaryImagePath, outputFormat, out List<TwinSectorInfo> primaryTwins);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        errno = GetTwinSectors(secondaryImage,
+                               secondaryImagePath,
+                               outputFormat,
+                               out List<TwinSectorInfo> secondaryTwins);
 
         if(errno != ErrorNumber.NoError) return errno;
 
@@ -504,6 +522,44 @@ public sealed partial class Merger
 
             if(secondaryImage.Info.OverflowSectors > 0)
                 CopyOverflowSectorsSecondary(useLong, secondaryImage, outputFormat, overrideOverflowSectorsList);
+        }
+
+        if(outputFormat is ITwinSectorsImage)
+        {
+            HashSet<ulong> secondarySectors = sectorsToCopyFromSecondImage
+                                             .Where(s => !_skippedSecondarySectors.Contains(s))
+                                             .ToHashSet();
+
+            // Twins of a sector come from the same image its contents were written from
+            bool FromSecondary(TwinSectorInfo twin)
+            {
+                if(_secondaryEdgeSectors.Contains((twin.sectorAddress, twin.negative))) return true;
+
+                return !twin.negative && secondarySectors.Contains(twin.sectorAddress);
+            }
+
+            bool FromPrimary(TwinSectorInfo twin)
+            {
+                if(FromSecondary(twin)) return false;
+
+                return twin.negative
+                           ? twin.sectorAddress <= nominalNegativeSectors
+                           : twin.sectorAddress < primaryImage.Info.Sectors + nominalOverflowSectors;
+            }
+
+            errno = CopyTwinSectors(useLong,
+                                    primaryImage,
+                                    outputFormat,
+                                    primaryTwins.Where(FromPrimary).ToList());
+
+            if(errno != ErrorNumber.NoError) return errno;
+
+            errno = CopyTwinSectors(useLong,
+                                    secondaryImage,
+                                    outputFormat,
+                                    secondaryTwins.Where(FromSecondary).ToList());
+
+            if(errno != ErrorNumber.NoError) return errno;
         }
 
         bool ret;
