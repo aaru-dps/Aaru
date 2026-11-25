@@ -5,6 +5,7 @@ using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs;
 using Aaru.Images;
 using Aaru.Localization;
 using MediaType = Aaru.CommonTypes.MediaType;
@@ -166,6 +167,25 @@ public partial class Convert
             StoppingErrorMessage?.Invoke("Output format does not support sessions, this will end in a loss of data, continuing...");*/
         }
 
+        // Determine if PS3 conversion path should be active
+        bool isPs3Conversion = _outputImage is AaruFormat                        &&
+                               _mediaType is MediaType.PS3BD or MediaType.PS3DVD &&
+                               !_bypassPs3Decryption;
+
+        // Determine if Wii U conversion path should be active
+        bool isWiiuConversion = _outputImage is AaruFormat && _mediaType == MediaType.WUOD && !_bypassWiiuDecryption;
+
+        // Determine if GameCube/Wii conversion path should be active
+        bool isNgcwConversion = _outputImage is AaruFormat                   &&
+                                _mediaType is MediaType.GOD or MediaType.WOD &&
+                                !(_mediaType == MediaType.WOD && _bypassWiiDecryption);
+
+        // Twin sectors are only kept when the output format can store them and the sectors are copied as they are
+        errno = GetTwinSectors(!isPs3Conversion && !isWiiuConversion && !isNgcwConversion,
+                               out List<TwinSectorInfo> twinSectors);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
         // Create the output image file with appropriate settings
         errno = CreateOutputImage();
 
@@ -179,19 +199,6 @@ public partial class Convert
         // Prepare metadata and dump hardware information
         Metadata           metadata     = _inputImage.AaruMetadata;
         List<DumpHardware> dumpHardware = _inputImage.DumpHardware;
-
-        // Determine if PS3 conversion path should be active
-        bool isPs3Conversion = _outputImage is AaruFormat                        &&
-                               _mediaType is MediaType.PS3BD or MediaType.PS3DVD &&
-                               !_bypassPs3Decryption;
-
-        // Determine if Wii U conversion path should be active
-        bool isWiiuConversion = _outputImage is AaruFormat && _mediaType == MediaType.WUOD && !_bypassWiiuDecryption;
-
-        // Determine if GameCube/Wii conversion path should be active
-        bool isNgcwConversion = _outputImage is AaruFormat                   &&
-                                _mediaType is MediaType.GOD or MediaType.WOD &&
-                                !(_mediaType == MediaType.WOD && _bypassWiiDecryption);
 
         // Inject PS3-specific media tags before copying normal media tags
         if(isPs3Conversion)
@@ -382,6 +389,15 @@ public partial class Convert
 
             if(errno != ErrorNumber.NoError) return errno;
         }
+
+        errno = ConvertTwinSectors(useLong,
+                                   twinSectors.Where(t => t.negative
+                                                              ? t.sectorAddress <= _negativeSectors
+                                                              : t.sectorAddress <
+                                                                _inputImage.Info.Sectors + _overflowSectors)
+                                              .ToList());
+
+        if(errno != ErrorNumber.NoError) return errno;
 
         if((_resume != null || dumpHardware != null) && !_aborted)
         {

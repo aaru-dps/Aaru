@@ -6184,4 +6184,22 @@ Probadores:
     <data name="Skipping_twin_1_of_sector_0_not_found" xml:space="preserve">
         <value>Gemelo {1} del sector {0} no encontrado, omitiendo...</value>
     </data>
+    <data name="Error_0_reading_twin_1_of_sector_2_continuing" xml:space="preserve">
+        <value>Error {0} leyendo el gemelo {1} del sector {2}, continuando...</value>
+    </data>
+    <data name="Error_0_writing_twin_1_of_sector_2_continuing" xml:space="preserve">
+        <value>Error {0} escribiendo el gemelo {1} del sector {2}, continuando...</value>
+    </data>
+    <data name="Error_0_reading_tag_1_of_twin_2_of_sector_3_continuing" xml:space="preserve">
+        <value>Error {0} leyendo la etiqueta {1} del gemelo {2} del sector {3}, continuando...</value>
+    </data>
+    <data name="Error_0_writing_tag_1_of_twin_2_of_sector_3_continuing" xml:space="preserve">
+        <value>Error {0} escribiendo la etiqueta {1} del gemelo {2} del sector {3}, continuando...</value>
+    </data>
+    <data name="Image_0_has_twin_sectors_that_cannot_be_kept_converting_this_media_not_continuing" xml:space="preserve">
+        <value>La imagen {0} contiene sectores gemelos que no se pueden conservar al convertir este medio, no se continuará...</value>
+    </data>
+    <data name="Image_0_has_twin_sectors_that_cannot_be_kept_converting_this_media_continuing" xml:space="preserve">
+        <value>La imagen {0} contiene sectores gemelos que no se pueden conservar al convertir este medio, se perderán, continuando...</value>
+    </data>
 </root>

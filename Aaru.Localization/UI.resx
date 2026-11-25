@@ -6271,4 +6271,22 @@ Do you want to continue?</value>
     <data name="Skipping_twin_1_of_sector_0_not_found" xml:space="preserve">
         <value>Twin {1} of sector {0} not found, skipping...</value>
     </data>
+    <data name="Error_0_reading_twin_1_of_sector_2_continuing" xml:space="preserve">
+        <value>Error {0} reading twin {1} of sector {2}, continuing...</value>
+    </data>
+    <data name="Error_0_writing_twin_1_of_sector_2_continuing" xml:space="preserve">
+        <value>Error {0} writing twin {1} of sector {2}, continuing...</value>
+    </data>
+    <data name="Error_0_reading_tag_1_of_twin_2_of_sector_3_continuing" xml:space="preserve">
+        <value>Error {0} reading tag {1} of twin {2} of sector {3}, continuing...</value>
+    </data>
+    <data name="Error_0_writing_tag_1_of_twin_2_of_sector_3_continuing" xml:space="preserve">
+        <value>Error {0} writing tag {1} of twin {2} of sector {3}, continuing...</value>
+    </data>
+    <data name="Image_0_has_twin_sectors_that_cannot_be_kept_converting_this_media_not_continuing" xml:space="preserve">
+        <value>Image {0} contains twin sectors that cannot be kept when converting this media, not continuing...</value>
+    </data>
+    <data name="Image_0_has_twin_sectors_that_cannot_be_kept_converting_this_media_continuing" xml:space="preserve">
+        <value>Image {0} contains twin sectors that cannot be kept when converting this media, they will be lost, continuing...</value>
+    </data>
 </root>

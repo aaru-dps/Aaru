@@ -12377,5 +12377,41 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Error_0_reading_twin_1_of_sector_2_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_reading_twin_1_of_sector_2_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_writing_twin_1_of_sector_2_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_writing_twin_1_of_sector_2_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_reading_tag_1_of_twin_2_of_sector_3_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_reading_tag_1_of_twin_2_of_sector_3_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_writing_tag_1_of_twin_2_of_sector_3_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_writing_tag_1_of_twin_2_of_sector_3_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Image_0_has_twin_sectors_that_cannot_be_kept_converting_this_media_not_continuing {
+            get {
+                return ResourceManager.GetString("Image_0_has_twin_sectors_that_cannot_be_kept_converting_this_media_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Image_0_has_twin_sectors_that_cannot_be_kept_converting_this_media_continuing {
+            get {
+                return ResourceManager.GetString("Image_0_has_twin_sectors_that_cannot_be_kept_converting_this_media_continuing", resourceCulture);
+            }
+        }
+        
     }
 }
