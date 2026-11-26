@@ -1,3 +1,160 @@
+# [6.0.0-beta.3] - 2026-11-26
+
+## Highlights
+
+- **Twin sectors.** AaruFormat images can store several physical sectors answering to the same address, as on copy protected floppies with duplicated sector IDs or CDs with the same MSF mastered twice. Each instance keeps its own data, prefix, suffix, subchannel and tags, and merging and converting keep them.
+- **Data Position Measurement analysis.** A DPM viewer in the GUI, with zoom, the spiral fitted to every layer, the density bands that deviate from it, rotation speeds and exports. DPMs of two images can be compared from the GUI and the `image compare` command, and the new `image dpm-graph` command draws the graph of any image.
+- **More reliable DPM measurement.** Calibration falls back to slower speeds, failed calibrations are no longer repeated at every bin, rotation periods are found where the drive answers turns late, DVD layer breaks are found on PTP and OTP discs, and audio sectors are timed past the drive's read ahead.
+- **New and improved filesystems.** Read-only Sony MiniDisc File System (MDFS), a rewritten HPOFS with WORM support, AmigaDOS long name volumes (DOS\6 and DOS\7), correct SFS\2 support, BOFS version 2 volumes and many CP/M fixes.
+- **Real dump speeds and resumable logs.** Read speeds are measured in wall-clock time, so drives reading ahead no longer show impossible speeds, and IBG and MHDD logs continue when resuming a dump instead of being overwritten.
+- **MediaTek firmware crash recovery.** CD dumps detect drives whose firmware crashed, answering every command with invalid field in CDB, and revive them by cycling the tray.
+- **Lost remote connections.** Dumps, media scans and DPM measurements stop gracefully and save their resume file when the connection to the remote is lost, without marking the sectors as bad. ([#416](https://github.com/aaru-dps/Aaru/issues/416))
+- **MAME compatible CHD.** CD images in CHD are laid out, decoded and verified as MAME does.
+
+## Upgrade notes
+
+- `dump` writes AaruFormat with the `.aif` extension when neither a format nor an extension is given. ([#553](https://github.com/aaru-dps/Aaru/issues/553))
+- A CD, DVD or Blu-ray dump into an image that can store Data Position Measurement but has none is not considered complete, so resuming it measures the DPM. Resuming into an image that already has a DPM does not measure it again.
+- Images containing twin sectors set the twin sectors read-only compatible feature flag. Readers that do not support it read the first instance of every twin sector but must not modify the image. Reading or writing twin sectors needs libaaruformat 1.0.0-beta.3.
+- The MiniDisc media tags `MiniDiscD5` and `MiniDiscDTOC` are now `MiniDiscDefectList` and `MiniDiscPTOC`, keeping their values. The response to D1h is stored as the U-TOC and the responses to D4h as the P-TOC.
+- Optical disc tracks are named the same way in every image format: "Optical disc track" scheme, "Track N." name, no description and the track type. ([#876](https://github.com/aaru-dps/Aaru/issues/876))
+- Global options are accepted in any position of the command line.
+- Debian, RPM and Arch Linux rolling packages depend on the runtime libraries .NET 10 requires. ([#967](https://github.com/aaru-dps/Aaru/issues/967))
+
+## AaruFormat
+
+- **New:** CD MODE 2 subheaders can be read and written as a sector tag.
+- **New:** PFI of UMDs is taken from the `.pfi.bin` sidecar next to the image when the image has none.
+- **New:** Twin sector table, storing every instance of a twin sector with its own data, prefix, suffix and tags.
+- **New:** UTF-8 file names on Windows.
+- **Changed:** Lead-In and Lead-Out sectors are stored in the format of the track after and before them, instead of raw as data.
+- **Fixed:** A sector outside any track was reported as having no data, so conversion took it as not dumped and dropped it.
+- **Fixed:** Apple Sony and Priam DataTower tags were reported readable as each other.
+- **Fixed:** Blu-ray sector EDC tags could not be written or read, and DVDs got a second copy of their EDC typed as Blu-ray EDC.
+- **Fixed:** CRC64 SIMD implementations read outside the buffer, and MD5 hashed wrongly multi-block inputs in MSVC, ARMv7, MIPS64, s390x and PowerPC builds.
+- **Fixed:** Images closed without freeing flux entries, and per-sector tables loaded twice leaked.
+- **Fixed:** Lead-In and Lead-Out sectors could not be read as long sectors, so conversion dropped them.
+- **Fixed:** MiniDisc media tags were missing.
+- **Fixed:** Multi-level deduplication tables written out of order or after resuming lost every sector they referenced, and resumed images could not be reopened.
+- **Fixed:** Wii discs took the 2064-byte Nintendo DVD long sector path for long sectors of any length, and the first group of a Wii partition region was taken as plaintext.
+- **Fixed:** Writing negative sectors disabled the image checksums.
+
+## CHD
+
+- **New:** Sessions and track flags are reported.
+- **Changed:** CD tracks are laid out as MAME does: frames always take 2448 bytes, tracks are padded to 4 frames, and pregaps not stored in the image still take sectors.
+- **Changed:** Images are verified against the checksum in their header over their logical size, and images without one are not verified.
+- **Fixed:** CD audio came out byte-swapped, except in legacy GD-ROM images.
+- **Fixed:** CD codec sectors were rebuilt as mode 1 sectors, and cooked mode 2 form 2 sectors were rebuilt as form 1 in long reads.
+- **Fixed:** Cooked subchannel was not interleaved, and mode 2 tags were returned from wrong offsets.
+- **Fixed:** FLAC and CD FLAC hunks, Huffman codec trees and old little-endian CD metadata were decoded wrongly.
+
+## Command line
+
+- **New:** `image dpm-graph` command, writing the Data Position Measurement graph of an image.
+- **New:** `image compare` compares the Data Position Measurements of both images, reporting the calibration scale, measurement noise and differing regions, and `--dpm-graph` writes a comparison graph.
+- **New:** `--eject` option of the `dpm` command, ejecting the medium when the measurement finishes.
+- **New:** Options choosing the size of the DPM and DPM comparison graphs, drawn at 1920x1080 by default.
+- **Changed:** Command line errors are shown plainly.
+- **Changed:** Single-sector extents of affected files in `image analyze` are shown as one sector number.
+- **Changed:** The progress shows the remaining time.
+- **Fixed:** Console lines were dropped from the log file, and verbose, error and debug messages with markup spanning a format argument were lost.
+- **Fixed:** Listing the options of image formats crashed on writable formats that are not media images. ([#942](https://github.com/aaru-dps/Aaru/issues/942))
+- **Fixed:** Many messages were printed with their markup instead of colored, in ATIP, PMA, Blu-ray, media info, compare, verify, checksum, device info, extract files, image info, dump, SSC, sidecar, CloneCD, ISO9660 and Symbian output, most of them in Spanish.
+
+## Data Position Measurement
+
+- **New:** Analysis of a DPM with the density and sectors per turn of every bin, a summary of every layer, the rotation speed at every calibration, a spiral fitted to every layer and the bands deviating from it beyond the measurement noise.
+- **New:** Comparison of two DPMs, resampling them onto a common grid, removing the calibration scale and reporting the regions whose density differs, with a comparison graph.
+- **Changed:** Calibration is retried at slower speeds when it fails at the drive maximum, as the command overhead of fast spinning discs covers several turns.
+- **Changed:** Rejected calibration sweeps log their samples, rotations and wraps, and refused timed reads log their sense.
+- **Changed:** Sectors the dump read are retried once before being taken as unreadable.
+- **Fixed:** A calibration that kept failing was retried several times at every bin.
+- **Fixed:** An audio track's pregap was read as data and refused by the drive.
+- **Fixed:** Audio sectors were served from the drive cache, stalling the measurement, and re-measuring audio bins read tens of megabytes of audio for each.
+- **Fixed:** DVD layer breaks were wrong on PTP discs and some OTP discs, measuring the second layer as a continuation of the first.
+- **Fixed:** Every calibration sweep was rejected where the drive answered one or more turns late.
+- **Fixed:** On media shorter than the cache flush regions the drive cache was never flushed.
+
+## Devices
+
+- **New:** Remote devices report a lost connection, failing every following command instead of throwing.
+- **New:** The PFI of the second layer of dual layer DVDs is read, saved and printed by media info.
+- **Fixed:** The layer 0 end of PFI was printed wrongly.
+
+## Dumping
+
+- **New:** `--cd-text` option, also in the GUI, to not read CD-TEXT from the lead-in. ([#819](https://github.com/aaru-dps/Aaru/issues/819))
+- **New:** `--no-retry-sectors` option, also in the GUI, with sectors or ranges that are neither trimmed nor retried, including CD subchannel retries and C2 audio convergence. Skipping SafeDisc retries adds its range to it.
+- **New:** Atari Jaguar CD offset is calculated from the boot header, and the session 2 pregap is dumped.
+- **New:** CD dumps recover from the firmware crash of MediaTek drives in every read path, including OmniDrive, CD-i Ready, trimming, retrying, pregaps, lead-outs and audio C2 convergence. They abort if ejecting fails.
+- **New:** MiniDisc dumps read every TOC sector in use and send D8h as Sony's drivers do.
+- **New:** OmniDrive dumps of GameCube and Wii discs enable raw reading automatically.
+- **Changed:** Retrying and trimming show determinate progress, and sectors not retried are left out of it.
+- **Changed:** OmniDrive dumps do not use FUA when trimming nor in the first retry pass.
+- **Changed:** OmniDrive retry passes report recovered audio sectors.
+- **Fixed:** OmniDrive reads past the end of the disc were stored as Lead-Out sectors without `--leadout`.
+- **Fixed:** Sectors whose read failed because the remote connection was lost were marked as bad, and other aborts were reported as aborted by the user.
+- **Fixed:** Skipping SafeDisc retries still retried the subchannels of the damaged sectors.
+- **Fixed:** The GUI trim checkbox was inverted, disabling trimming when checked.
+
+## Filesystems
+
+- **New:** AmigaDOS long name volumes (DOS\6 and DOS\7), and DOS type flags decoded as the FastFileSystem does.
+- **New:** BOFS version 2 volumes, and fragmented files following the chain of FAT blocks.
+- **New:** CP/M Excalibur 64 disks, and CP/M tried on 400 and 800 KiB Apple Sony raw images.
+- **New:** HPOFS rewritten from the verified on-disk format, with WORM volumes, OS/2 extended attributes, codepages including EBCDIC, and real free space.
+- **New:** MiniDisc File System (MDFS), read-only.
+- **Changed:** NTFS reads contiguous clusters of uncompressed files at once.
+- **Fixed:** Apple HFS files and directories whose names contain a slash could not be opened, and were split in two in sector analysis.
+- **Fixed:** Apple HFS+ volumes were extracted as "NO NAME".
+- **Fixed:** CP/M disks with reserved tracks, such as Kaypro II, XtalDOS, Otrona Attaché, Amstrad system disks and Sharp Personal CP/M, were read from the wrong sectors, and disk definitions were not tried properly.
+- **Fixed:** CP/M files with a slash in their names could not be opened, files with blank names were listed as a copy of the root directory, and the cluster count was wrong.
+- **Fixed:** SFS\2 volumes used the wrong checksum seed, node container shift and file size fields.
+- **Fixed:** SFS links and BOFS fragmented files were not handled when finding files with affected sectors.
+
+## Formats
+
+- **New:** Raw images with `.dvd` and `.bd` extensions are identified as DVD and Blu-ray.
+- **New:** Raw MiniDisc images read their media tag sidecars and are detected as MD-DATA from them.
+- **Changed:** VDI images cache whole blocks, reading files from filesystems inside them took minutes for a few megabytes.
+- **Fixed:** Converting Wii images from AaruFormat to WOD made every encrypted partition sector different from the source.
+- **Fixed:** Converting GameCube, Wii and Wii U images lost the creator and the rest of the metadata.
+- **Fixed:** Conversion skipped the tags of the first overflow sector.
+- **Fixed:** Raw images showed CD tags as readable for media that is not a CD.
+
+## GUI
+
+- **New:** Data Position Measurement tab in the image information, and a DPM viewer with density, deviation, status and rotation speed panels, zoom and pan, the bin under the pointer described, tables of layers, bands and calibrations, comparison with another image, PNG export at any size and CSV export.
+- **Changed:** Always uses dark mode.
+- **Changed:** Optical disc tracks are shown under "Optical disc partitions" in the navigation tree.
+- **Changed:** The CD IBG graph scale defaults to 52x and extends when a log goes above it.
+- **Fixed:** The speed line of the disc speed graph was not redrawn.
+
+## Image merging
+
+- **New:** A resume sidecar describing the merged image is written, named as the dump command names it.
+- **New:** Twin sectors are copied from the image each sector is taken from.
+- **Fixed:** For media other than optical discs, sectors chosen from the secondary were read from the primary, so the output was identical to the primary.
+- **Fixed:** With `--ignore-sector-not-found`, secondary sectors that could not be read were counted as repaired.
+
+## Speed and logs
+
+- **New:** IBG and MHDD logs are resumed when resuming a dump, in every dumper.
+- **New:** MHDD logs record the timing of trimming and retrying, and are written while they can still grow.
+- **Changed:** Read speeds are measured in wall-clock time over a sliding window, and averages from the time the dump or scan took and the bytes read in this run.
+- **Fixed:** Failed reads, the first read, the first track pregap and lead-in and lead-out sectors were counted in speeds, averages and logs.
+- **Fixed:** IBG logs stored a multiple of the peak speed, overcounted row durations, wrote rows with no speed and lost the last samples.
+- **Fixed:** MHDD graphs were written to the current folder.
+- **Fixed:** Retrode and SBC timings included time outside the read, ATA scans always took 0 seconds, and SecureDigital and SSC speeds were shown as bytes per second.
+- **Fixed:** Scans crashed printing the results when they failed before reading any sector.
+
+## For developers
+
+- New `ITwinSectorsImage` interface and `TwinSectorInfo` structure, and `CanStoreDpm` optical image capability.
+- DPM simulator tests for calibration speed fallback and failing calibrations, and tests for DVD layer breaks, DPM analysis, spiral fit and band detection, MAME CHD, MDFS and AmigaDOS long name volumes.
+- libaaruformat: GitHub Actions CI for Linux, macOS and Windows (MSVC and MinGW) and QEMU jobs for ARMv7, x86 and PowerPC 64 LE, FLAC SIMD intrinsics, twin sector and multi-level DDT tests, and twin sector table in the specification and the 010 Editor and ImHex templates. Big endian targets are disabled.
+
 # [6.0.0-beta.2] - 2026-10-09
 
 ## Highlights
