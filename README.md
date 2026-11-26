@@ -267,6 +267,7 @@ Fully supported file-systems (identify and extraction)
 * Microsoft Extended File Allocation Table (exFAT)
 * Microsoft/IBM High Performance File System (HPFS)
 * Microsoft New Technology File System (NTFS)
+* MiniDisc File System (MDFS), for MD-DATA discs
 * Minix v1/v2/v3 file systems
 * NILFS2
 * Nintendo optical filesystems (GameCube and Wii)
