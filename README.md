@@ -226,6 +226,7 @@ Fully supported file-systems (identify and extraction)
 * Acorn Advanced Disc Filing System
 * Alexander Osipov DOS (AO-DOS for Electronika BK-0011) file system
 * Amiga Fast File System, with international characters, directory cache and multi-user patches
+* Amiga Fast File System v2 (long filenames, DOS\6 and DOS\7)
 * Amiga Original File System, with international characters, directory cache and multi-user patches
 * Apple DOS file system
 * Apple Lisa file system
@@ -295,7 +296,6 @@ Fully supported file-systems (identify and extraction)
 Supported file systems for identification and information only
 ==============================================================
 
-* Amiga Fast File System v2, untested
 * Apple File System (preliminary detection until on-disk layout is stable)
 * dump(8) (Old historic BSD, AIX, UFS and UFS2 types)
 * Fossil file system (from Plan9)
