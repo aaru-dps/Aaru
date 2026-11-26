@@ -17,7 +17,7 @@ options=('!strip' 'staticlibs')
 validpgpkeys=('236F1E21B540FC0D40F7AD1751D20488C724CA9F')
 provides=('aaru')
 conflicts=('aaru')
-depends=('icu' 'krb5' 'libunwind' 'openssl' 'zlib')
+depends=('ca-certificates' 'glibc' 'icu' 'krb5' 'libgcc' 'libstdc++' 'openssl' 'tzdata')
 
 if [ "$CARCH" == 'aarch64' ]; then
     dotnet_rid=linux-arm64
