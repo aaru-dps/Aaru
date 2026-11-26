@@ -13,7 +13,7 @@
 #
 
 Name:           aaru
-Version:        6.0.0~beta.2
+Version:        6.0.0~beta.3
 Release:        1%{?dist}
 Summary:        Disc image management and creation tool
 
@@ -188,6 +188,51 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_datadir}/icons/hicolor/512x512/apps/aaru.png
 
 %changelog
+* Thu Nov 26 2026 Natalia Portillo <claunia@claunia.com> - 6.0.0~beta.3-1
+- New upstream beta release 6.0.0-beta.3
+- Added twin sectors to AaruFormat, storing every physical instance of a
+  sector that shares an address, kept when converting and merging images
+- Added Data Position Measurement viewer to the GUI, with spiral fitting,
+  density band detection, comparison with another image and PNG and CSV
+  export
+- Added Data Position Measurement comparison to image compare, the image
+  dpm-graph command and the dpm --eject option
+- Added read-only MiniDisc File System (MDFS) support
+- Added AmigaDOS long name volumes, BOFS version 2 volumes and CP/M
+  Excalibur 64 disks
+- Added recovery from the firmware crash of MediaTek drives in CD dumps
+- Added --no-retry-sectors and --cd-text dump options
+- Added resuming of IBG and MHDD logs when resuming a dump
+- Added Atari Jaguar CD offset detection and session 2 pregap dumping
+- Changed dump to write AaruFormat when no format or extension is given
+- Changed dumps into images that can store DPM but lack it to be resumed
+  to measure it
+- Changed read speeds to be measured in wall-clock time, and averages
+  from the time the dump took and the bytes read in that run
+- Changed dumps, scans and DPM measurements to stop gracefully and save
+  the resume file when the connection to the remote is lost
+- Changed CHD CD images to be laid out, decoded and verified as MAME does
+- Changed HPOFS to a rewritten driver with WORM support
+- Changed optical disc tracks to be named the same in every image format
+- Changed MiniDisc media tags to clearer names
+- Changed GUI to always use dark mode
+- Changed runtime dependencies to the ones required by .NET 10
+- Fixed DPM calibration failures, DVD layer breaks and audio sector timing
+- Fixed CP/M disks with reserved tracks being read from the wrong sectors
+- Fixed SFS\2 volumes, HFS names with slashes and HFS+ volume names
+- Fixed Wii images converted to WOD corrupting encrypted sectors, and
+  GameCube, Wii and Wii U conversions losing metadata
+- Fixed merging non-optical images taking every sector from the primary
+- Fixed Lead-In and Lead-Out sectors being dropped from AaruFormat images
+  when converting
+- Fixed multi-level deduplication tables in AaruFormat losing sectors when
+  written out of order or after resuming
+- Fixed the GUI trim checkbox being inverted
+- Fixed Blu-ray raw images being identified as DVD
+- Fixed messages printed with their markup instead of colored
+- Built for RHEL 9+, Fedora 38+, openSUSE Leap 15.5+
+- Multi-architecture support (x86_64, aarch64, armv7hl)
+
 * Thu Oct 08 2026 Natalia Portillo <claunia@claunia.com> - 6.0.0~beta.2-1
 - New upstream beta release 6.0.0-beta.2
 - Added Data Position Measurement, measured by default as the last phase
