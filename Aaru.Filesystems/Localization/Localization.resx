@@ -4025,4 +4025,10 @@
   <data name="MDFS_Volume_uses_32_bit_extent_records" xml:space="preserve">
     <value>Volume uses 32-bit extent records</value>
   </data>
+  <data name="JXFS_Name" xml:space="preserve">
+    <value>JXFileSystem</value>
+  </data>
+  <data name="Volume_has_an_unfinished_transaction" xml:space="preserve">
+    <value>Volume has an unfinished transaction that has not been applied</value>
+  </data>
 </root>

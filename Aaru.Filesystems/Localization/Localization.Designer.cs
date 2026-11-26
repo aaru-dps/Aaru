@@ -63,6 +63,12 @@ namespace Aaru.Filesystems {
             }
         }
 
+        internal static string JXFS_Name {
+            get {
+                return ResourceManager.GetString("JXFS_Name", resourceCulture);
+            }
+        }
+
         internal static string System_heap_will_be_extended_by_0_bytes_and_a_1_fraction_of_the_available_RAM {
             get {
                 return ResourceManager.GetString("System_heap_will_be_extended_by_0_bytes_and_a_1_fraction_of_the_available_RAM", resourceCulture);
@@ -282,6 +288,12 @@ namespace Aaru.Filesystems {
         internal static string Backup_sequence_number_0 {
             get {
                 return ResourceManager.GetString("Backup_sequence_number_0", resourceCulture);
+            }
+        }
+
+        internal static string Volume_has_an_unfinished_transaction {
+            get {
+                return ResourceManager.GetString("Volume_has_an_unfinished_transaction", resourceCulture);
             }
         }
 

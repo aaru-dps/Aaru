@@ -3989,4 +3989,10 @@
   <data name="MDFS_Volume_uses_32_bit_extent_records" xml:space="preserve">
     <value>El volumen usa registros de extensiones de 32 bits</value>
   </data>
+  <data name="JXFS_Name" xml:space="preserve">
+    <value>JXFileSystem</value>
+  </data>
+  <data name="Volume_has_an_unfinished_transaction" xml:space="preserve">
+    <value>El volumen tiene una transacción sin terminar que no se ha aplicado</value>
+  </data>
 </root>
