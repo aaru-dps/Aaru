@@ -12,7 +12,7 @@ arch=('x86_64' 'armv7h' 'aarch64')
 url='http://www.aaru.app'
 license=('GPL')
 source=('git+https://github.com/aaru-dps/Aaru')
-makedepends=('dotnet-sdk>=10.0.0' 'git')
+makedepends=('dotnet-sdk>=10.0' 'git')
 options=('!strip' 'staticlibs')
 sha256sums=('SKIP')
 provides=('aaru')
