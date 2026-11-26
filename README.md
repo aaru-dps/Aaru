@@ -256,6 +256,7 @@ Fully supported file-systems (identify and extraction)
 * HP Logical Interchange Format
 * IBM Journaling File System (JFS)
 * ISO9660, including Apple, Amiga, Rock Ridge, Joliet and Romeo extensions
+* JXFileSystem (AmigaOS 4)
 * Linux extended file system
 * Linux extended file system 2
 * Linux extended file system 3
