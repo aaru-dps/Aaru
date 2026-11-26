@@ -42,9 +42,6 @@
     </Application.Resources>
     <Application.Styles>
         <FluentTheme /> <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
-        <!-- TODO: Abandoned project need to find replacement
-        <StyleInclude Source="resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia" />
-        -->
     </Application.Styles>
     <NativeMenu.Menu>
         <NativeMenu>

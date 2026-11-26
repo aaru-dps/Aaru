@@ -4,9 +4,9 @@
     <PackageVersion Include="Aaru.Compression.Native" Version="6.0.0-beta.2.2" />
     <PackageVersion Include="AsyncFixer" Version="2.1.0" />
     <PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.1.2" />
-    <PackageVersion Include="Avalonia.Desktop" Version="12.1.2" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.2" />
-    <PackageVersion Include="Avalonia" Version="12.1.2" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.2.0" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.2.0" />
+    <PackageVersion Include="Avalonia" Version="12.2.0" />
     <PackageVersion Include="Claunia.Encoding" Version="1.9.2" />
     <PackageVersion Include="Claunia.RsrcFork" Version="1.2.0" />
     <PackageVersion Include="Consolonia" Version="12.0.3.13" />
